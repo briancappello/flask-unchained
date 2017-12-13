@@ -1,3 +1,4 @@
+import datetime
 import inspect
 import os
 
@@ -35,3 +36,10 @@ def safe_import_module(module_name):
 
 def title_case(string):
     return de_camel(string).replace('_', ' ').title()
+
+
+def utcnow():
+    """
+    Returns a current timezone-aware datetime.datetime in UTC
+    """
+    return datetime.datetime.now(datetime.timezone.utc)
