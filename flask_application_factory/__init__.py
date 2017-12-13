@@ -11,9 +11,12 @@ from .tuples import (
 )
 from .type_checker import TypeChecker
 from .utils import (
-    camel_to_snake_case,
+    de_camel,
     get_boolean_env,
     get_members,
+    pluralize,
     safe_import_module,
+    singularize,
     title_case,
+    utcnow,
 )
