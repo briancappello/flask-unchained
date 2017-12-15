@@ -3,6 +3,9 @@ import sys
 
 
 class Bundle:
+    app_bundle = False
+    """Whether or not this bundle is the top-level application bundle"""
+
     module_name = None  # type: str
     """Top-level module name of the bundle (dot notation)"""
 
