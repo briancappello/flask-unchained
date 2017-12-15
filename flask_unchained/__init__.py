@@ -6,6 +6,7 @@ from .utils import (
     get_members,
     kebab_case,
     pluralize,
+    right_replace,
     safe_import_module,
     singularize,
     snake_case,

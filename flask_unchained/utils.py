@@ -26,6 +26,10 @@ def kebab_case(string):
     return de_camel(string, '-')
 
 
+def right_replace(string, old, new, count=1):
+    return new.join(string.rsplit(old, count))
+
+
 def safe_import_module(module_name):
     """
     Like importlib's import_module, except it does not raise ImportError
