@@ -108,7 +108,7 @@ class AppFactory:
 
         return [hook for _, hook in sorted(hooks, key=lambda pair: pair[0])]
 
-    def debug(self, string: str):
+    def debug(self, msg: str):
         if self.verbose:
-            for line in string.splitlines():
+            for line in msg.splitlines():
                 print('UNCHAINED:', line)

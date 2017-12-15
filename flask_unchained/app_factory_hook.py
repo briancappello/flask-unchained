@@ -4,7 +4,7 @@ from flask import Flask
 from typing import List, Tuple
 
 from .bundle import Bundle
-from .utils import safe_import_module
+from .utils import get_boolean_env, safe_import_module
 
 
 class BundleOverrideModuleNameAttr:
@@ -19,6 +19,7 @@ class AppFactoryHook:
     bundle_override_module_name_attr = BundleOverrideModuleNameAttr()
 
     def __init__(self):
+        self.verbose = get_boolean_env('FLASK_UNCHAINED_VERBOSE', False)
         if not self.bundle_module_name:
             raise AttributeError(
                 f'{self.__class__.__name__} is missing a `bundle_module_name` attribute')
@@ -59,3 +60,8 @@ class AppFactoryHook:
 
     def update_shell_context(self, ctx: dict):
         pass
+
+    def debug(self, msg: str):
+        if self.verbose:
+            for line in msg.splitlines():
+                print('UNCHAINED:', line)
