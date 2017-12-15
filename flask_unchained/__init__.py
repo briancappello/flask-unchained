@@ -1,3 +1,4 @@
+from .base_config import FlaskUnchainedConfig
 from .bundle import Bundle
 from .app_factory import AppFactory
 from .app_factory_hook import AppFactoryHook
