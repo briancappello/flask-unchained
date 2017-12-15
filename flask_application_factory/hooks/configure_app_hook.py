@@ -1,4 +1,5 @@
 from flask import Flask
+from werkzeug.routing import UnicodeConverter
 
 from ..factory_hook import FactoryHook
 
@@ -14,5 +15,9 @@ class ConfigureAppHook(FactoryHook):
                 bundle_config_module, app_config_cls.__name__, None)
             if bundle_config:
                 app.config.from_object(bundle_config)
-
         app.config.from_object(app_config_cls)
+
+        # the UnicodeConverter is the default, and it's registered with the
+        # explicit name of "string", but since all the other converters use
+        # the builtin python type names, we alias it to "str" for dev sanity
+        app.url_map.converters['str'] = UnicodeConverter
