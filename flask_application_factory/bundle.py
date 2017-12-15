@@ -12,7 +12,7 @@ class Bundle:
     root_dir = None  # type: str
     """
     Top-level folder path of the bundle (defaults to the module's folder if
-    not provieded)
+    not provided)
     """
 
     hooks = []
