@@ -10,6 +10,7 @@ from .hooks import (
     RegisterExtensionsHook,
     RegisterDeferredExtensionsHook,
 )
+from .unchained import unchained
 from .utils import get_boolean_env, safe_import_module
 
 
@@ -27,6 +28,7 @@ class AppFactory:
     def create_app(self, **flask_kwargs) -> Flask:
         bundles = self._load_bundles()
         app = self.instantiate_app(bundles[0].module_name, **flask_kwargs)
+        unchained.init_app(app)
 
         for bundle in bundles:
             self.debug(f'Loading {bundle.__class__.__name__} from '
