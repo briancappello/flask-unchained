@@ -22,6 +22,10 @@ def get_members(module, predicate):
             yield (name, obj)
 
 
+def kebab_case(string):
+    return de_camel(string, '-')
+
+
 def safe_import_module(module_name):
     """
     Like importlib's import_module, except it does not raise ImportError
@@ -34,8 +38,12 @@ def safe_import_module(module_name):
             raise e
 
 
+def snake_case(string):
+    return de_camel(string)
+
+
 def title_case(string):
-    return de_camel(string).replace('_', ' ').title()
+    return de_camel(string, ' ').title()
 
 
 def utcnow():
