@@ -1,6 +1,6 @@
 from .bundle import Bundle
-from .factory import FlaskApplicationFactory
-from .factory_hook import FactoryHook
+from .app_factory import AppFactory
+from .app_factory_hook import AppFactoryHook
 from .utils import (
     get_boolean_env,
     get_members,

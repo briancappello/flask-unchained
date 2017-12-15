@@ -12,7 +12,7 @@ class BundleOverrideModuleNameAttr:
         return f'{cls.bundle_module_name}_module_name'
 
 
-class FactoryHook:
+class AppFactoryHook:
     priority = 50
 
     bundle_module_name = None
@@ -46,9 +46,16 @@ class FactoryHook:
         raise NotImplementedError
 
     def import_bundle_module(self, bundle: Bundle):
-        module_name = getattr(
-            bundle, self.bundle_override_module_name_attr, self.bundle_module_name)
-        return safe_import_module(f'{bundle.module_name}.{module_name}')
+        module_name = getattr(bundle,
+                              self.bundle_override_module_name_attr,
+                              self.bundle_module_name)
+        module = safe_import_module(f'{bundle.module_name}.{module_name}')
+        if not module:
+            super_class = bundle.__class__.__mro__[1]
+            if super_class != Bundle:
+                module = safe_import_module(
+                    f'{super_class.module_name}.{module_name}')
+        return module
 
     def update_shell_context(self, ctx: dict):
         pass

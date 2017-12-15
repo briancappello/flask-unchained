@@ -18,11 +18,11 @@ install_requires = read_requirements('requirements.txt')
 
 
 setup(
-    name='flask-application-factory',
+    name='flask-unchained',
     version='0.1.0',
-    description='Flask Application Factory',
+    description='Flask Unchained',
     long_description=long_description,
-    url='https://github.com/briancappello/flask-application-factory',
+    url='https://github.com/briancappello/flask-unchained',
     author='Brian Cappello',
     license='MIT',
 
@@ -33,7 +33,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
     ],
-    packages=find_packages(include=['flask_application_factory']),
+    packages=find_packages(include=['flask_unchained']),
     install_requires=install_requires,
     include_package_data=True,
     zip_safe=True,

@@ -1,10 +1,10 @@
 from flask import Flask
 from werkzeug.routing import UnicodeConverter
 
-from ..factory_hook import FactoryHook
+from ..app_factory_hook import AppFactoryHook
 
 
-class ConfigureAppHook(FactoryHook):
+class ConfigureAppHook(AppFactoryHook):
     priority = 5
     bundle_module_name = 'bundle_config'
 

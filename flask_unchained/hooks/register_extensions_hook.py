@@ -8,7 +8,7 @@ from collections import namedtuple
 from flask import Flask
 from typing import List
 
-from ..factory_hook import FactoryHook
+from ..app_factory_hook import AppFactoryHook
 
 
 ExtensionTuple = namedtuple('ExtensionTuple', ('name', 'extension', 'dependencies'))
@@ -29,7 +29,7 @@ class Node:
         return f'{self.name}: {self.dependencies!r}'
 
 
-class RegisterExtensionsHook(FactoryHook):
+class RegisterExtensionsHook(AppFactoryHook):
     priority = 10
     bundle_module_name = 'extensions'
     extensions = {}

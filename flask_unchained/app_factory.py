@@ -4,40 +4,56 @@ from flask import Flask
 from typing import List
 
 from .bundle import Bundle
-from .factory_hook import FactoryHook
+from .app_factory_hook import AppFactoryHook
 from .hooks import (
     ConfigureAppHook,
     RegisterExtensionsHook,
     RegisterDeferredExtensionsHook,
 )
-from .utils import safe_import_module
+from .utils import get_boolean_env, safe_import_module
 
 
-class FlaskApplicationFactory:
+class AppFactory:
     hooks = [ConfigureAppHook,
              RegisterExtensionsHook,
              RegisterDeferredExtensionsHook]
 
-    def create_app(self, app_config_cls, **flask_kwargs) -> Flask:
-        bundles = self._load_bundles(app_config_cls)
-        app = self.instantiate_app(bundles[0].module_name,
-                                   app_config_cls,
-                                   **flask_kwargs)
+    def __init__(self, app_config_cls):
+        self.app_config_cls = app_config_cls
+        self.verbose = get_boolean_env('FLASK_UNCHAINED_VERBOSE', False)
+        self.debug(f'Using {app_config_cls.__name__} from '
+                   f'{app_config_cls.__module__}')
+
+    def create_app(self, **flask_kwargs) -> Flask:
+        bundles = self._load_bundles()
+        app = self.instantiate_app(bundles[0].module_name, **flask_kwargs)
+
+        for bundle in bundles:
+            self.debug(f'Loading {bundle.__class__.__name__} from '
+                       f'{bundle.__module__}')
+
         hooks = self._load_hooks(bundles)
         for hook in hooks:
-            hook.run_hook(app, app_config_cls, bundles)
+            self.debug(f'Running hook: (priority {hook.priority:{2}}) '
+                       f'{hook.__class__.__name__} from {hook.__module__}')
+            hook.run_hook(app, self.app_config_cls, bundles)
+
         self.update_shell_context(app, hooks)
         self.configure_app(app)
+
         return app
 
-    def instantiate_app(self, app_import_name, app_config_cls, **flask_kwargs):
-        for k, v in getattr(app_config_cls, 'FLASK_KWARGS', {}).items():
+    def instantiate_app(self, app_import_name, **flask_kwargs):
+        for k, v in getattr(self.app_config_cls, 'FLASK_KWARGS', {}).items():
             if k not in flask_kwargs:
                 flask_kwargs[k] = v
 
+        self.debug(f'Creating Flask(app_import_name={app_import_name!r}, '
+                   f'kwargs={flask_kwargs!r})')
+
         return Flask(app_import_name, **flask_kwargs)
 
-    def update_shell_context(self, app: Flask, hooks: List[FactoryHook]):
+    def update_shell_context(self, app: Flask, hooks: List[AppFactoryHook]):
         ctx = {}
         for hook in hooks:
             hook.update_shell_context(ctx)
@@ -50,10 +66,10 @@ class FlaskApplicationFactory:
         """
         pass
 
-    def _load_bundles(self, app_config_cls) -> List[Bundle]:
+    def _load_bundles(self) -> List[Bundle]:
         bundles = []
 
-        for i, bundle_module_name in enumerate(app_config_cls.BUNDLES):
+        for i, bundle_module_name in enumerate(self.app_config_cls.BUNDLES):
             module = safe_import_module(bundle_module_name)
             bundle_found = False
             for name, bundle in inspect.getmembers(module, self.is_bundle_cls):
@@ -82,7 +98,7 @@ class FlaskApplicationFactory:
             return False
         return issubclass(obj, Bundle) and obj != Bundle
 
-    def _load_hooks(self, bundles: List[Bundle]) -> List[FactoryHook]:
+    def _load_hooks(self, bundles: List[Bundle]) -> List[AppFactoryHook]:
         def make_hooks(hooks):
             return [(hook.priority, hook()) for hook in hooks]
 
@@ -91,3 +107,8 @@ class FlaskApplicationFactory:
             hooks += make_hooks(bundle.hooks)
 
         return [hook for _, hook in sorted(hooks, key=lambda pair: pair[0])]
+
+    def debug(self, string: str):
+        if self.verbose:
+            for line in string.splitlines():
+                print('UNCHAINED:', line)

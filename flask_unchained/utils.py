@@ -5,7 +5,7 @@ import os
 from importlib import import_module
 
 # alias these to the utils module
-from .inflect import de_camel, pluralize, singularize
+from .clips_pattern import de_camel, pluralize, singularize
 
 
 def get_boolean_env(name, default):
