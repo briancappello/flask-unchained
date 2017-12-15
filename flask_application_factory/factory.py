@@ -18,9 +18,11 @@ class FlaskApplicationFactory:
              RegisterExtensionsHook,
              RegisterDeferredExtensionsHook]
 
-    def create_app(self, app_config_cls, **kwargs) -> Flask:
-        app = self.instantiate_app(app_config_cls, **kwargs)
+    def create_app(self, app_config_cls, **flask_kwargs) -> Flask:
         bundles = self._load_bundles(app_config_cls)
+        app = self.instantiate_app(bundles[0].module_name,
+                                   app_config_cls,
+                                   **flask_kwargs)
         hooks = self._load_hooks(bundles)
         for hook in hooks:
             hook.run_hook(app, app_config_cls, bundles)
@@ -28,13 +30,12 @@ class FlaskApplicationFactory:
         self.configure_app(app)
         return app
 
-    def instantiate_app(self, app_config_cls, **kwargs):
+    def instantiate_app(self, app_import_name, app_config_cls, **flask_kwargs):
         for k, v in getattr(app_config_cls, 'FLASK_KWARGS', {}).items():
-            if k not in kwargs:
-                kwargs[k] = v
+            if k not in flask_kwargs:
+                flask_kwargs[k] = v
 
-        app_name = getattr(app_config_cls, 'APP_IMPORT_NAME', 'app')
-        return Flask(app_name, **kwargs)
+        return Flask(app_import_name, **flask_kwargs)
 
     def register_shell_context(self, app: Flask, hooks: List[FactoryHook]):
         ctx = {}
@@ -52,19 +53,27 @@ class FlaskApplicationFactory:
     def _load_bundles(self, app_config_cls) -> List[Bundle]:
         bundles = []
 
-        for bundle_module_name in app_config_cls.BUNDLES:
+        for i, bundle_module_name in enumerate(app_config_cls.BUNDLES):
             module = safe_import_module(bundle_module_name)
             bundle_found = False
             for name, bundle in inspect.getmembers(module, self.is_bundle_cls):
-                bundles.append(bundle())
-                bundle_found = True
+                if not bundle.__subclasses__():
+                    bundles.append(bundle())
+                    bundle_found = True
+                # else: FIXME set bundle_found true?
 
             if not bundle_found:
-                from warnings import warn
-                warn(f'Unable to find a Bundle subclass for the '
-                     f'{bundle_module_name} bundle! Please make sure it\'s '
-                     f'installed and that there is a Bundle subclass in the '
-                     f'package\'s __init__.py file.')
+                raise Exception(
+                    f'Unable to find a Bundle subclass for the '
+                    f'{bundle_module_name} bundle! Please make sure it\'s '
+                    f'installed and that there is a Bundle subclass in the '
+                    f'module\'s __init__.py file.')
+            elif i == 0 and not bundles[0].app_bundle:
+                raise Exception('The first bundle in the BUNDLES app config '
+                                'must have app_bundle = True')
+            elif i != 0 and bundles[-1].app_bundle:
+                raise Exception(f'Cannot have more than one app_bundle '
+                                f'({bundles[-1]} conflicts with {bundles[0]})')
 
         return bundles
 
