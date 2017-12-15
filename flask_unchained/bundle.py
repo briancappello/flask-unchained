@@ -1,21 +1,24 @@
+from .utils import right_replace
+
+
+class ModuleNameDescriptor:
+    def __get__(self, instance, cls):
+        return right_replace(cls.__module__, '.bundle', '')
 
 
 class Bundle:
-    app_bundle = False
+    app_bundle: bool = False
     """Whether or not this bundle is the top-level application bundle"""
 
-    module_name = None  # type: str
+    module_name: str = ModuleNameDescriptor()
     """Top-level module name of the bundle (dot notation)"""
 
     hooks = []
 
     def __init__(self):
-        if not self.module_name:
-            raise AttributeError(f'{self.__class__.__name__} is missing a '
-                                 f'`module_name` attribute')
-
+        # just in case the user explicitly set this attribute to a string
         if self.module_name.endswith('.bundle'):
-            self.module_name = self.module_name[:-len('.bundle')]
+            self.module_name = right_replace(self.module_name, '.bundle', '')
 
     @property
     def name(self) -> str:
