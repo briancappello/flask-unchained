@@ -26,7 +26,7 @@ class FlaskApplicationFactory:
         hooks = self._load_hooks(bundles)
         for hook in hooks:
             hook.run_hook(app, app_config_cls, bundles)
-        self.register_shell_context(app, hooks)
+        self.update_shell_context(app, hooks)
         self.configure_app(app)
         return app
 
@@ -37,10 +37,10 @@ class FlaskApplicationFactory:
 
         return Flask(app_import_name, **flask_kwargs)
 
-    def register_shell_context(self, app: Flask, hooks: List[FactoryHook]):
+    def update_shell_context(self, app: Flask, hooks: List[FactoryHook]):
         ctx = {}
         for hook in hooks:
-            hook.register_shell_context(ctx)
+            hook.update_shell_context(ctx)
         app.shell_context_processor(lambda: ctx)
 
     def configure_app(self, app: Flask):

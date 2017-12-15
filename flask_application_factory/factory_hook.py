@@ -50,5 +50,5 @@ class FactoryHook:
             bundle, self.bundle_override_module_name_attr, self.bundle_module_name)
         return safe_import_module(f'{bundle.module_name}.{module_name}')
 
-    def register_shell_context(self, ctx: dict):
+    def update_shell_context(self, ctx: dict):
         pass

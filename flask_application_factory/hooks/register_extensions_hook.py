@@ -62,7 +62,7 @@ class RegisterExtensionsHook(FactoryHook):
                 ExtensionTuple(name, extension, dependencies))
         return extension_tuples
 
-    def register_shell_context(self, ctx: dict):
+    def update_shell_context(self, ctx: dict):
         ctx.update(self.extensions)
 
     def resolve_extension_order(self, extensions: List[ExtensionTuple]):
