@@ -34,3 +34,6 @@ class Bundle:
         if '.' not in self.module_name:
             return self.module_name
         return self.module_name.rsplit('.', maxsplit=1)[-1]
+
+    def __repr__(self):
+        return f'<Bundle name={self.name!r} module={self.module_name!r}>'
