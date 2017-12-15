@@ -1,9 +1,10 @@
 import inspect
 
-from flask import Flask
 from typing import List, Tuple
 
+from .base_config import FlaskUnchainedConfig as AppConfig
 from .bundle import Bundle
+from .flask_unchained import FlaskUnchained
 from .utils import get_boolean_env, safe_import_module
 
 
@@ -13,22 +14,28 @@ class BundleOverrideModuleNameAttr:
 
 
 class AppFactoryHook:
-    priority = 50
+    priority: int = 50
 
-    bundle_module_name = None
-    bundle_override_module_name_attr = BundleOverrideModuleNameAttr()
+    bundle_module_name: str = None
+    bundle_override_module_name_attr: str = BundleOverrideModuleNameAttr()
 
     def __init__(self):
         self.verbose = get_boolean_env('FLASK_UNCHAINED_VERBOSE', False)
         if not self.bundle_module_name:
-            raise AttributeError(
-                f'{self.__class__.__name__} is missing a `bundle_module_name` attribute')
+            raise AttributeError(f'{self.__class__.__name__} is missing a '
+                                 f'`bundle_module_name` attribute')
 
-    def run_hook(self, app: Flask, app_config_cls, bundles: List[Bundle]):
+    def run_hook(self,
+                 app: FlaskUnchained,
+                 app_config_cls: AppConfig,
+                 bundles: List[Bundle]):
         objects = self.collect_objects(bundles)
         self.process_objects(app, app_config_cls, objects)
 
-    def process_objects(self, app: Flask, app_config_cls, objects):
+    def process_objects(self,
+                        app: FlaskUnchained,
+                        app_config_cls: AppConfig,
+                        objects):
         raise NotImplementedError
 
     def collect_objects(self, bundles: List[Bundle]) -> List[Tuple[str, object]]:
@@ -43,7 +50,7 @@ class AppFactoryHook:
             return []
         return inspect.getmembers(module, self.type_check)
 
-    def type_check(self, obj: object) -> bool:
+    def type_check(self, obj) -> bool:
         raise NotImplementedError
 
     def import_bundle_module(self, bundle: Bundle):
@@ -58,7 +65,7 @@ class AppFactoryHook:
                     f'{super_class.module_name}.{module_name}')
         return module
 
-    def update_shell_context(self, ctx: dict):
+    def update_shell_context(self, app: FlaskUnchained, ctx: dict):
         pass
 
     def debug(self, msg: str):

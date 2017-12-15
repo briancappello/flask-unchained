@@ -1,10 +1,11 @@
 import inspect
 
-from flask import Flask
 from typing import List
 
-from .bundle import Bundle
 from .app_factory_hook import AppFactoryHook
+from .base_config import FlaskUnchainedConfig as AppConfig
+from .bundle import Bundle
+from .flask_unchained import FlaskUnchained
 from .hooks import (
     ConfigureAppHook,
     RegisterExtensionsHook,
@@ -19,13 +20,13 @@ class AppFactory:
              RegisterExtensionsHook,
              RegisterDeferredExtensionsHook]
 
-    def __init__(self, app_config_cls):
+    def __init__(self, app_config_cls: AppConfig):
         self.app_config_cls = app_config_cls
         self.verbose = get_boolean_env('FLASK_UNCHAINED_VERBOSE', False)
         self.debug(f'Using {app_config_cls.__name__} from '
                    f'{app_config_cls.__module__}')
 
-    def create_app(self, **flask_kwargs) -> Flask:
+    def create_app(self, **flask_kwargs) -> FlaskUnchained:
         bundles = self._load_bundles()
         app = self.instantiate_app(bundles[0].module_name, **flask_kwargs)
         unchained.init_app(app)
@@ -45,7 +46,7 @@ class AppFactory:
 
         return app
 
-    def instantiate_app(self, app_import_name, **flask_kwargs):
+    def instantiate_app(self, app_import_name: str, **flask_kwargs):
         for k, v in getattr(self.app_config_cls, 'FLASK_KWARGS', {}).items():
             if k not in flask_kwargs:
                 flask_kwargs[k] = v
@@ -53,15 +54,15 @@ class AppFactory:
         self.debug(f'Creating Flask(app_import_name={app_import_name!r}, '
                    f'kwargs={flask_kwargs!r})')
 
-        return Flask(app_import_name, **flask_kwargs)
+        return FlaskUnchained(app_import_name, **flask_kwargs)
 
-    def update_shell_context(self, app: Flask, hooks: List[AppFactoryHook]):
+    def update_shell_context(self, app: FlaskUnchained, hooks: List[AppFactoryHook]):
         ctx = {}
         for hook in hooks:
-            hook.update_shell_context(ctx)
+            hook.update_shell_context(app, ctx)
         app.shell_context_processor(lambda: ctx)
 
-    def configure_app(self, app: Flask):
+    def configure_app(self, app: FlaskUnchained):
         """
         Implement to add custom configuration to your app, e.g. loading Jinja
         extensions or adding request-response-cycle callback functions
@@ -95,7 +96,7 @@ class AppFactory:
 
         return bundles
 
-    def is_bundle_cls(self, obj):
+    def is_bundle_cls(self, obj) -> bool:
         if not inspect.isclass(obj):
             return False
         return issubclass(obj, Bundle) and obj != Bundle

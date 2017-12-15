@@ -5,10 +5,10 @@ https://www.electricmonk.nl/log/2008/08/07/dependency-resolving-algorithm/
 import inspect
 
 from collections import namedtuple
-from flask import Flask
 from typing import List
 
 from ..app_factory_hook import AppFactoryHook
+from ..flask_unchained import FlaskUnchained
 
 
 ExtensionTuple = namedtuple('ExtensionTuple', ('name', 'extension', 'dependencies'))
@@ -44,7 +44,7 @@ class RegisterExtensionsHook(AppFactoryHook):
 
         return self.get_extension_tuples(getattr(module, 'EXTENSIONS', {}))
 
-    def process_objects(self, app: Flask, app_config_cls, objects):
+    def process_objects(self, app: FlaskUnchained, app_config_cls, objects):
         order = self.resolve_extension_order(objects)
         extensions = {ext.name: ext.extension for ext in objects}
         for name in order:
@@ -62,10 +62,10 @@ class RegisterExtensionsHook(AppFactoryHook):
                 ExtensionTuple(name, extension, dependencies))
         return extension_tuples
 
-    def update_shell_context(self, ctx: dict):
+    def update_shell_context(self, app: FlaskUnchained, ctx: dict):
         ctx.update(self.extensions)
 
-    def resolve_extension_order(self, extensions: List[ExtensionTuple]):
+    def resolve_extension_order(self, app: FlaskUnchained, extensions: List[ExtensionTuple]):
         nodes = {}
         for extension in extensions:
             nodes[extension.name] = Node(extension.name, extension.dependencies)

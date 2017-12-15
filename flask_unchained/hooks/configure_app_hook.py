@@ -1,14 +1,15 @@
-from flask import Flask
 from werkzeug.routing import UnicodeConverter
 
 from ..app_factory_hook import AppFactoryHook
+from ..base_config import FlaskUnchainedConfig as AppConfig
+from ..flask_unchained import FlaskUnchained
 
 
 class ConfigureAppHook(AppFactoryHook):
     priority = 5
     bundle_module_name = 'bundle_config'
 
-    def run_hook(self, app: Flask, app_config_cls, bundles):
+    def run_hook(self, app: FlaskUnchained, app_config_cls: AppConfig, bundles):
         for bundle in bundles:
             bundle_config_module = self.import_bundle_module(bundle)
             bundle_config = getattr(
