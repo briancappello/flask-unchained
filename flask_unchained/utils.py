@@ -8,6 +8,11 @@ from importlib import import_module
 from .clips_pattern import de_camel, pluralize, singularize
 
 
+def camel_case(string):
+    parts = snake_case(string).split('_')
+    return parts[0] + ''.join(x.title() for x in parts[1:])
+
+
 def get_boolean_env(name, default):
     default = 'true' if default else 'false'
     return os.getenv(name, default).lower() in ['true', 'yes', 'y', '1']
