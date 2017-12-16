@@ -2,10 +2,11 @@ import inspect
 
 from typing import List
 
+from flask import Flask
+
 from .app_factory_hook import AppFactoryHook
-from .base_config import FlaskUnchainedConfig as AppConfig
+from .base_config import AppConfig
 from .bundle import Bundle
-from .flask_unchained import FlaskUnchained
 from .hooks import (
     ConfigureAppHook,
     RegisterExtensionsHook,
@@ -26,7 +27,7 @@ class AppFactory:
         self.debug(f'Using {app_config_cls.__name__} from '
                    f'{app_config_cls.__module__}')
 
-    def create_app(self, **flask_kwargs) -> FlaskUnchained:
+    def create_app(self, **flask_kwargs) -> Flask:
         bundles = self._load_bundles()
         app = self.instantiate_app(bundles[0].module_name, **flask_kwargs)
         unchained.init_app(app)
@@ -54,15 +55,15 @@ class AppFactory:
         self.debug(f'Creating Flask(app_import_name={app_import_name!r}, '
                    f'kwargs={flask_kwargs!r})')
 
-        return FlaskUnchained(app_import_name, **flask_kwargs)
+        return Flask(app_import_name, **flask_kwargs)
 
-    def update_shell_context(self, app: FlaskUnchained, hooks: List[AppFactoryHook]):
+    def update_shell_context(self, app: Flask, hooks: List[AppFactoryHook]):
         ctx = {}
         for hook in hooks:
             hook.update_shell_context(app, ctx)
         app.shell_context_processor(lambda: ctx)
 
-    def configure_app(self, app: FlaskUnchained):
+    def configure_app(self, app: Flask):
         """
         Implement to add custom configuration to your app, e.g. loading Jinja
         extensions or adding request-response-cycle callback functions

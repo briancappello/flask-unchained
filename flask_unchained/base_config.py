@@ -17,7 +17,7 @@ class FlaskKwargsDescriptor:
         return {'template_folder': os.path.join(cls.APP_ROOT, 'templates')}
 
 
-class FlaskUnchainedConfig:
+class AppConfig:
     APP_ROOT: str = AppRootDescriptor()
     PROJECT_ROOT: str = ProjectRootDescriptor()
     FLASK_KWARGS: dict = FlaskKwargsDescriptor()

@@ -2,9 +2,10 @@ import inspect
 
 from typing import List, Tuple
 
-from .base_config import FlaskUnchainedConfig as AppConfig
+from flask import Flask
+
+from .base_config import AppConfig
 from .bundle import Bundle
-from .flask_unchained import FlaskUnchained
 from .utils import get_boolean_env, safe_import_module
 
 
@@ -25,17 +26,11 @@ class AppFactoryHook:
             raise AttributeError(f'{self.__class__.__name__} is missing a '
                                  f'`bundle_module_name` attribute')
 
-    def run_hook(self,
-                 app: FlaskUnchained,
-                 app_config_cls: AppConfig,
-                 bundles: List[Bundle]):
+    def run_hook(self, app: Flask, app_config_cls: AppConfig, bundles: List[Bundle]):
         objects = self.collect_objects(bundles)
         self.process_objects(app, app_config_cls, objects)
 
-    def process_objects(self,
-                        app: FlaskUnchained,
-                        app_config_cls: AppConfig,
-                        objects):
+    def process_objects(self, app: Flask, app_config_cls: AppConfig, objects):
         raise NotImplementedError
 
     def collect_objects(self, bundles: List[Bundle]) -> List[Tuple[str, object]]:
@@ -65,7 +60,7 @@ class AppFactoryHook:
                     f'{super_class.module_name}.{module_name}')
         return module
 
-    def update_shell_context(self, app: FlaskUnchained, ctx: dict):
+    def update_shell_context(self, app: Flask, ctx: dict):
         pass
 
     def debug(self, msg: str):
