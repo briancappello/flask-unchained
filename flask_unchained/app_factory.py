@@ -24,7 +24,7 @@ class AppFactory:
     def create_app(self, **flask_kwargs) -> Flask:
         bundles = self._load_bundles()
         app = self.instantiate_app(bundles[0].module_name, **flask_kwargs)
-        unchained.init_app(app)
+        unchained.init_app(app, bundles)
 
         for bundle in bundles:
             self.debug(f'Loading {bundle.__class__.__name__} from '
@@ -99,7 +99,7 @@ class AppFactory:
     def _load_hooks(self, bundles: List[Bundle]) -> List[AppFactoryHook]:
         hooks = [(hook.priority, hook(unchained)) for hook in self.hooks]
         for bundle in bundles:
-            hooks += [(hook.priority, hook(None))
+            hooks += [(hook.priority, hook(bundle.store))
                       for hook in bundle.hooks]
 
         return [hook for _, hook in sorted(hooks, key=lambda pair: pair[0])]

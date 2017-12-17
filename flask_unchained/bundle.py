@@ -15,6 +15,8 @@ class Bundle:
 
     hooks = []
 
+    store = None
+
     def __init__(self):
         # just in case the user explicitly set this attribute to a string
         if self.module_name.endswith('.bundle'):
