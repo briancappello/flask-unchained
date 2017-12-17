@@ -12,7 +12,8 @@ from flask import Flask
 from ..app_factory_hook import AppFactoryHook
 
 
-ExtensionTuple = namedtuple('ExtensionTuple', ('name', 'extension', 'dependencies'))
+ExtensionTuple = namedtuple('ExtensionTuple',
+                            ('name', 'extension', 'dependencies'))
 
 PARENT_NODE = '__parent__'
 
@@ -78,11 +79,11 @@ class RegisterExtensionsHook(AppFactoryHook):
         nodes[PARENT_NODE] = parent_node
 
         for name, node in nodes.items():
-            for dependency_name in node.dependencies:
+            for dep_name in node.dependencies:
                 try:
-                    node.add_dependent_node(nodes[dependency_name])
+                    node.add_dependent_node(nodes[dep_name])
                 except KeyError as e:
-                    if dependency_name not in self.store._registered_extensions:
+                    if dep_name not in self.store._registered_extensions:
                         raise e
 
         order = []
@@ -91,12 +92,12 @@ class RegisterExtensionsHook(AppFactoryHook):
 
     def _resolve_dependencies(self, node: Node, resolved, unresolved):
         unresolved.append(node)
-        for dependent_node in node.dependent_nodes:
-            if dependent_node not in resolved:
-                if dependent_node in unresolved:
+        for dep_node in node.dependent_nodes:
+            if dep_node not in resolved:
+                if dep_node in unresolved:
                     raise Exception(
-                        f'Circular dependency detected: {dependent_node.name} '
+                        f'Circular dependency detected: {dep_node.name} '
                         f'depends on an extension that depends on it.')
-                self._resolve_dependencies(dependent_node, resolved, unresolved)
+                self._resolve_dependencies(dep_node, resolved, unresolved)
         resolved.append(node)
         unresolved.remove(node)
