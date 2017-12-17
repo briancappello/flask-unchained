@@ -1,3 +1,2 @@
 from .configure_app_hook import ConfigureAppHook
 from .register_extensions_hook import RegisterExtensionsHook
-from .register_deferred_extensions_hook import RegisterDeferredExtensionsHook

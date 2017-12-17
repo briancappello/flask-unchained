@@ -10,7 +10,6 @@ from typing import List
 from flask import Flask
 
 from ..app_factory_hook import AppFactoryHook
-from ..unchained import unchained
 
 
 ExtensionTuple = namedtuple('ExtensionTuple', ('name', 'extension', 'dependencies'))
@@ -32,7 +31,7 @@ class Node:
 
 
 class RegisterExtensionsHook(AppFactoryHook):
-    priority = 10
+    priority = 60
     bundle_module_name = 'extensions'
 
     def type_check(self, obj):
@@ -54,7 +53,7 @@ class RegisterExtensionsHook(AppFactoryHook):
                        f'({extension.__class__.__name__} from '
                        f'{extension.__module__})')
             extension.init_app(app)
-        unchained.extensions.update(extensions)
+        self.store._registered_extensions.update(extensions)
 
     def get_extension_tuples(self, extensions: dict):
         extension_tuples = []
@@ -68,7 +67,7 @@ class RegisterExtensionsHook(AppFactoryHook):
         return extension_tuples
 
     def update_shell_context(self, app: Flask, ctx: dict):
-        ctx.update(unchained.extensions)
+        ctx.update(self.store._registered_extensions)
 
     def resolve_extension_order(self, extensions: List[ExtensionTuple]):
         nodes = {}
@@ -83,7 +82,7 @@ class RegisterExtensionsHook(AppFactoryHook):
                 try:
                     node.add_dependent_node(nodes[dependency_name])
                 except KeyError as e:
-                    if dependency_name not in unchained.extensions:
+                    if dependency_name not in self.store._registered_extensions:
                         raise e
 
         order = []

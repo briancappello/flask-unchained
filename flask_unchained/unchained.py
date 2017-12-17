@@ -2,7 +2,7 @@ class Unchained:
     def __init__(self, app=None):
         self.app = app
 
-        self.extensions = {}
+        self._registered_extensions = {}
         self.models = {}
         self.serializers = {}
         self.services = {}
@@ -16,7 +16,7 @@ class Unchained:
         setattr(app, 'unchained', self)
 
     def __getattr__(self, name):
-        for store in ('extensions', 'models', 'serializers', 'services'):
+        for store in ('models', 'serializers', 'services'):
             d = getattr(self, store)
             if name in d:
                 return d[name]

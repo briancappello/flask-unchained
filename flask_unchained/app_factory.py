@@ -7,19 +7,13 @@ from flask import Flask
 from .app_factory_hook import AppFactoryHook
 from .base_config import AppConfig
 from .bundle import Bundle
-from .hooks import (
-    ConfigureAppHook,
-    RegisterExtensionsHook,
-    RegisterDeferredExtensionsHook,
-)
+from .hooks import ConfigureAppHook, RegisterExtensionsHook
 from .unchained import unchained
 from .utils import get_boolean_env, safe_import_module
 
 
 class AppFactory:
-    hooks = [ConfigureAppHook,
-             RegisterExtensionsHook,
-             RegisterDeferredExtensionsHook]
+    hooks = [ConfigureAppHook, RegisterExtensionsHook]
 
     def __init__(self, app_config_cls: AppConfig):
         self.app_config_cls = app_config_cls
@@ -103,12 +97,10 @@ class AppFactory:
         return issubclass(obj, Bundle) and obj != Bundle
 
     def _load_hooks(self, bundles: List[Bundle]) -> List[AppFactoryHook]:
-        def make_hooks(hooks):
-            return [(hook.priority, hook()) for hook in hooks]
-
-        hooks = make_hooks(self.hooks)
+        hooks = [(hook.priority, hook(unchained)) for hook in self.hooks]
         for bundle in bundles:
-            hooks += make_hooks(bundle.hooks)
+            hooks += [(hook.priority, hook(None))
+                      for hook in bundle.hooks]
 
         return [hook for _, hook in sorted(hooks, key=lambda pair: pair[0])]
 
