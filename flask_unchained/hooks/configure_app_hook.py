@@ -22,3 +22,8 @@ class ConfigureAppHook(AppFactoryHook):
         # explicit name of "string", but since all the other converters use
         # the builtin python type names, we alias it to "str" for dev sanity
         app.url_map.converters['str'] = UnicodeConverter
+
+    def get_module_name(self, bundle):
+        if bundle.app_bundle:
+            return f'{bundle.module_name}.config'
+        return super().get_module_name(bundle)

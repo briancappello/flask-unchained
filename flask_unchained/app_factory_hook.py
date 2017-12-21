@@ -50,16 +50,17 @@ class AppFactoryHook:
         raise NotImplementedError
 
     def import_bundle_module(self, bundle: Bundle):
+        if self.bundle_module_name is None:
+            raise NotImplementedError('you must set the `bundle_module_name` '
+                                      'class attribute on your hook to use '
+                                      'this feature')
+        return safe_import_module(self.get_module_name(bundle))
+
+    def get_module_name(self, bundle: Bundle):
         module_name = getattr(bundle,
                               self.bundle_override_module_name_attr,
                               self.bundle_module_name)
-        module = safe_import_module(f'{bundle.module_name}.{module_name}')
-        if not module:
-            super_class = bundle.__class__.__mro__[1]
-            if super_class != Bundle:
-                module = safe_import_module(
-                    f'{super_class.module_name}.{module_name}')
-        return module
+        return f'{bundle.module_name}.{module_name}'
 
     def update_shell_context(self, app: Flask, ctx: dict):
         pass
