@@ -1,11 +1,15 @@
 from .utils import right_replace, snake_case
 
 
+def _normalize_module_name(module_name):
+    if module_name.endswith('.bundle'):
+        return right_replace(module_name, '.bundle', '')
+    return module_name
+
+
 class ModuleNameDescriptor:
     def __get__(self, instance, cls):
-        if cls.__module__.endswith('.bundle'):
-            return right_replace(cls.__module__, '.bundle', '')
-        return cls.__module__
+        return _normalize_module_name(cls.__module__)
 
 
 class NameDescriptor:
@@ -15,10 +19,10 @@ class NameDescriptor:
 
 class BundleMeta(type):
     def __new__(mcs, name, bases, clsdict):
-        # check if the user explicitly set module_name to a string
+        # check if the user explicitly set module_name
         module_name = clsdict.get('module_name')
-        if isinstance(module_name, str) and module_name.endswith('.bundle'):
-            clsdict['module_name'] = right_replace(module_name, '.bundle', '')
+        if isinstance(module_name, str):
+            clsdict['module_name'] = _normalize_module_name(module_name)
         return super().__new__(mcs, name, bases, clsdict)
 
     def __repr__(cls):
