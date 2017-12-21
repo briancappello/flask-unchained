@@ -9,6 +9,8 @@ from .clips_pattern import de_camel, pluralize, singularize
 
 
 def camel_case(string):
+    if not string:
+        return string
     parts = snake_case(string).split('_')
     return parts[0] + ''.join(x.title() for x in parts[1:])
 
@@ -28,10 +30,15 @@ def get_members(module, predicate):
 
 
 def kebab_case(string):
-    return de_camel(string, '-')
+    if not string:
+        return string
+    string = string.replace('_', '-').replace(' ', '-')
+    return de_camel(string, '-').strip('-')
 
 
 def right_replace(string, old, new, count=1):
+    if not string:
+        return string
     return new.join(string.rsplit(old, count))
 
 
@@ -48,11 +55,17 @@ def safe_import_module(module_name):
 
 
 def snake_case(string):
+    if not string:
+        return string
+    string = string.replace('-', '_').replace(' ', '_')
     return de_camel(string)
 
 
 def title_case(string):
-    return de_camel(string, ' ').title()
+    if not string:
+        return string
+    string = string.replace('_', ' ').replace('-', ' ')
+    return de_camel(string, ' ').title().strip()
 
 
 def utcnow():
