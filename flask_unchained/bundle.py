@@ -14,6 +14,10 @@ class ModuleNameDescriptor:
 
 class NameDescriptor:
     def __get__(self, instance, cls):
+        if cls.app_bundle:
+            if '.' not in cls.module_name:
+                return cls.module_name
+            return cls.module_name.rsplit('.', 1)[-1]
         return snake_case(cls.__name__)
 
 
