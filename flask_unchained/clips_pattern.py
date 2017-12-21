@@ -28,14 +28,29 @@ from __future__ import unicode_literals
 from __future__ import division
 
 from builtins import str, range
-from functools import lru_cache
-
+import functools
 import re
 
 VERB, NOUN, ADJECTIVE, ADVERB = "VB", "NN", "JJ", "RB"
 
 
-@lru_cache(maxsize=256)
+CACHED_FUNCTIONS = {}
+
+def maybe_lru_cached(maxsize):
+    def wrapper(fn):
+        @functools.wraps(fn)
+        def wrapped(*args, **kwargs):
+            fn_name = fn.__name__
+            if fn_name not in CACHED_FUNCTIONS:
+                CACHED_FUNCTIONS[fn_name] = functools.lru_cache(maxsize)(fn)
+            if 'custom' in kwargs:
+                return fn(*args, **kwargs)
+            return CACHED_FUNCTIONS[fn_name](*args, **kwargs)
+        return wrapped
+    return wrapper
+
+
+@functools.lru_cache(maxsize=256)
 def de_camel(s, separator="_"):
     """ Returns the string with CamelCase converted to underscores, e.g.,
         de_camel("TomDeSmedt", "-") => "tom-de-smedt"
@@ -43,8 +58,7 @@ def de_camel(s, separator="_"):
     """
     s = re.sub(r"([a-z0-9])([A-Z])", "\\1%s\\2" % separator, s)
     s = re.sub(r"([A-Z])([A-Z][a-z])", "\\1%s\\2" % separator, s)
-    s = s.lower()
-    return s
+    return s.lower()
 
 
 #### PLURALIZE #####################################################################################
@@ -326,14 +340,14 @@ plural_categories = {
 }
 
 
-@lru_cache(maxsize=256)
-def pluralize(word, pos=NOUN, custom={}, classical=True):
+@maybe_lru_cached(maxsize=256)
+def pluralize(word, pos=NOUN, custom=None, classical=True):
     """ Returns the plural of a given word, e.g., child => children.
         Handles nouns and adjectives, using classical inflection by default
         (i.e., where "matrix" pluralizes to "matrices" and not "matrixes").
         The custom dictionary is for user-defined replacements.
     """
-    if word in custom:
+    if custom and word in custom:
         return custom[word]
     # Recurse genitives.
     # Remove the apostrophe and any trailing -s,
@@ -521,11 +535,11 @@ singular_irregular = {
 }
 
 
-@lru_cache(maxsize=256)
-def singularize(word, pos=NOUN, custom={}):
+@maybe_lru_cached(maxsize=256)
+def singularize(word, pos=NOUN, custom=None):
     """ Returns the singular of a given word.
     """
-    if word in custom:
+    if custom and word in custom:
         return custom[word]
     # Recurse compound words (e.g. mothers-in-law).
     if "-" in word:
@@ -544,7 +558,7 @@ def singularize(word, pos=NOUN, custom={}):
             return word
     for x in singular_ie:
         if w.endswith(x + "s"):
-            return w
+            return w[:-1]
     for x in singular_irregular:
         if w.endswith(x):
             return re.sub('(?i)' + x + '$', singular_irregular[x], word)
