@@ -4,104 +4,49 @@ from typing import List
 
 from flask import Flask
 
-from .app_factory_hook import AppFactoryHook
 from .base_config import AppConfig
 from .bundle import Bundle
-from .hooks import ConfigureAppHook, RegisterExtensionsHook
-from .unchained_extension import Unchained
-from .utils import get_boolean_env, safe_import_module
-
-
-unchained = Unchained()
+from .unchained_extension import UnchainedExtension
+from .utils import safe_import_module
 
 
 class AppFactory:
-    hooks = [ConfigureAppHook, RegisterExtensionsHook]
+    _unchained = UnchainedExtension()
 
-    def __init__(self, app_config_cls: AppConfig):
-        self.app_config_cls = app_config_cls
-        self.verbose = get_boolean_env('FLASK_UNCHAINED_VERBOSE', False)
-        self.debug(f'Using {app_config_cls.__name__} from '
-                   f'{app_config_cls.__module__}')
-
-    def create_app(self, **flask_kwargs) -> Flask:
-        bundles = self._load_bundles()
-        app = self.instantiate_app(bundles[-1].module_name, **flask_kwargs)
-        unchained.init_app(app, bundles)
-
-        for bundle in bundles:
-            self.debug(f'Loading {bundle.__class__.__name__} from '
-                       f'{bundle.__module__}')
-
-        hooks = self._load_hooks(bundles)
-        for hook in hooks:
-            self.debug(f'Hook: (priority {hook.priority:{2}}) '
-                       f'{hook.__class__.__name__} from {hook.__module__}')
-            hook.run_hook(app, self.app_config_cls, bundles)
-
-        self.update_shell_context(app, hooks)
-        self.configure_app(app)
-
+    @classmethod
+    def create_app(cls, app_config_cls: AppConfig, **flask_kwargs):
+        for k, v in getattr(app_config_cls, 'FLASK_KWARGS', {}).items():
+            flask_kwargs.setdefault(k, v)
+        bundles = _load_bundles(app_config_cls)
+        app = Flask(bundles[-1].name, **flask_kwargs)
+        cls._unchained.init_app(app, app_config_cls, bundles)
         return app
 
-    def instantiate_app(self, app_import_name: str, **flask_kwargs):
-        for k, v in getattr(self.app_config_cls, 'FLASK_KWARGS', {}).items():
-            if k not in flask_kwargs:
-                flask_kwargs[k] = v
 
-        self.debug(f'Creating Flask(app_import_name={app_import_name!r}, '
-                   f'kwargs={flask_kwargs!r})')
+def _load_bundles(app_config_cls: AppConfig) -> List[Bundle]:
+    loaded_bundles = set()
+    bundles = []
+    for bundle_module_name in app_config_cls.BUNDLES:
+        module = safe_import_module(bundle_module_name)
+        bundle_found = False
+        for name, bundle in inspect.getmembers(module, _is_bundle_cls):
+            # FIXME test overriding bundles works as expected
+            if bundle.name not in loaded_bundles:  # avoid getting superclasses
+                bundles.append(bundle)
+                loaded_bundles.add(bundle.name)
+                bundle_found = True
+                break
 
-        return Flask(app_import_name, **flask_kwargs)
+        if not bundle_found:
+            raise Exception(
+                f'Unable to find a Bundle subclass for the '
+                f'{bundle_module_name} bundle! Please make sure it\'s '
+                f'installed and that there is a Bundle subclass in (or '
+                f'imported in) the module\'s __init__.py file.')
+    return bundles
 
-    def update_shell_context(self, app: Flask, hooks: List[AppFactoryHook]):
-        ctx = {}
-        for hook in hooks:
-            hook.update_shell_context(app, ctx)
-        app.shell_context_processor(lambda: ctx)
 
-    def configure_app(self, app: Flask):
-        """
-        Implement to add custom configuration to your app, e.g. loading Jinja
-        extensions or adding request-response-cycle callback functions
-        """
-        pass
-
-    def _load_bundles(self) -> List[Bundle]:
-        bundles = []
-
-        for i, bundle_module_name in enumerate(self.app_config_cls.BUNDLES):
-            module = safe_import_module(bundle_module_name)
-            bundle_found = False
-            for name, bundle in inspect.getmembers(module, self.is_bundle_cls):
-                if not bundle.__subclasses__():
-                    bundles.append(bundle)
-                    bundle_found = True
-                # else: FIXME set bundle_found true?
-
-            if not bundle_found:
-                raise Exception(
-                    f'Unable to find a Bundle subclass for the '
-                    f'{bundle_module_name} bundle! Please make sure it\'s '
-                    f'installed and that there is a Bundle subclass in the '
-                    f'module\'s __init__.py file.')
-
-        return bundles
-
-    def is_bundle_cls(self, obj) -> bool:
-        if not inspect.isclass(obj):
-            return False
-        return issubclass(obj, Bundle) and obj != Bundle
-
-    def _load_hooks(self, bundles: List[Bundle]) -> List[AppFactoryHook]:
-        hooks = [(hook.priority, hook()) for hook in self.hooks]
-        for bundle in bundles:
-            hooks += [(hook.priority, hook(bundle.store))
-                      for hook in bundle.hooks]
-
-        return [hook for _, hook in sorted(hooks, key=lambda pair: pair[0])]
-
-    def debug(self, msg: str):
-        if self.verbose:
-            for line in msg.splitlines():
-                print('UNCHAINED:', line)
+def _is_bundle_cls(obj) -> bool:
+    if not inspect.isclass(obj):
+        return False
+    return issubclass(obj, Bundle) and obj != Bundle

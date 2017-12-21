@@ -1,11 +1,11 @@
 import pytest
 
-from flask_unchained import unchained, AppConfig
 from flask_unchained.hooks.register_extensions_hook import (
     ExtensionTuple, RegisterExtensionsHook)
+from flask_unchained.unchained_extension import UnchainedStore
 
-from .fixtures.app_bundle import AppBundle, myext
-from .fixtures.app_bundle.extensions import MyExtension
+from .fixtures.myapp import AppBundle, myext
+from .fixtures.myapp.extensions import MyExtension
 
 from .fixtures.empty_bundle import EmptyBundle
 
@@ -13,18 +13,20 @@ from .fixtures.vendor_bundle import VendorBundle, awesome
 from .fixtures.vendor_bundle.extension import AwesomeExtension
 
 
-hook = RegisterExtensionsHook()
+@pytest.fixture
+def hook():
+    return RegisterExtensionsHook(UnchainedStore(None))
 
 
 class TestRegisterExtensionsHook:
-    def test_type_check(self):
+    def test_type_check(self, hook):
         assert hook.type_check(AwesomeExtension) is False
         assert hook.type_check(awesome) is True
 
         assert hook.type_check(MyExtension) is False
         assert hook.type_check(myext) is True
 
-    def test_collect_from_bundle(self):
+    def test_collect_from_bundle(self, hook):
         assert hook.collect_from_bundle(EmptyBundle) == []
 
         vendor_extensions = hook.collect_from_bundle(VendorBundle)
@@ -41,17 +43,17 @@ class TestRegisterExtensionsHook:
         assert vendor_ext.extension == myext
         assert vendor_ext.dependencies == ['awesome']
 
-    def test_resolve_extension_order(self):
+    def test_resolve_extension_order(self, hook):
         exts = [
             ExtensionTuple('four', None, []),
             ExtensionTuple('three', None, ['four']),
             ExtensionTuple('two', None, ['four']),
             ExtensionTuple('one', None, ['two', 'three'])
         ]
-        order = hook.resolve_extension_order(exts)
+        order = [ext.name for ext in hook.resolve_extension_order(exts)]
         assert order == ['four', 'three', 'two', 'one']
 
-    def test_resolve_broken_extension_order(self):
+    def test_resolve_broken_extension_order(self, hook):
         exts = [
             ExtensionTuple('one', None, ['two']),
             ExtensionTuple('two', None, ['one']),
@@ -60,7 +62,7 @@ class TestRegisterExtensionsHook:
             hook.resolve_extension_order(exts)
         assert 'Circular dependency detected' in str(e)
 
-    def test_process_objects(self, app):
+    def test_process_objects(self, app, hook):
         class FakeExt:
             def __init__(self, name):
                 self.app = None
@@ -75,27 +77,28 @@ class TestRegisterExtensionsHook:
             ExtensionTuple('two', FakeExt('two'), ['four']),
             ExtensionTuple('one', FakeExt('one'), ['two', 'three'])
         ]
-        hook.process_objects(app, AppConfig, exts)
+        hook.process_objects(app, exts)
 
-        registered = list(unchained._extensions.keys())
+        registered = list(hook.unchained._extensions.keys())
         assert registered == ['four', 'three', 'two', 'one']
-        for name, ext in unchained._extensions.items():
+        for name, ext in hook.unchained._extensions.items():
             assert name == ext.name
             assert ext.app == app
 
-    def test_run_hook(self, app):
-        hook.run_hook(app, AppConfig, [EmptyBundle, VendorBundle, AppBundle])
+    def test_run_hook(self, app, hook):
+        hook.run_hook(app, [EmptyBundle, VendorBundle, AppBundle])
 
-        registered = list(unchained._extensions.keys())
-        exts = list(unchained._extensions.values())
+        registered = list(hook.unchained._extensions.keys())
+        exts = list(hook.unchained._extensions.values())
         assert registered == ['awesome', 'myext']
         assert exts == [awesome, myext]
         assert awesome.app == app
         assert myext.app == app
 
-    def test_update_shell_context(self, app):
+    def test_update_shell_context(self, hook):
         ctx = {}
-        expected = {'one': 1, 'two': 2, 'three': 3}
-        unchained._extensions = expected
-        hook.update_shell_context(app, ctx)
-        assert ctx == expected
+        data = {'one': 1, 'two': 2, 'three': 3}
+        hook.unchained._extensions = data
+        hook.update_shell_context(ctx)
+        data['unchained'] = hook.unchained
+        assert ctx == data

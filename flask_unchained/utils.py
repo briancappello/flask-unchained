@@ -8,6 +8,16 @@ from importlib import import_module
 from .clips_pattern import de_camel, pluralize, singularize
 
 
+class AttrGetter:
+    def __init__(self, dict_):
+        self.__d = dict_
+
+    def __getattr__(self, name):
+        if name in self.__d:
+            return self.__d[name]
+        raise AttributeError(name)
+
+
 def camel_case(string):
     if not string:
         return string

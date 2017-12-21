@@ -5,4 +5,4 @@ from .vendor_bundle_store import VendorBundleStore
 
 class VendorBundle(Bundle):
     extensions_module_name = 'extension'
-    store = VendorBundleStore()
+    store = VendorBundleStore

@@ -19,8 +19,9 @@ PARENT_NODE = '__parent__'
 
 
 class Node:
-    def __init__(self, name, dependencies):
+    def __init__(self, name, extension, dependencies):
         self.name = name
+        self.extension = extension
         self.dependencies = dependencies
         self.dependent_nodes = []
 
@@ -42,16 +43,13 @@ class RegisterExtensionsHook(AppFactoryHook):
 
         return self.get_extension_tuples(getattr(module, 'EXTENSIONS', {}))
 
-    def process_objects(self, app: Flask, app_config_cls, objects):
-        order = self.resolve_extension_order(objects)
-        extensions = {ext.name: ext.extension for ext in objects}
-        for name in order:
-            extension = extensions[name]
-            self.debug(f'Extension: {name} '
-                       f'({extension.__class__.__name__} from '
-                       f'{extension.__module__})')
-            extension.init_app(app)
-            app.extensions['unchained']._extensions.update(extensions)
+    def process_objects(self, app: Flask, extension_tuples):
+        for ext in self.resolve_extension_order(extension_tuples):
+            self.log_msg('Extension', f'{ext.name} '
+                                      f'({ext.extension.__class__.__name__} '
+                                      f'from {ext.extension.__module__})')
+            ext.extension.init_app(app)
+            self.unchained._extensions[ext.name] = ext.extension
 
     def get_extension_tuples(self, extensions: dict):
         extension_tuples = []
@@ -64,15 +62,16 @@ class RegisterExtensionsHook(AppFactoryHook):
                 ExtensionTuple(name, extension, dependencies))
         return extension_tuples
 
-    def update_shell_context(self, app: Flask, ctx: dict):
-        ctx.update(app.extensions['unchained']._extensions)
+    def update_shell_context(self, ctx: dict):
+        ctx.update(self.unchained._extensions)
+        ctx.update({'unchained': self.unchained})
 
     def resolve_extension_order(self, extensions: List[ExtensionTuple]):
         nodes = {}
         for ext in extensions:
-            nodes[ext.name] = Node(ext.name, ext.dependencies)
+            nodes[ext.name] = Node(*ext)
 
-        parent_node = Node(PARENT_NODE, list(nodes.keys()))
+        parent_node = Node(PARENT_NODE, None, list(nodes.keys()))
         nodes[PARENT_NODE] = parent_node
 
         for name, node in nodes.items():
@@ -81,7 +80,7 @@ class RegisterExtensionsHook(AppFactoryHook):
 
         order = []
         self._resolve_dependencies(parent_node, order, [])
-        return [node.name for node in order if node.name != PARENT_NODE]
+        return [node for node in order if node.name != PARENT_NODE]
 
     def _resolve_dependencies(self, node: Node, resolved, unresolved):
         unresolved.append(node)

@@ -4,7 +4,6 @@ from typing import List, Tuple
 
 from flask import Flask
 
-from .base_config import AppConfig
 from .bundle import Bundle
 from .utils import get_boolean_env, safe_import_module
 
@@ -20,21 +19,23 @@ class AppFactoryHook:
     bundle_module_name: str = None
     bundle_override_module_name_attr: str = BundleOverrideModuleNameAttr()
 
-    def __init__(self, store=None):
-        self.store = store
+    def __init__(self, unchained, store_name=None):
+        self.unchained = unchained
+        if store_name:
+            self.store = getattr(unchained, store_name, None)
         self.verbose = get_boolean_env('FLASK_UNCHAINED_VERBOSE', False)
         if not self.bundle_module_name:
             raise AttributeError(f'{self.__class__.__name__} is missing a '
                                  f'`bundle_module_name` attribute')
 
-    def run_hook(self, app: Flask, app_config_cls: AppConfig, bundles: List[Bundle]):
-        objects = self.collect_objects(bundles)
-        self.process_objects(app, app_config_cls, objects)
+    def run_hook(self, app: Flask, bundles: List[Bundle]):
+        objects = self.collect_from_bundles(bundles)
+        self.process_objects(app, objects)
 
-    def process_objects(self, app: Flask, app_config_cls: AppConfig, objects):
+    def process_objects(self, app: Flask, objects):
         raise NotImplementedError
 
-    def collect_objects(self, bundles: List[Bundle]) -> List[Tuple[str, object]]:
+    def collect_from_bundles(self, bundles: List[Bundle]) -> List[Tuple[str, object]]:
         objects = []
         for bundle in bundles:
             objects += self.collect_from_bundle(bundle)
@@ -62,10 +63,8 @@ class AppFactoryHook:
                               self.bundle_module_name)
         return f'{bundle.module_name}.{module_name}'
 
-    def update_shell_context(self, app: Flask, ctx: dict):
+    def update_shell_context(self, ctx: dict):
         pass
 
-    def debug(self, msg: str):
-        if self.verbose:
-            for line in msg.splitlines():
-                print('UNCHAINED:', line)
+    def log_msg(self, category, msg: str):
+        self.unchained.log_msg(category, msg)
