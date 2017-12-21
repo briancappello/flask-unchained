@@ -72,7 +72,7 @@ class AppFactory:
             bundle_found = False
             for name, bundle in inspect.getmembers(module, self.is_bundle_cls):
                 if not bundle.__subclasses__():
-                    bundles.append(bundle())
+                    bundles.append(bundle)
                     bundle_found = True
                 # else: FIXME set bundle_found true?
 
