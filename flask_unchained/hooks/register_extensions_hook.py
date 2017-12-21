@@ -27,9 +27,6 @@ class Node:
     def add_dependent_node(self, node):
         self.dependent_nodes.append(node)
 
-    def __repr__(self):
-        return f'{self.name}: {self.dependencies!r}'
-
 
 class RegisterExtensionsHook(AppFactoryHook):
     priority = 60
@@ -50,11 +47,11 @@ class RegisterExtensionsHook(AppFactoryHook):
         extensions = {ext.name: ext.extension for ext in objects}
         for name in order:
             extension = extensions[name]
-            self.debug(f'Initializing extension {name} '
+            self.debug(f'Extension: {name} '
                        f'({extension.__class__.__name__} from '
                        f'{extension.__module__})')
             extension.init_app(app)
-        self.store._registered_extensions.update(extensions)
+            app.extensions['unchained']._extensions.update(extensions)
 
     def get_extension_tuples(self, extensions: dict):
         extension_tuples = []
@@ -68,7 +65,7 @@ class RegisterExtensionsHook(AppFactoryHook):
         return extension_tuples
 
     def update_shell_context(self, app: Flask, ctx: dict):
-        ctx.update(self.store._registered_extensions)
+        ctx.update(app.extensions['unchained']._extensions)
 
     def resolve_extension_order(self, extensions: List[ExtensionTuple]):
         nodes = {}
@@ -80,11 +77,7 @@ class RegisterExtensionsHook(AppFactoryHook):
 
         for name, node in nodes.items():
             for dep_name in node.dependencies:
-                try:
-                    node.add_dependent_node(nodes[dep_name])
-                except KeyError as e:
-                    if dep_name not in self.store._registered_extensions:
-                        raise e
+                node.add_dependent_node(nodes[dep_name])
 
         order = []
         self._resolve_dependencies(parent_node, order, [])

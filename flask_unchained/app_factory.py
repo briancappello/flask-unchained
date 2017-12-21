@@ -8,8 +8,11 @@ from .app_factory_hook import AppFactoryHook
 from .base_config import AppConfig
 from .bundle import Bundle
 from .hooks import ConfigureAppHook, RegisterExtensionsHook
-from .unchained import unchained
+from .unchained_extension import Unchained
 from .utils import get_boolean_env, safe_import_module
+
+
+unchained = Unchained()
 
 
 class AppFactory:
@@ -23,7 +26,7 @@ class AppFactory:
 
     def create_app(self, **flask_kwargs) -> Flask:
         bundles = self._load_bundles()
-        app = self.instantiate_app(bundles[0].module_name, **flask_kwargs)
+        app = self.instantiate_app(bundles[-1].module_name, **flask_kwargs)
         unchained.init_app(app, bundles)
 
         for bundle in bundles:
@@ -32,7 +35,7 @@ class AppFactory:
 
         hooks = self._load_hooks(bundles)
         for hook in hooks:
-            self.debug(f'Running hook: (priority {hook.priority:{2}}) '
+            self.debug(f'Hook: (priority {hook.priority:{2}}) '
                        f'{hook.__class__.__name__} from {hook.__module__}')
             hook.run_hook(app, self.app_config_cls, bundles)
 
@@ -82,12 +85,6 @@ class AppFactory:
                     f'{bundle_module_name} bundle! Please make sure it\'s '
                     f'installed and that there is a Bundle subclass in the '
                     f'module\'s __init__.py file.')
-            elif i == 0 and not bundles[0].app_bundle:
-                raise Exception('The first bundle in the BUNDLES app config '
-                                'must have app_bundle = True')
-            elif i != 0 and bundles[-1].app_bundle:
-                raise Exception(f'Cannot have more than one app_bundle '
-                                f'({bundles[-1]} conflicts with {bundles[0]})')
 
         return bundles
 
@@ -97,7 +94,7 @@ class AppFactory:
         return issubclass(obj, Bundle) and obj != Bundle
 
     def _load_hooks(self, bundles: List[Bundle]) -> List[AppFactoryHook]:
-        hooks = [(hook.priority, hook(unchained)) for hook in self.hooks]
+        hooks = [(hook.priority, hook()) for hook in self.hooks]
         for bundle in bundles:
             hooks += [(hook.priority, hook(bundle.store))
                       for hook in bundle.hooks]

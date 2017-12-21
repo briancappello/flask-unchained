@@ -20,7 +20,7 @@ class AppFactoryHook:
     bundle_module_name: str = None
     bundle_override_module_name_attr: str = BundleOverrideModuleNameAttr()
 
-    def __init__(self, store):
+    def __init__(self, store=None):
         self.store = store
         self.verbose = get_boolean_env('FLASK_UNCHAINED_VERBOSE', False)
         if not self.bundle_module_name:
