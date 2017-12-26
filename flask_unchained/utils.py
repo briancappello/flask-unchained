@@ -30,15 +30,6 @@ def get_boolean_env(name, default):
     return os.getenv(name, default).lower() in {'true', 'yes', 'y', '1'}
 
 
-def get_members(module, predicate):
-    """
-    Like inspect.getmembers except predicate is passed both name and object
-    """
-    for name, obj in inspect.getmembers(module):
-        if predicate(name, obj):
-            yield (name, obj)
-
-
 def kebab_case(string):
     if not string:
         return string

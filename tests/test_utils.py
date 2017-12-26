@@ -28,22 +28,6 @@ def test_get_boolean_env(monkeypatch):
         monkeypatch.undo()
 
 
-def test_get_members():
-    class FakeModule:
-        a = 'a'
-        b = 'b'
-        c = None
-        d = 1
-        e = 1.0
-        f = lambda x: x
-
-    def predicate(name, obj):
-        return name == 'e' or (isinstance(obj, str) and len(name) == 1)
-
-    results = list(get_members(FakeModule, predicate))
-    assert results == [('a', 'a'), ('b', 'b'), ('e', 1.0)]
-
-
 def test_right_replace():
     assert right_replace('aabb', 'b', 'c') == 'aabc'
     assert right_replace('aabbcc', 'b', 'd') == 'aabdcc'
