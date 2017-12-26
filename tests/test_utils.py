@@ -2,7 +2,7 @@ import datetime
 import pytest
 
 from flask_unchained.utils import (
-    camel_case, get_boolean_env, get_members, kebab_case, right_replace,
+    camel_case, get_boolean_env, kebab_case, right_replace,
     safe_import_module, snake_case, title_case, utcnow)
 
 
