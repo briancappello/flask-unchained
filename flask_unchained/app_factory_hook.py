@@ -1,11 +1,12 @@
 import inspect
 
+from types import FunctionType
 from typing import List, Tuple
 
 from flask import Flask
 
 from .bundle import Bundle
-from .utils import get_boolean_env, safe_import_module
+from .utils import get_boolean_env, safe_import_module, snake_case
 
 
 class BundleOverrideModuleNameAttr:
@@ -13,16 +14,35 @@ class BundleOverrideModuleNameAttr:
         return f'{cls.bundle_module_name}_module_name'
 
 
-class AppFactoryHook:
+class HookNameDescriptor:
+    def __get__(self, instance, cls):
+        return snake_case(cls.__name__)
+
+
+class AppFactoryMeta(type):
+    def __new__(mcs, name, bases, clsdict):
+        # automatically make action_table_converter a staticmethod
+        converter = clsdict.get('action_table_converter')
+        if isinstance(converter, FunctionType):
+            clsdict['action_table_converter'] = staticmethod(converter)
+        return super().__new__(mcs, name, bases, clsdict)
+
+
+class AppFactoryHook(metaclass=AppFactoryMeta):
+    name: str = HookNameDescriptor()
     priority: int = 50
+
+    action_category: str = None
+    action_table_columns = None
+    action_table_converter = lambda x: x
 
     bundle_module_name: str = None
     bundle_override_module_name_attr: str = BundleOverrideModuleNameAttr()
 
-    def __init__(self, unchained, store_name=None):
+    def __init__(self, unchained, store=None):
         self.unchained = unchained
-        if store_name:
-            self.store = getattr(unchained, store_name, None)
+        if store:
+            self.store = store
         self.verbose = get_boolean_env('FLASK_UNCHAINED_VERBOSE', False)
         if not self.bundle_module_name:
             raise AttributeError(f'{self.__class__.__name__} is missing a '
@@ -66,5 +86,5 @@ class AppFactoryHook:
     def update_shell_context(self, ctx: dict):
         pass
 
-    def log_msg(self, category, msg: str):
-        self.unchained.log_msg(category, msg)
+    def log_action(self, data):
+        self.unchained.log_action(self.action_category, data)

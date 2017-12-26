@@ -1,5 +1,6 @@
 import inspect
 
+from datetime import datetime
 from typing import List
 
 from flask import Flask
@@ -15,11 +16,21 @@ class AppFactory:
 
     @classmethod
     def create_app(cls, app_config_cls: AppConfig, **flask_kwargs):
+        bundles = _load_bundles(app_config_cls)
+        app_name = bundles[-1].name
         for k, v in getattr(app_config_cls, 'FLASK_KWARGS', {}).items():
             flask_kwargs.setdefault(k, v)
-        bundles = _load_bundles(app_config_cls)
-        app = Flask(bundles[-1].name, **flask_kwargs)
-        cls._unchained.init_app(app, app_config_cls, bundles)
+
+        timestamp = datetime.now()
+        app = Flask(app_name, **flask_kwargs)
+
+        unchained = cls._unchained.init_app(app, app_config_cls, bundles)
+        unchained.register_action_table('flask',
+                                        ['app_name', 'kwargs'],
+                                        lambda d: [d['app_name'], d['kwargs']])
+        unchained.log_action('flask',
+                             {'app_name': app_name, 'kwargs': flask_kwargs},
+                             timestamp)
         return app
 
 

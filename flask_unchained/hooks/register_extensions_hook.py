@@ -30,8 +30,17 @@ class Node:
 
 
 class RegisterExtensionsHook(AppFactoryHook):
-    priority = 60
+    """
+    Initializes extensions found in bundles with the current app.
+    """
+    action_category = 'extensions'
+    action_table_columns = ['name', 'class', 'dependencies']
+    action_table_converter = lambda ext: [ext.name,
+                                          ext.extension.__class__.__name__,
+                                          ext.dependencies]
     bundle_module_name = 'extensions'
+    name = 'extensions'
+    priority = 60
 
     def type_check(self, obj):
         return not inspect.isclass(obj) and hasattr(obj, 'init_app')
@@ -45,9 +54,7 @@ class RegisterExtensionsHook(AppFactoryHook):
 
     def process_objects(self, app: Flask, extension_tuples):
         for ext in self.resolve_extension_order(extension_tuples):
-            self.log_msg('Extension', f'{ext.name} '
-                                      f'({ext.extension.__class__.__name__} '
-                                      f'from {ext.extension.__module__})')
+            self.log_action(ext)
             ext.extension.init_app(app)
             self.unchained._extensions[ext.name] = ext.extension
 

@@ -1,12 +1,15 @@
 from flask import Flask
-from werkzeug.routing import UnicodeConverter
 
 from ..app_factory_hook import AppFactoryHook
 
 
 class ConfigureAppHook(AppFactoryHook):
-    priority = 5
+    """
+    Updates app.config with the default settings of each bundle.
+    """
     bundle_module_name = 'bundle_config'
+    name = 'configure_app'
+    priority = 5
 
     def run_hook(self, app: Flask, bundles):
         config_name = self.unchained.app_config_cls.__name__
@@ -15,11 +18,7 @@ class ConfigureAppHook(AppFactoryHook):
             bundle_config = getattr(bundle_config_module, config_name, None)
             if bundle_config:
                 app.config.from_object(bundle_config)
-
-        # the UnicodeConverter is the default, and it's registered with the
-        # explicit name of "string", but since all the other converters use
-        # the builtin python type names, we alias it to "str" for dev sanity
-        app.url_map.converters['str'] = UnicodeConverter
+        app.config.from_object(self.unchained.app_config_cls)
 
     def get_module_name(self, bundle):
         if bundle.app_bundle:
