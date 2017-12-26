@@ -36,5 +36,9 @@ setup(
     packages=find_packages(include=['flask_unchained']),
     install_requires=install_requires,
     include_package_data=True,
-    zip_safe=True,
+    zip_safe=False,
+    entry_points='''
+        [console_scripts]
+        flask=manage:main
+    ''',
 )

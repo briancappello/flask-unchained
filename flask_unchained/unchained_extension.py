@@ -4,7 +4,8 @@ from typing import List
 
 from .base_config import AppConfig
 from .bundle import Bundle
-from .hooks import ConfigureAppHook, RegisterExtensionsHook
+from .hooks import (ConfigureAppHook, RegisterCommandsHook,
+                    RegisterExtensionsHook)
 from .utils import AttrGetter, format_docstring
 
 
@@ -71,7 +72,7 @@ class UnchainedStore:
 
 
 class UnchainedExtension:
-    hooks = [ConfigureAppHook, RegisterExtensionsHook]
+    hooks = [ConfigureAppHook, RegisterCommandsHook, RegisterExtensionsHook]
 
     def init_app(self, app, app_config_cls: AppConfig, bundles: List[Bundle]):
         unchained = UnchainedStore(app_config_cls)
