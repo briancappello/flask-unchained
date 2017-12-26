@@ -1,6 +1,7 @@
 *.egg-info
 __pycache__/
 .cache/
+.tox/
 
 .coverage
 coverage_html_report
