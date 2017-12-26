@@ -27,7 +27,7 @@ def camel_case(string):
 
 def get_boolean_env(name, default):
     default = 'true' if default else 'false'
-    return os.getenv(name, default).lower() in ['true', 'yes', 'y', '1']
+    return os.getenv(name, default).lower() in {'true', 'yes', 'y', '1'}
 
 
 def get_members(module, predicate):
