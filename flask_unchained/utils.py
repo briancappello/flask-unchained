@@ -1,6 +1,7 @@
 import datetime
 import inspect
 import os
+import re
 
 from importlib import import_module
 
@@ -23,6 +24,12 @@ def camel_case(string):
         return string
     parts = snake_case(string).split('_')
     return parts[0] + ''.join(x.title() for x in parts[1:])
+
+
+def format_docstring(docstring):
+    if not docstring:
+        return ''
+    return re.sub(r'\s+', ' ', docstring).strip()
 
 
 def get_boolean_env(name, default):
