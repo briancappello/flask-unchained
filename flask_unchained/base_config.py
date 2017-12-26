@@ -14,7 +14,7 @@ class ProjectRootDescriptor:
 
 class FlaskKwargsDescriptor:
     def __get__(self, instance, cls):
-        return {'template_folder': os.path.join(cls.APP_ROOT, 'templates')}
+        return {'template_folder': os.path.join(cls.PROJECT_ROOT, 'templates')}
 
 
 class AppConfig:
