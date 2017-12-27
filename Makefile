@@ -1,10 +1,14 @@
-sdist:
+clean:
+	rm -r build/*
+	rm dist/*
+
+sdist: clean
 	python setup.py sdist
 
-wheel:
+wheel: clean
 	python setup.py bdist_wheel
 
 dist: sdist wheel
 	twine upload dist/*
 
-.PHONY: dist sdist wheel
+.PHONY: clean dist sdist wheel
