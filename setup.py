@@ -1,4 +1,5 @@
 import os
+import versioneer
 
 from codecs import open
 from setuptools import setup, find_packages
@@ -11,18 +12,18 @@ with open(os.path.join(ROOT_DIR, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 
-def is_pkg(line):
-    return line and not line.startswith(('--', 'git', '#'))
-
-
 def read_requirements(filename):
+    def is_pkg(line):
+        return line and not line.startswith(('--', 'git', '#'))
+
     with open(os.path.join(ROOT_DIR, filename), encoding='utf-8') as f:
         return [line for line in f.read().splitlines() if is_pkg(line)]
 
 
 setup(
-    name='flask-unchained',
-    version='0.1.0',
+    name='Flask Unchained',
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     description='Flask Unchained',
     long_description=long_description,
     url='https://github.com/briancappello/flask-unchained',
