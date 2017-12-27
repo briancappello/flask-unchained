@@ -43,10 +43,6 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         self.unchained = unchained
         if store:
             self.store = store
-        self.verbose = get_boolean_env('FLASK_UNCHAINED_VERBOSE', False)
-        if not self.bundle_module_name:
-            raise AttributeError(f'{self.__class__.__name__} is missing a '
-                                 f'`bundle_module_name` attribute')
 
     def run_hook(self, app: Flask, bundles: List[Bundle]):
         objects = self.collect_from_bundles(bundles)
