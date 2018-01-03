@@ -48,6 +48,6 @@ setup(
     zip_safe=False,
     entry_points='''
         [console_scripts]
-        flask=manage:main
+        flask=flask_unchained.cli:main
     ''',
 )
