@@ -1,5 +1,5 @@
 clean:
-	rm -r build/*
+	rm -fr build/*
 	rm dist/*
 
 sdist: clean
