@@ -29,9 +29,9 @@ SHOULD_CLEAR_DEBUG_ENV = not bool(os.getenv('FLASK_DEBUG', None))
 
 def clear_env_vars():
     if SHOULD_CLEAR_APP_ENV:
-        del os.environ['FLASK_APP_ENV']
+        os.environ.pop('FLASK_APP_ENV', None)
     if SHOULD_CLEAR_DEBUG_ENV:
-        del os.environ['FLASK_DEBUG']
+        os.environ.pop('FLASK_DEBUG', None)
 
 
 def cli_create_app(_):
