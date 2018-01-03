@@ -11,8 +11,8 @@ import os
 import sys
 import time
 
-sys.path.append(os.getcwd())  # so we can find the user's unchained_config
-import unchained_config
+sys.path.append(os.getcwd())  # so we can find the user's unchained_factory
+import unchained_factory
 
 from flask.cli import FlaskGroup, run_command
 from flask_unchained import DEV, TEST, get_boolean_env
@@ -20,7 +20,7 @@ from flask_unchained.commands import clean, lint, shell, unchained, url, urls
 from traceback import format_exc
 
 
-ENV_CHOICES = [env for env in unchained_config.ENV_CONFIGS.keys()
+ENV_CHOICES = [env for env in unchained_factory.ENV_CONFIGS.keys()
                if env != TEST]
 
 SHOULD_CLEAR_APP_ENV = not bool(os.getenv('FLASK_APP_ENV', None))
@@ -38,14 +38,16 @@ def cli_create_app(_):
     # Flask's default click integration silences exceptions thrown by
     # create_app, which IMO isn't so awesome. so this gets around that.
     try:
-        return unchained_config.create_app()
+        return unchained_factory.create_app()
     except:
         print(format_exc())
         clear_env_vars()
         sys.exit(1)
 
 
-@click.group(cls=FlaskGroup, add_default_commands=False,
+@click.group(cls=FlaskGroup,
+             add_default_commands=False,
+             create_app=cli_create_app,
              help='A utility script for Flask')
 @click.option('--env', default=os.getenv('FLASK_APP_ENV', DEV),
               type=click.Choice(ENV_CHOICES),
