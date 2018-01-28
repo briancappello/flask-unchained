@@ -51,7 +51,7 @@ class TestRegisterExtensionsHook:
             ExtensionTuple('one', None, ['two', 'three'])
         ]
         order = [ext.name for ext in hook.resolve_extension_order(exts)]
-        assert order == ['four', 'three', 'two', 'one']
+        assert order == ['four', 'two', 'three', 'one']
 
     def test_resolve_broken_extension_order(self, hook):
         exts = [
@@ -80,7 +80,7 @@ class TestRegisterExtensionsHook:
         hook.process_objects(app, exts)
 
         registered = list(hook.unchained._extensions.keys())
-        assert registered == ['four', 'three', 'two', 'one']
+        assert registered == ['four', 'two', 'three', 'one']
         for name, ext in hook.unchained._extensions.items():
             assert name == ext.name
             assert ext.app == app

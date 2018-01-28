@@ -1,6 +1,6 @@
 clean:
 	rm -fr build/*
-	rm dist/*
+	rm -f dist/*
 
 sdist: clean
 	python setup.py sdist
