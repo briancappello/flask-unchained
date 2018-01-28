@@ -14,7 +14,7 @@ import time
 sys.path.append(os.getcwd())  # so we can find the user's unchained_factory
 import unchained_factory
 
-from flask.cli import FlaskGroup, run_command
+from flask.cli import FlaskGroup, ScriptInfo, run_command
 from flask_unchained import DEV, TEST, get_boolean_env
 from flask_unchained.commands import clean, lint, shell, unchained, url, urls
 from traceback import format_exc
@@ -47,7 +47,6 @@ def cli_create_app(_):
 
 @click.group(cls=FlaskGroup,
              add_default_commands=False,
-             create_app=cli_create_app,
              help='A utility script for Flask')
 @click.option('--env', default=os.getenv('FLASK_APP_ENV', DEV),
               type=click.Choice(ENV_CHOICES),
@@ -91,7 +90,13 @@ def main():
     cli.add_command(url)
     cli.add_command(urls)
 
-    cli.main(args=[arg for arg in sys.argv[1:] if '--env' not in arg])
+    # make sure to always load the app. this is necessary because some 3rd party
+    # extensions register commands using setup.py, which for some reason
+    # bypasses this step
+    obj = ScriptInfo(create_app=cli_create_app)
+    obj.load_app()
+
+    cli.main(args=[arg for arg in sys.argv[1:] if '--env' not in arg], obj=obj)
     clear_env_vars()
 
 
