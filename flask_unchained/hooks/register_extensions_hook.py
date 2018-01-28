@@ -1,8 +1,5 @@
-"""
-extension dependency resolution order code adapted from:
-https://www.electricmonk.nl/log/2008/08/07/dependency-resolving-algorithm/
-"""
 import inspect
+import networkx as nx
 
 from collections import namedtuple
 from typing import List
@@ -14,19 +11,6 @@ from ..app_factory_hook import AppFactoryHook
 
 ExtensionTuple = namedtuple('ExtensionTuple',
                             ('name', 'extension', 'dependencies'))
-
-PARENT_NODE = '__parent__'
-
-
-class Node:
-    def __init__(self, name, extension, dependencies):
-        self.name = name
-        self.extension = extension
-        self.dependencies = dependencies
-        self.dependent_nodes = []
-
-    def add_dependent_node(self, node):
-        self.dependent_nodes.append(node)
 
 
 class RegisterExtensionsHook(AppFactoryHook):
@@ -74,29 +58,17 @@ class RegisterExtensionsHook(AppFactoryHook):
         ctx.update({'unchained': self.unchained})
 
     def resolve_extension_order(self, extensions: List[ExtensionTuple]):
-        nodes = {}
+        dag = nx.DiGraph()
         for ext in extensions:
-            nodes[ext.name] = Node(*ext)
+            dag.add_node(ext.name, extension_tuple=ext)
+            for dep_name in ext.dependencies:
+                dag.add_edge(ext.name, dep_name)
 
-        parent_node = Node(PARENT_NODE, None, list(nodes.keys()))
-        nodes[PARENT_NODE] = parent_node
-
-        for name, node in nodes.items():
-            for dep_name in node.dependencies:
-                node.add_dependent_node(nodes[dep_name])
-
-        order = []
-        self._resolve_dependencies(parent_node, order, [])
-        return [node for node in order if node.name != PARENT_NODE]
-
-    def _resolve_dependencies(self, node: Node, resolved, unresolved):
-        unresolved.append(node)
-        for dep_node in node.dependent_nodes:
-            if dep_node not in resolved:
-                if dep_node in unresolved:
-                    raise Exception(
-                        f'Circular dependency detected: {dep_node.name} '
-                        f'depends on an extension that depends on it.')
-                self._resolve_dependencies(dep_node, resolved, unresolved)
-        resolved.append(node)
-        unresolved.remove(node)
+        try:
+            return [dag.nodes[n]['extension_tuple']
+                    for n in reversed(list(nx.topological_sort(dag)))]
+        except nx.NetworkXUnfeasible:
+            msg = 'Circular dependency detected between extensions'
+            problem_graph = ', '.join([f'{a} -> {b}'
+                                       for a, b in nx.find_cycle(dag)])
+            raise Exception(f'{msg}: {problem_graph}')
