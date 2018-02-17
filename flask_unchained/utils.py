@@ -1,5 +1,4 @@
 import datetime
-import inspect
 import os
 import re
 
@@ -24,6 +23,10 @@ def camel_case(string):
         return string
     parts = snake_case(string).split('_')
     return parts[0] + ''.join(x.title() for x in parts[1:])
+
+
+def class_case(string):
+    return title_case(string).replace(' ', '')
 
 
 def format_docstring(docstring):
