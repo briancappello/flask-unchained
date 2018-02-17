@@ -1,19 +1,18 @@
 import pytest
 
-from flask_unchained import unchained as exported_unchained
-from flask_unchained.unchained_extension import UnchainedExtension
+from flask_unchained.unchained import Unchained
 
 from .fixtures.myapp import AppBundle
 from .fixtures.myapp.config import DevConfig
 from .fixtures.vendor_bundle import VendorBundle, awesome
-from .fixtures.vendor_bundle.vendor_bundle_store import VendorBundleStore
+from .fixtures.vendor_bundle.hooks import Store as VendorBundleStore
 
 
 def test_unchained(app):
-    unchained_ext = UnchainedExtension()
-    unchained = unchained_ext.init_app(app, DevConfig, [VendorBundle, AppBundle])
+    unchained = Unchained()
+    unchained.init_app(app, DevConfig, [VendorBundle, AppBundle])
     assert 'unchained' in app.extensions
-    assert app.extensions['unchained'] == unchained == exported_unchained
+    assert app.extensions['unchained'] == unchained
 
     with pytest.raises(AttributeError):
         fail = unchained.app

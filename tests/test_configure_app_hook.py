@@ -2,7 +2,7 @@ import pytest
 
 from flask_unchained import AppConfig
 from flask_unchained.hooks import ConfigureAppHook
-from flask_unchained.unchained_extension import UnchainedStore
+from flask_unchained.unchained import Unchained
 
 from .fixtures.myapp import AppBundle
 from .fixtures.empty_bundle import EmptyBundle
@@ -15,7 +15,7 @@ class DevConfig(AppConfig):
 
 @pytest.fixture
 def hook():
-    return ConfigureAppHook(UnchainedStore(DevConfig))
+    return ConfigureAppHook(Unchained(DevConfig))
 
 
 class TestConfigureAppHook:

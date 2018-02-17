@@ -1,19 +1,16 @@
 import inspect
 
-from datetime import datetime
 from typing import List
 
 from flask import Flask
 
 from .app_config import AppConfig
 from .bundle import Bundle
-from .unchained_extension import UnchainedExtension
+from .unchained import unchained
 from .utils import safe_import_module
 
 
 class AppFactory:
-    _unchained = UnchainedExtension()
-
     @classmethod
     def create_app(cls, app_config_cls: AppConfig, **flask_kwargs):
         bundles = _load_bundles(app_config_cls)
@@ -21,16 +18,11 @@ class AppFactory:
         for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
             flask_kwargs.setdefault(k.lower(), getattr(app_config_cls, k, None))
 
-        timestamp = datetime.now()
         app = Flask(app_name, **flask_kwargs)
-
-        unchained = cls._unchained.init_app(app, app_config_cls, bundles)
-        unchained.register_action_table('flask',
-                                        ['app_name', 'kwargs'],
-                                        lambda d: [d['app_name'], d['kwargs']])
         unchained.log_action('flask',
-                             {'app_name': app_name, 'kwargs': flask_kwargs},
-                             timestamp)
+                             {'app_name': app_name, 'kwargs': flask_kwargs})
+
+        unchained.init_app(app, app_config_cls, bundles)
         return app
 
 
@@ -45,6 +37,7 @@ def _load_bundles(app_config_cls: AppConfig) -> List[Bundle]:
             if bundle.name not in loaded_bundles:  # avoid getting superclasses
                 bundles.append(bundle)
                 loaded_bundles.add(bundle.name)
+                unchained.log_action('bundle', bundle)
                 bundle_found = True
                 break
 

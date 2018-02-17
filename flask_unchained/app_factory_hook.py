@@ -1,12 +1,15 @@
 import inspect
 
 from types import FunctionType
-from typing import List, Tuple
+from typing import Any, List, Tuple
 
 from flask import Flask
 
 from .bundle import Bundle
-from .utils import get_boolean_env, safe_import_module, snake_case
+from .utils import safe_import_module, snake_case
+
+
+Member = Tuple[str, Any]
 
 
 class BundleOverrideModuleNameAttr:
@@ -45,19 +48,20 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
             self.store = store
 
     def run_hook(self, app: Flask, bundles: List[Bundle]):
+        self.unchained.log_action('hook', self)
         objects = self.collect_from_bundles(bundles)
         self.process_objects(app, objects)
 
     def process_objects(self, app: Flask, objects):
         raise NotImplementedError
 
-    def collect_from_bundles(self, bundles: List[Bundle]) -> List[Tuple[str, object]]:
+    def collect_from_bundles(self, bundles: List[Bundle]) -> List[Member]:
         objects = []
         for bundle in bundles:
             objects += self.collect_from_bundle(bundle)
         return objects
 
-    def collect_from_bundle(self, bundle: Bundle) -> List[Tuple[str, object]]:
+    def collect_from_bundle(self, bundle: Bundle) -> List[Member]:
         module = self.import_bundle_module(bundle)
         if not module:
             return []
