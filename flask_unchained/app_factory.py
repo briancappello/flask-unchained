@@ -5,7 +5,7 @@ from typing import List
 
 from flask import Flask
 
-from .base_config import AppConfig
+from .app_config import AppConfig
 from .bundle import Bundle
 from .unchained_extension import UnchainedExtension
 from .utils import safe_import_module
@@ -18,8 +18,8 @@ class AppFactory:
     def create_app(cls, app_config_cls: AppConfig, **flask_kwargs):
         bundles = _load_bundles(app_config_cls)
         app_name = bundles[-1].name
-        for k, v in getattr(app_config_cls, 'FLASK_KWARGS', {}).items():
-            flask_kwargs.setdefault(k, v)
+        for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
+            flask_kwargs.setdefault(k.lower(), getattr(app_config_cls, k, None))
 
         timestamp = datetime.now()
         app = Flask(app_name, **flask_kwargs)
