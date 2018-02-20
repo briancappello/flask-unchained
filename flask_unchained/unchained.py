@@ -1,11 +1,10 @@
 from collections import defaultdict, namedtuple
 from datetime import datetime
 from flask import Flask
-from typing import List
+from typing import List, Optional, Type
 
 from .app_config import AppConfig
 from .bundle import Bundle
-from .hooks import RunHooksHook
 from .utils import AttrGetter, format_docstring
 
 
@@ -16,7 +15,7 @@ ActionTableItem = namedtuple('ActionTableItem', ('column_names', 'converter'))
 
 
 class Unchained:
-    def __init__(self, app_config_cls=None):
+    def __init__(self, app_config_cls: Optional[Type[AppConfig]]=None):
         self.app_config_cls = app_config_cls
         self._bundle_stores = {}
         self._shell_ctx = {}
@@ -49,10 +48,13 @@ class Unchained:
 
     def init_app(self,
                  app: Flask,
-                 app_config_cls: AppConfig=None,
-                 bundles: List[Bundle]=None):
+                 app_config_cls: Optional[Type[AppConfig]]=None,
+                 bundles: Optional[List[Bundle]]=None):
         self.app_config_cls = app_config_cls or self.app_config_cls
         app.extensions['unchained'] = self
+
+        # must import the RunHooksHook here to prevent a circular dependency
+        from .hooks import RunHooksHook
         RunHooksHook(self).run_hook(app, bundles or [])
 
     def log_action(self, category: str, data):

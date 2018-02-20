@@ -1,6 +1,6 @@
 import inspect
 
-from typing import List
+from typing import List, Type
 
 from flask import Flask
 
@@ -12,7 +12,7 @@ from .utils import safe_import_module
 
 class AppFactory:
     @classmethod
-    def create_app(cls, app_config_cls: AppConfig, **flask_kwargs):
+    def create_app(cls, app_config_cls: Type[AppConfig], **flask_kwargs):
         bundles = _load_bundles(app_config_cls)
         app_name = bundles[-1].name
         for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
@@ -26,7 +26,7 @@ class AppFactory:
         return app
 
 
-def _load_bundles(app_config_cls: AppConfig) -> List[Bundle]:
+def _load_bundles(app_config_cls: Type[AppConfig]) -> List[Bundle]:
     loaded_bundles = set()
     bundles = []
     for bundle_module_name in app_config_cls.BUNDLES:

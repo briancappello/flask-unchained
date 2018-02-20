@@ -1,16 +1,17 @@
 import inspect
 
 from flask import Flask
+from importlib import import_module
 from typing import List
 
 from ..app_factory_hook import AppFactoryHook
-from ..utils import safe_import_module
+from ..bundle import Bundle
 
 
 class RunHooksHook(AppFactoryHook):
     bundle_module_name = 'hooks'
 
-    def run_hook(self, app: Flask, bundles):
+    def run_hook(self, app: Flask, bundles: List[Bundle]):
         for hook in self.load_hooks(bundles):
             if hook.action_category:
                 self.unchained.register_action_table(hook.action_category,
@@ -21,15 +22,15 @@ class RunHooksHook(AppFactoryHook):
 
         app.shell_context_processor(lambda: self.unchained._shell_ctx)
 
-    def load_hooks(self, bundles) -> List[AppFactoryHook]:
+    def load_hooks(self, bundles: List[Bundle]) -> List[AppFactoryHook]:
         unchained_hooks = inspect.getmembers(
-            safe_import_module('flask_unchained.hooks'), self.type_check)
+            import_module('flask_unchained.hooks'), self.type_check)
         hooks = [hook(self.unchained) for _, hook in unchained_hooks]
         for bundle in bundles:
             hooks += self.collect_from_bundle(bundle)
         return sorted(hooks, key=lambda hook: hook.priority)
 
-    def collect_from_bundle(self, bundle) -> List[AppFactoryHook]:
+    def collect_from_bundle(self, bundle: Bundle) -> List[AppFactoryHook]:
         bundle_store = getattr(self.import_bundle_module(bundle), 'Store', None)
         if bundle_store:
             bundle_store = bundle_store()

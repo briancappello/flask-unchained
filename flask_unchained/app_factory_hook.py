@@ -6,10 +6,10 @@ from typing import Any, List, Tuple
 from flask import Flask
 
 from .bundle import Bundle
+from .unchained import Unchained
 from .utils import safe_import_module, snake_case
 
 
-Member = Tuple[str, Any]
 
 
 class BundleOverrideModuleNameAttr:
@@ -42,7 +42,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
     bundle_module_name: str = None
     bundle_override_module_name_attr: str = BundleOverrideModuleNameAttr()
 
-    def __init__(self, unchained, store=None):
+    def __init__(self, unchained: Unchained, store=None):
         self.unchained = unchained
         if store:
             self.store = store
@@ -52,16 +52,17 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         objects = self.collect_from_bundles(bundles)
         self.process_objects(app, objects)
 
-    def process_objects(self, app: Flask, objects):
+    def process_objects(self, app: Flask, objects: List[Tuple[str, Any]]):
         raise NotImplementedError
 
-    def collect_from_bundles(self, bundles: List[Bundle]) -> List[Member]:
+    def collect_from_bundles(self, bundles: List[Bundle],
+                             ) -> List[Tuple[str, Any]]:
         objects = []
         for bundle in bundles:
             objects += self.collect_from_bundle(bundle)
         return objects
 
-    def collect_from_bundle(self, bundle: Bundle) -> List[Member]:
+    def collect_from_bundle(self, bundle: Bundle) -> List[Tuple[str, Any]]:
         module = self.import_bundle_module(bundle)
         if not module:
             return []
@@ -77,7 +78,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
                                       'this feature')
         return safe_import_module(self.get_module_name(bundle))
 
-    def get_module_name(self, bundle: Bundle):
+    def get_module_name(self, bundle: Bundle) -> str:
         module_name = getattr(bundle,
                               self.bundle_override_module_name_attr,
                               self.bundle_module_name)
