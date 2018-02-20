@@ -43,13 +43,3 @@ class Bundle(metaclass=BundleMeta):
     name: str = NameDescriptor()
     """Name of the bundle. Defaults to the snake cased class name"""
 
-    hooks = []
-    """A list of AppFactoryHook classes to register to be run by AppFactory"""
-
-    store = None
-    """
-    An optional dict or class instance to add to the unchained extension,
-    useful for hooks that need to share data between themselves, or to store
-    data that persists once the app has been brought up by the factory. The
-    store instance is available as an attribute at unchained.<bundle_name>
-    """
