@@ -10,6 +10,9 @@ from .unchained import Unchained
 from .utils import safe_import_module, snake_case
 
 
+class ActionCategoryDescriptor:
+    def __get__(self, instance, cls):
+        return cls.name
 
 
 class BundleOverrideModuleNameAttr:
@@ -35,7 +38,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
     name: str = HookNameDescriptor()
     priority: int = 50
 
-    action_category: str = None
+    action_category: str = ActionCategoryDescriptor()
     action_table_columns = None
     action_table_converter = lambda x: x
 
