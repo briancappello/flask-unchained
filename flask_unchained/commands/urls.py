@@ -53,7 +53,8 @@ def _get_rule_view(rule):
     if '.as_view.' in view_fn.__qualname__:
         view_fn_name = view_fn.__dict__['view_class'].__name__
     elif '.method_as_view.' in view_fn.__qualname__:
-        view_fn_name = f"{view_fn.__dict__['view_class'].__name__}.{view_fn.__name__}"
+        view_class_name = view_fn.__dict__['view_class'].__name__
+        view_fn_name = f'{view_class_name}.{view_fn.__name__}'
     return f'{view_module.__name__}:{view_fn_name}'
 
 

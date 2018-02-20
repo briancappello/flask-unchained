@@ -14,7 +14,8 @@ def print_table(column_names, rows):
     def get_column_width(idx):
         header_length = len(column_names[idx])
         content_length = max(len(str(row[idx])) for row in rows)
-        return content_length if content_length > header_length else header_length
+        return (content_length if content_length > header_length
+                else header_length)
 
     for i in range(0, len(column_names)):
         col_width = get_column_width(i)

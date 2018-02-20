@@ -23,7 +23,8 @@ def lint(fix_imports):
         'requirements',
     ]
     root_files = glob('*.py')
-    root_dirs = [name for name in next(os.walk('.'))[1] if not name.startswith('.')]
+    root_dirs = [name for name in next(os.walk('.'))[1]
+                 if not name.startswith('.')]
     files_and_dirs = [x for x in root_files + root_dirs if x not in skip]
 
     def execute_tool(desc, *args):
