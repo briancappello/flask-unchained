@@ -48,7 +48,6 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
             self.store = store
 
     def run_hook(self, app: Flask, bundles: List[Bundle]):
-        self.unchained.log_action('hook', self)
         objects = self.collect_from_bundles(bundles)
         self.process_objects(app, objects)
 

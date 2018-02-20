@@ -19,6 +19,7 @@ class RunHooksHook(AppFactoryHook):
                                                      hook.action_table_converter)
             hook.run_hook(app, bundles)
             hook.update_shell_context(self.unchained._shell_ctx)
+            self.unchained.log_action('hook', hook)
 
         app.shell_context_processor(lambda: self.unchained._shell_ctx)
 
