@@ -15,21 +15,22 @@ sys.path.append(os.getcwd())  # so we can find the user's unchained_factory
 import unchained_factory
 
 from flask.cli import FlaskGroup, ScriptInfo, run_command
-from flask_unchained import DEV, TEST, get_boolean_env
+from flask_unchained import DEV, PROD, STAGING, TEST, get_boolean_env
 from flask_unchained.commands import clean, lint, shell, unchained, url, urls
 from traceback import format_exc
 
 
-ENV_CHOICES = [env for env in unchained_factory.ENV_CONFIGS.keys()
-               if env != TEST]
+ENV_ALIASES = {'dev': DEV, 'prod': PROD}
+ENV_CHOICES = list(ENV_ALIASES.keys()) + [DEV, PROD, STAGING, TEST]
+PROD_ENVS = {PROD, STAGING}
 
-SHOULD_CLEAR_APP_ENV = not bool(os.getenv('FLASK_APP_ENV', None))
-SHOULD_CLEAR_DEBUG_ENV = not bool(os.getenv('FLASK_DEBUG', None))
+SHOULD_CLEAR_FLASK_ENV = 'FLASK_ENV' not in os.environ
+SHOULD_CLEAR_DEBUG_ENV = 'FLASK_DEBUG' not in os.environ
 
 
 def clear_env_vars():
-    if SHOULD_CLEAR_APP_ENV:
-        os.environ.pop('FLASK_APP_ENV', None)
+    if SHOULD_CLEAR_FLASK_ENV:
+        os.environ.pop('FLASK_ENV', None)
     if SHOULD_CLEAR_DEBUG_ENV:
         os.environ.pop('FLASK_DEBUG', None)
 
@@ -48,7 +49,7 @@ def cli_create_app(_):
 @click.group(cls=FlaskGroup,
              add_default_commands=False,
              help='A utility script for Flask')
-@click.option('--env', default=os.getenv('FLASK_APP_ENV', DEV),
+@click.option('--env', default=os.getenv('FLASK_ENV', DEV),
               type=click.Choice(ENV_CHOICES),
               help='Which env config to run with (dev by default)')
 @click.option('--warn/--no-warn', default=True,
@@ -56,7 +57,7 @@ def cli_create_app(_):
 @click.pass_context
 def cli(ctx, env, warn):
     ctx.obj.data['env'] = env
-    if env not in {DEV, TEST} and warn:
+    if env in PROD_ENVS and warn:
         production_warning(env, [arg for arg in sys.argv[1:]
                                  if '--env' not in arg])
 
@@ -75,10 +76,12 @@ def main():
     parser.add_argument('--env')
     args, _ = parser.parse_known_args()
 
-    env = args.env or os.getenv('FLASK_APP_ENV', DEV)
-    os.environ['FLASK_APP_ENV'] = env
+    env = args.env or os.getenv('FLASK_ENV', DEV)
+    if env in ENV_ALIASES:
+        env = ENV_ALIASES[env]
+    os.environ['FLASK_ENV'] = env
 
-    debug = get_boolean_env('FLASK_DEBUG', env in {DEV, TEST})
+    debug = get_boolean_env('FLASK_DEBUG', env not in PROD_ENVS)
     if debug:
         os.environ['FLASK_DEBUG'] = 'true'
 

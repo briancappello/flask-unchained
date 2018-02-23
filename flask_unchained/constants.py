@@ -1,4 +1,4 @@
-DEV = 'dev'
-PROD = 'prod'
+DEV = 'development'
+PROD = 'production'
 STAGING = 'staging'
 TEST = 'test'
