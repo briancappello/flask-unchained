@@ -15,7 +15,7 @@ ActionTableItem = namedtuple('ActionTableItem', ('column_names', 'converter'))
 
 
 class Unchained:
-    def __init__(self, app_config_cls: Optional[Type[AppConfig]]=None):
+    def __init__(self, app_config_cls: Optional[Type[AppConfig]] = None):
         self.app_config_cls = app_config_cls
         self._bundle_stores = {}
         self._shell_ctx = {}
@@ -48,8 +48,9 @@ class Unchained:
 
     def init_app(self,
                  app: Flask,
-                 app_config_cls: Optional[Type[AppConfig]]=None,
-                 bundles: Optional[List[Bundle]]=None):
+                 app_config_cls: Optional[Type[AppConfig]] = None,
+                 bundles: Optional[List[Type[Bundle]]] = None,
+                 ) -> None:
         self.app_config_cls = app_config_cls or self.app_config_cls
         app.extensions['unchained'] = self
 
@@ -63,21 +64,21 @@ class Unchained:
             converter = self._action_tables[category].converter
         self._action_log[category].append((converter(data), datetime.now()))
 
-    def register_action_table(self, category, columns, converter):
+    def register_action_table(self, category: str, columns, converter):
         self._action_tables[category] = ActionTableItem(columns, converter)
 
-    def get_action_log(self, category):
+    def get_action_log(self, category: str):
         return CategoryActionLog(
             category,
             self._action_tables[category].column_names,
             self._action_log_items_by_category(category))
 
-    def _action_log_items_by_category(self, category):
+    def _action_log_items_by_category(self, category: str):
         items = [ActionLogItem(data, timestamp)
                  for data, timestamp in self._action_log[category]]
         return sorted(items, key=lambda row: row.timestamp)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         if name in self._bundle_stores:
             return self._bundle_stores[name]
         raise AttributeError(name)
