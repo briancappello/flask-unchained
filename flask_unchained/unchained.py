@@ -54,7 +54,7 @@ class Unchained:
         app.extensions['unchained'] = self
 
         # must import the RunHooksHook here to prevent a circular dependency
-        from .hooks import RunHooksHook
+        from .hooks.run_hooks_hook import RunHooksHook
         RunHooksHook(self).run_hook(app, bundles or [])
 
     def log_action(self, category: str, data):

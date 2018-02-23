@@ -24,9 +24,8 @@ class RunHooksHook(AppFactoryHook):
         app.shell_context_processor(lambda: self.unchained._shell_ctx)
 
     def load_hooks(self, bundles: List[Bundle]) -> List[AppFactoryHook]:
-        unchained_hooks = inspect.getmembers(
-            import_module('flask_unchained.hooks'), self.type_check)
-        hooks = [hook(self.unchained) for _, hook in unchained_hooks]
+        hooks = [Hook(self.unchained) for _, Hook in
+                 self._collect_from_package(import_module('flask_unchained.hooks'))]
         for bundle in bundles:
             hooks += self.collect_from_bundle(bundle)
         return sorted(hooks, key=lambda hook: hook.priority)
@@ -36,8 +35,8 @@ class RunHooksHook(AppFactoryHook):
         if bundle_store:
             bundle_store = bundle_store()
             self.unchained._bundle_stores[bundle.name] = bundle_store
-        return [hook(self.unchained, bundle_store)
-                for _, hook in super().collect_from_bundle(bundle)]
+        return [Hook(self.unchained, bundle_store) for _, Hook in
+                super().collect_from_bundle(bundle)]
 
     def type_check(self, obj):
         is_class = inspect.isclass(obj) and issubclass(obj, AppFactoryHook)

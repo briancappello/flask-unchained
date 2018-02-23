@@ -1,9 +1,10 @@
+import importlib
 import inspect
-
-from types import FunctionType
-from typing import Any, List, Tuple
+import pkgutil
 
 from flask import Flask
+from types import FunctionType
+from typing import Any, List, Optional, Tuple
 
 from .bundle import Bundle
 from .unchained import Unchained
@@ -69,7 +70,26 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         module = self.import_bundle_module(bundle)
         if not module:
             return []
-        return inspect.getmembers(module, self.type_check)
+        return self._collect_from_package(module)
+
+    def _collect_from_package(self, module,
+                              type_checker: Optional[FunctionType] = None,
+                              ) -> List[Tuple[str, Any]]:
+        type_checker = type_checker or self.type_check
+        members = dict(inspect.getmembers(module, type_checker))
+
+        # do not require everything be imported into a package's __init__.py
+        # to be discoverable by hooks
+        if pkgutil.get_loader(module).is_package(module.__name__):
+            for loader, name, is_pkg in pkgutil.walk_packages(module.__path__):
+                full_module_name = f'{module.__package__}.{name}'
+                child_module = importlib.import_module(full_module_name)
+                for member_name, member in inspect.getmembers(child_module,
+                                                              type_checker):
+                    if member_name not in members:
+                        members[member_name] = member
+
+        return list(members.items())
 
     def type_check(self, obj) -> bool:
         raise NotImplementedError

@@ -1,5 +1,4 @@
 import click
-import inspect
 
 from flask import Flask
 from ..app_factory_hook import AppFactoryHook
@@ -40,15 +39,15 @@ class RegisterCommandsHook(AppFactoryHook):
             return self.is_click_command(obj) and obj.name not in group_commands
 
         return [(command.name, command) for _, command in
-                inspect.getmembers(commands_module, is_click_command)]
+                self._collect_from_package(commands_module, is_click_command)]
 
     def get_bundle_command_groups(self, bundle: Bundle):
         commands_module = self.import_bundle_module(bundle)
         if not commands_module:
             return []
 
-        command_groups = dict(inspect.getmembers(commands_module,
-                                                 self.is_click_group))
+        command_groups = dict(self._collect_from_package(commands_module,
+                                                     self.is_click_group))
         tuples = []
         for name in getattr(bundle, 'command_group_names', [bundle.name]):
             try:

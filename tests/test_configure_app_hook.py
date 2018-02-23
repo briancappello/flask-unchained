@@ -1,7 +1,7 @@
 import pytest
 
 from flask_unchained import AppConfig
-from flask_unchained.hooks import ConfigureAppHook
+from flask_unchained.hooks.configure_app_hook import ConfigureAppHook
 from flask_unchained.unchained import Unchained
 
 from .fixtures.myapp import AppBundle
