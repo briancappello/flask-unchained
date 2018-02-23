@@ -34,4 +34,7 @@ def print_table(column_names, rows):
     click.echo('-' * table_width)
 
     for row in rows:
-        click.echo(row_template.format(*row))
+        try:
+            click.echo(row_template.format(*row))
+        except TypeError as e:
+            raise TypeError(f'{e}: {row!r}')
