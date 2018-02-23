@@ -13,7 +13,7 @@ class RunHooksHook(AppFactoryHook):
 
     def run_hook(self, app: Flask, bundles: List[Bundle]):
         for hook in self.load_hooks(bundles):
-            if hook.action_category:
+            if hook.action_category and hook.action_table_columns:
                 self.unchained.register_action_table(hook.action_category,
                                                      hook.action_table_columns,
                                                      hook.action_table_converter)

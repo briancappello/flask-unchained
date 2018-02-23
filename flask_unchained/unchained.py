@@ -42,8 +42,8 @@ class Unchained:
              'Bundle Module Override Attr', 'Description'],
             lambda hook: [hook.priority,
                           hook.name,
-                          hook.bundle_module_name,
-                          hook.bundle_override_module_name_attr,
+                          hook.bundle_module_name or '',
+                          hook.bundle_override_module_name_attr or '',
                           format_docstring(hook.__doc__)])
 
     def init_app(self,
