@@ -1,7 +1,15 @@
 import click
 
+from typing import *
 
-def print_table(column_names, rows):
+IterableOfStrings = Union[List[str], Tuple[str, ...]]
+IterableOfTuples = Union[List[tuple], Tuple[tuple, ...]]
+
+
+def print_table(column_names: IterableOfStrings,
+                rows: IterableOfTuples,
+                column_alignments: Optional[IterableOfStrings] = None,
+                ) -> None:
     header_template = ''
     row_template = ''
     table_width = 0
@@ -9,7 +17,8 @@ def print_table(column_names, rows):
     types = [type_formatters.get(type(x), 'r') for x in rows[0]]
 
     alignments = {int: '>', float: '>'}
-    aligns = [alignments.get(type(x), '<') for x in rows[0]]
+    column_alignments = (column_alignments or
+                         [alignments.get(type(x), '<') for x in rows[0]])
 
     def get_column_width(idx):
         header_length = len(column_names[idx])
@@ -20,7 +29,7 @@ def print_table(column_names, rows):
     for i in range(0, len(column_names)):
         col_width = get_column_width(i)
         header_col_template = f'{{:{col_width}}}'
-        col_template = f'{{:{aligns[i]}{col_width}{types[i]}}}'
+        col_template = f'{{:{column_alignments[i]}{col_width}{types[i]}}}'
         if i == 0:
             header_template += header_col_template
             row_template += col_template
