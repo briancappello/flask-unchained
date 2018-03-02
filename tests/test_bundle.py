@@ -1,6 +1,6 @@
 from flask_unchained import Bundle
 
-from .fixtures.myapp import AppBundle
+from .fixtures.myapp import MyAppBundle
 from .fixtures.vendor_bundle import VendorBundle
 
 
@@ -29,7 +29,7 @@ class TestBundle:
         assert AmazingBundle.name == 'amazing_bundle'
 
     def test_automatic_app_bundle_name_descriptor(self):
-        assert AppBundle.name == 'myapp'
+        assert MyAppBundle.name == 'my_app'
 
     def test_repr(self):
         expected = "class <Bundle name='foobaz' module='tests.test_bundle'>"

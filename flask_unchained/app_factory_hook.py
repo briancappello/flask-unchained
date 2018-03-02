@@ -4,7 +4,7 @@ import pkgutil
 
 from flask import Flask
 from types import FunctionType
-from typing import Any, List, Optional, Tuple
+from typing import *
 
 from .bundle import Bundle
 from .unchained import Unchained
@@ -52,29 +52,33 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         if store:
             self.store = store
 
-    def run_hook(self, app: Flask, bundles: List[Bundle]):
+    def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
         objects = self.collect_from_bundles(bundles)
         self.process_objects(app, objects)
 
     def process_objects(self, app: Flask, objects: List[Tuple[str, Any]]):
         raise NotImplementedError
 
-    def collect_from_bundles(self, bundles: List[Bundle],
+    def collect_from_bundles(self, bundles: List[Type[Bundle]],
                              ) -> List[Tuple[str, Any]]:
         objects = []
         for bundle in bundles:
             objects += self.collect_from_bundle(bundle)
         return objects
 
-    def collect_from_bundle(self, bundle: Bundle) -> List[Tuple[str, Any]]:
-        module = self.import_bundle_module(bundle)
-        if not module:
-            return []
-        return self._collect_from_package(module)
+    def collect_from_bundle(self, bundle: Type[Bundle],
+                            ) -> List[Tuple[str, Any]]:
+        members = {}
+        for bundle in bundle.iter_bundles():
+            module = self.import_bundle_module(bundle)
+            if not module:
+                continue
+            members.update(self._collect_from_package(module))
+        return list(members.items())
 
     def _collect_from_package(self, module,
                               type_checker: Optional[FunctionType] = None,
-                              ) -> List[Tuple[str, Any]]:
+                              ) -> Dict[str, Any]:
         type_checker = type_checker or self.type_check
         members = dict(inspect.getmembers(module, type_checker))
 
@@ -89,19 +93,19 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
                     if member_name not in members:
                         members[member_name] = member
 
-        return list(members.items())
+        return members
 
-    def type_check(self, obj) -> bool:
+    def type_check(self, obj: Any) -> bool:
         raise NotImplementedError
 
-    def import_bundle_module(self, bundle: Bundle):
+    def import_bundle_module(self, bundle: Type[Bundle]):
         if self.bundle_module_name is None:
             raise NotImplementedError('you must set the `bundle_module_name` '
                                       'class attribute on your hook to use '
                                       'this feature')
         return safe_import_module(self.get_module_name(bundle))
 
-    def get_module_name(self, bundle: Bundle) -> str:
+    def get_module_name(self, bundle: Type[Bundle]) -> str:
         module_name = getattr(bundle,
                               self.bundle_override_module_name_attr,
                               self.bundle_module_name)

@@ -39,15 +39,16 @@ class RegisterCommandsHook(AppFactoryHook):
             return self.is_click_command(obj) and obj.name not in group_commands
 
         return [(command.name, command) for _, command in
-                self._collect_from_package(commands_module, is_click_command)]
+                self._collect_from_package(commands_module,
+                                           is_click_command).items()]
 
     def get_bundle_command_groups(self, bundle: Bundle):
         commands_module = self.import_bundle_module(bundle)
         if not commands_module:
             return []
 
-        command_groups = dict(self._collect_from_package(commands_module,
-                                                     self.is_click_group))
+        command_groups = self._collect_from_package(commands_module,
+                                                    self.is_click_group)
         tuples = []
         for name in getattr(bundle, 'command_group_names', [bundle.name]):
             try:

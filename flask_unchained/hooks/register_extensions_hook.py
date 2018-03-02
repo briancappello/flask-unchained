@@ -2,11 +2,12 @@ import inspect
 import networkx as nx
 
 from collections import namedtuple
-from typing import List
+from typing import *
 
 from flask import Flask
 
 from ..app_factory_hook import AppFactoryHook
+from ..bundle import Bundle
 
 
 ExtensionTuple = namedtuple('ExtensionTuple',
@@ -29,12 +30,12 @@ class RegisterExtensionsHook(AppFactoryHook):
     def type_check(self, obj):
         return not inspect.isclass(obj) and hasattr(obj, 'init_app')
 
-    def collect_from_bundle(self, bundle):
-        module = self.import_bundle_module(bundle)
-        if not module:
-            return []
-
-        return self.get_extension_tuples(getattr(module, 'EXTENSIONS', {}))
+    def collect_from_bundle(self, bundle: Bundle):
+        extensions = {}
+        for bundle in bundle.iter_bundles():
+            module = self.import_bundle_module(bundle)
+            extensions.update(getattr(module, 'EXTENSIONS', {}))
+        return self.get_extension_tuples(extensions)
 
     def process_objects(self, app: Flask, extension_tuples):
         for ext in self.resolve_extension_order(extension_tuples):
@@ -45,10 +46,9 @@ class RegisterExtensionsHook(AppFactoryHook):
     def get_extension_tuples(self, extensions: dict):
         extension_tuples = []
         for name, extension in extensions.items():
+            dependencies = []
             if isinstance(extension, (list, tuple)):
                 extension, dependencies = extension
-            else:
-                dependencies = []
             extension_tuples.append(
                 ExtensionTuple(name, extension, dependencies))
         return extension_tuples

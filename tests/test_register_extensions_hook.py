@@ -4,7 +4,7 @@ from flask_unchained.hooks.register_extensions_hook import (
     ExtensionTuple, RegisterExtensionsHook)
 from flask_unchained.unchained import Unchained
 
-from .fixtures.myapp import AppBundle, myext
+from .fixtures.myapp import MyAppBundle, myext
 from .fixtures.myapp.extensions import MyExtension
 
 from .fixtures.empty_bundle import EmptyBundle
@@ -36,7 +36,7 @@ class TestRegisterExtensionsHook:
         assert vendor_ext.extension == awesome
         assert vendor_ext.dependencies == []
 
-        app_extensions = hook.collect_from_bundle(AppBundle)
+        app_extensions = hook.collect_from_bundle(MyAppBundle)
         assert len(app_extensions) == 1
         vendor_ext = app_extensions[0]
         assert vendor_ext.name == 'myext'
@@ -86,7 +86,7 @@ class TestRegisterExtensionsHook:
             assert ext.app == app
 
     def test_run_hook(self, app, hook):
-        hook.run_hook(app, [EmptyBundle, VendorBundle, AppBundle])
+        hook.run_hook(app, [EmptyBundle, VendorBundle, MyAppBundle])
 
         registered = list(hook.unchained._extensions.keys())
         exts = list(hook.unchained._extensions.values())

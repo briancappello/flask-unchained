@@ -1,7 +1,7 @@
-from flask_unchained import Bundle
+from flask_unchained import AppBundle
 
 from .extensions import myext
 
 
-class AppBundle(Bundle):
-    app_bundle = True
+class MyAppBundle(AppBundle):
+    pass

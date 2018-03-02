@@ -24,8 +24,9 @@ class RunHooksHook(AppFactoryHook):
         app.shell_context_processor(lambda: self.unchained._shell_ctx)
 
     def load_hooks(self, bundles: List[Bundle]) -> List[AppFactoryHook]:
-        hooks = [Hook(self.unchained) for _, Hook in
-                 self._collect_from_package(import_module('flask_unchained.hooks'))]
+        unchained_hooks = self._collect_from_package(
+            import_module('flask_unchained.hooks'))
+        hooks = [Hook(self.unchained) for _, Hook in unchained_hooks.items()]
         for bundle in bundles:
             hooks += self.collect_from_bundle(bundle)
         return sorted(hooks, key=lambda hook: hook.priority)

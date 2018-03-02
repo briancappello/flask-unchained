@@ -1,7 +1,7 @@
 from .app_factory import AppFactory
 from .app_factory_hook import AppFactoryHook
 from .app_config import AppConfig
-from .bundle import Bundle
+from .bundle import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
 from .unchained import unchained
 from .utils import (

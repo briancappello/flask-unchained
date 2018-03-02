@@ -11,12 +11,10 @@ import os
 import sys
 import time
 
-sys.path.append(os.getcwd())  # so we can find the user's unchained_factory
-import unchained_factory
-
 from flask.cli import FlaskGroup, ScriptInfo, run_command
-from flask_unchained import DEV, PROD, STAGING, TEST, get_boolean_env
+from flask_unchained import AppFactory, get_boolean_env
 from flask_unchained.commands import clean, lint, shell, unchained, url, urls
+from flask_unchained.constants import DEV, PROD, STAGING, TEST
 from traceback import format_exc
 
 
@@ -38,8 +36,13 @@ def clear_env_vars():
 def cli_create_app(_):
     # Flask's default click integration silences exceptions thrown by
     # create_app, which IMO isn't so awesome. so this gets around that.
+    app_bundle_name = os.getenv('FLASK_APP_BUNDLE', os.getenv('FLASK_APP'))
+    if not app_bundle_name:
+        raise EnvironmentError('Please set the FLASK_APP_BUNDLE environment '
+                               'variable to the module name of your app bundle')
+
     try:
-        return unchained_factory.create_app()
+        return AppFactory.create_app(app_bundle_name, os.getenv('FLASK_ENV'))
     except:
         print(format_exc())
         clear_env_vars()
@@ -82,8 +85,7 @@ def main():
     os.environ['FLASK_ENV'] = env
 
     debug = get_boolean_env('FLASK_DEBUG', env not in PROD_ENVS)
-    if debug:
-        os.environ['FLASK_DEBUG'] = 'true'
+    os.environ['FLASK_DEBUG'] = 'true' if debug else 'false'
 
     cli.add_command(clean)
     cli.add_command(lint)

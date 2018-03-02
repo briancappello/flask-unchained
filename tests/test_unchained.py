@@ -2,7 +2,7 @@ import pytest
 
 from flask_unchained.unchained import Unchained
 
-from .fixtures.myapp import AppBundle
+from .fixtures.myapp import MyAppBundle
 from .fixtures.myapp.config import DevConfig
 from .fixtures.vendor_bundle import VendorBundle, awesome
 from .fixtures.vendor_bundle.hooks import Store as VendorBundleStore
@@ -10,7 +10,7 @@ from .fixtures.vendor_bundle.hooks import Store as VendorBundleStore
 
 def test_unchained(app):
     unchained = Unchained()
-    unchained.init_app(app, DevConfig, [VendorBundle, AppBundle])
+    unchained.init_app(app, DevConfig, [VendorBundle, MyAppBundle])
     assert 'unchained' in app.extensions
     assert app.extensions['unchained'] == unchained
 
