@@ -6,7 +6,8 @@ from flask import Flask
 from types import FunctionType
 from typing import *
 
-from .bundle import Bundle
+from .bundle import AppBundle, Bundle
+from .exceptions import NameCollisionError
 from .unchained import Unchained
 from .utils import safe_import_module, snake_case
 
@@ -16,7 +17,7 @@ class ActionCategoryDescriptor:
         return cls.name
 
 
-class BundleOverrideModuleNameAttr:
+class BundleOverrideModuleNameAttrDescriptor:
     def __get__(self, instance, cls):
         if cls.bundle_module_name:
             return f'{cls.bundle_module_name}_module_name'
@@ -45,57 +46,122 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
     action_table_converter = lambda x: x
 
     bundle_module_name: str = None
-    bundle_override_module_name_attr: str = BundleOverrideModuleNameAttr()
+    bundle_override_module_name_attr: str = \
+        BundleOverrideModuleNameAttrDescriptor()
+
+    _limit_discovery_to_bundle_superclasses = False
+    """
+    whether or not to search the whole bundle inheritance hierarchy for objects
+    """
+
+    _limit_discovery_to_local_declarations = True
+    """
+    whether or not to only include objects declared within bundles (ie not
+    imported from other places, like third-party code)
+    """
 
     def __init__(self, unchained: Unchained, store=None):
         self.unchained = unchained
-        if store:
-            self.store = store
+        self.store = store
 
     def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
-        objects = self.collect_from_bundles(bundles)
-        self.process_objects(app, objects)
+        """
+        hook entrance point. override to disable standard behavior of iterating
+        over bundles to discover objects and processing them
+        """
+        self.process_objects(app, self.collect_from_bundles(bundles))
 
-    def process_objects(self, app: Flask, objects: List[Tuple[str, Any]]):
+    def process_objects(self, app: Flask, objects: Dict[str, Any]):
+        """
+        implement to do stuff with discovered objects (typically registering
+        them with the app instance)
+        """
         raise NotImplementedError
 
     def collect_from_bundles(self, bundles: List[Type[Bundle]],
-                             ) -> List[Tuple[str, Any]]:
-        objects = []
+                             ) -> Dict[str, Any]:
+        """
+        collect (objects where self.type_check returns True) from bundles.
+        names (keys) are expected to be unique across bundles, except for the
+        app bundle, which can override anything from other bundles.
+        """
+        all_objects = {}  # all discovered objects
+        key_bundles = {}  # lookup of which bundle a key came from
+        object_keys = set()  # keys in all_objects, used to ensure uniqueness
         for bundle in bundles:
-            objects += self.collect_from_bundle(bundle)
-        return objects
+            from_bundle = self.collect_from_bundle(bundle)
+            if issubclass(bundle, AppBundle):
+                all_objects.update(from_bundle)
+                break  # app_bundle is last, no need to update keys
 
-    def collect_from_bundle(self, bundle: Type[Bundle],
-                            ) -> List[Tuple[str, Any]]:
+            from_bundle_keys = set(from_bundle.keys())
+            conflicts = object_keys.intersection(from_bundle_keys)
+            if conflicts:
+                msg = [f'{self.name} from {bundle.name} conflict with '
+                       f'previously registered {self.name}:']
+                for key in conflicts:
+                    msg.append(f'{key} from {key_bundles[key].name}')
+                raise NameCollisionError('\n'.join(msg))
+
+            all_objects.update(from_bundle)
+            object_keys = object_keys.union(from_bundle_keys)
+            key_bundles.update({k: bundle for k in from_bundle_keys})
+
+        return all_objects
+
+    def collect_from_bundle(self, bundle: Type[Bundle]) -> Dict[str, Any]:
+        """
+        collect (objects where self.type_check returns True) from bundles.
+        bundle subclasses can override objects discovered in superclass bundles.
+        """
         members = {}
-        for bundle in bundle.iter_bundles():
+        hierarchy = ([bundle] if self._limit_discovery_to_bundle_superclasses
+                     else bundle.iter_bundles())
+        for bundle in hierarchy:
             module = self.import_bundle_module(bundle)
             if not module:
                 continue
             members.update(self._collect_from_package(module))
-        return list(members.items())
+        return members
 
     def _collect_from_package(self, module,
                               type_checker: Optional[FunctionType] = None,
                               ) -> Dict[str, Any]:
+        """
+        discover objects passing self.type_check by walking through all the
+        child modules/packages in the given module (ie, do not require modules
+        to import everything into their __init__.py for it to be discovered)
+        """
         type_checker = type_checker or self.type_check
-        members = dict(inspect.getmembers(module, type_checker))
+        members = dict(self._get_members(module, type_checker))
 
-        # do not require everything be imported into a package's __init__.py
-        # to be discoverable by hooks
         if pkgutil.get_loader(module).is_package(module.__name__):
             for loader, name, is_pkg in pkgutil.walk_packages(module.__path__):
-                full_module_name = f'{module.__package__}.{name}'
-                child_module = importlib.import_module(full_module_name)
-                for member_name, member in inspect.getmembers(child_module,
-                                                              type_checker):
-                    if member_name not in members:
-                        members[member_name] = member
+                child_module_name = f'{module.__package__}.{name}'
+                child_module = importlib.import_module(child_module_name)
+                for key, obj in self._get_members(child_module, type_checker):
+                    if key not in members:
+                        members[key] = obj
 
         return members
 
+    def _get_members(self, module, type_checker) -> List[Tuple[str, Any]]:
+        for name, obj in inspect.getmembers(module, type_checker):
+            if (not self._limit_discovery_to_local_declarations
+                    or obj.__module__ in module.__name__):
+                yield self.key_name(name, obj), obj
+
+    def key_name(self, name, obj):
+        """
+        override to use a custom key to determine uniqueness/overriding
+        """
+        return name
+
     def type_check(self, obj: Any) -> bool:
+        """
+        implement to determine which objects in a module should be processed
+        by this hook
+        """
         raise NotImplementedError
 
     def import_bundle_module(self, bundle: Type[Bundle]):
@@ -112,6 +178,9 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         return f'{bundle.module_name}.{module_name}'
 
     def update_shell_context(self, ctx: dict):
+        """
+        implement to add objects to the cli shell context
+        """
         pass
 
     def log_action(self, data):

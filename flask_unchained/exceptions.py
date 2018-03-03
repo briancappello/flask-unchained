@@ -1,0 +1,2 @@
+class NameCollisionError(Exception):
+    pass

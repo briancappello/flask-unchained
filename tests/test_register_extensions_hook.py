@@ -27,16 +27,18 @@ class TestRegisterExtensionsHook:
         assert hook.type_check(myext) is True
 
     def test_collect_from_bundle(self, hook):
-        assert hook.collect_from_bundle(EmptyBundle) == []
+        assert hook.collect_from_bundle(EmptyBundle) == {}
 
-        vendor_extensions = hook.collect_from_bundle(VendorBundle)
+        vendor_extensions = hook.get_extension_tuples(
+            hook.collect_from_bundle(VendorBundle))
         assert len(vendor_extensions) == 1
         vendor_ext = vendor_extensions[0]
         assert vendor_ext.name == 'awesome'
         assert vendor_ext.extension == awesome
         assert vendor_ext.dependencies == []
 
-        app_extensions = hook.collect_from_bundle(MyAppBundle)
+        app_extensions = hook.get_extension_tuples(
+            hook.collect_from_bundle(MyAppBundle))
         assert len(app_extensions) == 1
         vendor_ext = app_extensions[0]
         assert vendor_ext.name == 'myext'

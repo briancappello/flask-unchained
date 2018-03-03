@@ -1,9 +1,10 @@
 import click
+import inspect
 
 from flask import Flask
 from ..app_factory_hook import AppFactoryHook
 from ..bundle import Bundle
-from typing import List
+from typing import *
 from warnings import warn
 
 
@@ -13,11 +14,16 @@ class RegisterCommandsHook(AppFactoryHook):
     name = 'commands'
     priority = 95
 
-    def run_hook(self, app: Flask, bundles: List[Bundle]):
+    _limit_discovery_to_local_declarations = False
+
+    def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
         commands = []
         for bundle in bundles:
             bundle_command_groups = self.get_bundle_command_groups(bundle)
             commands += bundle_command_groups
+
+            # FIXME need to allow app bundle commands to override others for
+            # consistency with overriding behavior of other hooks
             commands += self.get_bundle_commands(bundle, bundle_command_groups)
 
         for name, command in commands:
@@ -26,7 +32,7 @@ class RegisterCommandsHook(AppFactoryHook):
                 continue
             app.cli.add_command(command, name)
 
-    def get_bundle_commands(self, bundle: Bundle, bundle_command_groups):
+    def get_bundle_commands(self, bundle: Type[Bundle], bundle_command_groups):
         commands_module = self.import_bundle_module(bundle)
         if not commands_module:
             return []
@@ -42,7 +48,7 @@ class RegisterCommandsHook(AppFactoryHook):
                 self._collect_from_package(commands_module,
                                            is_click_command).items()]
 
-    def get_bundle_command_groups(self, bundle: Bundle):
+    def get_bundle_command_groups(self, bundle: Type[Bundle]):
         commands_module = self.import_bundle_module(bundle)
         if not commands_module:
             return []

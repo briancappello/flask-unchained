@@ -27,17 +27,19 @@ class RegisterExtensionsHook(AppFactoryHook):
     name = 'extensions'
     priority = 60
 
-    def type_check(self, obj):
-        return not inspect.isclass(obj) and hasattr(obj, 'init_app')
+    def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
+        extensions = self.collect_from_bundles(bundles)
+        self.process_objects(app, self.get_extension_tuples(extensions))
 
-    def collect_from_bundle(self, bundle: Bundle):
+    def collect_from_bundle(self, bundle: Type[Bundle]):
         extensions = {}
         for bundle in bundle.iter_bundles():
             module = self.import_bundle_module(bundle)
             extensions.update(getattr(module, 'EXTENSIONS', {}))
-        return self.get_extension_tuples(extensions)
+        return extensions
 
-    def process_objects(self, app: Flask, extension_tuples):
+    def process_objects(self, app: Flask,
+                        extension_tuples: List[ExtensionTuple]):
         for ext in self.resolve_extension_order(extension_tuples):
             self.log_action(ext)
             ext.extension.init_app(app)
@@ -57,7 +59,8 @@ class RegisterExtensionsHook(AppFactoryHook):
         ctx.update(self.unchained._extensions)
         ctx.update({'unchained': self.unchained})
 
-    def resolve_extension_order(self, extensions: List[ExtensionTuple]):
+    def resolve_extension_order(self, extensions: List[ExtensionTuple],
+                                ) -> List[ExtensionTuple]:
         dag = nx.DiGraph()
         for ext in extensions:
             dag.add_node(ext.name, extension_tuple=ext)
@@ -72,3 +75,6 @@ class RegisterExtensionsHook(AppFactoryHook):
             problem_graph = ', '.join([f'{a} -> {b}'
                                        for a, b in nx.find_cycle(dag)])
             raise Exception(f'{msg}: {problem_graph}')
+
+    def type_check(self, obj):
+        return not inspect.isclass(obj) and hasattr(obj, 'init_app')
