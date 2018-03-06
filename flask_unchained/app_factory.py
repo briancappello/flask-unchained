@@ -10,7 +10,10 @@ from typing import *
 from .bundle import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
 from .unchained import unchained
-from .utils import safe_import_module
+
+
+class BundleNotFoundError(Exception):
+    pass
 
 
 class AppFactory:
@@ -18,10 +21,12 @@ class AppFactory:
     def create_app(cls,
                    app_bundle_name: str,
                    env: Union[DEV, PROD, STAGING, TEST],
+                   bundles: Optional[List[str]] = None,
                    **flask_kwargs,
                    ) -> Flask:
-        app_bundle, bundles = _load_bundles(app_bundle_name, env)
+        app_bundle = _load_app_bundle(app_bundle_name)
         app_config_cls = app_bundle.get_config(env)
+        bundles = _load_bundles(bundles or app_config_cls.BUNDLES)
 
         for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
             flask_kwargs.setdefault(k.lower(), getattr(app_config_cls, k, None))
@@ -42,33 +47,13 @@ class AppFactory:
         return app
 
 
-def _load_bundles(app_bundle_name: str,
-                  env: Union[DEV, PROD, STAGING, TEST],
-                  ) -> Tuple[Type[AppBundle], List[Type[Bundle]]]:
-    app_bundle = _load_app_bundle(app_bundle_name)
-
+def _load_bundles(bundle_package_names: List[str]) -> List[Type[Bundle]]:
     bundles = []
-    for bundle_module_name in app_bundle.get_config(env).BUNDLES:
-        module = safe_import_module(bundle_module_name)
-        bundle_found = False
-        for name, bundle in inspect.getmembers(module, _is_bundle):
-            # skip superclasses
-            if bundle.__subclasses__():
-                continue
-
-            bundles.append(bundle)
-            unchained.log_action('bundle', bundle)
-            bundle_found = True
-
-        if not bundle_found:
-            raise Exception(
-                f'Unable to find a Bundle subclass for the '
-                f'{bundle_module_name} bundle! Please make sure it\'s '
-                f'installed and that there is a Bundle subclass in (or '
-                f'imported in) the module\'s __init__.py file.')
-
-    bundles.append(app_bundle)
-    return app_bundle, bundles
+    for bundle_package_name in bundle_package_names:
+        bundle = _load_bundle(bundle_package_name, _is_bundle)
+        bundles.append(bundle)
+        unchained.log_action('bundle', bundle)
+    return bundles
 
 
 def _load_app_bundle(app_bundle_name) -> Type[AppBundle]:
@@ -77,18 +62,44 @@ def _load_app_bundle(app_bundle_name) -> Type[AppBundle]:
     else:
         sys.path.insert(0, os.getcwd())
 
-    app_module = importlib.import_module(app_bundle_name)
-    for _, bundle in inspect.getmembers(app_module, _is_app_bundle):
-        return bundle
+    try:
+        return _load_bundle(app_bundle_name, _is_app_bundle)
+    except BundleNotFoundError:
+        raise BundleNotFoundError(
+            'Unable to locate your AppBundle. Please verify the Bundle subclass'
+            f'in the `{app_bundle_name}` package subclasses '
+            f'`flask_unchained.AppBundle`, and that `{app_bundle_name}` is '
+            'the correct path.')
 
 
-def _is_app_bundle(obj) -> bool:
-    if not inspect.isclass(obj):
-        return False
-    return issubclass(obj, AppBundle) and obj != AppBundle
+def _load_bundle(bundle_package_name: str, type_checker):
+    for module_name in [f'{bundle_package_name}.bundle', bundle_package_name]:
+        try:
+            module = importlib.import_module(module_name)
+        except (ImportError, ModuleNotFoundError):
+            continue
+
+        try:
+            return inspect.getmembers(module, type_checker(module))[0][1]
+        except IndexError:
+            continue
+
+    raise BundleNotFoundError(
+        f'Unable to find a Bundle subclass in the {bundle_package_name} bundle!'
+        ' Please make sure it\'s installed and that there is a Bundle subclass '
+        'in the packages\'s bundle module or its __init__.py file.')
 
 
-def _is_bundle(obj) -> bool:
-    if not inspect.isclass(obj) or issubclass(obj, AppBundle):
-        return False
-    return issubclass(obj, Bundle) and obj != Bundle
+def _is_app_bundle(module):
+    def is_app_bundle(obj):
+        return _is_bundle(module)(obj) and issubclass(obj, AppBundle)
+    return is_app_bundle
+
+
+def _is_bundle(module):
+    def is_bundle(obj):
+        if not inspect.isclass(obj):
+            return False
+        is_subclass = issubclass(obj, Bundle) and obj not in {AppBundle, Bundle}
+        return is_subclass and module.__name__ in obj.__module__
+    return is_bundle
