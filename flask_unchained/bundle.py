@@ -2,6 +2,7 @@ import importlib
 import sys
 
 from flask import Flask
+from os import path
 from typing import *
 
 from .constants import DEV, PROD, STAGING, TEST
@@ -34,6 +35,32 @@ class NameDescriptor:
         return snake_case(cls.__name__)
 
 
+class StaticFolderDescriptor:
+    def __get__(self, instance, cls):
+        if not hasattr(cls, '_static_folder'):
+            bundle_dir = path.dirname(sys.modules[cls.module_name].__file__)
+            cls._static_folder = path.join(bundle_dir, 'static')
+            if not path.exists(cls._static_folder):
+                cls._static_folder = None
+        return cls._static_folder
+
+
+class StaticUrlPrefixDescriptor:
+    def __get__(self, instance, cls):
+        if cls.static_folder:
+            return f'/{cls.name}/static'
+
+
+class TemplateFolderDescriptor:
+    def __get__(self, instance, cls):
+        if not hasattr(cls, '_template_folder'):
+            bundle_dir = path.dirname(sys.modules[cls.module_name].__file__)
+            cls._template_folder = path.join(bundle_dir, 'templates')
+            if not path.exists(cls._template_folder):
+                cls._template_folder = None
+        return cls._template_folder
+
+
 class BundleMeta(type):
     def __new__(mcs, name, bases, clsdict):
         # check if the user explicitly set module_name
@@ -52,6 +79,10 @@ class Bundle(metaclass=BundleMeta):
 
     name: str = NameDescriptor()
     """Name of the bundle. Defaults to the snake cased class name"""
+
+    template_folder: Optional[str] = TemplateFolderDescriptor()
+    static_folder: Optional[str] = StaticFolderDescriptor()
+    static_url_prefix: Optional[str] = StaticUrlPrefixDescriptor()
 
     @classmethod
     def iter_bundles(cls, include_self=True, reverse=True):
