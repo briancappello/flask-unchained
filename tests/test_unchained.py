@@ -18,4 +18,4 @@ def test_unchained(app):
         fail = unchained.app
 
     assert isinstance(unchained.vendor_bundle, VendorBundleStore)
-    assert unchained.ext.awesome == awesome
+    assert unchained.extensions.awesome == awesome

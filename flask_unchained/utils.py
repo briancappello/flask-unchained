@@ -10,12 +10,18 @@ from .clips_pattern import de_camel, pluralize, singularize
 
 class AttrGetter:
     def __init__(self, dict_):
-        self.__d = dict_
+        self._d = dict_
 
-    def __getattr__(self, name):
-        if name in self.__d:
-            return self.__d[name]
-        raise AttributeError(name)
+    def __getitem__(self, item):
+        return self._d[item]
+
+    def __contains__(self, item):
+        return item in self._d
+
+    def __getattr__(self, item):
+        if item in self._d:
+            return self._d[item]
+        raise AttributeError(item)
 
 
 def camel_case(string):
