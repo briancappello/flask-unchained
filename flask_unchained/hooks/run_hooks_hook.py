@@ -33,12 +33,18 @@ class RunHooksHook(AppFactoryHook):
         return sorted(hooks, key=lambda hook: hook.priority)
 
     def collect_from_bundle(self, bundle: Type[Bundle]) -> List[AppFactoryHook]:
-        bundle_store = getattr(self.import_bundle_module(bundle), 'Store', None)
+        bundle_store = self.find_bundle_store(bundle)
         if bundle_store:
             bundle_store = bundle_store()
             self.unchained._bundle_stores[bundle.name] = bundle_store
         return [Hook(self.unchained, bundle_store) for _, Hook in
                 super().collect_from_bundle(bundle).items()]
+
+    def find_bundle_store(self, bundle):
+        for bundle in bundle.iter_bundles():
+            module = self.import_bundle_module(bundle)
+            if hasattr(module, 'Store'):
+                return module.Store
 
     def type_check(self, obj):
         is_class = inspect.isclass(obj) and issubclass(obj, AppFactoryHook)
