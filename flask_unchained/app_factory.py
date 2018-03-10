@@ -86,8 +86,8 @@ def _load_bundle(bundle_package_name: str, type_checker):
 
     raise BundleNotFoundError(
         f'Unable to find a Bundle subclass in the {bundle_package_name} bundle!'
-        ' Please make sure it\'s installed and that there is a Bundle subclass '
-        'in the packages\'s bundle module or its __init__.py file.')
+        ' Please make sure this bundle is installed and that there is a Bundle'
+        ' subclass in the packages\'s bundle module or its __init__.py file.')
 
 
 def _is_app_bundle(module):
