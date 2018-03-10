@@ -110,11 +110,12 @@ class Unchained:
                 param_names = (args if has_explicit_args
                                else inspect.signature(fn).parameters)
 
-                # FIXME: allow injecting extensions
                 # FIXME: is it possible to not set kwargs when fn_args are
                 # FIXME: explicitly set? (ie manual instantiation of services)
                 for param_name in param_names:
-                    if param_name in self._services:
+                    if param_name in self._extensions:
+                        fn_kwargs[param_name] = self._extensions[param_name]
+                    elif param_name in self._services:
                         fn_kwargs[param_name] = self._services[param_name]
                 return fn(*fn_args, **fn_kwargs)
             return decorator
