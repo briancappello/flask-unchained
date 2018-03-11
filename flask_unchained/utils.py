@@ -8,20 +8,15 @@ from importlib import import_module
 from .clips_pattern import de_camel, pluralize, singularize
 
 
-class AttrGetter:
-    def __init__(self, dict_):
-        self._d = dict_
+class AttrDict(dict):
+    def __getattr__(self, key):
+        return self[key]
 
-    def __getitem__(self, item):
-        return self._d[item]
+    def __setattr__(self, key, value):
+        self[key] = value
 
-    def __contains__(self, item):
-        return item in self._d
-
-    def __getattr__(self, item):
-        if item in self._d:
-            return self._d[item]
-        raise AttributeError(item)
+    def __repr__(self):
+        return f'AttrDict({super().__repr__()})'
 
 
 def camel_case(string):

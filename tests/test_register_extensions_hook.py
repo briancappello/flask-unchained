@@ -3,6 +3,7 @@ import pytest
 from flask_unchained.hooks.register_extensions_hook import (
     ExtensionTuple, RegisterExtensionsHook)
 from flask_unchained.unchained import Unchained
+from flask_unchained.utils import AttrDict
 
 from .fixtures.myapp import MyAppBundle, myext
 from .fixtures.myapp.extensions import MyExtension
@@ -81,17 +82,17 @@ class TestRegisterExtensionsHook:
         ]
         hook.process_objects(app, exts)
 
-        registered = list(hook.unchained._extensions.keys())
+        registered = list(hook.unchained.extensions.keys())
         assert registered == ['four', 'two', 'three', 'one']
-        for name, ext in hook.unchained._extensions.items():
+        for name, ext in hook.unchained.extensions.items():
             assert name == ext.name
             assert ext.app == app
 
     def test_run_hook(self, app, hook):
         hook.run_hook(app, [EmptyBundle, VendorBundle, MyAppBundle])
 
-        registered = list(hook.unchained._extensions.keys())
-        exts = list(hook.unchained._extensions.values())
+        registered = list(hook.unchained.extensions.keys())
+        exts = list(hook.unchained.extensions.values())
         assert registered == ['awesome', 'myext']
         assert exts == [awesome, myext]
         assert awesome.app == app
@@ -100,7 +101,7 @@ class TestRegisterExtensionsHook:
     def test_update_shell_context(self, hook):
         ctx = {}
         data = {'one': 1, 'two': 2, 'three': 3}
-        hook.unchained._extensions = data
+        hook.unchained.extensions = AttrDict(data)
         hook.update_shell_context(ctx)
         data['unchained'] = hook.unchained
         assert ctx == data

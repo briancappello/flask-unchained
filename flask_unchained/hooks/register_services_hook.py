@@ -23,4 +23,4 @@ class RegisterServicesHook(AppFactoryHook):
         return issubclass(obj, BaseService) and hasattr(obj, '__di_name__')
 
     def update_shell_context(self, ctx: dict):
-        ctx.update(self.unchained._services)
+        ctx.update(self.unchained.services)

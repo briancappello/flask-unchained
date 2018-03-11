@@ -43,7 +43,7 @@ class RegisterExtensionsHook(AppFactoryHook):
         for ext in self.resolve_extension_order(extension_tuples):
             self.log_action(ext)
             ext.extension.init_app(app)
-            self.unchained._extensions[ext.name] = ext.extension
+            self.unchained.extensions[ext.name] = ext.extension
 
     def get_extension_tuples(self, extensions: dict):
         extension_tuples = []
@@ -56,7 +56,7 @@ class RegisterExtensionsHook(AppFactoryHook):
         return extension_tuples
 
     def update_shell_context(self, ctx: dict):
-        ctx.update(self.unchained._extensions)
+        ctx.update(self.unchained.extensions)
         ctx.update({'unchained': self.unchained})
 
     def resolve_extension_order(self, extensions: List[ExtensionTuple],

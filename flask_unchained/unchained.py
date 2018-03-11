@@ -10,7 +10,7 @@ from typing import List, Optional, Type
 from .app_config import AppConfig
 from .bundle import Bundle
 from .di import ensure_service_name
-from .utils import AttrGetter, format_docstring
+from .utils import AttrDict, format_docstring
 
 
 CategoryActionLog = namedtuple('CategoryActionLog',
@@ -27,11 +27,9 @@ class Unchained:
         self._initialized = False
 
         self._services_registry = {}
-        self._services = {}
-        self.services = AttrGetter(self._services)
+        self.services = AttrDict()
 
-        self._extensions = {}
-        self.extensions = AttrGetter(self._extensions)
+        self.extensions = AttrDict()
 
         self._action_log = defaultdict(list)
         self._action_tables = {}
@@ -113,10 +111,10 @@ class Unchained:
                 # FIXME: is it possible to not set kwargs when fn_args are
                 # FIXME: explicitly set? (ie manual instantiation of services)
                 for param_name in param_names:
-                    if param_name in self._extensions:
-                        fn_kwargs[param_name] = self._extensions[param_name]
-                    elif param_name in self._services:
-                        fn_kwargs[param_name] = self._services[param_name]
+                    if param_name in self.extensions:
+                        fn_kwargs[param_name] = self.extensions[param_name]
+                    elif param_name in self.services:
+                        fn_kwargs[param_name] = self.services[param_name]
                 return fn(*fn_args, **fn_kwargs)
             return decorator
 
@@ -148,7 +146,7 @@ class Unchained:
         dag = nx.DiGraph()
         for name, service in self._services_registry.items():
             if not callable(service):
-                self._services[name] = service
+                self.services[name] = service
                 continue
 
             dag.add_node(name)
@@ -166,13 +164,13 @@ class Unchained:
 
         for name in instantiation_order:
             service = self._services_registry[name]
-            params = {n: self._services[n] for n in dag.successors(name)}
+            params = {n: self.services[n] for n in dag.successors(name)}
 
             if not inspect.isclass(service):
-                self._services[name] = partial(service, **params)
+                self.services[name] = partial(service, **params)
             else:
                 try:
-                    self._services[name] = service(**params)
+                    self.services[name] = service(**params)
                 except TypeError as e:
                     missing = str(e).rsplit(': ')[-1]
                     requester = f'{service.__module__}.{service.__name__}'
