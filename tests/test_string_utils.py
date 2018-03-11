@@ -1,6 +1,5 @@
-
 from flask_unchained.string_utils import (
-    camel_case, kebab_case, right_replace, snake_case, title_case)
+    camel_case, kebab_case, right_replace, slugify, snake_case, title_case)
 
 
 def test_camel_case():
@@ -32,6 +31,18 @@ def test_kebab_case():
     assert kebab_case(None) is None
 
 
+def test_slugify():
+    assert slugify('aCamelCasedString') == 'acamelcasedstring'
+    assert slugify('A_snake_cased_string') == 'a_snake_cased_string'
+    assert slugify('A-kebab-cased-string') == 'a-kebab-cased-string'
+    assert slugify('A normal sentence') == 'a-normal-sentence'
+    assert slugify('multiple   spaces') == 'multiple-spaces'
+    assert slugify('multiple---dashes') == 'multiple-dashes'
+    assert slugify('Héllö Wørld') == 'hello-wrld'  # unicode-to-ascii is so-so
+    assert slugify('') == ''
+    assert slugify(None) is None
+
+
 def test_snake_case():
     assert snake_case('aCamelCasedString') == 'a_camel_cased_string'
     assert snake_case('A_snake_cased_string') == 'a_snake_cased_string'
@@ -48,4 +59,3 @@ def test_title_case():
     assert title_case('A normal sentence') == 'A Normal Sentence'
     assert title_case('') == ''
     assert title_case(None) is None
-

@@ -1,3 +1,6 @@
+import re
+import unicodedata
+
 # alias these to the string_utils module
 from .clips_pattern import de_camel, pluralize, singularize
 
@@ -24,6 +27,18 @@ def right_replace(string, old, new, count=1):
     if not string:
         return string
     return new.join(string.rsplit(old, count))
+
+
+def slugify(string):
+    if not string:
+        return string
+
+    string = re.sub(r'[^\w\s-]', '',
+                    unicodedata.normalize('NFKD', string)
+                    .encode('ascii', 'ignore')
+                    .decode('ascii')).strip()
+
+    return re.sub(r'[-\s]+', '-', string).lower()
 
 
 def snake_case(string):
