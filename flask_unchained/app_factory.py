@@ -76,8 +76,10 @@ def _load_bundle(bundle_package_name: str, type_checker):
     for module_name in [f'{bundle_package_name}.bundle', bundle_package_name]:
         try:
             module = importlib.import_module(module_name)
-        except (ImportError, ModuleNotFoundError):
-            continue
+        except (ImportError, ModuleNotFoundError) as e:
+            if module_name in str(e):
+                continue
+            raise e
 
         try:
             return inspect.getmembers(module, type_checker(module))[0][1]
