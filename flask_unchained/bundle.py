@@ -6,7 +6,7 @@ from os import path
 from typing import *
 
 from .constants import DEV, PROD, STAGING, TEST
-from .utils import right_replace, snake_case
+from .string_utils import right_replace, snake_case
 
 
 ENV_CONFIGS = {

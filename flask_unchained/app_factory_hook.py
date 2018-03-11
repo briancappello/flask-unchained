@@ -8,8 +8,9 @@ from typing import *
 
 from .bundle import AppBundle, Bundle
 from .exceptions import NameCollisionError
+from .string_utils import snake_case
 from .unchained import Unchained
-from .utils import safe_import_module, snake_case
+from .utils import safe_import_module
 
 
 class ActionCategoryDescriptor:

@@ -1,4 +1,4 @@
-from .utils import snake_case
+from .string_utils import snake_case
 
 
 def ensure_service_name(service, name=None):

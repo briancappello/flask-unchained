@@ -12,9 +12,10 @@ import sys
 import time
 
 from flask.cli import FlaskGroup, ScriptInfo, run_command
-from flask_unchained import AppFactory, get_boolean_env
+from flask_unchained import AppFactory
 from flask_unchained.commands import clean, lint, shell, unchained, url, urls
 from flask_unchained.constants import DEV, PROD, STAGING, TEST
+from flask_unchained.utils import get_boolean_env
 from traceback import format_exc
 
 

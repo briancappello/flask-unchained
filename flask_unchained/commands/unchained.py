@@ -3,7 +3,7 @@ import click
 from flask.cli import with_appcontext
 
 from ..unchained import unchained as unchained_store
-from ..utils import title_case
+from ..string_utils import title_case
 from .utils import print_table
 
 
