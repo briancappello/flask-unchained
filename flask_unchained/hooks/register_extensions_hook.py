@@ -41,7 +41,8 @@ class RegisterExtensionsHook(AppFactoryHook):
                         extension_tuples: List[ExtensionTuple]):
         for ext in self.resolve_extension_order(extension_tuples):
             self.log_action(ext)
-            self.unchained.extensions[ext.name] = ext.extension
+            if ext.name not in self.unchained.extensions:
+                self.unchained.extensions[ext.name] = ext.extension
 
     def get_extension_tuples(self, extensions: dict):
         extension_tuples = []

@@ -11,7 +11,7 @@ class RegisterServicesHook(AppFactoryHook):
 
     def process_objects(self, app, services):
         for name, obj in services.items():
-            self.unchained.register(name, obj)
+            self.unchained.register_service(name, obj)
         self.unchained._init_services()
 
     def key_name(self, name, obj):

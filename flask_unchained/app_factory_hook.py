@@ -50,7 +50,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
     bundle_override_module_name_attr: str = \
         BundleOverrideModuleNameAttrDescriptor()
 
-    _limit_discovery_to_bundle_superclasses = False
+    _discover_from_bundle_superclasses = True
     """
     whether or not to search the whole bundle inheritance hierarchy for objects
     """
@@ -116,7 +116,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         bundle subclasses can override objects discovered in superclass bundles.
         """
         members = {}
-        hierarchy = ([bundle] if self._limit_discovery_to_bundle_superclasses
+        hierarchy = ([bundle] if not self._discover_from_bundle_superclasses
                      else bundle.iter_bundles())
         for bundle in hierarchy:
             module = self.import_bundle_module(bundle)

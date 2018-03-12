@@ -20,5 +20,7 @@ class InitExtensionsHook(RegisterExtensionsHook):
     def process_objects(self, app: Flask,
                         extension_tuples: List[ExtensionTuple]):
         for ext in self.resolve_extension_order(extension_tuples):
-            ext.extension.init_app(app)
-            self.unchained.extensions[ext.name] = ext.extension
+            instance = self.unchained.extensions.get(ext.name, ext.extension)
+            instance.init_app(app)
+            if app.name not in self.unchained.extensions:
+                self.unchained.extensions[ext.name] = instance
