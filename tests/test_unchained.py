@@ -2,10 +2,10 @@ import pytest
 
 from flask_unchained.unchained import Unchained
 
-from .fixtures.myapp import MyAppBundle
-from .fixtures.myapp.config import DevConfig
-from .fixtures.vendor_bundle import VendorBundle, awesome
-from .fixtures.vendor_bundle.hooks import Store as VendorBundleStore
+from ._bundles.myapp import MyAppBundle
+from ._bundles.myapp.config import DevConfig
+from ._bundles.vendor_bundle import VendorBundle, awesome
+from ._bundles.vendor_bundle.hooks import Store as VendorBundleStore
 
 
 def test_unchained(app):

@@ -2,20 +2,20 @@ import pytest
 
 from flask_unchained import app_factory
 
-from .fixtures.app_bundle_in_module.bundle import AppBundleInModule
-from .fixtures.bundle_in_module.bundle import ModuleBundle
-from .fixtures.empty_bundle import EmptyBundle
-from .fixtures.myapp import MyAppBundle
-from .fixtures.override_vendor_bundle import VendorBundle
-from .fixtures.vendor_bundle import VendorBundle as BaseVendorBundle
+from ._bundles.app_bundle_in_module.bundle import AppBundleInModule
+from ._bundles.bundle_in_module.bundle import ModuleBundle
+from ._bundles.empty_bundle import EmptyBundle
+from ._bundles.myapp import MyAppBundle
+from ._bundles.override_vendor_bundle import VendorBundle
+from ._bundles.vendor_bundle import VendorBundle as BaseVendorBundle
 
-app_bundle_in_module = 'tests.fixtures.app_bundle_in_module'
-bundle_in_module = 'tests.fixtures.bundle_in_module'
-empty_bundle = 'tests.fixtures.empty_bundle'
-error_bundle = 'tests.fixtures.error_bundle'
-myapp = 'tests.fixtures.myapp'
-override_vendor_bundle = 'tests.fixtures.override_vendor_bundle'
-vendor_bundle = 'tests.fixtures.vendor_bundle'
+app_bundle_in_module = 'tests._bundles.app_bundle_in_module'
+bundle_in_module = 'tests._bundles.bundle_in_module'
+empty_bundle = 'tests._bundles.empty_bundle'
+error_bundle = 'tests._bundles.error_bundle'
+myapp = 'tests._bundles.myapp'
+override_vendor_bundle = 'tests._bundles.override_vendor_bundle'
+vendor_bundle = 'tests._bundles.vendor_bundle'
 
 
 class TestLoadBundles:

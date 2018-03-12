@@ -3,10 +3,10 @@ import pytest
 from flask_unchained.hooks.configure_app_hook import ConfigureAppHook
 from flask_unchained.unchained import Unchained
 
-from .fixtures.myapp import MyAppBundle
-from .fixtures.myapp.config import DevConfig
-from .fixtures.empty_bundle import EmptyBundle
-from .fixtures.vendor_bundle import VendorBundle
+from ._bundles.myapp import MyAppBundle
+from ._bundles.myapp.config import DevConfig
+from ._bundles.empty_bundle import EmptyBundle
+from ._bundles.vendor_bundle import VendorBundle
 
 
 @pytest.fixture
@@ -23,4 +23,4 @@ class TestConfigureAppHook:
         assert app.config.get('VENDOR_KEY2') == 'vendor_key2'
 
     def test_the_app_bundle_config_module_is_named_config(self, hook):
-        assert hook.get_module_name(MyAppBundle) == 'tests.fixtures.myapp.config'
+        assert hook.get_module_name(MyAppBundle) == 'tests._bundles.myapp.config'

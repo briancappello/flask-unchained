@@ -116,7 +116,8 @@ class Bundle(metaclass=BundleMeta):
 class AppBundle(Bundle):
     @classmethod
     def get_config(cls, env: Union[DEV, PROD, STAGING, TEST]):
-        config_module_name = f'{cls.__module__}.config'
+        bundle_pkg = right_replace(cls.__module__, '.bundle', '')
+        config_module_name = f'{bundle_pkg}.config'
         config_module = importlib.import_module(config_module_name)
         try:
             config_name = ENV_CONFIGS[env]

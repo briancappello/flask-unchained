@@ -1,7 +1,7 @@
 from flask_unchained import Bundle
 
-from .fixtures.myapp import MyAppBundle
-from .fixtures.vendor_bundle import VendorBundle
+from ._bundles.myapp import MyAppBundle
+from ._bundles.vendor_bundle import VendorBundle
 
 
 class FoobarBundle(Bundle):
@@ -18,7 +18,7 @@ class TestBundle:
         assert FooBundle.module_name == 'tests.foo'
 
     def test_module_name_descriptor_strips_bundle_module_suffix(self):
-        assert VendorBundle.module_name == 'tests.fixtures.vendor_bundle'
+        assert VendorBundle.module_name == 'tests._bundles.vendor_bundle'
 
     def test_declared_name_descriptor(self):
         assert FoobarBundle.name == 'foobaz'

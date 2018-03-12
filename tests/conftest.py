@@ -1,17 +1,18 @@
 import pytest
 
-from flask import Flask
-from flask_unchained import AppConfig
-from flask_unchained.unchained import Unchained
-
-
-unchained = Unchained(AppConfig)
+from flask_unchained import AppFactory, TEST, unchained
 
 
 @pytest.fixture()
-def app():
-    app = Flask('tests')
-    unchained.init_app(app)
+def bundles(request):
+    return getattr(request.keywords.get('bundles'), 'args', [None])[0]
+
+
+@pytest.fixture()
+def app(bundles):
+    unchained._reset()
+    app = AppFactory.create_app('tests._bundles.app_bundle_in_module', TEST,
+                                bundles=bundles)
     ctx = app.app_context()
     ctx.push()
     yield app
