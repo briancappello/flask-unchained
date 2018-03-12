@@ -1,6 +1,5 @@
 import inspect
 import networkx as nx
-
 from collections import namedtuple
 from typing import *
 
@@ -25,7 +24,7 @@ class RegisterExtensionsHook(AppFactoryHook):
                                           ext.dependencies]
     bundle_module_name = 'extensions'
     name = 'extensions'
-    priority = 60
+    priority = 0
 
     def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
         extensions = self.collect_from_bundles(bundles)
@@ -42,7 +41,6 @@ class RegisterExtensionsHook(AppFactoryHook):
                         extension_tuples: List[ExtensionTuple]):
         for ext in self.resolve_extension_order(extension_tuples):
             self.log_action(ext)
-            ext.extension.init_app(app)
             self.unchained.extensions[ext.name] = ext.extension
 
     def get_extension_tuples(self, extensions: dict):

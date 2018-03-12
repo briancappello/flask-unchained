@@ -1,7 +1,7 @@
 import pytest
 
-from flask_unchained.hooks.register_extensions_hook import (
-    ExtensionTuple, RegisterExtensionsHook)
+from flask_unchained.hooks.init_extensions_hook import (
+    ExtensionTuple, InitExtensionsHook)
 from flask_unchained.unchained import Unchained
 from flask_unchained.utils import AttrDict
 
@@ -16,7 +16,7 @@ from ._bundles.vendor_bundle.extension import AwesomeExtension
 
 @pytest.fixture
 def hook():
-    return RegisterExtensionsHook(Unchained())
+    return InitExtensionsHook(Unchained())
 
 
 class TestRegisterExtensionsHook:
