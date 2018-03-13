@@ -21,7 +21,7 @@ class ActionCategoryDescriptor:
 class BundleOverrideModuleNameAttrDescriptor:
     def __get__(self, instance, cls):
         if cls.bundle_module_name:
-            return f'{cls.bundle_module_name}_module_name'
+            return f'{cls.bundle_module_name}_module_name'.replace('.', '_')
 
 
 class HookNameDescriptor:
