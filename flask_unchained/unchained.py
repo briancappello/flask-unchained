@@ -39,7 +39,7 @@ class Unchained(DependencyInjectionMixin):
 
         self.register_action_table(
             'hook',
-            ['Priority', 'Name', 'Default Bundle Module',
+            ['Priority', 'Hook Name', 'Default Bundle Module',
              'Bundle Module Override Attr', 'Description'],
             lambda hook: [hook.priority,
                           hook.name,

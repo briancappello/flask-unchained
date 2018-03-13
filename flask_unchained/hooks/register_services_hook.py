@@ -5,6 +5,9 @@ from ..di import BaseService
 
 
 class RegisterServicesHook(AppFactoryHook):
+    """
+    Registers services for dependency injection
+    """
     name = 'services'
     bundle_module_name = 'services'
     priority = 65

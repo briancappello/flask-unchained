@@ -14,7 +14,7 @@ class InitExtensionsHook(RegisterExtensionsHook):
                                           ext.extension.__class__.__name__,
                                           ext.dependencies]
     bundle_module_name = 'extensions'
-    name = 'extensions'
+    name = 'init_extensions'
     priority = 60
 
     def process_objects(self, app: Flask,

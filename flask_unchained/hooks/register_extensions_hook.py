@@ -15,7 +15,7 @@ ExtensionTuple = namedtuple('ExtensionTuple',
 
 class RegisterExtensionsHook(AppFactoryHook):
     """
-    Initializes extensions found in bundles with the current app.
+    Registers extensions found in bundles with the current app.
     """
     action_category = 'extensions'
     action_table_columns = ['name', 'class', 'dependencies']

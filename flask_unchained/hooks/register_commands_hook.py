@@ -1,5 +1,4 @@
 import click
-import inspect
 
 from flask import Flask
 from ..app_factory_hook import AppFactoryHook
@@ -9,7 +8,9 @@ from warnings import warn
 
 
 class RegisterCommandsHook(AppFactoryHook):
-    """Adds commands and command groups from bundles."""
+    """
+    Adds commands and command groups from bundles.
+    """
     bundle_module_name = 'commands'
     name = 'commands'
     priority = 95

@@ -9,6 +9,9 @@ from ..bundle import Bundle
 
 
 class RunHooksHook(AppFactoryHook):
+    """
+    An internal hook to discover and run all the other hooks
+    """
     bundle_module_name = 'hooks'
 
     def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
