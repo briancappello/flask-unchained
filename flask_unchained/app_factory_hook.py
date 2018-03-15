@@ -148,6 +148,10 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
 
     def _get_members(self, module, type_checker) -> List[Tuple[str, Any]]:
         for name, obj in inspect.getmembers(module, type_checker):
+            # FIXME obj.__module__ in module.__name__ probably isn't right
+            # for instance variables (works fine for classes, but instances
+            # seem to keep the __module__ of their *class*, not where they
+            # themselves were defined. which is fucking garbage for this.)
             if (not self._limit_discovery_to_local_declarations
                     or obj.__module__ in module.__name__):
                 yield self.key_name(name, obj), obj
