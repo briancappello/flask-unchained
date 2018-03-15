@@ -1,3 +1,7 @@
+class BundleNotFoundError(Exception):
+    pass
+
+
 class NameCollisionError(Exception):
     pass
 

@@ -9,12 +9,9 @@ from typing import *
 
 from .bundle import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
+from .exceptions import BundleNotFoundError
 from .hooks.configure_app_hook import ConfigureAppHook
 from .unchained import unchained
-
-
-class BundleNotFoundError(Exception):
-    pass
 
 
 class AppFactory:
