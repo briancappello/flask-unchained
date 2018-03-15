@@ -9,6 +9,7 @@ from typing import *
 
 from .bundle import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
+from .hooks.configure_app_hook import ConfigureAppHook
 from .unchained import unchained
 
 
@@ -25,11 +26,12 @@ class AppFactory:
                    **flask_kwargs,
                    ) -> Flask:
         app_bundle = _load_app_bundle(app_bundle_name)
-        app_config_cls = app_bundle.get_config(env)
-        bundles = _load_bundles(bundles or app_config_cls.BUNDLES)
+        app_bundle_config = ConfigureAppHook(unchained).get_config(app_bundle,
+                                                                   env)
+        bundles = _load_bundles(bundles or app_bundle_config.BUNDLES)
 
         for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
-            flask_kwargs.setdefault(k.lower(), getattr(app_config_cls, k, None))
+            flask_kwargs.setdefault(k.lower(), app_bundle_config.get(k))
 
         app = Flask(app_bundle.module_name, **flask_kwargs)
 
@@ -39,7 +41,7 @@ class AppFactory:
         for bundle in bundles:
             bundle.before_init_app(app)
 
-        unchained.init_app(app, app_config_cls, bundles)
+        unchained.init_app(app, env, bundles)
 
         for bundle in bundles:
             bundle.after_init_app(app)

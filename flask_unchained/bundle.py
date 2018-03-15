@@ -1,20 +1,10 @@
-import importlib
 import sys
 
 from flask import Flask
 from os import path
 from typing import *
 
-from .constants import DEV, PROD, STAGING, TEST
 from .string_utils import right_replace, snake_case
-
-
-ENV_CONFIGS = {
-    DEV: 'DevConfig',
-    PROD: 'ProdConfig',
-    STAGING: 'StagingConfig',
-    TEST: 'TestConfig',
-}
 
 
 def _normalize_module_name(module_name):
@@ -114,21 +104,4 @@ class Bundle(metaclass=BundleMeta):
 
 
 class AppBundle(Bundle):
-    @classmethod
-    def get_config(cls, env: Union[DEV, PROD, STAGING, TEST]):
-        bundle_pkg = right_replace(cls.__module__, '.bundle', '')
-        config_module_name = f'{bundle_pkg}.config'
-        config_module = importlib.import_module(config_module_name)
-        try:
-            config_name = ENV_CONFIGS[env]
-        except KeyError:
-            msg = f'Unsupported FLASK_ENV: "{env}" ' \
-                  f"(expected one of {', '.join(ENV_CONFIGS.keys())})"
-            raise NotImplementedError(msg)
-
-        try:
-            return getattr(config_module, config_name)
-        except AttributeError:
-            msg = f'Could not find a config class named "{config_name}" ' \
-                  f'in the {config_module_name} module'
-            raise AttributeError(msg)
+    pass

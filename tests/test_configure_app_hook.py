@@ -1,17 +1,17 @@
 import pytest
 
+from flask_unchained.constants import DEV
 from flask_unchained.hooks.configure_app_hook import ConfigureAppHook
 from flask_unchained.unchained import Unchained
 
 from ._bundles.myapp import MyAppBundle
-from ._bundles.myapp.config import DevConfig
 from ._bundles.empty_bundle import EmptyBundle
 from ._bundles.vendor_bundle import VendorBundle
 
 
 @pytest.fixture
 def hook():
-    return ConfigureAppHook(Unchained(DevConfig))
+    return ConfigureAppHook(Unchained(DEV))
 
 
 class TestConfigureAppHook:

@@ -1,10 +1,10 @@
 from collections import defaultdict, namedtuple
 from datetime import datetime
 from flask import Flask
-from typing import List, Optional, Type
+from typing import *
 
-from .app_config import AppConfig
 from .bundle import Bundle
+from .constants import DEV, PROD, STAGING, TEST
 from .di import DependencyInjectionMixin
 from .utils import format_docstring
 
@@ -16,10 +16,10 @@ ActionTableItem = namedtuple('ActionTableItem', ('column_names', 'converter'))
 
 
 class Unchained(DependencyInjectionMixin):
-    def __init__(self, app_config_cls: Optional[Type[AppConfig]] = None):
-        super().__init__(app_config_cls)
+    def __init__(self, env: Optional[Union[DEV, PROD, STAGING, TEST]] = None):
+        super().__init__(env)
 
-        self.app_config_cls = app_config_cls
+        self.env = env
         self._bundle_stores = {}
         self._shell_ctx = {}
 
@@ -49,10 +49,10 @@ class Unchained(DependencyInjectionMixin):
 
     def init_app(self,
                  app: Flask,
-                 app_config_cls: Optional[Type[AppConfig]] = None,
+                 env: Optional[Union[DEV, PROD, STAGING, TEST]] = None,
                  bundles: Optional[List[Type[Bundle]]] = None,
                  ) -> None:
-        self.app_config_cls = app_config_cls or self.app_config_cls
+        self.env = env or self.env
         app.extensions['unchained'] = self
         app.unchained = self
 
