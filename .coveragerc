@@ -1,6 +1,0 @@
-[run]
-branch = True
-source = flask_unchained
-
-[html]
-directory = coverage_html_report
