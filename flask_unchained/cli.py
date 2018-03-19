@@ -37,13 +37,8 @@ def clear_env_vars():
 def cli_create_app(_):
     # Flask's default click integration silences exceptions thrown by
     # create_app, which IMO isn't so awesome. so this gets around that.
-    app_bundle_name = os.getenv('FLASK_APP_BUNDLE', os.getenv('FLASK_APP'))
-    if not app_bundle_name:
-        raise EnvironmentError('Please set the FLASK_APP_BUNDLE environment '
-                               'variable to the module name of your app bundle')
-
     try:
-        return AppFactory.create_app(app_bundle_name, os.getenv('FLASK_ENV'))
+        return AppFactory.create_app(os.getenv('FLASK_ENV'))
     except:
         print(format_exc())
         clear_env_vars()

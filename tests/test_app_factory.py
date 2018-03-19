@@ -21,11 +21,11 @@ vendor_bundle = 'tests._bundles.vendor_bundle'
 class TestLoadBundles:
     def test_bundle_in_module(self):
         results = app_factory._load_bundles([bundle_in_module])
-        assert results == [ModuleBundle]
+        assert results == (None, [ModuleBundle])
 
     def test_bundle_in_init(self):
         results = app_factory._load_bundles([empty_bundle])
-        assert results == [EmptyBundle]
+        assert results == (None, [EmptyBundle])
 
     def test_no_bundle_found(self):
         with pytest.raises(app_factory.BundleNotFoundError) as e:
@@ -37,27 +37,19 @@ class TestLoadBundles:
         results = app_factory._load_bundles([bundle_in_module,
                                              empty_bundle,
                                              vendor_bundle])
-        assert results == [ModuleBundle, EmptyBundle, BaseVendorBundle]
+        assert results == (None, [ModuleBundle, EmptyBundle, BaseVendorBundle])
 
     def test_multiple_bundles_including_app_bundle(self):
         results = app_factory._load_bundles([bundle_in_module,
                                              empty_bundle,
                                              override_vendor_bundle,
                                              myapp])
-        assert results == [ModuleBundle, EmptyBundle, VendorBundle, MyAppBundle]
+        assert results == (
+            MyAppBundle, [ModuleBundle, EmptyBundle, VendorBundle, MyAppBundle])
 
-    def test_load_app_bundle(self):
-        result = app_factory._load_app_bundle(myapp)
-        assert result == MyAppBundle
-
-    def test_load_app_bundle_in_module(self):
-        result = app_factory._load_app_bundle(app_bundle_in_module)
-        assert result == AppBundleInModule
-
-    def test_load_app_bundle_on_non_app_bundle(self):
-        with pytest.raises(app_factory.BundleNotFoundError):
-            app_factory._load_app_bundle(vendor_bundle)
-
-    def test_load_app_bundle_on_empty_package(self):
-        with pytest.raises(app_factory.BundleNotFoundError):
-            app_factory._load_app_bundle(empty_bundle)
+    def test_multiple_bundles_including_app_bundle_in_module(self):
+        results = app_factory._load_bundles([bundle_in_module,
+                                             override_vendor_bundle,
+                                             app_bundle_in_module])
+        assert results == (
+            AppBundleInModule, [ModuleBundle, VendorBundle, AppBundleInModule])

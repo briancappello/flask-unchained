@@ -11,8 +11,7 @@ def bundles(request):
 @pytest.fixture()
 def app(bundles):
     unchained._reset()
-    app = AppFactory.create_app('tests._bundles.app_bundle_in_module', TEST,
-                                bundles=bundles)
+    app = AppFactory.create_app(TEST, bundles=bundles)
     ctx = app.app_context()
     ctx.push()
     yield app

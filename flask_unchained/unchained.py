@@ -28,8 +28,8 @@ class Unchained(DependencyInjectionMixin):
 
         self.register_action_table(
             'flask',
-            ['app_name', 'kwargs'],
-            lambda d: [d['app_name'], d['kwargs']])
+            ['app_name', 'root_path', 'kwargs'],
+            lambda d: [d['app_name'], d['root_path'], d['kwargs']])
 
         self.register_action_table(
             'bundle',
