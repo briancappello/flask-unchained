@@ -49,5 +49,7 @@ setup(
     entry_points='''
         [console_scripts]
         flask=flask_unchained.cli:main
+        [pytest11]
+        flask_unchained=flask_unchained.pytest
     ''',
 )
