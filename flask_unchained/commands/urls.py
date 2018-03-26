@@ -5,7 +5,9 @@ import inspect
 
 from flask import current_app
 from flask.cli import cli
+from typing import *
 from werkzeug.exceptions import MethodNotAllowed, NotFound
+from werkzeug.routing import Rule
 
 from .utils import print_table
 
@@ -14,48 +16,49 @@ from .utils import print_table
 @click.argument('url')
 @click.option('--method', default='GET',
               help='Method for url to match (default: GET)')
-def url(url, method):
+def url(url: str, method: str):
     """Show details for a specific URL."""
     try:
-        rule, params = (current_app.url_map
-                           .bind('localhost')
-                           .match(url, method=method, return_rule=True))
-    except (NotFound, MethodNotAllowed) as e:
-        click.echo(str(e))
+        url_rule, params = (current_app.url_map.bind('localhost')
+                            .match(url, method=method, return_rule=True))
+    except (NotFound, MethodNotAllowed)\
+            as e:
+        click.secho(str(e), fg='white', bg='red')
     else:
         headings = ('', 'Rule', 'Params', 'Endpoint', 'View', 'Options')
         print_table(headings,
-                    [(_get_http_methods(rule),
-                      rule.rule,
+                    [(_get_http_methods(url_rule),
+                      url_rule.rule,
                       _format_dict(params),
-                      rule.endpoint,
-                      _get_rule_view(rule),
-                      _format_rule_options(rule))],
+                      url_rule.endpoint,
+                      _get_rule_view(url_rule),
+                      _format_rule_options(url_rule))],
                     ['<' if col else '>' for col in headings])
 
 
 @cli.command()
-@click.option('--order', default=None,
+@click.option('--order_by', default=None,
               help='Property on Rule to order by '
                    '(default: app registration order)')
-def urls(order=None):
+def urls(order_by: Optional[str] = None):
     """List all URLs registered with the app."""
-    rules = current_app.url_map._rules
-    if order is not None:
-        rules = sorted(rules, key=lambda rule: getattr(rule, order))
+    url_rules: List[Rule] = current_app.url_map._rules
+    if order_by is not None:
+        url_rules = sorted(url_rules,
+                           key=lambda url_rule: getattr(url_rule, order_by))
 
     headings = ('', 'Rule', 'Endpoint', 'View', 'Options')
     print_table(headings,
-                [(_get_http_methods(rule),
-                  rule.rule,
-                  rule.endpoint,
-                  _get_rule_view(rule),
-                  _format_rule_options(rule),
-                  ) for rule in rules],
+                [(_get_http_methods(url_rule),
+                  url_rule.rule,
+                  url_rule.endpoint,
+                  _get_rule_view(url_rule),
+                  _format_rule_options(url_rule),
+                  ) for url_rule in url_rules],
                 ['<' if col else '>' for col in headings])
 
 
-def _get_http_methods(url_rule):
+def _get_http_methods(url_rule: Rule) -> str:
     if url_rule.methods is None:
         return 'GET'
 
@@ -63,8 +66,8 @@ def _get_http_methods(url_rule):
     return ', '.join(sorted(list(methods)))
 
 
-def _get_rule_view(rule):
-    view_fn = current_app.view_functions[rule.endpoint]
+def _get_rule_view(url_rule: Rule) -> str:
+    view_fn = current_app.view_functions[url_rule.endpoint]
     view_class = getattr(view_fn, 'view_class', None)
     view_module = inspect.getmodule(view_class if view_class else view_fn)
 
@@ -77,7 +80,7 @@ def _get_rule_view(rule):
     return f'{view_module.__name__}:{view_fn_name}'
 
 
-def _format_rule_options(url_rule):
+def _format_rule_options(url_rule: Rule) -> str:
     options = {}
 
     # FIXME: when not strict_slashes, maybe print the rule as something like:
@@ -94,11 +97,11 @@ def _format_rule_options(url_rule):
     return _format_dict(options)
 
 
-def _format_dict(d):
-    ret = ''
+def _format_dict(d: dict) -> str:
+    rv = ''
     for key, value in sorted(d.items(), key=lambda item: item[0]):
         if value is True:
-            ret += f'{key}; '
+            rv += f'{key}; '
         else:
-            ret += f'{key}: {value}; '
-    return ret.rstrip('; ')
+            rv += f'{key}: {value}; '
+    return rv.rstrip('; ')
