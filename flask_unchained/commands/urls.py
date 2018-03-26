@@ -67,7 +67,11 @@ def _get_http_methods(url_rule: Rule) -> str:
 
 
 def _get_rule_view(url_rule: Rule) -> str:
-    view_fn = current_app.view_functions[url_rule.endpoint]
+    try:
+        view_fn = current_app.view_functions[url_rule.endpoint]
+    except KeyError:
+        return '(None)'
+
     view_class = getattr(view_fn, 'view_class', None)
     view_module = inspect.getmodule(view_class if view_class else view_fn)
 
