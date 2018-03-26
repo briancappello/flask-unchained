@@ -148,12 +148,11 @@ class DependencyInjectionMixin:
             new_fn.__signature__ = sig
             new_fn.__di_name__ = fn.__name__
 
-            if not cls:
-                return new_fn
-
-            cls.__init__ = new_fn
-            cls.__signature__ = sig
-            return cls
+            if cls:
+                cls.__init__ = new_fn
+                cls.__signature__ = sig
+                return cls
+            return new_fn
 
         if used_without_parenthesis:
             return wrapper(args[0])
