@@ -6,6 +6,11 @@ config files
 * document how defaults, inheritance and overriding works
 
 
+logging
+-------
+integrate Flask-LogConfig (or Logbook, need to investigate)
+
+
 documentation - JFDI
 -------------
 

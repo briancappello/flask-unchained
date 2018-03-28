@@ -193,6 +193,8 @@ class DependencyInjectionMixin:
                 try:
                     self.services[name] = service(**params)
                 except TypeError as e:
+                    # FIXME this exception is too generic, need to better parse
+                    # its string repr (eg, got unexpected keyword argument)
                     missing = str(e).rsplit(': ')[-1]
                     requester = f'{service.__module__}.{service.__name__}'
                     raise Exception(f'No service found with the name {missing} '

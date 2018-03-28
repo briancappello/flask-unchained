@@ -2,22 +2,20 @@
 
 ## The better way to build large Flask applications.
 
-Flask Unchained is an extension that implements the Application Factory Pattern. It provides a standardized way to organize "bundles" of code, such that they become easily distributable and reusable across multiple Flask projects (similar to Django's "apps"). This project adds support for auto-discovering other Flask extensions and click commands/groups from bundles. These are some of the other bundles which can be combined to provide a complete web application framework experience with Flask:
+Flask Unchained is an extension that implements the Application Factory Pattern. It provides a standardized (by convention) way to organize "bundles" of code, such that they become easily distributable, reusable, and customizable across multiple Flask projects (similar to Django's "apps", with an architecture heavily inspired by Symfony). The ultimate goal is to provide a complete optional-batteries-included web application framework experience built on top of Flask.
 
 * [**Flask Controller Bundle**](https://github.com/briancappello/flask-controller-bundle)
     - auto-discovers blueprints, controllers, and views across bundles
     - support for declarative routing (similar to Django's `urls.py`)
-    - (think of it as the best ideas from Flask-RESTful, Flask-Classful, Flask's MethodView, and Flask-Via - combined into one coherent solution)
+    - (think of it as the best ideas from Flask-RESTful, Flask-Classful, Flask's MethodView, and Flask-Via - all combined into one coherent solution)
 
 * [**Flask API Bundle**](https://github.com/briancappello/flask-api-bundle)
-    - extends Flask Controller Bundle with support for Marshmallow serializers and Swagger API Docs
+    - extends Flask Controller Bundle with support for ModelResource controllers integrated with Marshmallow and SQLAlchemy
 
-* [**Flask Webpack Bundle**](https://github.com/briancappello/flask-webpack-bundle) (integrates Flask-Webpack)
+* [**Flask Webpack Bundle**](https://github.com/briancappello/flask-webpack-bundle) (integrates Webpack)
 
-* [**Flask SQLAlchemy Bundle**](https://github.com/briancappello/flask-sqlalchemy-bundle) (integrates Flask-SQLAlchemy and Alembic migrations)
+* [**Flask SQLAlchemy Bundle**](https://github.com/briancappello/flask-sqlalchemy-bundle) (integrates Flask-SQLAlchemy and Flask-Migrate)
     - auto-discovers models across bundles
-
-* [**Flask Fixtures Bundle**](https://github.com/briancappello/flask-fixtures-bundle) (populate SQLAlchemy models from Jinja-YAML files)
 
 * [**Flask Security Bundle**](https://github.com/briancappello/flask-security-bundle) (integrates Flask-Security)
 
