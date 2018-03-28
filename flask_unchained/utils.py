@@ -4,6 +4,8 @@ import re
 
 from importlib import import_module
 
+_missing = object()
+
 
 class AttrDict(dict):
     def __getattr__(self, key):
@@ -14,6 +16,19 @@ class AttrDict(dict):
 
     def __repr__(self):
         return f'AttrDict({super().__repr__()})'
+
+
+def deep_getattr(clsdict, bases, name, default=_missing):
+    value = clsdict.get(name, _missing)
+    if value != _missing:
+        return value
+    for base in bases:
+        value = getattr(base, name, _missing)
+        if value != _missing:
+            return value
+    if default != _missing:
+        return default
+    raise AttributeError(name)
 
 
 def format_docstring(docstring):
