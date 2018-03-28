@@ -51,14 +51,14 @@ def maybe_lru_cached(maxsize):
 
 
 @functools.lru_cache(maxsize=256)
-def de_camel(s, separator="_"):
+def de_camel(s, separator="_", _lowercase=True):
     """ Returns the string with CamelCase converted to underscores, e.g.,
         de_camel("TomDeSmedt", "-") => "tom-de-smedt"
         de_camel("getHTTPResponse2) => "get_http_response2"
     """
     s = re.sub(r"([a-z0-9])([A-Z])", "\\1%s\\2" % separator, s)
     s = re.sub(r"([A-Z])([A-Z][a-z])", "\\1%s\\2" % separator, s)
-    return s.lower()
+    return s.lower() if _lowercase else s
 
 
 #### PLURALIZE #####################################################################################
