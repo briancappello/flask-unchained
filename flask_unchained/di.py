@@ -215,21 +215,22 @@ def ensure_service_name(service, name=None):
     return name
 
 
+def setup_class_dependency_injection(class_name, clsdict):
+    if '__init__' in clsdict:
+        from .unchained import unchained
+        init = unchained.inject()(clsdict['__init__'])
+        clsdict['__init__'] = init
+        clsdict['__signature__'] = init.__signature__
+
+    for attr, fn in clsdict.items():
+        if hasattr(fn, '__signature__'):
+            fn.__di_name__ = (class_name if fn.__name__ == '__init__'
+                              else f'{class_name}.{fn.__name__}')
+
+
 class ServiceMeta(type):
     def __new__(mcs, name, bases, clsdict):
-        if '__abstract__' in clsdict:
-            return super().__new__(mcs, name, bases, clsdict)
-
-        if '__init__' in clsdict:
-            from .unchained import unchained
-            init = unchained.inject()(clsdict['__init__'])
-            clsdict['__init__'] = init
-            clsdict['__signature__'] = init.__signature__
-
-        for attr, fn in clsdict.items():
-            if hasattr(fn, '__signature__'):
-                fn.__di_name__ = (name if fn.__name__ == '__init__'
-                                  else f'{name}.{fn.__name__}')
+        setup_class_dependency_injection(name, clsdict)
 
         # extended concrete services should not inherit their super's di name
         if deep_getattr({}, bases, '__di_name__', None):
