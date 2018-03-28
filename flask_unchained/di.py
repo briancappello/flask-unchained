@@ -2,12 +2,11 @@ import functools
 import inspect
 import networkx as nx
 
-from types import FunctionType
 from typing import *
 
 from .exceptions import ServiceUsageError
 from .string_utils import snake_case
-from .utils import AttrDict
+from .utils import AttrDict, deep_getattr
 
 
 injectable = 'INJECTABLE_PARAMETER'
@@ -203,7 +202,8 @@ class DependencyInjectionMixin:
 
 
 def ensure_service_name(service, name=None):
-    name = name or getattr(service, '__di_name__', snake_case(service.__name__))
+    default = snake_case(service.__name__)
+    name = name or getattr(service, '__di_name__', default) or default
 
     try:
         setattr(service, '__di_name__', name)
@@ -228,6 +228,10 @@ class ServiceMeta(type):
             if hasattr(fn, '__signature__'):
                 fn.__di_name__ = (name if fn.__name__ == '__init__'
                                   else f'{name}.{fn.__name__}')
+
+        # extended concrete services should not inherit their super's di name
+        if deep_getattr({}, bases, '__di_name__', None):
+            clsdict['__di_name__'] = None
 
         return super().__new__(mcs, name, bases, clsdict)
 
