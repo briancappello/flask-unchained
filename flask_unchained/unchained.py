@@ -19,6 +19,7 @@ class Unchained(DependencyInjectionMixin):
     def __init__(self, env: Optional[Union[DEV, PROD, STAGING, TEST]] = None):
         super().__init__(env)
 
+        self.BUNDLES = []
         self.env = env
         self._bundle_stores = {}
         self._shell_ctx = {}
@@ -52,6 +53,7 @@ class Unchained(DependencyInjectionMixin):
                  env: Optional[Union[DEV, PROD, STAGING, TEST]] = None,
                  bundles: Optional[List[Type[Bundle]]] = None,
                  ) -> None:
+        self.BUNDLES = bundles
         self.env = env or self.env
         app.extensions['unchained'] = self
         app.unchained = self
