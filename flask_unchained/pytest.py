@@ -1,9 +1,21 @@
+import importlib
 import pytest
 
 from _pytest.fixtures import FixtureLookupError
 
 from .app_factory import AppFactory
 from .constants import TEST
+
+
+def optional_pytest_fixture(required_module_name, scope='function', params=None,
+                            autouse=False, ids=None, name=None):
+    def wrapper(fn):
+        try:
+            importlib.import_module(required_module_name)
+        except (ImportError, ModuleNotFoundError):
+            return pytest.fixture(name=name or fn.__name__)(lambda: None)
+        return pytest.fixture(scope, params, autouse, ids, name)(fn)
+    return wrapper
 
 
 @pytest.fixture(autouse=True, scope='session')
