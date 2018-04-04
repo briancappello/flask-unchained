@@ -40,22 +40,23 @@ class AppFactoryMeta(type):
 
 class AppFactoryHook(metaclass=AppFactoryMeta):
     name: str = HookNameDescriptor()
-    priority: int = 50
+    run_after: Union[List[str], Tuple[str, ...]] = []
+    run_before: Union[List[str], Tuple[str, ...]] = []
 
     action_category: str = ActionCategoryDescriptor()
-    action_table_columns = None
-    action_table_converter = lambda x: x
+    action_table_columns: Union[List[str], Tuple[str, ...]] = None
+    action_table_converter: FunctionType = lambda x: x
 
     bundle_module_name: str = None
     bundle_override_module_name_attr: str = \
         BundleOverrideModuleNameAttrDescriptor()
 
-    _discover_from_bundle_superclasses = True
+    _discover_from_bundle_superclasses: bool = True
     """
     whether or not to search the whole bundle inheritance hierarchy for objects
     """
 
-    _limit_discovery_to_local_declarations = True
+    _limit_discovery_to_local_declarations: bool = True
     """
     whether or not to only include objects declared within bundles (ie not
     imported from other places, like third-party code)

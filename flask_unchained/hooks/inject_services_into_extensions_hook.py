@@ -4,9 +4,9 @@ from ..app_factory_hook import AppFactoryHook
 
 
 class InjectServicesIntoExtensions(AppFactoryHook):
-    name = 'extension_services'
     bundle_module_name = None
-    priority = 70
+    name = 'extension_services'
+    run_after = ['init_extensions', 'services']
 
     def run_hook(self, app, bundles):
         for ext in app.unchained.extensions.values():

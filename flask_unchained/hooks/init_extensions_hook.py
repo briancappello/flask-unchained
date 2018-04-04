@@ -8,14 +8,15 @@ class InitExtensionsHook(RegisterExtensionsHook):
     """
     Initializes extensions found in bundles with the current app.
     """
+    bundle_module_name = 'extensions'
+    name = 'init_extensions'
+    run_after = ['extensions']
+
     action_category = 'extensions'
     action_table_columns = ['name', 'class', 'dependencies']
     action_table_converter = lambda ext: [ext.name,
                                           ext.extension.__class__.__name__,
                                           ext.dependencies]
-    bundle_module_name = 'extensions'
-    name = 'init_extensions'
-    priority = 60
 
     def process_objects(self, app: Flask,
                         extension_tuples: List[ExtensionTuple]):

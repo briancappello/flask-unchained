@@ -8,9 +8,9 @@ class RegisterServicesHook(AppFactoryHook):
     """
     Registers services for dependency injection
     """
-    name = 'services'
     bundle_module_name = 'services'
-    priority = 65
+    name = 'services'
+    run_after = ['init_extensions']
 
     def process_objects(self, app, services):
         for name, obj in services.items():

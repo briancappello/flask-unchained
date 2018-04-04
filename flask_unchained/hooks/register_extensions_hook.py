@@ -1,9 +1,9 @@
 import inspect
 import networkx as nx
-from collections import namedtuple
-from typing import *
 
+from collections import namedtuple
 from flask import Flask
+from typing import *
 
 from ..app_factory_hook import AppFactoryHook
 from ..bundle import Bundle
@@ -17,14 +17,14 @@ class RegisterExtensionsHook(AppFactoryHook):
     """
     Registers extensions found in bundles with the current app.
     """
+    bundle_module_name = 'extensions'
+    name = 'extensions'
+
     action_category = 'extensions'
     action_table_columns = ['name', 'class', 'dependencies']
     action_table_converter = lambda ext: [ext.name,
                                           ext.extension.__class__.__name__,
                                           ext.dependencies]
-    bundle_module_name = 'extensions'
-    name = 'extensions'
-    priority = 0
 
     def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
         extensions = self.collect_from_bundles(bundles)
@@ -67,8 +67,8 @@ class RegisterExtensionsHook(AppFactoryHook):
                 dag.add_edge(ext.name, dep_name)
 
         try:
-            return [dag.nodes[n]['extension_tuple']
-                    for n in reversed(list(nx.topological_sort(dag)))]
+            return [dag.nodes[ext_name]['extension_tuple']
+                    for ext_name in reversed(list(nx.topological_sort(dag)))]
         except nx.NetworkXUnfeasible:
             msg = 'Circular dependency detected between extensions'
             problem_graph = ', '.join([f'{a} -> {b}'

@@ -21,7 +21,7 @@ class ConfigureAppHook(AppFactoryHook):
     """
     bundle_module_name = 'config'
     name = 'configure_app'
-    priority = 5
+    run_after = ['extensions']
 
     def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
         env = self.unchained.env

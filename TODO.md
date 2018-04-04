@@ -21,7 +21,7 @@ documentation - JFDI
 tests
 -----
 
-* di subsystem, register services hook needs tests
+* add more tests for the di subsystem, eg register services hook needs tests
 * register commands hook
 
 lower priority:
@@ -36,9 +36,3 @@ flask controller bundle: should probably make this core, like DI
     > separate template-specific blueprints for each bundle in the hierarchy
         - decoupled from views/controllers
         - allows for loading and extending templates
-
-maybe?
-------
-- would be better for hooks to declare dependencies by name, instead of priority numbers
-    > does it make sense to combine the hook resolution order with that of extensions?
-        - most likely YAGNI, and it would be a somewhat big change for... what gain exactly?

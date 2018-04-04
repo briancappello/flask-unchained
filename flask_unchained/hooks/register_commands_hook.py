@@ -13,7 +13,7 @@ class RegisterCommandsHook(AppFactoryHook):
     """
     bundle_module_name = 'commands'
     name = 'commands'
-    priority = 95
+    run_after = ['extension_services']
 
     _limit_discovery_to_local_declarations = False
 
