@@ -5,13 +5,13 @@ from flask_unchained.hooks.init_extensions_hook import (
 from flask_unchained.unchained import Unchained
 from flask_unchained.utils import AttrDict
 
-from ._bundles.myapp import MyAppBundle, myext
-from ._bundles.myapp.extensions import MyExtension
+from .._bundles.myapp import MyAppBundle, myext
+from .._bundles.myapp.extensions import MyExtension
 
-from ._bundles.empty_bundle import EmptyBundle
+from .._bundles.empty_bundle import EmptyBundle
 
-from ._bundles.vendor_bundle import VendorBundle, awesome
-from ._bundles.vendor_bundle.extension import AwesomeExtension
+from .._bundles.vendor_bundle import VendorBundle, awesome
+from .._bundles.vendor_bundle.extension import AwesomeExtension
 
 
 @pytest.fixture
