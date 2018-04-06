@@ -1,4 +1,3 @@
-include LICENSE .coveragerc pytest.ini requirements.txt tox.ini
+include CHANGELOG.md LICENSE README.md requirements.txt setup.cfg tox.ini
 include *.py
-recursive-include flask_unchained *.py
 recursive-include tests *.py

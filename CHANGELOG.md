@@ -1,7 +1,8 @@
 # CHANGELOG
 
-## 0.2.0 (unreleased)
+## 0.2.0 (2018/04/06)
 
+* rename `BaseConfig` to `Config`
 * add utilities for dealing with optional dependencies:
     * `OptionalClass`: generic base class that can also be used as a substitute for extensions that have base classes defined as attributes on them
     * `optional_pytest_fixture`: allows to conditionally register test fixtures
