@@ -1,8 +1,6 @@
 config files
 ------------
 
-* rename BaseConfig to Config
-
 * document how defaults, inheritance and overriding works
 
 

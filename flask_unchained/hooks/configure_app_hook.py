@@ -6,7 +6,7 @@ from ..bundle import Bundle
 from ..constants import DEV, PROD, STAGING, TEST
 from ..utils import AttrDict
 
-BASE_CONFIG = 'BaseConfig'
+BASE_CONFIG = 'Config'
 ENV_CONFIGS = {
     DEV: 'DevConfig',
     PROD: 'ProdConfig',

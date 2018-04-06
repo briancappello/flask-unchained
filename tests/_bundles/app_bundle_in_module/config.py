@@ -1,5 +1,5 @@
-from flask_unchained import AppConfig as BaseConfig
+from flask_unchained import AppConfig
 
 
-class TestConfig(BaseConfig):
+class TestConfig(AppConfig):
     TESTING = True
