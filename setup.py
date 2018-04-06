@@ -1,5 +1,4 @@
 import os
-import versioneer
 
 from codecs import open
 from setuptools import setup, find_packages
@@ -22,8 +21,7 @@ def read_requirements(filename):
 
 setup(
     name='Flask Unchained',
-    version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
+    version='0.1.6',
     description='The better way to build large Flask applications',
     long_description=long_description,
     url='https://github.com/briancappello/flask-unchained',
