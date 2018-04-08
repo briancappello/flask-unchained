@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.2.1 (unreleased)
+## 0.2.1 (2018/04/08)
 
 * bugfix: check for `FunctionType` in `setup_class_dependency_injection`
 
