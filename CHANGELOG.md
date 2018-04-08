@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.2 (unreleased)
+
+* bugfix: Bundle.static_url_prefix renamed to Bundle.static_url_path
+
 ## 0.2.1 (2018/04/08)
 
 * bugfix: check for `FunctionType` in `setup_class_dependency_injection`

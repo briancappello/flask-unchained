@@ -4,7 +4,7 @@ from flask import Flask
 from os import path
 from typing import *
 
-from .string_utils import right_replace, snake_case
+from .string_utils import right_replace, slugify, snake_case
 
 
 def _normalize_module_name(module_name):
@@ -35,10 +35,10 @@ class StaticFolderDescriptor:
         return cls._static_folder
 
 
-class StaticUrlPrefixDescriptor:
+class StaticUrlPathDescriptor:
     def __get__(self, instance, cls):
         if cls.static_folder:
-            return f'/{cls.name}/static'
+            return f'/{slugify(cls.name)}/static'
 
 
 class TemplateFolderDescriptor:
@@ -72,7 +72,7 @@ class Bundle(metaclass=BundleMeta):
 
     template_folder: Optional[str] = TemplateFolderDescriptor()
     static_folder: Optional[str] = StaticFolderDescriptor()
-    static_url_prefix: Optional[str] = StaticUrlPrefixDescriptor()
+    static_url_path: Optional[str] = StaticUrlPathDescriptor()
 
     @classmethod
     def iter_bundles(cls, include_self=True, reverse=True):
