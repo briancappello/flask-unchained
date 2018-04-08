@@ -2,6 +2,7 @@ import functools
 import inspect
 import networkx as nx
 
+from types import FunctionType
 from typing import *
 
 from .exceptions import ServiceUsageError
@@ -223,7 +224,7 @@ def setup_class_dependency_injection(class_name, clsdict):
         clsdict['__signature__'] = init.__signature__
 
     for attr, fn in clsdict.items():
-        if hasattr(fn, '__signature__'):
+        if isinstance(fn, FunctionType) and hasattr(fn, '__signature__'):
             fn.__di_name__ = (class_name if fn.__name__ == '__init__'
                               else f'{class_name}.{fn.__name__}')
 

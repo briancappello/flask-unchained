@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.1 (unreleased)
+
+* bugfix: check for `FunctionType` in `setup_class_dependency_injection`
+
 ## 0.2.0 (2018/04/06)
 
 * rename `BaseConfig` to `Config`
