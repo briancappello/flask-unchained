@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.2.2 (unreleased)
+## 0.2.2 (2018/04/08)
 
 * bugfix: Bundle.static_url_prefix renamed to Bundle.static_url_path
 
