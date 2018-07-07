@@ -1,4 +1,5 @@
 import click
+import itertools
 
 from flask import Flask
 from ..app_factory_hook import AppFactoryHook
@@ -18,59 +19,77 @@ class RegisterCommandsHook(AppFactoryHook):
     _limit_discovery_to_local_declarations = False
 
     def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
-        commands = []
+        commands = {}
         for bundle in bundles:
-            bundle_command_groups = self.get_bundle_command_groups(bundle)
-            commands += bundle_command_groups
+            command_groups = self.get_bundle_command_groups(bundle)
+            commands.update(inherit_docstrings(command_groups, commands))
+            commands.update(self.get_bundle_commands(bundle, command_groups))
 
-            # FIXME need to allow app bundle commands to override others for
-            # consistency with overriding behavior of other hooks
-            commands += self.get_bundle_commands(bundle, bundle_command_groups)
-
-        for name, command in commands:
+        for name, command in commands.items():
             if name in app.cli.commands:
                 warn(f'Command name conflict: "{name}" is taken.')
                 continue
             app.cli.add_command(command, name)
+        return commands
 
-    def get_bundle_commands(self, bundle: Type[Bundle], bundle_command_groups):
-        commands_module = self.import_bundle_module(bundle)
-        if not commands_module:
-            return []
-
-        group_commands = {}
-        for _, group in bundle_command_groups:
-            group_commands.update(group.commands)
+    def get_bundle_commands(self, bundle: Type[Bundle], command_groups):
+        # when a command belongs to a group, we don't also want to register the command
+        # therefore we collect all the command names belonging to groups, and use that
+        # in our is_click_command type-checking fn below
+        group_command_names = set(itertools.chain.from_iterable(
+            g.commands.keys() for g in command_groups.values()))
 
         def is_click_command(obj):
-            return self.is_click_command(obj) and obj.name not in group_commands
+            return self.is_click_command(obj) and obj.name not in group_command_names
 
-        return [(command.name, command) for _, command in
-                self._collect_from_package(commands_module,
-                                           is_click_command).items()]
+        commands = {}
+        for bundle in bundle.iter_class_hierarchy():
+            module = self.import_bundle_module(bundle)
+            if not module:
+                continue
+            new = {name: command for name, command in
+                   self._collect_from_package(module, is_click_command).items()}
+            commands.update(inherit_docstrings(new, commands))
+        return commands
 
     def get_bundle_command_groups(self, bundle: Type[Bundle]):
-        commands_module = self.import_bundle_module(bundle)
-        if not commands_module:
-            return []
+        command_groups = {}
+        module_found = False
+        for bundle in bundle.iter_class_hierarchy():
+            module = self.import_bundle_module(bundle)
+            if not module:
+                continue
+            module_found = True
+            from_pkg = self._collect_from_package(module, self.is_click_group)
+            command_groups.update(from_pkg)
 
-        command_groups = self._collect_from_package(commands_module,
-                                                    self.is_click_group)
-        tuples = []
+        groups = {}
         for name in getattr(bundle, 'command_group_names', [bundle.name]):
             try:
-                command_group = command_groups[name]
+                groups[name] = command_groups[name]
             except KeyError as e:
-                warn(f'WARNING: Found a commands module for the {bundle.name} '
-                     f'bundle, but there was no command group named {e.args[0]}'
-                     f' in it. Either create one, or customize the bundle\'s '
-                     f'`command_group_names` class attribute.')
+                if module_found:
+                    warn(f'WARNING: Found a commands module for the {bundle.name} '
+                         f'bundle, but there was no command group named {e.args[0]}'
+                         f' in it. Either create one, or customize the bundle\'s '
+                         f'`command_group_names` class attribute.')
                 continue
-            tuples.append((name, command_group))
-        return tuples
+        return groups
 
     def is_click_command(self, obj) -> bool:
         return isinstance(obj, click.Command) and not self.is_click_group(obj)
 
     def is_click_group(self, obj) -> bool:
         return isinstance(obj, click.Group)
+
+
+def inherit_docstrings(new, preexisting):
+    preexisting_names = set(preexisting.keys()) & set(new.keys())
+    for name in preexisting_names:
+        if not new[name].__doc__:
+            new[name].__doc__ = preexisting[name].__doc__
+
+        if isinstance(new[name], click.Group):
+            new[name].commands = inherit_docstrings(new[name].commands,
+                                                    preexisting[name].commands)
+    return new

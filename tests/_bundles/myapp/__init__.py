@@ -4,4 +4,4 @@ from .extensions import myext
 
 
 class MyAppBundle(AppBundle):
-    pass
+    command_group_names = ('goo_group',)
