@@ -23,5 +23,5 @@ class InitExtensionsHook(RegisterExtensionsHook):
         for ext in self.resolve_extension_order(extension_tuples):
             instance = self.unchained.extensions.get(ext.name, ext.extension)
             instance.init_app(app)
-            if app.name not in self.unchained.extensions:
+            if ext.name not in self.unchained.extensions:
                 self.unchained.extensions[ext.name] = instance
