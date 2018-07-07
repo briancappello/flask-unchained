@@ -54,7 +54,7 @@ class RunHooksHook(AppFactoryHook):
                 for Hook in super().collect_from_bundle(bundle).values()]
 
     def find_bundle_store(self, bundle):
-        for bundle in bundle.iter_bundles():
+        for bundle in bundle.iter_class_hierarchy():
             hooks_pkg = self.import_bundle_module(bundle)
             if hasattr(hooks_pkg, 'Store'):
                 return hooks_pkg.Store

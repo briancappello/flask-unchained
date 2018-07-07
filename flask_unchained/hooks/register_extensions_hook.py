@@ -32,7 +32,7 @@ class RegisterExtensionsHook(AppFactoryHook):
 
     def collect_from_bundle(self, bundle: Type[Bundle]):
         extensions = {}
-        for bundle in bundle.iter_bundles():
+        for bundle in bundle.iter_class_hierarchy():
             module = self.import_bundle_module(bundle)
             extensions.update(getattr(module, 'EXTENSIONS', {}))
         return extensions

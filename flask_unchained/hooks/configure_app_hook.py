@@ -26,7 +26,7 @@ class ConfigureAppHook(AppFactoryHook):
     def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
         env = self.unchained.env
         for bundle_ in bundles:
-            for bundle in bundle_.iter_bundles():
+            for bundle in bundle_.iter_class_hierarchy():
                 bundle_config = self.get_config(bundle, env)
                 app.config.from_mapping(bundle_config)
 

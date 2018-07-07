@@ -118,7 +118,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         """
         members = {}
         hierarchy = ([bundle] if not self._discover_from_bundle_superclasses
-                     else bundle.iter_bundles())
+                     else bundle.iter_class_hierarchy())
         for bundle in hierarchy:
             module = self.import_bundle_module(bundle)
             if not module:

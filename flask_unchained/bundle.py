@@ -75,9 +75,9 @@ class Bundle(metaclass=BundleMeta):
     static_url_path: Optional[str] = StaticUrlPathDescriptor()
 
     @classmethod
-    def iter_bundles(cls, include_self=True, reverse=True):
+    def iter_class_hierarchy(cls, include_self=True, reverse=True):
         """
-        Iterate over the bundle classes in the heirarchy. Yields base-most
+        Iterate over the bundle classes in the hierarchy. Yields base-most
         super classes first (aka opposite of Method Resolution Order).
 
         :param include_self: Whether or not to yield the top-level bundle.
