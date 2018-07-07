@@ -1,6 +1,8 @@
 import importlib
 import pytest
 
+from click.testing import CliRunner
+from flask.cli import ScriptInfo
 from _pytest.fixtures import FixtureLookupError
 
 from .app_factory import AppFactory
@@ -42,3 +44,21 @@ def maybe_inject_extensions_and_services(app, request):
                 item.funcargs[arg_name] = app.unchained.extensions[arg_name]
             elif arg_name in app.unchained.services:
                 item.funcargs[arg_name] = app.unchained.services[arg_name]
+
+
+class FlaskCliRunner(CliRunner):
+    def __init__(self, app, **kwargs):
+        super().__init__(**kwargs)
+        self.app = app
+
+    def invoke(self, cli=None, args=None, **kwargs):
+        if cli is None:
+            cli = self.app.cli
+        if 'obj' not in kwargs:
+            kwargs['obj'] = ScriptInfo(create_app=lambda _: self.app)
+        return super().invoke(cli, args, **kwargs)
+
+
+@pytest.fixture()
+def cli_runner(app):
+    yield FlaskCliRunner(app)
