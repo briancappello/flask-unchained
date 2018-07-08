@@ -28,7 +28,8 @@ def url(url: str, method: str):
         headings = ('', 'Rule', 'Params', 'Endpoint', 'View', 'Options')
         print_table(headings,
                     [(_get_http_methods(url_rule),
-                      url_rule.rule,
+                      url_rule.rule if url_rule.strict_slashes
+                                    else url_rule.rule + '[/]',
                       _format_dict(params),
                       url_rule.endpoint,
                       _get_rule_view(url_rule),
@@ -50,7 +51,8 @@ def urls(order_by: Optional[str] = None):
     headings = ('', 'Rule', 'Endpoint', 'View', 'Options')
     print_table(headings,
                 [(_get_http_methods(url_rule),
-                  url_rule.rule,
+                  url_rule.rule if url_rule.strict_slashes
+                                else url_rule.rule.rstrip('/') + '[/]',
                   url_rule.endpoint,
                   _get_rule_view(url_rule),
                   _format_rule_options(url_rule),
@@ -87,8 +89,6 @@ def _get_rule_view(url_rule: Rule) -> str:
 def _format_rule_options(url_rule: Rule) -> str:
     options = {}
 
-    # FIXME: when not strict_slashes, maybe print the rule as something like:
-    # /foo/bar[/] or perhaps /foo/bar[/ -> '']
     if url_rule.strict_slashes:
         options['strict_slashes'] = True
 
