@@ -25,7 +25,7 @@ def url(url: str, method: str):
             as e:
         click.secho(str(e), fg='white', bg='red')
     else:
-        headings = ('', 'Rule', 'Params', 'Endpoint', 'View', 'Options')
+        headings = ('Method(s)', 'Rule', 'Params', 'Endpoint', 'View', 'Options')
         print_table(headings,
                     [(_get_http_methods(url_rule),
                       url_rule.rule if url_rule.strict_slashes
@@ -34,7 +34,7 @@ def url(url: str, method: str):
                       url_rule.endpoint,
                       _get_rule_view(url_rule),
                       _format_rule_options(url_rule))],
-                    ['<' if col else '>' for col in headings])
+                    ['<' if i > 0 else '>' for i, col in enumerate(headings)])
 
 
 @cli.command()
@@ -48,7 +48,7 @@ def urls(order_by: Optional[str] = None):
         url_rules = sorted(url_rules,
                            key=lambda url_rule: getattr(url_rule, order_by))
 
-    headings = ('', 'Rule', 'Endpoint', 'View', 'Options')
+    headings = ('Method(s)', 'Rule', 'Endpoint', 'View', 'Options')
     print_table(headings,
                 [(_get_http_methods(url_rule),
                   url_rule.rule if url_rule.strict_slashes
@@ -57,7 +57,7 @@ def urls(order_by: Optional[str] = None):
                   _get_rule_view(url_rule),
                   _format_rule_options(url_rule),
                   ) for url_rule in url_rules],
-                ['<' if col else '>' for col in headings])
+                ['<' if i > 0 else '>' for i, col in enumerate(headings)])
 
 
 def _get_http_methods(url_rule: Rule) -> str:
