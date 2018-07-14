@@ -5,6 +5,7 @@ from os import path
 from typing import *
 
 from .string_utils import right_replace, slugify, snake_case
+from .utils import safe_import_module
 
 
 def _normalize_module_name(module_name):
@@ -74,6 +75,8 @@ class Bundle(metaclass=BundleMeta):
     static_folder: Optional[str] = StaticFolderDescriptor()
     static_url_path: Optional[str] = StaticUrlPathDescriptor()
 
+    _deferred_functions = []
+
     @classmethod
     def iter_class_hierarchy(cls, include_self=True, reverse=True):
         """
@@ -101,6 +104,49 @@ class Bundle(metaclass=BundleMeta):
         Give bundles an opportunity to finalize app initialization
         """
         pass
+
+    @classmethod
+    def before_request(cls, fn):
+        cls._defer(lambda bp: bp.before_request(fn))
+
+    @classmethod
+    def after_request(cls, fn):
+        cls._defer(lambda bp: bp.after_request(fn))
+
+    @classmethod
+    def teardown_request(cls, fn):
+        cls._defer(lambda bp: bp.teardown_request(fn))
+
+    @classmethod
+    def context_processor(cls, fn):
+        cls._defer(lambda bp: bp.context_processor(fn))
+        return fn
+
+    @classmethod
+    def url_defaults(cls, fn):
+        cls._defer(lambda bp: bp.url_defaults(fn))
+        return fn
+
+    @classmethod
+    def url_value_preprocessor(cls, fn):
+        cls._defer(lambda bp: bp.url_value_preprocessor(fn))
+        return fn
+
+    @classmethod
+    def errorhandler(cls, code_or_exception):
+        def decorator(fn):
+            cls._defer(lambda bp: bp.register_error_handler(code_or_exception, fn))
+            return fn
+        return decorator
+
+    @classmethod
+    def has_views(cls):
+        views_module_name = getattr(cls, 'views_module_name', 'views')
+        return bool(safe_import_module(f'{cls.module_name}.{views_module_name}'))
+
+    @classmethod
+    def _defer(cls, fn):
+        cls._deferred_functions.append(fn)
 
 
 class AppBundle(Bundle):
