@@ -5,7 +5,7 @@ import re
 from flask import current_app
 from importlib import import_module
 
-_missing = object()
+_missing = type('_missing', (), {'__bool__': lambda s: False})()
 
 
 class AttrDict(dict):
