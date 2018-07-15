@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.1 (unreleased)
+
+* support loading bundles as the app bundle for development
+
 ## 0.3.0 (2018/07/14)
 
 * add `flask qtconsole` command

@@ -43,6 +43,8 @@ class AppFactory:
                 bundles.insert(0, b)
 
         app_bundle, bundles = _load_bundles(bundles)
+        if app_bundle is None:
+            return cls.create_bundle_app(bundles)
 
         for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
             flask_kwargs.setdefault(k.lower(), getattr(unchained_config, k, None))
@@ -69,6 +71,23 @@ class AppFactory:
 
         return app
 
+    @classmethod
+    def create_bundle_app(cls, bundles):
+        """
+        Creates an app for use while developing bundles
+        """
+        app = Flask(bundles[-1].module_name)
+
+        for bundle in bundles:
+            bundle.before_init_app(app)
+
+        unchained.init_app(app, DEV, bundles)
+
+        for bundle in bundles:
+            bundle.after_init_app(app)
+
+        return app
+
 
 def _load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):
     if not sys.path or sys.path[0] != os.getcwd():
@@ -78,8 +97,7 @@ def _load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):
         return importlib.import_module('unchained_config')
     except (ImportError, ModuleNotFoundError) as e:
         if env != TEST:
-            e.msg = f'{e.msg}: Could not find unchained_config.py in the ' \
-                    f'project root'
+            e.msg = f'{e.msg}: Could not find unchained_config.py in the project root'
             raise e
 
     try:

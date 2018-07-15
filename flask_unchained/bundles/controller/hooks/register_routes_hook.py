@@ -2,7 +2,7 @@ import importlib
 import inspect
 
 from flask import Flask
-from flask_unchained import AppFactoryHook, AppBundle, Bundle
+from flask_unchained import AppFactoryHook, Bundle
 from typing import *
 
 from ..attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
@@ -75,9 +75,6 @@ class RegisterRoutesHook(AppFactoryHook):
                     **route.rule_options)
 
     def get_explicit_routes(self, bundle: Type[Bundle]):
-        if not issubclass(bundle, AppBundle):
-            raise Exception('Can only get routes from the app bundle')
-
         routes_module = self.import_bundle_module(bundle)
         try:
             return getattr(routes_module, 'routes')
