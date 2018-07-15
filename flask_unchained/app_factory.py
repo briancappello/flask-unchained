@@ -12,6 +12,12 @@ from .exceptions import BundleNotFoundError
 from .unchained import unchained
 
 
+REQUIRED_BUNDLES = [
+    'flask_unchained.bundles.babel',
+    'flask_unchained.bundles.controller',
+]
+
+
 class AppFactory:
     @classmethod
     def create_app(cls,
@@ -31,8 +37,12 @@ class AppFactory:
         :return: the Flask application instance
         """
         unchained_config = _load_unchained_config(env)
-        app_bundle, bundles = _load_bundles(
-            bundles or getattr(unchained_config, 'BUNDLES', []))
+        bundles = bundles or getattr(unchained_config, 'BUNDLES', [])
+        for b in REQUIRED_BUNDLES:
+            if b not in bundles:
+                bundles.insert(0, b)
+
+        app_bundle, bundles = _load_bundles(bundles)
 
         for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
             flask_kwargs.setdefault(k.lower(), getattr(unchained_config, k, None))

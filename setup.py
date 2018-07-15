@@ -19,7 +19,9 @@ setup(
     zip_safe=False,
     python_requires='>=3.6',
     install_requires=[
+        'blinker>=1.4',
         'flask>=0.12.2',
+        'flask_babelex>=0.9.3',
         'networkx>=2.1',
     ],
     extras_require={

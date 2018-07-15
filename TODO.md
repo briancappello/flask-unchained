@@ -26,11 +26,3 @@ lower priority:
 - verify it's possible to override hooks (certainly bundles should be able to override hooks from parent bundles, but should it also be possible to override unchained's hooks too?)
 
 
-flask controller bundle: should probably make this core, like DI
-----------------------------------------------------------------
-- figure out the automatic behind-the-scenes blueprints shit
-    > all registered routes from a bundle hierarchy should be in one blueprint
-        - allows for bp-specific context processors, request hooks, etc
-    > separate template-specific blueprints for each bundle in the hierarchy
-        - decoupled from views/controllers
-        - allows for loading and extending templates

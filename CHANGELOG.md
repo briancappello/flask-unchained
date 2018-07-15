@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.3.0 (unreleased)
+
+* add `flask qtconsole` command
+* rename Bundle.iter_bundles to Bundle.iter_class_hierarchy
+* add `cli_runner` pytest fixture for testing click commands
+* fix register commands hook to support overriding groups and commands
+* support registering request hooks, template tags/filters/tests, and context processors via deferred decorators on the Unchained and Bundle classes
+* ship the controller bundle, session bundle, and babel bundles as part of core
+    - the babel and controller bundles are now mandatory, and will be included automatically
+
 ## 0.2.2 (2018/04/08)
 
 * bugfix: Bundle.static_url_prefix renamed to Bundle.static_url_path
