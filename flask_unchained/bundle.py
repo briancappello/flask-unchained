@@ -1,3 +1,4 @@
+import importlib
 import sys
 
 from flask import Flask
@@ -17,6 +18,17 @@ def _normalize_module_name(module_name):
 class ModuleNameDescriptor:
     def __get__(self, instance, cls):
         return _normalize_module_name(cls.__module__)
+
+
+class FolderDescriptor:
+    def __get__(self, instance, cls):
+        module = importlib.import_module(cls.module_name)
+        return path.dirname(module.__file__)
+
+
+class RootFolderDescriptor:
+    def __get__(self, instance, cls):
+        return path.dirname(cls.folder)
 
 
 class NameDescriptor:
@@ -70,6 +82,12 @@ class Bundle(metaclass=BundleMeta):
 
     name: str = NameDescriptor()
     """Name of the bundle. Defaults to the snake cased class name"""
+
+    folder: str = FolderDescriptor()
+    """Root directory path of the bundle's package."""
+
+    root_folder: str = RootFolderDescriptor()
+    """Root directory path of the bundle."""
 
     template_folder: Optional[str] = TemplateFolderDescriptor()
     static_folder: Optional[str] = StaticFolderDescriptor()

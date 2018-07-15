@@ -3,6 +3,7 @@
 ## 0.3.1 (unreleased)
 
 * support loading bundles as the app bundle for development
+* refactor the babel commands to work with both app and regular bundles
 
 ## 0.3.0 (2018/07/14)
 
