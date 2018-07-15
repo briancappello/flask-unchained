@@ -286,7 +286,7 @@ def _is_controller_cls(controller_cls, has_rule):
 
 
 def _is_resource_cls(resource_cls, has_rule):
-    if inspect.isclass(resource_cls) and issubclass(resource_cls, Controller):
+    if inspect.isclass(resource_cls) and issubclass(resource_cls, Resource):
         return True
 
     if has_rule:
