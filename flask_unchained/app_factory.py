@@ -76,7 +76,8 @@ class AppFactory:
         """
         Creates an app for use while developing bundles
         """
-        app = Flask(bundles[-1].module_name)
+        app = Flask(bundles[-1].module_name, template_folder=os.path.join(
+            os.path.dirname(__file__), 'templates'))
 
         for bundle in bundles:
             bundle.before_init_app(app)
