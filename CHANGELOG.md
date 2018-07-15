@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.3.0 (unreleased)
+## 0.3.0 (2018/07/14)
 
 * add `flask qtconsole` command
 * rename Bundle.iter_bundles to Bundle.iter_class_hierarchy
