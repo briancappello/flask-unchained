@@ -66,7 +66,7 @@ class BundleBlueprint(Blueprint):
         if self.has_static_folder:
             state.add_url_rule(self.static_url_path + '/<path:filename>',
                                view_func=self.send_static_file,
-                               endpoint='static')
+                               endpoint=f'{self.bundle.name}.static')
 
         for deferred in self.bundle._deferred_functions:
             deferred(self)

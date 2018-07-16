@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.2 (unreleased)
+
+* fix naming of bundle static endpoints
+
 ## 0.3.1 (2018/07/16)
 
 * support loading bundles as the app bundle for development
