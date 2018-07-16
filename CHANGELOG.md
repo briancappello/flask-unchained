@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.3.1 (unreleased)
+## 0.3.1 (2018/07/16)
 
 * support loading bundles as the app bundle for development
 * refactor the babel commands to work with both app and regular bundles
