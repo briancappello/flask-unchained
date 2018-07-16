@@ -43,7 +43,7 @@ class AppFactory:
                 bundles.insert(0, b)
 
         app_bundle, bundles = _load_bundles(bundles)
-        if app_bundle is None:
+        if app_bundle is None and env != TEST:
             return cls.create_bundle_app(bundles)
 
         for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
@@ -94,17 +94,18 @@ def _load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):
     if not sys.path or sys.path[0] != os.getcwd():
         sys.path.insert(0, os.getcwd())
 
-    try:
-        return importlib.import_module('unchained_config')
-    except (ImportError, ModuleNotFoundError) as e:
-        if env != TEST:
-            e.msg = f'{e.msg}: Could not find unchained_config.py in the project root'
+    if env == TEST:
+        try:
+            return importlib.import_module('tests._unchained_config')
+        except ImportError as e:
+            e.msg = f'{e.msg}: Could not find _unchained_config.py in the tests directory'
             raise e
 
     try:
-        return importlib.import_module('tests._unchained_config')
-    except ImportError:
-        return None
+        return importlib.import_module('unchained_config')
+    except (ImportError, ModuleNotFoundError) as e:
+        e.msg = f'{e.msg}: Could not find unchained_config.py in the project root'
+        raise e
 
 
 def _load_bundles(bundle_package_names: List[str],

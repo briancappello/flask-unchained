@@ -4,6 +4,7 @@
 
 * support loading bundles as the app bundle for development
 * refactor the babel commands to work with both app and regular bundles
+* fix discovery of tests._unchained_config module
 
 ## 0.3.0 (2018/07/14)
 
