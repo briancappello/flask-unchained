@@ -24,10 +24,6 @@ class TestRegisterRoutesHook:
         for route in routes:
             assert isinstance(route, GeneratorType)
 
-        with pytest.raises(Exception) as e:
-            hook.get_explicit_routes(VendorBundle)
-        assert 'Can only get routes from the app bundle' in str(e)
-
         with pytest.raises(AttributeError) as e:
             hook.get_explicit_routes(EmptyBundle)
         assert 'Could not find a variable named `routes`' in str(e)
