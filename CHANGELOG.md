@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.4.1 (unreleased)
+
+* fix infinite recursion error when registering urls and blueprints with babel
+
 ## 0.4.0 (2018/07/20)
 
 * make `tests._unchained_config` optional if `unchained_config` exists

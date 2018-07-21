@@ -49,7 +49,8 @@ class BundleBlueprint(Blueprint):
 
         Overridden to allow dots in endpoint names
         """
-        self.record(lambda s: s.add_url_rule(rule, endpoint, view_func, **options))
+        self.record(lambda s: s.add_url_rule(rule, endpoint, view_func,
+                                             register_with_babel=False, **options))
 
     def register(self, app, options, first_registration=False):
         """Called by :meth:`Flask.register_blueprint` to register a blueprint

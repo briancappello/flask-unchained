@@ -29,7 +29,6 @@ PLURAL_TRANSLATION_KEY_RE = re.compile(r'^(?P<domain>[a-z_]+)\.[a-z_.]+\.plural$
 
 class BabelBundle(Bundle):
     command_group_names = ('babel',)
-    enable_url_lang_code_prefix = True
     language_code_key = 'lang_code'
 
     @classmethod
@@ -40,14 +39,15 @@ class BabelBundle(Bundle):
 
     @classmethod
     def register_blueprint(cls, app: Flask, blueprint: Blueprint):
-        if cls.enable_url_lang_code_prefix:
+        if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
             url_prefix = (blueprint.url_prefix or '').rstrip('/')
-            app.register_blueprint(blueprint, url_prefix=cls.get_url_rule(url_prefix))
+            app.register_blueprint(blueprint, url_prefix=cls.get_url_rule(url_prefix),
+                                   register_with_babel=False)
 
     @classmethod
     def add_url_rule(cls, app: Flask, rule: str, **kwargs):
-        if cls.enable_url_lang_code_prefix:
-            app.add_url_rule(cls.get_url_rule(rule), **kwargs)
+        if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
+            app.add_url_rule(cls.get_url_rule(rule), register_with_babel=False, **kwargs)
 
     @classmethod
     def get_locale(cls):
@@ -71,7 +71,7 @@ class BabelBundle(Bundle):
     @classmethod
     def before_init_app(cls, app: Flask):
         babel.locale_selector_func = cls.get_locale
-        if cls.enable_url_lang_code_prefix:
+        if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
             app.url_value_preprocessor(cls.lang_code_url_value_preprocessor)
             app.url_defaults(cls.set_url_defaults)
 
@@ -128,5 +128,6 @@ def _get_domain(match):
     return Domain(domain_resources, domain=domain_name)
 
 
+# FIXME this doesn't quite work....
 _ = LocalProxy(
     lambda: lazy_gettext if current_app.config.get('LAZY_TRANSLATIONS') else gettext)

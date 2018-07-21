@@ -24,6 +24,7 @@ class Config:
         'datetime.full':    None,
         'datetime.long':    None,
     })
+    ENABLE_URL_LANG_CODE_PREFIX = False
 
 
 class DevConfig:
