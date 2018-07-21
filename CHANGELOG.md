@@ -3,6 +3,7 @@
 ## 0.3.3 (unreleased)
 
 * make `tests._unchained_config` optional if `unchained_config` exists
+* fix discovery of bundle views to include any bundle in the hierarchy with views
 
 ## 0.3.2 (2018/07/16)
 

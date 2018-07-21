@@ -158,9 +158,16 @@ class Bundle(metaclass=BundleMeta):
         return decorator
 
     @classmethod
-    def has_views(cls):
+    def _has_views_module(cls):
         views_module_name = getattr(cls, 'views_module_name', 'views')
         return bool(safe_import_module(f'{cls.module_name}.{views_module_name}'))
+
+    @classmethod
+    def has_views(cls):
+        for bundle in cls.iter_class_hierarchy():
+            if bundle._has_views_module():
+                return True
+        return False
 
     @classmethod
     def _defer(cls, fn):
