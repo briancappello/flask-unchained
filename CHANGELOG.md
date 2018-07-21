@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.4.2 (unreleased)
+## 0.4.2 (2018/07/21)
 
 * fix tests when babel_bundle isn't loaded
 
