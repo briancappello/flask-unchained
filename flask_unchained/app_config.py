@@ -19,7 +19,7 @@ class TemplateFolderDescriptor:
 
 class StaticFolderDescriptor:
     def __get__(self, instance, cls):
-        return os.path.join(cls.PROJECT_ROOT, 'public')
+        return os.path.join(cls.PROJECT_ROOT, 'static')
 
 
 class AppConfig:
@@ -29,5 +29,3 @@ class AppConfig:
     TEMPLATE_FOLDER: str = TemplateFolderDescriptor()
     STATIC_FOLDER: str = StaticFolderDescriptor()
     STATIC_URL_PATH: str = '/static'
-
-    BUNDLES = []
