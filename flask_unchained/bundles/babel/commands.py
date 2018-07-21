@@ -5,13 +5,13 @@ import sys
 
 from babel.messages.frontend import CommandLineInterface
 from flask import current_app
-from flask.cli import with_appcontext
+from flask.cli import cli, with_appcontext
 from flask_unchained import AppBundle
 
 DEFAULT_DOMAIN = 'messages'
 
 
-@click.group()
+@cli.group()
 def babel():
     """Flask Babel Bundle commands"""
 

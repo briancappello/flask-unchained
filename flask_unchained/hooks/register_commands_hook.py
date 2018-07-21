@@ -47,8 +47,7 @@ class RegisterCommandsHook(AppFactoryHook):
             module = self.import_bundle_module(bundle)
             if not module:
                 continue
-            new = {name: command for name, command in
-                   self._collect_from_package(module, is_click_command).items()}
+            new = self._collect_from_package(module, is_click_command)
             commands.update(inherit_docstrings(new, commands))
         return commands
 
