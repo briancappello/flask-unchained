@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.4.1 (unreleased)
+## 0.4.1 (2018/07/20)
 
 * fix infinite recursion error when registering urls and blueprints with babel
 
