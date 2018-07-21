@@ -66,7 +66,7 @@ def _run(str):
 
 
 def _get_babel_cfg():
-    app_bundle = current_app.unchained.BUNDLES[-1]
+    app_bundle = current_app.unchained.bundles[-1]
     app_babel_cfg = os.path.join(app_bundle.root_folder, 'babel.cfg')
     if os.path.exists(app_babel_cfg):
         return app_babel_cfg
@@ -78,7 +78,7 @@ def _get_babel_cfg():
 
 
 def _get_translations_dir():
-    app_bundle = current_app.unchained.BUNDLES[-1]
+    app_bundle = current_app.unchained.bundles[-1]
     is_user_app = issubclass(app_bundle, AppBundle)
 
     root_dir = app_bundle.root_folder if is_user_app else app_bundle.folder
@@ -93,7 +93,7 @@ def _get_translations_domain(domain):
     if domain != DEFAULT_DOMAIN:
         return domain
 
-    app_bundle = current_app.unchained.BUNDLES[-1]
+    app_bundle = current_app.unchained.bundles[-1]
     if issubclass(app_bundle, AppBundle):
         return DEFAULT_DOMAIN
 

@@ -4,6 +4,8 @@
 
 * make `tests._unchained_config` optional if `unchained_config` exists
 * fix discovery of bundle views to include any bundle in the hierarchy with views
+* subclass Flask to improve handling of adding blueprints and url rules in conjunction with the babel bundle
+* rename `unchained.BUNDLES` to `unchained.bundles`
 
 ## 0.3.2 (2018/07/16)
 

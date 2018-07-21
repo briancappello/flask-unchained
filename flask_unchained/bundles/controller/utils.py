@@ -13,11 +13,6 @@ from urllib.parse import urlsplit
 from werkzeug.local import LocalProxy
 from werkzeug.routing import BuildError
 
-try:
-    from flask_babel_bundle import FlaskBabelBundle
-except ImportError:
-    FlaskBabelBundle = None
-
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
 from .constants import _missing
 
@@ -33,13 +28,6 @@ def controller_name(cls) -> str:
             name = right_replace(name, suffix, '')
             break
     return snake_case(name)
-
-
-def get_babel_bundle(bundles):
-    if FlaskBabelBundle is None:
-        return None
-    babel_bundle = [b for b in bundles if issubclass(b, FlaskBabelBundle)]
-    return babel_bundle[0] if babel_bundle else None
 
 
 def get_param_tuples(url_rule) -> List[Tuple[str, str]]:

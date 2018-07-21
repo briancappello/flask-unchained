@@ -23,7 +23,8 @@ class Unchained(DependencyInjectionMixin):
     def __init__(self, env: Optional[Union[DEV, PROD, STAGING, TEST]] = None):
         super().__init__(env)
 
-        self.BUNDLES = []
+        self.bundles = []
+        self.babel_bundle = None
         self.env = env
         self._bundle_stores = {}
         self._shell_ctx = {}
@@ -58,7 +59,11 @@ class Unchained(DependencyInjectionMixin):
                  env: Optional[Union[DEV, PROD, STAGING, TEST]] = None,
                  bundles: Optional[List[Type[Bundle]]] = None,
                  ) -> None:
-        self.BUNDLES = bundles
+        # must import here to prevent circular import errors
+        from .bundles.babel import BabelBundle
+        self.babel_bundle = [b for b in bundles if issubclass(b, BabelBundle)][0]
+
+        self.bundles = bundles
         self.env = env or self.env
         app.extensions['unchained'] = self
         app.unchained = self

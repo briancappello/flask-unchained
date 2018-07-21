@@ -3,12 +3,12 @@ import inspect
 import os
 import sys
 
-from flask import Flask
 from typing import *
 
 from .bundle import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
 from .exceptions import BundleNotFoundError
+from .flask_unchained import FlaskUnchained
 from .unchained import unchained
 
 
@@ -24,7 +24,7 @@ class AppFactory:
                    env: Union[DEV, PROD, STAGING, TEST],
                    bundles: Optional[List[str]] = None,
                    **flask_kwargs,
-                   ) -> Flask:
+                   ) -> FlaskUnchained:
         """
         Flask Unchained Application Factory
 
@@ -34,7 +34,7 @@ class AppFactory:
         :param bundles: An optional list of bundle modules names to use (mainly
             useful for testing)
         :param flask_kwargs: keyword argument overrides to the Flask constructor
-        :return: the Flask application instance
+        :return: the FlaskUnchained application instance
         """
         unchained_config = _load_unchained_config(env)
         bundles = bundles or getattr(unchained_config, 'BUNDLES', [])
@@ -50,7 +50,7 @@ class AppFactory:
             flask_kwargs.setdefault(k.lower(), getattr(unchained_config, k, None))
 
         app_import_name = app_bundle and app_bundle.module_name or 'tests'
-        app = Flask(app_import_name, **flask_kwargs)
+        app = FlaskUnchained(app_import_name, **flask_kwargs)
 
         # Flask assumes the root_path is based on the app_import_name, but
         # we want it to be the project root, not the app bundle root
@@ -76,7 +76,7 @@ class AppFactory:
         """
         Creates an app for use while developing bundles
         """
-        app = Flask(bundles[-1].module_name, template_folder=os.path.join(
+        app = FlaskUnchained(bundles[-1].module_name, template_folder=os.path.join(
             os.path.dirname(__file__), 'templates'))
 
         for bundle in bundles:
