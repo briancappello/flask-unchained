@@ -94,17 +94,19 @@ def _load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):
     if not sys.path or sys.path[0] != os.getcwd():
         sys.path.insert(0, os.getcwd())
 
+    msg = None
     if env == TEST:
         try:
             return importlib.import_module('tests._unchained_config')
         except ImportError as e:
-            e.msg = f'{e.msg}: Could not find _unchained_config.py in the tests directory'
-            raise e
+            msg = f'{e.msg}: Could not find _unchained_config.py in the tests directory'
 
     try:
         return importlib.import_module('unchained_config')
-    except (ImportError, ModuleNotFoundError) as e:
-        e.msg = f'{e.msg}: Could not find unchained_config.py in the project root'
+    except ImportError as e:
+        if not msg:
+            msg = f'{e.msg}: Could not find unchained_config.py in the project root'
+        e.msg = msg
         raise e
 
 

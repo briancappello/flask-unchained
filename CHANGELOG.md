@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.3 (unreleased)
+
+* make `tests._unchained_config` optional if `unchained_config` exists
+
 ## 0.3.2 (2018/07/16)
 
 * fix naming of bundle static endpoints
