@@ -38,11 +38,14 @@ class BabelBundle(Bundle):
         return f'/<{cls.language_code_key}>' + rule
 
     @classmethod
-    def register_blueprint(cls, app: Flask, blueprint: Blueprint):
+    def register_blueprint(cls, app: Flask, blueprint: Blueprint, **options):
         if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
-            url_prefix = (blueprint.url_prefix or '').rstrip('/')
-            app.register_blueprint(blueprint, url_prefix=cls.get_url_rule(url_prefix),
-                                   register_with_babel=False)
+            url_prefix = (options.get('url_prefix', (blueprint.url_prefix or ''))
+                                 .rstrip('/'))
+            options = dict(**options,
+                           url_prefix=cls.get_url_rule(url_prefix),
+                           register_with_babel=False)
+            app.register_blueprint(blueprint, **options)
 
     @classmethod
     def add_url_rule(cls, app: Flask, rule: str, **kwargs):

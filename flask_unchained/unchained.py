@@ -60,8 +60,11 @@ class Unchained(DependencyInjectionMixin):
                  bundles: Optional[List[Type[Bundle]]] = None,
                  ) -> None:
         # must import here to prevent circular import errors
-        from .bundles.babel import BabelBundle
-        self.babel_bundle = [b for b in bundles if issubclass(b, BabelBundle)][0]
+        try:
+            from .bundles.babel import BabelBundle
+            self.babel_bundle = [b for b in bundles if issubclass(b, BabelBundle)][0]
+        except IndexError:
+            self.babel_bundle = None
 
         self.bundles = bundles
         self.env = env or self.env
