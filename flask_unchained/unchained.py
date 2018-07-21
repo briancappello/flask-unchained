@@ -186,11 +186,18 @@ class Unchained(DependencyInjectionMixin):
             return wrapper(arg)
         return wrapper
 
-    def template_tag(self, *args, **kwargs):
+    def template_tag(self, arg: Optional[Callable] = None,
+                     *,
+                     name: Optional[str] = None,
+                     pass_context: bool = False,
+                     inject: Optional[Union[bool, Iterable[str]]] = None,
+                     safe: bool = False,
+                     ) -> Callable:
         """
         alias for :meth:`template_global`
         """
-        return self.template_global(*args, **kwargs)
+        return self.template_global(arg, name=name, pass_context=pass_context,
+                                    inject=inject, safe=safe)
 
     def template_test(self, arg: Optional[Callable] = None,
                       *,
