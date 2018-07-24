@@ -1,0 +1,63 @@
+"""
+code adapted from:
+https://stackoverflow.com/questions/12044776/how-to-use-flask-sqlalchemy-in-a-celery-task
+"""
+import flask
+
+from celery import Celery as BaseCelery
+from dill import dumps as dill_dumps, load as dill_load
+from kombu.serialization import pickle_loads, pickle_protocol, registry
+from kombu.utils.encoding import str_to_bytes
+from werkzeug.local import LocalProxy
+
+
+class Celery(BaseCelery):
+    def __init__(self, *args, **kwargs):
+        self.register_dill()
+        super().__init__(*args, **kwargs)
+        self.override_task_class()
+
+    def override_task_class(self):
+        BaseTask = self.Task
+        _celery = self
+
+        class ContextTask(BaseTask):
+            abstract = True
+
+            def __call__(self, *args, **kwargs):
+                if flask.has_app_context():
+                    return BaseTask.__call__(self, *args, **kwargs)
+                else:
+                    with _celery.app.app_context():
+                        return BaseTask.__call__(self, *args, **kwargs)
+
+        self.Task = ContextTask
+
+    def init_app(self, app):
+        self.app = app
+        self.main = app.import_name
+        self.__autoset('broker_url', app.config.get('CELERY_BROKER_URL'))
+        self.__autoset('result_backend', app.config.get('CELERY_RESULT_BACKEND'))
+        self.config_from_object(app.config)
+        self.autodiscover_tasks(lambda: [bundle.module_name
+                                         for bundle in app.unchained.BUNDLES])
+
+    def register_dill(self):
+        def encode(obj, dumper=dill_dumps):
+            return dumper(obj, protocol=pickle_protocol)
+
+        def decode(s):
+            return pickle_loads(str_to_bytes(s), load=dill_load)
+
+        registry.register(
+            name='dill',
+            encoder=encode,
+            decoder=decode,
+            content_type='application/x-python-serialize',
+            content_encoding='binary'
+        )
+
+    def __autoset(self, key, value):
+        if value:
+            self._preconf[key] = value
+            self._preconf_set_by_auto.add(key)

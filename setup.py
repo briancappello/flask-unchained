@@ -26,6 +26,11 @@ setup(
         'networkx>=2.1',
     ],
     extras_require={
+        'celery': [
+            'celery',
+            'dill',
+            'redis',
+        ],
         'dev': [
             'coverage',
             'pytest',
