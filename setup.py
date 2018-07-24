@@ -56,6 +56,7 @@ setup(
         flask=flask_unchained.cli:main
         [pytest11]
         flask_unchained=flask_unchained.pytest
+        unchained_controller_bundle=flask_unchained.bundles.controller.pytest
         unchained_mail_bundle=flask_unchained.bundles.mail.pytest
     ''',
 )
