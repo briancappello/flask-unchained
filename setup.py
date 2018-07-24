@@ -29,6 +29,12 @@ setup(
         'admin': [
             'flask-admin',
         ],
+        'api': [
+            'apispec>=0.39.0',
+            'flask-marshmallow>=0.8.0',
+            'marshmallow>=2.13.6',
+            'marshmallow-sqlalchemy>=0.13.1',
+        ],
         'celery': [
             'celery',
             'dill',
@@ -72,6 +78,7 @@ setup(
         flask=flask_unchained.cli:main
         [pytest11]
         flask_unchained=flask_unchained.pytest
+        unchained_api_bundle=flask_unchained.bundles.api.pytest
         unchained_controller_bundle=flask_unchained.bundles.controller.pytest
         unchained_mail_bundle=flask_unchained.bundles.mail.pytest
         unchained_sqlalchemy_bundle=flask_unchained.bundles.sqlalchemy.pytest

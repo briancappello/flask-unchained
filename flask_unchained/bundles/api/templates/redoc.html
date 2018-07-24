@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <!-- needed for adaptive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- ReDoc doesn't change outer page styles -->
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <redoc spec-url="{{ url_for('api-docs.openapi_json') }}" lazy-rendering></redoc>
+    <script src="{{ redoc_url }}"></script>
+  </body>
+</html>
