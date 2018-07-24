@@ -78,7 +78,7 @@ class BundleBlueprint(Blueprint):
 
 class RegisterBundleBlueprintsHook(AppFactoryHook):
     bundle_module_name = None
-    name = 'bundle_template_folders'
+    name = 'bundle_blueprints'
     run_before = ['blueprints']
 
     action_category = 'template_folders'

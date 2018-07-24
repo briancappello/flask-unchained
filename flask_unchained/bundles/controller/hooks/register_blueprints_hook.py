@@ -7,7 +7,7 @@ class RegisterBlueprintsHook(AppFactoryHook):
     bundle_module_name = 'views'
     bundle_override_module_name_attr = 'views_module_name'
     name = 'blueprints'
-    run_after = ['bundle_template_folders']
+    run_after = ['bundle_blueprints']
 
     action_category = 'blueprints'
     action_table_columns = ['name', 'url_prefix']
