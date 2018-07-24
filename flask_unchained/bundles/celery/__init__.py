@@ -1,6 +1,6 @@
 """
-    celery_bundle
-    ~~~~~~~~~~~~~~~
+    flask_unchained.bundles.celery
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Adds Celery support to Flask Unchained
 

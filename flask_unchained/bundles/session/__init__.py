@@ -1,6 +1,6 @@
 """
-    flask_session_bundle
-    ~~~~~~~~~~~~~~~~~~~~
+    flask_unchained.bundles.session
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Adds server-side sessions support to Flask Unchained
 

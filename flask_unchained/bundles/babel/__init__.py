@@ -1,6 +1,6 @@
 """
-    flask_babel_bundle
-    ~~~~~~~~~~~~~~~~~~
+    flask_unchained.bundles.babel
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Adds support for translations to Flask Unchained
 
