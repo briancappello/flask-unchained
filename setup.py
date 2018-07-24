@@ -26,6 +26,9 @@ setup(
         'networkx>=2.1',
     ],
     extras_require={
+        'admin': [
+            'flask-admin',
+        ],
         'celery': [
             'celery',
             'dill',
