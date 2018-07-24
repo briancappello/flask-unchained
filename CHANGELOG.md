@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.4.3
+
+* export `FlaskUnchained` from the root package
+* export Flask's `current_app` from the root package
+
 ## 0.4.2 (2018/07/21)
 
 * fix tests when babel_bundle isn't loaded

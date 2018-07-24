@@ -17,6 +17,7 @@ from .app_config import AppConfig
 from .bundle import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
 from .di import BaseService, injectable
+from .flask_unchained import FlaskUnchained
 from .unchained import unchained
 from .utils import OptionalClass
 
@@ -27,5 +28,9 @@ from .bundles.controller.controller import Controller
 from .bundles.controller.decorators import route, no_route
 from .bundles.controller.resource import Resource
 from .bundles.controller.routes import (
-    controller, func, get, include, patch, post, prefix, put,resource, rule)
+    controller, func, get, include, patch, post, prefix, put, resource, rule)
 from .bundles.controller.utils import redirect, url_for
+
+
+# aliases
+from flask import current_app
