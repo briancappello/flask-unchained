@@ -2,17 +2,15 @@ import importlib
 import inspect
 import pytest
 
+from click.testing import CliRunner
 from collections import namedtuple
 from flask import Response, template_rendered
+from flask.cli import ScriptInfo
 from flask.testing import FlaskClient
+from flask_unchained import url_for
 from urllib.parse import urlparse
 from werkzeug.test import EnvironBuilder
 from werkzeug.utils import cached_property
-
-from flask_unchained.bundles.controller.utils import url_for
-
-from click.testing import CliRunner
-from flask.cli import ScriptInfo
 from _pytest.fixtures import FixtureLookupError
 
 from .app_factory import AppFactory

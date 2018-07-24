@@ -16,7 +16,7 @@ class RegisterAdminsHook(AppFactoryHook):
         admin.category_icon_classes = app.config.get('ADMIN_CATEGORY_ICON_CLASSES')
 
         db = self.unchained.extensions.db
-        models = self.unchained.flask_sqlalchemy_bundle.models
+        models = self.unchained.sqlalchemy_bundle.models
 
         for admin_name, admin_cls in objects.items():
             model = (admin_cls.model if not isinstance(admin_cls.model, str)

@@ -1,5 +1,5 @@
 try:
-    from flask_sqlalchemy_bundle import db
+    from flask_unchained.bundles.sqlalchemy import db
 except ImportError:
     db = None
 

@@ -11,9 +11,9 @@ class RegisterSessionModelHook(AppFactoryHook):
             return
 
         Session = app.session_interface.sql_session_model
-        self.unchained.flask_sqlalchemy_bundle.models['Session'] = Session
+        self.unchained.sqlalchemy_bundle.models['Session'] = Session
 
     def update_shell_context(self, ctx: dict):
-        if (self.unchained.flask_sqlalchemy_bundle
-                and 'Session' in self.unchained.flask_sqlalchemy_bundle.models):
-            ctx.update(self.unchained.flask_sqlalchemy_bundle.models)
+        if (self.unchained.sqlalchemy_bundle
+                and 'Session' in self.unchained.sqlalchemy_bundle.models):
+            ctx.update(self.unchained.sqlalchemy_bundle.models)

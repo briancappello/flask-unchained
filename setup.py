@@ -36,7 +36,9 @@ setup(
         ],
         'dev': [
             'coverage',
+            'factory_boy',
             'mock',
+            'psycopg2',
             'pytest',
             'pytest-flask',
             'tox',
@@ -47,6 +49,11 @@ setup(
         ],
         'session': [
             'flask_session',
+        ],
+        'sqlalchemy': [
+            'flask-migrate>=2.1.1',
+            'flask-sqlalchemy>=2.3',
+            'py-yaml-fixtures>=0.1.1',
         ],
     },
 
@@ -67,5 +74,6 @@ setup(
         flask_unchained=flask_unchained.pytest
         unchained_controller_bundle=flask_unchained.bundles.controller.pytest
         unchained_mail_bundle=flask_unchained.bundles.mail.pytest
+        unchained_sqlalchemy_bundle=flask_unchained.bundles.sqlalchemy.pytest
     ''',
 )

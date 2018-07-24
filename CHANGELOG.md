@@ -9,6 +9,7 @@
 * integrate the celery bundle into the `flask_unchained` package
 * integrate the webpack bundle into the `flask_unchained` package
 * integrate the admin bundle into the `flask_unchained` package
+* integrate the sqlalchemy bundle into the `flask_unchained` package
 
 ## 0.4.2 (2018/07/21)
 
