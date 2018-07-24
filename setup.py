@@ -33,6 +33,7 @@ setup(
         ],
         'dev': [
             'coverage',
+            'mock',
             'pytest',
             'pytest-flask',
             'tox',
