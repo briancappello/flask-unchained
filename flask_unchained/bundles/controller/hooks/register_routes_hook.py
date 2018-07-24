@@ -35,6 +35,11 @@ class RegisterRoutesHook(AppFactoryHook):
             if route.should_register(app):
                 self.store.endpoints[route.endpoint] = route
 
+                # FIXME this assumes a single endpoint per view function
+                if route._controller_name:
+                    key = f'{route._controller_name}.{route.method_name}'
+                    self.store.controller_endpoints[key] = route
+
         bundle_names = [(b.name, [cb.module_name for cb in b.iter_class_hierarchy()
                                   if cb.has_views()])
                         for b in app.unchained.bundles]

@@ -13,5 +13,6 @@ BundleName = str
 class Store:
     def __init__(self):
         self.endpoints: Dict[EndpointName, Route] = {}
+        self.controller_endpoints = {}
         self.bundle_routes: Dict[BundleName, List[Route]] = defaultdict(list)
         self.other_routes: List[Route] = []
