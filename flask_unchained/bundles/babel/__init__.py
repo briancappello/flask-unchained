@@ -32,6 +32,21 @@ class BabelBundle(Bundle):
     language_code_key = 'lang_code'
 
     @classmethod
+    def before_init_app(cls, app: Flask):
+        babel.locale_selector_func = cls.get_locale
+        if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
+            app.url_value_preprocessor(cls.lang_code_url_value_preprocessor)
+            app.url_defaults(cls.set_url_defaults)
+
+    @classmethod
+    def after_init_app(cls, app: Flask):
+        if not app.config.get('LAZY_TRANSLATIONS'):
+            app.jinja_env.install_gettext_callables(gettext, ngettext, newstyle=True)
+        else:
+            app.jinja_env.install_gettext_callables(lazy_gettext, lazy_ngettext,
+                                                    newstyle=True)
+
+    @classmethod
     def get_url_rule(cls, rule: Optional[str]):
         if not rule:
             return f'/<{cls.language_code_key}>'
@@ -70,21 +85,6 @@ class BabelBundle(Bundle):
     def lang_code_url_value_preprocessor(cls, endpoint: str, values: Dict[str, Any]):
         if values is not None:
             g.lang_code = values.pop(cls.language_code_key, None)
-
-    @classmethod
-    def before_init_app(cls, app: Flask):
-        babel.locale_selector_func = cls.get_locale
-        if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
-            app.url_value_preprocessor(cls.lang_code_url_value_preprocessor)
-            app.url_defaults(cls.set_url_defaults)
-
-    @classmethod
-    def after_init_app(cls, app: Flask):
-        if not app.config.get('LAZY_TRANSLATIONS'):
-            app.jinja_env.install_gettext_callables(gettext, ngettext, newstyle=True)
-        else:
-            app.jinja_env.install_gettext_callables(lazy_gettext, lazy_ngettext,
-                                                    newstyle=True)
 
 
 def gettext(*args, **kwargs):
@@ -131,6 +131,6 @@ def _get_domain(match):
     return Domain(domain_resources, domain=domain_name)
 
 
-# FIXME this doesn't quite work....
+# FIXME this doesn't quite work (app context not always available)....
 _ = LocalProxy(
     lambda: lazy_gettext if current_app.config.get('LAZY_TRANSLATIONS') else gettext)
