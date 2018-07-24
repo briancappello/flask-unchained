@@ -36,6 +36,9 @@ setup(
             'beautifulsoup4>=4.6.0',
             'lxml>=4.2.1',
         ],
+        'session': [
+            'flask_session',
+        ],
     },
 
     # https://pypi.python.org/pypi?%3Aaction=list_classifiers
