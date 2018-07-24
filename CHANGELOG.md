@@ -1,10 +1,11 @@
 # CHANGELOG
 
-## 0.4.3
+## 0.5.0 (unreleased)
 
 * export `FlaskUnchained` from the root package
 * export Flask's `current_app` from the root package
 * never register static assets routes with babel bundle
+* integrate the mail bundle into the `flask_unchained` package
 
 ## 0.4.2 (2018/07/21)
 
