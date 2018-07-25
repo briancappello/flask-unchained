@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.5.0 (unreleased)
+## 0.5.0 (2018/07/25)
 
 * export `FlaskUnchained` from the root package
 * export Flask's `current_app` from the root package
