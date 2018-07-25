@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.5.1 (unreleased)
+## 0.5.1 (2018/07/25)
 
 * include html templates in the distribution
 * add bundles to the shell context
