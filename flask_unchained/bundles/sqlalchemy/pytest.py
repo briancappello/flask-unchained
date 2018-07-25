@@ -1,9 +1,5 @@
+import factory
 import pytest
-
-try:
-    import factory
-except ImportError:
-    from flask_unchained import OptionalClass as factory
 
 from flask_unchained import unchained, injectable
 
