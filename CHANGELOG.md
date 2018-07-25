@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.1 (unreleased)
+
+* include html templates in the distribution
+
 ## 0.5.0 (2018/07/25)
 
 * export `FlaskUnchained` from the root package
