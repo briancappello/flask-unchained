@@ -6,8 +6,14 @@ from flask import current_app
 from flask.cli import with_appcontext
 from flask_migrate.cli import db
 from flask_unchained import unchained, injectable
-from py_yaml_fixtures import FixturesLoader
-from py_yaml_fixtures.factories import SQLAlchemyModelFactory
+
+maybe_db_command = db.command
+
+try:
+    from py_yaml_fixtures import FixturesLoader
+    from py_yaml_fixtures.factories import SQLAlchemyModelFactory
+except ImportError:
+    maybe_db_command = lambda: lambda fn: None
 
 from .extensions import SQLAlchemy, migrate
 
@@ -51,7 +57,7 @@ def reset_command(reset):
     click.echo('Done.')
 
 
-@db.command()
+@maybe_db_command()
 @with_appcontext
 @unchained.inject('db')
 def import_fixtures(db: SQLAlchemy = injectable):
