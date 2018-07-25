@@ -64,7 +64,7 @@ class ConfigPropertyMeta(type):
                 descriptor.key = f'{config_prefix}_{property_name}'.upper()
 
 
-class _OptionalClassAttributes(type):
+class OptionalMetaClass(type):
     __optional_class = None
 
     def __new__(mcs, name, bases, clsdict):
@@ -88,7 +88,7 @@ class _OptionalClassAttributes(type):
         pass
 
 
-class OptionalClass(metaclass=_OptionalClassAttributes):
+class OptionalClass(metaclass=OptionalMetaClass):
     """
     Use this as a generic base class if you have classes that depend on an
     optional bundle. For example, if you want to define a serializer but not

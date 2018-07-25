@@ -19,7 +19,7 @@ from .constants import DEV, PROD, STAGING, TEST
 from .di import BaseService, injectable
 from .flask_unchained import FlaskUnchained
 from .unchained import unchained
-from .utils import OptionalClass
+from .utils import OptionalClass, OptionalMetaClass
 
 from .bundles.babel import _, gettext, ngettext, lazy_gettext, lazy_ngettext
 from .bundles.controller.constants import (ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,
