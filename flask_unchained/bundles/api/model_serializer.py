@@ -1,16 +1,23 @@
 from flask_unchained.bundles.controller.attr_constants import ABSTRACT_ATTR
-from flask_marshmallow.sqla import ModelSchema, SchemaOpts
 from flask_unchained.bundles.sqlalchemy import db
 from flask_unchained import unchained
 from flask_unchained.di import setup_class_dependency_injection
 from flask_unchained.string_utils import camel_case, title_case
 from flask_unchained.utils import deep_getattr
-from marshmallow.exceptions import ValidationError as MarshmallowValidationError
-from marshmallow.marshalling import Unmarshaller as BaseUnmarshaller
-from marshmallow_sqlalchemy.convert import (
-    ModelConverter as BaseModelConverter, _should_exclude_field)
-from marshmallow_sqlalchemy.schema import ModelSchemaMeta
-
+try:
+    from flask_marshmallow.sqla import ModelSchema, SchemaOpts
+    from marshmallow.exceptions import ValidationError as MarshmallowValidationError
+    from marshmallow.marshalling import Unmarshaller as BaseUnmarshaller
+    from marshmallow_sqlalchemy.convert import (
+        ModelConverter as BaseModelConverter, _should_exclude_field)
+    from marshmallow_sqlalchemy.schema import ModelSchemaMeta
+except ImportError:
+    from flask_unchained import OptionalClass as ModelSchema
+    from flask_unchained import OptionalClass as SchemaOpts
+    from flask_unchained import OptionalClass as MarshmallowValidationError
+    from flask_unchained import OptionalClass as BaseUnmarshaller
+    from flask_unchained import OptionalClass as BaseModelConverter
+    from flask_unchained.utils import OptionalMetaClass as ModelSchemaMeta
 
 READ_ONLY_FIELDS = {'slug', 'created_at', 'updated_at'}
 

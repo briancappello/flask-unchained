@@ -1,8 +1,13 @@
-import flask_marshmallow as flask_ma
-import marshmallow as ma
-
 from flask import Flask
-from flask_marshmallow.sqla import HyperlinkRelated
+
+try:
+    import marshmallow as ma
+    import flask_marshmallow as flask_ma
+    from flask_marshmallow.sqla import HyperlinkRelated
+except ImportError:
+    from flask_unchained import OptionalClass as ma
+    from flask_unchained import OptionalClass as flask_ma
+    from flask_unchained import OptionalClass as HyperlinkRelated
 
 from ..model_serializer import ModelSerializer
 

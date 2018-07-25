@@ -1,10 +1,19 @@
-from apispec.ext.marshmallow.openapi import (
-    OpenAPIConverter as BaseOpenAPIConverter,
-    LazyDict, OrderedLazyDict,
-)
-from marshmallow.compat import iteritems
-from marshmallow.utils import is_collection
+try:
+    from apispec.ext.marshmallow.openapi import (
+        OpenAPIConverter as BaseOpenAPIConverter,
+        LazyDict, OrderedLazyDict,
+    )
+except ImportError:
+    from flask_unchained import OptionalClass as BaseOpenAPIConverter
+    from flask_unchained import OptionalClass as LazyDict
+    from flask_unchained import OptionalClass as OrderedLazyDict
 
+try:
+    from marshmallow.compat import iteritems
+    from marshmallow.utils import is_collection
+except ImportError:
+    from flask_unchained import OptionalClass as iteritems
+    from flask_unchained import OptionalClass as is_collection
 
 class OpenAPIConverter(BaseOpenAPIConverter):
     def fields2jsonschema(self, fields, schema=None, use_refs=True, dump=True, name=None):

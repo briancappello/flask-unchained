@@ -3,7 +3,11 @@ import inspect
 from flask import Flask
 from flask_unchained import AppFactoryHook
 from flask_unchained.string_utils import title_case
-from marshmallow import class_registry
+
+try:
+    from marshmallow import class_registry
+except ImportError:
+    from flask_unchained import OptionalClass as class_registry
 
 from ..model_serializer import ModelSerializer
 from ..extensions import api

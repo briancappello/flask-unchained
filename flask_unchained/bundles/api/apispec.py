@@ -1,9 +1,14 @@
-import apispec
+try:
+    import apispec
+    from apispec.ext.flask import FlaskPlugin
+    from apispec.ext.marshmallow import MarshmallowPlugin as BaseMarshmallowPlugin
+except ImportError:
+    from flask_unchained import OptionalClass as apispec
+    from flask_unchained import OptionalClass as FlaskPlugin
+    from flask_unchained import OptionalClass as BaseMarshmallowPlugin
 import json
 import os
 
-from apispec.ext.flask import FlaskPlugin
-from apispec.ext.marshmallow import MarshmallowPlugin as BaseMarshmallowPlugin
 from flask import Blueprint, current_app, render_template
 from flask_unchained import FlaskUnchained
 

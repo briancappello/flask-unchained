@@ -15,7 +15,10 @@ from flask_unchained import unchained, injectable
 from flask_unchained.utils import deep_getattr
 from functools import partial
 from http import HTTPStatus
-from marshmallow import MarshalResult
+try:
+    from marshmallow import MarshalResult
+except ImportError:
+    from flask_unchained import OptionalClass as MarshalResult
 from types import FunctionType
 from typing import *
 from werkzeug.wrappers import Response

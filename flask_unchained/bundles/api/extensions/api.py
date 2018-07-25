@@ -1,4 +1,8 @@
-from apispec.ext.marshmallow.openapi import __location_map__
+try:
+    from apispec.ext.marshmallow.openapi import __location_map__
+except ImportError:
+    from collections import defaultdict
+    __location_map__ = defaultdict(None)
 from flask_unchained import FlaskUnchained, unchained
 from flask_unchained import CREATE, DELETE, GET, LIST, PATCH, PUT
 from flask_unchained.string_utils import title_case, pluralize
