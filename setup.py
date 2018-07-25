@@ -43,10 +43,13 @@ setup(
         'dev': [
             'coverage',
             'factory_boy',
+            'm2r',
             'mock',
             'psycopg2',
             'pytest',
             'pytest-flask',
+            'sphinx',
+            'sphinx-autobuild',
             'tox',
         ],
         'mail': [
