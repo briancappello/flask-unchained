@@ -29,7 +29,7 @@ Currently Flask Unchained includes the following bundles:
 * **Mail Bundle**
    - integrates [Flask-Mail](https://pythonhosted.org/flask-mail/)
 
-* **Security Bundle**
+* [**Security Bundle**](https://github.com/briancappello/flask-security-bundle)
    - integrates a heavily cleaned up [Flask-Security](https://pythonhosted.org/Flask-Security/index.html) (just about everything except for the core session and encryption logic has been rewritten for your sanity)
 
 * **Session Bundle**
