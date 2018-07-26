@@ -17,7 +17,6 @@ class Webpack:
         self._load_assets(app)
 
         if app.unchained.env == DEV:
-            print('ok should be refreshing?')
             app.before_request(self._refresh_assets)
             if not self.assets_host:
                 from warnings import warn
