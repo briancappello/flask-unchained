@@ -9,6 +9,10 @@ _missing = type('_missing', (), {'__bool__': lambda s: False})()
 
 
 class AttrDict(dict):
+    """
+    A dictionary subclass that implements attribute access, ie using the dot operator
+    to get and set keys.
+    """
     def __getattr__(self, key):
         return self[key]
 
@@ -24,8 +28,8 @@ class ConfigProperty:
     Used in conjunction with ConfigPropertyMeta, allows extension classes to
     create properties that proxy to the config value, eg app.config.get(key)
 
-    If key is left unspecified, in will be injected by ConfigPropertyMeta,
-    defaulting to '{ext_class_name}_{property_name}'.upper()
+    If key is left unspecified, in will be injected by ``ConfigPropertyMeta``,
+    defaulting to ``f'{ext_class_name}_{property_name}'.upper()``.
     """
     def __init__(self, key=None):
         self.key = key
@@ -38,10 +42,10 @@ class ConfigPropertyMeta(type):
     """
     Use this metaclass to enable config properties on extension classes. I'm not
     sold on this being a good idea for *new* extensions, but for backwards
-    compatibility with existing extensions that have silly __getattr__ magic, I
+    compatibility with existing extensions that have silly ``__getattr__`` magic, I
     think it's a big improvement. (NOTE: this only works when the application
     context is available, but that's no different than the behavior of what it's
-    meant to replace)
+    meant to replace.)
 
     Example usage::
 
@@ -64,7 +68,12 @@ class ConfigPropertyMeta(type):
                 descriptor.key = f'{config_prefix}_{property_name}'.upper()
 
 
-class OptionalMetaClass(type):
+class OptionalMetaclass(type):
+    """
+    Use this as a generic base metaclass if you need to subclass a metaclass from
+    an optional package.
+    """
+
     __optional_class = None
 
     def __new__(mcs, name, bases, clsdict):
@@ -88,10 +97,10 @@ class OptionalMetaClass(type):
         pass
 
 
-class OptionalClass(metaclass=OptionalMetaClass):
+class OptionalClass(metaclass=OptionalMetaclass):
     """
     Use this as a generic base class if you have classes that depend on an
-    optional bundle. For example, if you want to define a serializer but not
+    optional package. For example, if you want to define a serializer but not
     depend on flask_api_bundle, you should do something like this::
 
         try:
@@ -108,6 +117,13 @@ class OptionalClass(metaclass=OptionalMetaClass):
 
 
 def deep_getattr(clsdict, bases, name, default=_missing):
+    """
+    Acts just like getattr would on a constructed class object, except this operates
+    on the pre-class-construction class dictionary and base classes. In other words,
+    first we look for the attribute in the class dictionary, and then we search all the
+    base classes (in method resolution order), finally returning the default value if
+    the attribute was not found in any of the class dictionary or base classes.
+    """
     value = clsdict.get(name, _missing)
     if value != _missing:
         return value
@@ -121,12 +137,20 @@ def deep_getattr(clsdict, bases, name, default=_missing):
 
 
 def format_docstring(docstring):
+    """
+    Strips whitespace from docstrings (both on the ends, and in the middle, replacing
+    all sequential occurrences of whitespace with a single space).
+    """
     if not docstring:
         return ''
     return re.sub(r'\s+', ' ', docstring).strip()
 
 
 def get_boolean_env(name, default):
+    """
+    Converts environment variables to boolean values, where True is defined as:
+    value.lower() in {'true', 'yes', 'y', '1'} (everything else is False)
+    """
     default = 'true' if default else 'false'
     return os.getenv(name, default).lower() in {'true', 'yes', 'y', '1'}
 

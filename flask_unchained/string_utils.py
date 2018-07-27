@@ -6,6 +6,11 @@ from .clips_pattern import de_camel, pluralize, singularize
 
 
 def camel_case(string):
+    """
+    Converts a string to camel case. For example::
+
+        camel_case('one_two_three') -> 'oneTwoThree'
+    """
     if not string:
         return string
     parts = snake_case(string).split('_')
@@ -19,6 +24,11 @@ def camel_case(string):
 
 
 def class_case(string):
+    """
+    Converts a string to class case. For example::
+
+        class_case('one_two_three') -> 'OneTwoThree'
+    """
     if not string:
         return string
     string = string.replace(' ', '_').replace('-', '_')
@@ -34,6 +44,13 @@ def class_case(string):
 
 
 def kebab_case(string):
+    """
+    Converts a string to kebab case. For example::
+
+        kebab_case('one_two_three') -> 'one-two-three'
+
+    NOTE: To generate valid slugs, use :meth:`slugify`
+    """
     if not string:
         return string
     string = string.replace('_', '-').replace(' ', '-')
@@ -41,12 +58,23 @@ def kebab_case(string):
 
 
 def right_replace(string, old, new, count=1):
+    """
+    Right replaces ``count`` occurrences of ``old`` with ``new`` in ``string``.
+    For example::
+
+        right_replace('one_two_two', 'two', 'three') -> 'one_two_three'
+    """
     if not string:
         return string
     return new.join(string.rsplit(old, count))
 
 
 def slugify(string):
+    """
+    Converts a string to a valid slug. For example::
+
+        slugify('Hello World') -> 'hello-world'
+    """
     if not string:
         return string
     string = re.sub(r'[^\w\s-]', '',
@@ -57,6 +85,11 @@ def slugify(string):
 
 
 def snake_case(string):
+    """
+    Converts a string to snake case. For example::
+
+        snake_case('OneTwoThree') -> 'one_two_three'
+    """
     if not string:
         return string
     string = string.replace('-', '_').replace(' ', '_')
@@ -64,6 +97,11 @@ def snake_case(string):
 
 
 def title_case(string):
+    """
+    Converts a string to title case. For example::
+
+        title_case('one_two_three') -> 'One Two Three'
+    """
     if not string:
         return string
     string = string.replace('_', ' ').replace('-', ' ')

@@ -14,15 +14,15 @@
 # 95% for pluralize()
 # 96% for singularize()
 
-"""
-source:
-https://github.com/clips/pattern/blob/e18fd2a5d6416d7ffdbd83c823027e1111d34af2/pattern/text/en/inflect.py
+# DEV NOTES:
+# upstream source file:
+# https://github.com/clips/pattern/blob/e18fd2a5d6416d7ffdbd83c823027e1111d34af2/pattern/text/en/inflect.py
+#
+# de_camel source (same project, different source file):
+# https://github.com/clips/pattern/blob/e18fd2a5d6416d7ffdbd83c823027e1111d34af2/pattern/text/__init__.py#L91
+#
+# Modified to add a LRU cache decorator
 
-de_camel source (same project, different source file):
-https://github.com/clips/pattern/blob/e18fd2a5d6416d7ffdbd83c823027e1111d34af2/pattern/text/__init__.py#L91
-
-Modified to add a LRU cache decorator
-"""
 
 from __future__ import unicode_literals
 from __future__ import division
