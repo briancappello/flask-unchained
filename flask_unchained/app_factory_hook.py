@@ -1,3 +1,7 @@
+"""
+    AppFactoryHook
+    --------------
+"""
 import importlib
 import inspect
 import pkgutil

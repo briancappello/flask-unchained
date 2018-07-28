@@ -1,3 +1,7 @@
+"""
+    Unchained
+    ---------
+"""
 import functools
 import inspect
 import jinja2
@@ -23,6 +27,12 @@ ActionTableItem = namedtuple('ActionTableItem', ('column_names', 'converter'))
 
 
 class Unchained:
+    """
+    The Unchained Flask extension. Responsible for loading bundles, keeping references
+    to all of the various discovered bundles and classes, and for doing dependency
+    injection.
+    """
+
     def __init__(self, env: Optional[Union[DEV, PROD, STAGING, TEST]] = None):
         self._initialized = False
         self._services_registry = {}
@@ -88,7 +98,7 @@ class Unchained:
 
     def _reset(self):
         """
-        this method is for testing only!
+        This method is for use by tests only!
         """
         self._initialized = False
         self._services_registry = {}
@@ -97,7 +107,7 @@ class Unchained:
 
     def service(self, name: str = None):
         """
-        decorator to mark something as a service
+        Decorator to mark something as a service.
         """
         if self._initialized:
             from warnings import warn
@@ -112,7 +122,7 @@ class Unchained:
 
     def register_service(self, name: str, service: Any):
         """
-        method to register a service
+        Method to register a service.
         """
         if not inspect.isclass(service):
             if hasattr(service, '__class__'):
@@ -130,7 +140,7 @@ class Unchained:
 
     def inject(self, *args):
         """
-        Decorator to mark a callable as needing dependencies injected
+        Decorator to mark a callable as needing dependencies injected.
         """
         used_without_parenthesis = len(args) and callable(args[0])
         has_explicit_args = len(args) and all(isinstance(x, str) for x in args)
@@ -271,60 +281,205 @@ class Unchained:
         self._deferred_functions.append(fn)
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
+        """
+        Register a new url rule. Acts the same as :meth:`~flask.Flask.add_url_rule`.
+        """
         self._defer(lambda app: app.add_url_rule(rule,
                                                  endpoint=endpoint,
                                                  view_func=view_func,
                                                  **options))
 
     def before_request(self, fn):
+        """
+        Registers a function to run before each request.
+
+        For example, this can be used to open a database connection, or to load
+        the logged in user from the session.
+
+        The function will be called without any arguments. If it returns a
+        non-None value, the value is handled as if it was the return value from
+        the view, and further request handling is stopped.
+        """
         self._defer(lambda app: app.before_request(fn))
         return fn
 
     def before_first_request(self, fn):
+        """
+        Registers a function to be run before the first request to this
+        instance of the application.
+
+        The function will be called without any arguments and its return
+        value is ignored.
+        """
         self._defer(lambda app: app.before_first_request(fn))
         return fn
 
     def after_request(self, fn):
+        """
+        Register a function to be run after each request.
+
+        Your function must take one parameter, an instance of
+        :attr:`response_class` and return a new response object or the
+        same (see :meth:`process_response`).
+
+        As of Flask 0.7 this function might not be executed at the end of the
+        request in case an unhandled exception occurred.
+        """
         self._defer(lambda app: app.after_request(fn))
         return fn
 
     def teardown_request(self, fn):
+        """
+        Register a function to be run at the end of each request,
+        regardless of whether there was an exception or not.  These functions
+        are executed when the request context is popped, even if not an
+        actual request was performed.
+
+        Example::
+
+            ctx = app.test_request_context()
+            ctx.push()
+            ...
+            ctx.pop()
+
+        When ``ctx.pop()`` is executed in the above example, the teardown
+        functions are called just before the request context moves from the
+        stack of active contexts.  This becomes relevant if you are using
+        such constructs in tests.
+
+        Generally teardown functions must take every necessary step to avoid
+        that they will fail.  If they do execute code that might fail they
+        will have to surround the execution of these code by try/except
+        statements and log occurring errors.
+
+        When a teardown function was called because of an exception it will
+        be passed an error object.
+
+        The return values of teardown functions are ignored.
+
+        .. admonition:: Debug Note
+
+           In debug mode Flask will not tear down a request on an exception
+           immediately.  Instead it will keep it alive so that the interactive
+           debugger can still access it.  This behavior can be controlled
+           by the ``PRESERVE_CONTEXT_ON_EXCEPTION`` configuration variable.
+        """
         self._defer(lambda app: app.teardown_request(fn))
         return fn
 
     def teardown_appcontext(self, fn):
+        """
+        Registers a function to be called when the application context
+        ends.  These functions are typically also called when the request
+        context is popped.
+
+        Example::
+
+            ctx = app.app_context()
+            ctx.push()
+            ...
+            ctx.pop()
+
+        When ``ctx.pop()`` is executed in the above example, the teardown
+        functions are called just before the app context moves from the
+        stack of active contexts.  This becomes relevant if you are using
+        such constructs in tests.
+
+        Since a request context typically also manages an application
+        context it would also be called when you pop a request context.
+
+        When a teardown function was called because of an unhandled exception
+        it will be passed an error object. If an :meth:`errorhandler` is
+        registered, it will handle the exception and the teardown will not
+        receive it.
+
+        The return values of teardown functions are ignored.
+        """
         self._defer(lambda app: app.teardown_appcontext(fn))
         return fn
 
     def context_processor(self, fn):
+        """
+        Registers a template context processor function.
+        """
         self._defer(lambda app: app.context_processor(fn))
         return fn
 
     def shell_context_processor(self, fn):
+        """
+        Registers a shell context processor function.
+        """
         self._defer(lambda app: app.shell_context_processor(fn))
         return fn
 
     def url_value_preprocessor(self, fn):
+        """
+        Register a URL value preprocessor function for all view
+        functions in the application. These functions will be called before the
+        :meth:`before_request` functions.
+
+        The function can modify the values captured from the matched url before
+        they are passed to the view. For example, this can be used to pop a
+        common language code value and place it in ``g`` rather than pass it to
+        every view.
+
+        The function is passed the endpoint name and values dict. The return
+        value is ignored.
+        """
         self._defer(lambda app: app.url_value_preprocessor(fn))
         return fn
 
     def url_defaults(self, fn):
+        """
+        Callback function for URL defaults for all view functions of the
+        application.  It's called with the endpoint and values and should
+        update the values passed in place.
+        """
         self._defer(lambda app: app.url_defaults(fn))
         return fn
 
     def errorhandler(self, code_or_exception):
+        """
+        Register a function to handle errors by code or exception class.
+
+        A decorator that is used to register a function given an
+        error code.  Example::
+
+            @app.errorhandler(404)
+            def page_not_found(error):
+                return 'This page does not exist', 404
+
+        You can also register handlers for arbitrary exceptions::
+
+            @app.errorhandler(DatabaseError)
+            def special_exception_handler(error):
+                return 'Database connection failed', 500
+
+        :param code_or_exception: the code as integer for the handler, or
+                                  an arbitrary exception
+        """
         def decorator(fn):
             self._defer(lambda app: app.register_error_handler(code_or_exception, fn))
             return fn
         return decorator
 
-    def template_filter(self, arg: Optional[Callable] = None,
+    def template_filter(self,
+                        arg: Optional[Callable] = None,
                         *,
                         name: Optional[str] = None,
                         pass_context: bool = False,
                         inject: Optional[Union[bool, Iterable[str]]] = None,
                         safe: bool = False,
                         ) -> Callable:
+        """
+        Decorator to mark a function as a jinja template filter.
+
+        :param name: The name of the filter, if different from the function name.
+        :param pass_context: Whether or not to pass the template context into the filter.
+            If true, the first argument must be the context.
+        :param inject: Whether or not this filter needs any dependencies injected.
+        :param safe: Whether or not to mark the output of this filter as html-safe.
+        """
         def wrapper(fn):
             fn = _inject(fn, inject)
             if safe:
@@ -338,13 +493,23 @@ class Unchained:
             return wrapper(arg)
         return wrapper
 
-    def template_global(self, arg: Optional[Callable] = None,
+    def template_global(self,
+                        arg: Optional[Callable] = None,
                         *,
                         name: Optional[str] = None,
                         pass_context: bool = False,
                         inject: Optional[Union[bool, Iterable[str]]] = None,
                         safe: bool = False,
                         ) -> Callable:
+        """
+        Decorator to mark a function as a jinja template global (tag).
+
+        :param name: The name of the tag, if different from the function name.
+        :param pass_context: Whether or not to pass the template context into the tag.
+            If true, the first argument must be the context.
+        :param inject: Whether or not this tag needs any dependencies injected.
+        :param safe: Whether or not to mark the output of this tag as html-safe.
+        """
         def wrapper(fn):
             fn = _inject(fn, inject)
             if safe:
@@ -358,7 +523,8 @@ class Unchained:
             return wrapper(arg)
         return wrapper
 
-    def template_tag(self, arg: Optional[Callable] = None,
+    def template_tag(self,
+                     arg: Optional[Callable] = None,
                      *,
                      name: Optional[str] = None,
                      pass_context: bool = False,
@@ -366,17 +532,31 @@ class Unchained:
                      safe: bool = False,
                      ) -> Callable:
         """
-        alias for :meth:`template_global`
+        Alias for :meth:`template_global`.
+
+        :param name: The name of the tag, if different from the function name.
+        :param pass_context: Whether or not to pass the template context into the tag.
+            If true, the first argument must be the context.
+        :param inject: Whether or not this tag needs any dependencies injected.
+        :param safe: Whether or not to mark the output of this tag as html-safe.
         """
         return self.template_global(arg, name=name, pass_context=pass_context,
                                     inject=inject, safe=safe)
 
-    def template_test(self, arg: Optional[Callable] = None,
+    def template_test(self,
+                      arg: Optional[Callable] = None,
                       *,
                       name: Optional[str] = None,
                       inject: Optional[Union[bool, Iterable[str]]] = None,
                       safe: bool = False,
                       ) -> Callable:
+        """
+        Decorator to mark a function as a jinja template test.
+
+        :param name: The name of the test, if different from the function name.
+        :param inject: Whether or not this test needs any dependencies injected.
+        :param safe: Whether or not to mark the output of this test as html-safe.
+        """
         def wrapper(fn):
             fn = _inject(fn, inject)
             if safe:

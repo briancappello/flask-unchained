@@ -1,3 +1,7 @@
+"""
+    AppFactory
+    ----------
+"""
 import importlib
 import inspect
 import os
@@ -19,6 +23,12 @@ REQUIRED_BUNDLES = [
 
 
 class AppFactory:
+    """
+    This class implements the `Application Factory Pattern`_ for Flask Unchained.
+
+    .. _Application Factory Pattern: http://flask.pocoo.org/docs/1.0/patterns/appfactories/
+    """
+
     @classmethod
     def create_app(cls,
                    env: Union[DEV, PROD, STAGING, TEST],
@@ -26,14 +36,20 @@ class AppFactory:
                    **flask_kwargs,
                    ) -> FlaskUnchained:
         """
-        Flask Unchained Application Factory
+        Flask Unchained Application Factory. Returns an instance of
+        :class:`FlaskUnchained`.
+
+        Example Usage::
+
+            app = AppFactory.create_app(DEV)
 
         :param env: Which environment the app should run in. Should be one of
             "development", "production", "staging", or "test" (you can import
-            them: `from flask_unchained import DEV, PROD, STAGING, TEST`)
+            them: ``from flask_unchained import DEV, PROD, STAGING, TEST``)
         :param bundles: An optional list of bundle modules names to use (mainly
             useful for testing)
-        :param flask_kwargs: keyword argument overrides to the Flask constructor
+        :param flask_kwargs: keyword argument overrides for the :class:`FlaskUnchained`
+            constructor
         :return: the FlaskUnchained application instance
         """
         unchained_config = _load_unchained_config(env)
@@ -44,7 +60,7 @@ class AppFactory:
 
         app_bundle, bundles = _load_bundles(bundles)
         if app_bundle is None and env != TEST:
-            return cls.create_bundle_app(bundles)
+            return cls._create_bundle_app(bundles)
 
         for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
             flask_kwargs.setdefault(k.lower(), getattr(unchained_config, k, None))
@@ -72,7 +88,7 @@ class AppFactory:
         return app
 
     @classmethod
-    def create_bundle_app(cls, bundles):
+    def _create_bundle_app(cls, bundles):
         """
         Creates an app for use while developing bundles
         """

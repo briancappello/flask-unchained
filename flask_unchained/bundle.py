@@ -1,3 +1,7 @@
+"""
+    Bundle
+    ------
+"""
 import importlib
 import sys
 
@@ -77,37 +81,49 @@ class BundleMeta(type):
 
 
 class Bundle(metaclass=BundleMeta):
+    """
+    Base class for bundles.
+    """
+
     module_name: str = ModuleNameDescriptor()
-    """Top-level module name of the bundle (dot notation)"""
+    """
+    Top-level module name of the bundle (dot notation). Automatically determined.
+    """
 
     name: str = NameDescriptor()
-    """Name of the bundle. Defaults to the snake cased class name"""
+    """
+    Name of the bundle. Defaults to the snake cased class name.
+    """
 
     folder: str = FolderDescriptor()
-    """Root directory path of the bundle's package."""
+    """
+    Root directory path of the bundle's package. Automatically determined.
+    """
 
     root_folder: str = RootFolderDescriptor()
-    """Root directory path of the bundle."""
+    """
+    Root directory path of the bundle. Automatically determined.
+    """
 
     template_folder: Optional[str] = TemplateFolderDescriptor()
+    """
+    Root directory path of the bundle's template folder. By default, if there exists
+    a folder named ``templates`` in the bundle package, it will be used, otherwise None.
+    """
+
     static_folder: Optional[str] = StaticFolderDescriptor()
+    """
+    Root directory path of the bundle's static assets folder. By default, if there exists
+    a folder named ``static`` in the bundle package, it will be used, otherwise None.
+    """
+
     static_url_path: Optional[str] = StaticUrlPathDescriptor()
+    """
+    Url path where this bundle's static assets will be served from. If static_folder is
+    set, this will default to ``/<bundle.name>/static``, otherwise None.
+    """
 
     _deferred_functions = []
-
-    @classmethod
-    def iter_class_hierarchy(cls, include_self=True, reverse=True):
-        """
-        Iterate over the bundle classes in the hierarchy. Yields base-most
-        super classes first (aka opposite of Method Resolution Order).
-
-        :param include_self: Whether or not to yield the top-level bundle.
-        :param reverse: Pass False to yield bundles in Method Resolution Order.
-        """
-        supers = cls.__mro__[(0 if include_self else 1):]
-        for bundle in (supers if not reverse else reversed(supers)):
-            if issubclass(bundle, Bundle) and bundle not in {AppBundle, Bundle}:
-                yield bundle
 
     @classmethod
     def before_init_app(cls, app: Flask):
@@ -125,37 +141,107 @@ class Bundle(metaclass=BundleMeta):
 
     @classmethod
     def before_request(cls, fn):
+        """
+        Like :meth:`~flask.Flask.before_request` but for a bundle.  This function
+        is only executed before each request that is handled by a function of
+        that bundle.
+        """
         cls._defer(lambda bp: bp.before_request(fn))
 
     @classmethod
     def after_request(cls, fn):
+        """
+        Like :meth:`~flask.Flask.after_request` but for a bundle.  This function
+        is only executed after each request that is handled by a function of
+        that bundle.
+        """
         cls._defer(lambda bp: bp.after_request(fn))
 
     @classmethod
     def teardown_request(cls, fn):
+        """
+        Like :meth:`~flask.Flask.teardown_request` but for a bundle.  This
+        function is only executed when tearing down requests handled by a
+        function of that bundle.  Teardown request functions are executed
+        when the request context is popped, even when no actual request was
+        performed.
+        """
         cls._defer(lambda bp: bp.teardown_request(fn))
 
     @classmethod
     def context_processor(cls, fn):
+        """
+        Like :meth:`~flask.Flask.context_processor` but for a bundle.  This
+        function is only executed for requests handled by a bundle.
+        """
         cls._defer(lambda bp: bp.context_processor(fn))
         return fn
 
     @classmethod
     def url_defaults(cls, fn):
+        """
+        Callback function for URL defaults for this bundle.  It's called
+        with the endpoint and values and should update the values passed
+        in place.
+        """
         cls._defer(lambda bp: bp.url_defaults(fn))
         return fn
 
     @classmethod
     def url_value_preprocessor(cls, fn):
+        """
+        Registers a function as URL value preprocessor for this
+        bundle.  It's called before the view functions are called and
+        can modify the url values provided.
+        """
         cls._defer(lambda bp: bp.url_value_preprocessor(fn))
         return fn
 
     @classmethod
     def errorhandler(cls, code_or_exception):
+        """
+        Registers an error handler that becomes active for this bundle
+        only.  Please be aware that routing does not happen local to a
+        bundle so an error handler for 404 usually is not handled by
+        a bundle unless it is caused inside a view function.  Another
+        special case is the 500 internal server error which is always looked
+        up from the application.
+
+        Otherwise works as the :meth:`~flask.Flask.errorhandler` decorator
+        of the :class:`~flask.Flask` object.
+        """
         def decorator(fn):
             cls._defer(lambda bp: bp.register_error_handler(code_or_exception, fn))
             return fn
         return decorator
+
+    @classmethod
+    def iter_class_hierarchy(cls, include_self=True, reverse=True):
+        """
+        Iterate over the bundle classes in the hierarchy. Yields base-most
+        super classes first (aka opposite of Method Resolution Order).
+
+        For internal use only.
+
+        :param include_self: Whether or not to yield the top-level bundle.
+        :param reverse: Pass False to yield bundles in Method Resolution Order.
+        """
+        supers = cls.__mro__[(0 if include_self else 1):]
+        for bundle in (supers if not reverse else reversed(supers)):
+            if issubclass(bundle, Bundle) and bundle not in {AppBundle, Bundle}:
+                yield bundle
+
+    @classmethod
+    def has_views(cls):
+        """
+        Returns True if any of the bundles in the hierarchy has a views module.
+
+        For internal use only.
+        """
+        for bundle in cls.iter_class_hierarchy():
+            if bundle._has_views_module():
+                return True
+        return False
 
     @classmethod
     def _has_views_module(cls):
@@ -163,16 +249,13 @@ class Bundle(metaclass=BundleMeta):
         return bool(safe_import_module(f'{cls.module_name}.{views_module_name}'))
 
     @classmethod
-    def has_views(cls):
-        for bundle in cls.iter_class_hierarchy():
-            if bundle._has_views_module():
-                return True
-        return False
-
-    @classmethod
     def _defer(cls, fn):
         cls._deferred_functions.append(fn)
 
 
 class AppBundle(Bundle):
+    """
+    Like :class:`Bundle`, except used to specify your bundle is the top-most application
+    bundle.
+    """
     pass

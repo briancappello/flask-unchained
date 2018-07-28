@@ -44,7 +44,7 @@ class BundleBlueprint(Blueprint):
         return BlueprintSetupState(self, app, options, first_registration)
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
-        """Like :meth:`Flask.add_url_rule` but for a blueprint.  The endpoint for
+        """Like :meth:`~flask.Flask.add_url_rule` but for a blueprint.  The endpoint for
         the :func:`url_for` function is prefixed with the name of the blueprint.
 
         Overridden to allow dots in endpoint names
@@ -53,7 +53,7 @@ class BundleBlueprint(Blueprint):
                                              register_with_babel=False, **options))
 
     def register(self, app, options, first_registration=False):
-        """Called by :meth:`Flask.register_blueprint` to register a blueprint
+        """Called by :meth:`~flask.Flask.register_blueprint` to register a blueprint
         on the application.  This can be overridden to customize the register
         behavior.  Keyword arguments from
         :func:`~flask.Flask.register_blueprint` are directly forwarded to this
