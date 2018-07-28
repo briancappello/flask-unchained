@@ -17,7 +17,7 @@ except ImportError:
     from flask_unchained import OptionalClass as MarshmallowValidationError
     from flask_unchained import OptionalClass as BaseUnmarshaller
     from flask_unchained import OptionalClass as BaseModelConverter
-    from flask_unchained.utils import OptionalMetaClass as ModelSchemaMeta
+    from flask_unchained.utils import OptionalMetaclass as ModelSchemaMeta
 
 READ_ONLY_FIELDS = {'slug', 'created_at', 'updated_at'}
 
