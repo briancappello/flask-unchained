@@ -20,7 +20,7 @@ from .decorators import param_converter
 from .di import BaseService, injectable
 from .flask_unchained import FlaskUnchained
 from .unchained import unchained
-from .utils import OptionalClass, OptionalMetaclass
+from .utils import OptionalClass, OptionalMetaclass, get_boolean_env
 
 from .bundles.babel import _, gettext, ngettext, lazy_gettext, lazy_ngettext
 from .bundles.controller.constants import (ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,
