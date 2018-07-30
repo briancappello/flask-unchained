@@ -4,7 +4,9 @@ templates with the same name as templates from later template folders
 """
 import re
 
+from flask import request
 from flask.templating import DispatchingJinjaLoader, Environment
+from flask_unchained import unchained
 from jinja2 import TemplateNotFound
 
 
@@ -144,3 +146,8 @@ def explain_template_loading_attempts(app, template, attempts):
         info.append('  See http://flask.pocoo.org/docs/blueprints/#templates')
 
     app.logger.info('\n'.join(info))
+
+
+@unchained.template_test(name='active')
+def is_active(endpoint):
+    return request.endpoint == endpoint
