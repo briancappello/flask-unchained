@@ -22,7 +22,7 @@ def parse_template(template):
 
 
 def make_template_override(template, depth):
-    return '%s__%d__' % (template, depth + 1)
+    return f'{template}__{depth + 1}__'
 
 
 class UnchainedJinjaEnvironment(Environment):

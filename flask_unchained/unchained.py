@@ -62,8 +62,10 @@ class Unchained:
 
         self.register_action_table(
             'hook',
-            ['Hook Name', 'Default Bundle Module',
-             'Bundle Module Override Attr', 'Description'],
+            ['Hook Name',
+             'Default Bundle Module',
+             'Bundle Module Override Attr',
+             'Description'],
             lambda hook: [hook.name,
                           hook.bundle_module_name or '',
                           hook.bundle_override_module_name_attr or '',

@@ -82,7 +82,8 @@ class Api:
                                            schema=resource.serializer)})
 
             docs[http_method]['tags'] = [model_name]
-            route = unchained.controller_bundle.controller_endpoints[f'{resource.__name__}.{method}']
+            key = f'{resource.__name__}.{method}'
+            route = unchained.controller_bundle.controller_endpoints[key]
 
             display_name = title_case(model_name)
             if method == LIST:
