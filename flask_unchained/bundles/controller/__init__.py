@@ -40,8 +40,8 @@ class ControllerBundle(Bundle):
         """
         Configure the Jinja environment and template loader
         """
-        from .template_loader import (UnchainedJinjaEnvironment,
-                                      UnchainedJinjaLoader)
+        from .templates import (UnchainedJinjaEnvironment,
+                                UnchainedJinjaLoader)
         app.jinja_environment = UnchainedJinjaEnvironment
         app.jinja_options = {**app.jinja_options,
                              'loader': UnchainedJinjaLoader(app)}
