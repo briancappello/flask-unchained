@@ -1,17 +1,17 @@
 """
     AppFactoryHook
-    --------------
+    ^^^^^^^^^^^^^^
 """
 import importlib
 import inspect
 import pkgutil
 
-from flask import Flask
 from types import FunctionType
 from typing import *
 
 from .bundle import AppBundle, Bundle
 from .exceptions import NameCollisionError
+from .flask_unchained import FlaskUnchained
 from .string_utils import snake_case
 from .unchained import Unchained
 from .utils import safe_import_module
@@ -43,9 +43,26 @@ class AppFactoryMeta(type):
 
 
 class AppFactoryHook(metaclass=AppFactoryMeta):
+    """
+    Base class for hooks. It has one entry point, :meth:`run_hook`, which can be
+    overridden to completely customize the behavior of the subclass. The default
+    behavior is to look for objects in ``bundle_module_name`` passing the result
+    of :meth:`type_check`. These objects are collected from all bundles into a
+    dictionary with keys the result of :meth:`key_name`, starting from the base-
+    most bundle, allowing bundle subclasses to override objects with the same name
+    from earlier bundles.
+
+    Subclasses should implement at a minimum :attr:`bundle_module_name`,
+    :meth:`process_objects`, and :meth:`type_check`. You may also need to set
+    one or both of :attr:`run_before` and/or :attr:`run_after`. Also of interest,
+    hooks can store objects in their bundle's store, using :attr:`store`, which is
+    an instance of :class:`AttrDict` defined in the bundle's ``hooks/__init__.py``
+    file. Hooks can also modify the shell context using :meth:`update_shell_context`.
+    """
+
     name: str = HookNameDescriptor()
-    run_after: Union[List[str], Tuple[str, ...]] = []
     run_before: Union[List[str], Tuple[str, ...]] = []
+    run_after: Union[List[str], Tuple[str, ...]] = []
 
     action_category: str = ActionCategoryDescriptor()
     action_table_columns: Union[List[str], Tuple[str, ...]] = None
@@ -57,38 +74,38 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
 
     _discover_from_bundle_superclasses: bool = True
     """
-    whether or not to search the whole bundle inheritance hierarchy for objects
+    Whether or not to search the whole bundle inheritance hierarchy for objects.
     """
 
     _limit_discovery_to_local_declarations: bool = True
     """
-    whether or not to only include objects declared within bundles (ie not
-    imported from other places, like third-party code)
+    Whether or not to only include objects declared within bundles (ie not
+    imported from other places, like third-party code).
     """
 
     def __init__(self, unchained: Unchained, store=None):
         self.unchained = unchained
         self.store = store
 
-    def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
+    def run_hook(self, app: FlaskUnchained, bundles: List[Type[Bundle]]):
         """
-        hook entrance point. override to disable standard behavior of iterating
-        over bundles to discover objects and processing them
+        Hook entry point. Override to disable standard behavior of iterating
+        over bundles to discover objects and processing them.
         """
         self.process_objects(app, self.collect_from_bundles(bundles))
 
-    def process_objects(self, app: Flask, objects: Dict[str, Any]):
+    def process_objects(self, app: FlaskUnchained, objects: Dict[str, Any]):
         """
-        implement to do stuff with discovered objects (typically registering
-        them with the app instance)
+        Implement to do stuff with discovered objects (eg, registering them with
+        the app instance).
         """
         raise NotImplementedError
 
     def collect_from_bundles(self, bundles: List[Type[Bundle]],
                              ) -> Dict[str, Any]:
         """
-        collect (objects where self.type_check returns True) from bundles.
-        names (keys) are expected to be unique across bundles, except for the
+        Collect objects where :meth:`type_check` returns ``True`` from bundles.
+        Names (keys) are expected to be unique across bundles, except for the
         app bundle, which can override anything from other bundles.
         """
         all_objects = {}  # all discovered objects
@@ -117,7 +134,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
 
     def collect_from_bundle(self, bundle: Type[Bundle]) -> Dict[str, Any]:
         """
-        collect (objects where self.type_check returns True) from bundles.
+        Collect objects where :meth:`type_check` returns ``True`` from bundles.
         bundle subclasses can override objects discovered in superclass bundles.
         """
         members = {}
@@ -134,9 +151,9 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
                               type_checker: Optional[FunctionType] = None,
                               ) -> Dict[str, Any]:
         """
-        discover objects passing self.type_check by walking through all the
+        Discover objects passing :meth:`type_check` by walking through all the
         child modules/packages in the given module (ie, do not require modules
-        to import everything into their __init__.py for it to be discovered)
+        to import everything into their ``__init__.py`` for it to be discovered)
         """
         type_checker = type_checker or self.type_check
         members = dict(self._get_members(module, type_checker))
@@ -174,14 +191,14 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
 
     def key_name(self, name, obj):
         """
-        override to use a custom key to determine uniqueness/overriding
+        Override to use a custom key to determine uniqueness/overriding.
         """
         return name
 
     def type_check(self, obj: Any) -> bool:
         """
-        implement to determine which objects in a module should be processed
-        by this hook
+        Implement to determine which objects in a module should be processed
+        by this hook.
         """
         raise NotImplementedError
 
@@ -200,7 +217,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
 
     def update_shell_context(self, ctx: dict):
         """
-        implement to add objects to the cli shell context
+        Implement to add objects to the cli shell context.
         """
         pass
 
