@@ -1,6 +1,6 @@
 """
     flask_unchained
-    ~~~~~~~~~~~~~~~
+    ---------------
 
     The better way to build large Flask applications
 

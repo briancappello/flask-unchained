@@ -1,15 +1,17 @@
 """
-    flask_unchained.bundles.admin
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Admin Bundle
+    ------------
 
     Integrates Flask Admin with Flask Unchained
 
-    :copyright: Copyright © 2018 Brian Cappello
-    :license: MIT, see LICENSE for details
+    Dependencies:
+
+    * flask-admin >= 1.5
+
+    .. automodule:: flask_unchained.bundles.admin.config
+       :members:
+
 """
-
-__version__ = '0.2.3'
-
 
 from flask_unchained import Bundle
 
@@ -21,4 +23,8 @@ from .views import AdminDashboardView, AdminSecurityController
 
 
 class AdminBundle(Bundle):
+    """
+    AdminBundle base class. Subclass if you need to extend or customize
+    anything in this bundle.
+    """
     pass

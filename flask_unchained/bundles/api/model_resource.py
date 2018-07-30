@@ -1,7 +1,7 @@
 import inspect
 
 from flask import jsonify, make_response
-from flask_unchained import Resource, route
+from flask_unchained import Resource, route, param_converter
 from flask_unchained.bundles.controller.attr_constants import (
     ABSTRACT_ATTR, CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR)
 from flask_unchained import (
@@ -10,7 +10,7 @@ from flask_unchained import (
 from flask_unchained.bundles.controller.metaclasses import ResourceMeta
 from flask_unchained.bundles.controller.route import Route
 from flask_unchained.bundles.controller.utils import get_param_tuples
-from flask_unchained.bundles.sqlalchemy import BaseModel, SessionManager, param_converter
+from flask_unchained.bundles.sqlalchemy import BaseModel, SessionManager
 from flask_unchained import unchained, injectable
 from flask_unchained.utils import deep_getattr
 from functools import partial

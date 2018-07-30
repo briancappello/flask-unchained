@@ -26,7 +26,7 @@ author = 'Brian Cappello'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = 'v0.4.3'
+release = 'v0.5.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -42,6 +42,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
+    'sphinx_click.ext',
     'm2r',
 ]
 
@@ -176,5 +177,9 @@ texinfo_documents = [
 # -- Options for intersphinx extension ---------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'python': ('https://docs.python.org/', None),
-                       'flask': ('http://flask.pocoo.org/docs/', None)}
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/', None),
+    'flask': ('http://flask.pocoo.org/docs/', None),
+    'werkzeug': ('http://werkzeug.pocoo.org/docs/0.14/', None),
+    'flask_admin': ('https://flask-admin.readthedocs.io/en/latest/', None),
+}

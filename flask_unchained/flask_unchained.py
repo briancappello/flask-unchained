@@ -1,10 +1,8 @@
 """
     FlaskUnchained
-    --------------
+    ^^^^^^^^^^^^^^
 """
 from flask import Flask
-
-from .unchained import Unchained, unchained
 
 
 class FlaskUnchained(Flask):
@@ -14,6 +12,7 @@ class FlaskUnchained(Flask):
     automatic (optional) registration of URLs prefixed with a language code.
     """
 
+    from .unchained import Unchained, unchained
     unchained: Unchained = unchained
     """
     The Flask Unchained extension instance.
@@ -25,8 +24,8 @@ class FlaskUnchained(Flask):
         is True, then we also allow the Babel Bundle an opportunity to register language
         code prefixed URLs.
         """
-        if unchained.babel_bundle and register_with_babel:
-            unchained.babel_bundle.register_blueprint(self, blueprint, **options)
+        if self.unchained.babel_bundle and register_with_babel:
+            self.unchained.babel_bundle.register_blueprint(self, blueprint, **options)
         return super().register_blueprint(blueprint, **options)
 
     def add_url_rule(self, rule, endpoint=None, view_func=None,
@@ -37,8 +36,8 @@ class FlaskUnchained(Flask):
         then we also allow the Babel Bundle an opportunity to register a language code
         prefixed URL.
         """
-        if unchained.babel_bundle and register_with_babel:
-            unchained.babel_bundle.add_url_rule(
+        if self.unchained.babel_bundle and register_with_babel:
+            self.unchained.babel_bundle.add_url_rule(
                 self, rule, endpoint=endpoint, view_func=view_func,
                 provide_automatic_options=provide_automatic_options, **options)
         return super().add_url_rule(rule, endpoint, view_func,

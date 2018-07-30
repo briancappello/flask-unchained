@@ -39,7 +39,7 @@ def url(url: str, method: str):
 
 @cli.command()
 @click.option('--order_by', default=None,
-              help='Property on Rule to order by '
+              help='Property on :class:`~werkzeug.routing.Rule` to order by '
                    '(default: app registration order)')
 def urls(order_by: Optional[str] = None):
     """List all URLs registered with the app."""

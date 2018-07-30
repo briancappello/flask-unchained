@@ -35,6 +35,11 @@ except ImportError:
 
 @cli.command()
 def qtconsole():
+    """
+    Starts qtconsole in the app context.
+
+    Only available if ``PyQt5`` and ``qtconsole`` are installed.
+    """
     connection_file = os.path.join(tempfile.gettempdir(),
                                    f'connection-{os.getpid()}.json')
     p = multiprocessing.Process(target=launch_qtconsole,

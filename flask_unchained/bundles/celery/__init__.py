@@ -1,15 +1,9 @@
 """
-    flask_unchained.bundles.celery
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Celery Bundle
+    -------------
 
     Adds Celery support to Flask Unchained
-
-    :copyright: Copyright © 2018 Brian Cappello
-    :license: MIT, see LICENSE for more details
 """
-
-__version__ = '0.2.2'
-
 
 from flask_unchained import Bundle
 

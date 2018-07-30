@@ -1,6 +1,6 @@
 """
     AppConfig
-    ---------
+    ^^^^^^^^^
 
     Base class for app-bundle configs. Example usage::
 

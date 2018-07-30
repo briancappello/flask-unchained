@@ -1,6 +1,6 @@
 """
     Unchained
-    ---------
+    ^^^^^^^^^
 """
 import functools
 import inspect
@@ -13,7 +13,6 @@ from datetime import datetime
 from flask import Flask
 from typing import *
 
-from .bundle import Bundle
 from .constants import DEV, PROD, STAGING, TEST
 from .di import ensure_service_name, injectable
 from .exceptions import ServiceUsageError
@@ -73,7 +72,10 @@ class Unchained:
     def init_app(self,
                  app: Flask,
                  env: Optional[Union[DEV, PROD, STAGING, TEST]] = None,
-                 bundles: Optional[List[Type[Bundle]]] = None,
+
+                 # FIXME: properly type hint this once on 3.7+, on 3.6 we get
+                 # FIXME: circular import errors
+                 bundles: Optional[List] = None,
                  ) -> None:
         self.bundles = bundles
         self.env = env or self.env

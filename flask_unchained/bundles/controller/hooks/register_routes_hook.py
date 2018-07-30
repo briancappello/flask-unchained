@@ -1,8 +1,7 @@
 import importlib
 import inspect
 
-from flask import Flask
-from flask_unchained import AppFactoryHook, Bundle
+from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
 from typing import *
 
 from ..attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
@@ -20,14 +19,14 @@ class RegisterRoutesHook(AppFactoryHook):
                                             route.endpoint,
                                             route.full_name]
 
-    def run_hook(self, app: Flask, bundles):
+    def run_hook(self, app: FlaskUnchained, bundles):
         app_bundle = bundles[-1]
         routes_module = self.import_bundle_module(app_bundle)
         routes = (self.get_explicit_routes(app_bundle) if routes_module
                   else self.collect_from_bundle(app_bundle))
         self.process_objects(app, routes)
 
-    def process_objects(self, app: Flask, routes):
+    def process_objects(self, app: FlaskUnchained, routes):
         for route in reduce_routes(routes):
             # FIXME maybe validate routes first? (eg for duplicates?)
             # Flask doesn't complain; it will match the first route found,

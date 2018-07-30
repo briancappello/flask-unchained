@@ -1,14 +1,9 @@
 """
-    flask_unchained.bundles.babel
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Babel Bundle
+    ------------
 
     Adds support for translations to Flask Unchained
-
-    :copyright: Copyright © 2018 Brian Cappello
-    :license: MIT, see LICENSE for details
 """
-
-__version__ = '0.1.0'
 
 import pkg_resources
 import re

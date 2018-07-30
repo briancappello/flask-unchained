@@ -7,7 +7,10 @@ from flask.globals import _app_ctx_stack
 
 @cli.command()
 def shell():
-    """Runs a shell in the app context."""
+    """
+    Runs a shell in the app context. If ``IPython`` is installed, it will
+    be used, otherwise the default Python shell is used.
+    """
     ctx = _get_shell_ctx()
     try:
         import IPython

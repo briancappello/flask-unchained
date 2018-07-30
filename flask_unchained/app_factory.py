@@ -1,6 +1,6 @@
 """
     AppFactory
-    ----------
+    ^^^^^^^^^^
 """
 import importlib
 import inspect
@@ -50,7 +50,7 @@ class AppFactory:
             useful for testing)
         :param flask_kwargs: keyword argument overrides for the :class:`FlaskUnchained`
             constructor
-        :return: the FlaskUnchained application instance
+        :return: the :class:`FlaskUnchained` application instance
         """
         unchained_config = _load_unchained_config(env)
         bundles = bundles or getattr(unchained_config, 'BUNDLES', [])

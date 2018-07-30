@@ -1,15 +1,21 @@
 """
-    flask_unchained.bundles.controller
-    ~~~~~~~~~~~~~~~~~~~~~~~
+    Controller Bundle
+    -----------------
 
-    Adds class-based views and declarative routing to Flask Unchained
+    Adds class-based views and declarative routing to Flask Unchained.
 
-    :copyright: Copyright © 2018 Brian Cappello
-    :license: MIT, see LICENSE for more details
+    Installation
+    ~~~~~~~~~~~~
+
+    The controller bundle is always used, even if not specified in your
+    ``unchained_config.py``. But it doesn't hurt to list it if you want::
+
+        # file: your_project_root/unchained_config.py
+        BUNDLES = [
+            'flask_unchained.bundles.controller',
+            # ...
+        ]
 """
-
-__version__ = '0.2.1'
-
 
 from flask import Flask
 from flask_unchained import Bundle
@@ -25,8 +31,15 @@ from .utils import redirect, url_for
 
 
 class ControllerBundle(Bundle):
+    """
+    Controller Bundle class.
+    """
+
     @classmethod
     def before_init_app(cls, app: Flask):
+        """
+        Configure the Jinja environment and template loader
+        """
         from .template_loader import (UnchainedJinjaEnvironment,
                                       UnchainedJinjaLoader)
         app.jinja_environment = UnchainedJinjaEnvironment
