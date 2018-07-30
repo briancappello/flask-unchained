@@ -106,6 +106,13 @@ class AppFactory:
         return app
 
 
+def _cwd_import(module_name):
+    module = importlib.import_module(module_name)
+    if not module.__file__.startswith(os.getcwd()):
+        raise ImportError
+    return module
+
+
 def _load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):
     if not sys.path or sys.path[0] != os.getcwd():
         sys.path.insert(0, os.getcwd())
@@ -113,12 +120,12 @@ def _load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):
     msg = None
     if env == TEST:
         try:
-            return importlib.import_module('tests._unchained_config')
+            return _cwd_import('tests._unchained_config')
         except ImportError as e:
             msg = f'{e.msg}: Could not find _unchained_config.py in the tests directory'
 
     try:
-        return importlib.import_module('unchained_config')
+        return _cwd_import('unchained_config')
     except ImportError as e:
         if not msg:
             msg = f'{e.msg}: Could not find unchained_config.py in the project root'

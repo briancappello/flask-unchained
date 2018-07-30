@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.5.2 (unreleased)
+
+* export `get_boolean_env` from core `flask_unchained` package
+* export `param_converter` from core `flask_unchained` package
+* fix discovery of user-app `tests._unchained_config`
+
 ## 0.5.1 (2018/07/25)
 
 * include html templates in the distribution
