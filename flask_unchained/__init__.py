@@ -16,6 +16,7 @@ from .app_factory_hook import AppFactoryHook
 from .app_config import AppConfig
 from .bundle import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
+from .decorators import param_converter
 from .di import BaseService, injectable
 from .flask_unchained import FlaskUnchained
 from .unchained import unchained

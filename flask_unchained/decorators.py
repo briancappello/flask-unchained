@@ -5,8 +5,12 @@ from functools import wraps
 from http import HTTPStatus
 
 from flask import abort, request
-from flask_sqlalchemy.model import Model
 from flask_unchained.string_utils import snake_case
+
+try:
+    from flask_sqlalchemy.model import Model
+except ImportError:
+    Model = None
 
 
 def param_converter(*decorator_args, **decorator_kwargs):
@@ -50,7 +54,8 @@ def param_converter(*decorator_args, **decorator_kwargs):
     def wrapped(fn):
         @wraps(fn)
         def decorated(*view_args, **view_kwargs):
-            view_kwargs = _convert_models(view_kwargs, decorator_kwargs)
+            if Model is not None:
+                view_kwargs = _convert_models(view_kwargs, decorator_kwargs)
             view_kwargs = _convert_query_params(view_kwargs, decorator_kwargs)
             return fn(*view_args, **view_kwargs)
         return decorated
