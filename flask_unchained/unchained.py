@@ -67,9 +67,9 @@ class Unchained:
              'Bundle Module Override Attr',
              'Description'],
             lambda hook: [hook.name,
-                          hook.bundle_module_name or '',
-                          hook.bundle_override_module_name_attr or '',
-                          format_docstring(hook.__doc__)])
+                          hook.bundle_module_name or '(None)',
+                          hook.bundle_override_module_name_attr or '(None)',
+                          format_docstring(hook.__doc__) or '(None)'])
 
     def init_app(self,
                  app: Flask,

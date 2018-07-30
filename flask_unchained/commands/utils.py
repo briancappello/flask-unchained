@@ -1,4 +1,5 @@
 import click
+import subprocess
 
 from typing import *
 
@@ -9,6 +10,7 @@ IterableOfTuples = Union[List[tuple], Tuple[tuple, ...]]
 def print_table(column_names: IterableOfStrings,
                 rows: IterableOfTuples,
                 column_alignments: Optional[IterableOfStrings] = None,
+                primary_column_idx = 0,
                 ) -> None:
     header_template = ''
     row_template = ''
@@ -39,11 +41,41 @@ def print_table(column_names: IterableOfStrings,
             row_template += '  ' + col_template
             table_width += 2 + col_width
 
-    click.echo(header_template.format(*column_names))
-    click.echo('-' * table_width)
+    # check if we can format the table horizontally
+    if table_width < get_terminal_width():
+        click.echo(header_template.format(*column_names))
+        click.echo('-' * table_width)
 
-    for row in rows:
-        try:
-            click.echo(row_template.format(*row))
-        except TypeError as e:
-            raise TypeError(f'{e}: {row!r}')
+        for row in rows:
+            try:
+                click.echo(row_template.format(*row))
+            except TypeError as e:
+                raise TypeError(f'{e}: {row!r}')
+
+    # otherwise format it vertically
+    else:
+        max_label_width = max(*[len(label) for label in column_names])
+        non_primary_columns = [(i, col) for i, col in enumerate(column_names)
+                               if i != primary_column_idx]
+        for row in rows:
+            type_ = types[primary_column_idx]
+            row_template = f'{{:>{max_label_width}s}}: {{:{type_}}}'
+            click.echo(row_template.format(column_names[primary_column_idx],
+                                           row[primary_column_idx]))
+            for i, label in non_primary_columns:
+                row_template = f'{{:>{max_label_width}s}}: {{:{types[i]}}}'
+                click.echo(row_template.format(label, row[i]))
+            click.echo()
+
+
+def get_terminal_width():
+    try:
+        r = subprocess.run(['tput', 'cols'],
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE)
+    except:
+        pass
+    else:
+        if r.returncode == 0:
+            return int(r.stdout.decode('ascii').strip())
+    return 0

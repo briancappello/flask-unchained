@@ -34,7 +34,8 @@ def url(url: str, method: str):
                       url_rule.endpoint,
                       _get_rule_view(url_rule),
                       _format_rule_options(url_rule))],
-                    ['<' if i > 0 else '>' for i, col in enumerate(headings)])
+                    ['<' if i > 0 else '>' for i, col in enumerate(headings)],
+                    primary_column_idx=1)
 
 
 @cli.command()
@@ -57,7 +58,8 @@ def urls(order_by: Optional[str] = None):
                   _get_rule_view(url_rule),
                   _format_rule_options(url_rule),
                   ) for url_rule in url_rules],
-                ['<' if i > 0 else '>' for i, col in enumerate(headings)])
+                ['<' if i > 0 else '>' for i, col in enumerate(headings)],
+                primary_column_idx=1)
 
 
 def _get_http_methods(url_rule: Rule) -> str:

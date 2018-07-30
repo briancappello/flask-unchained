@@ -5,6 +5,7 @@
 * export `get_boolean_env` from core `flask_unchained` package
 * export `param_converter` from core `flask_unchained` package
 * fix discovery of user-app `tests._unchained_config`
+* improve the output of commands that display their information in a table
 
 ## 0.5.1 (2018/07/25)
 
