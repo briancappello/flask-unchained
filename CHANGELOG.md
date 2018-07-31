@@ -7,6 +7,7 @@
 * fix discovery of user-app `tests._unchained_config`
 * improve the output of commands that display their information in a table
 * improve the output of custom sqlalchemy types in generated migrations files
+* rename command `flask db import_fixtures` to `flask db import-fixtures`
 
 ## 0.5.1 (2018/07/25)
 

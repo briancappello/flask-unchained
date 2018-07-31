@@ -13,7 +13,7 @@ try:
     from py_yaml_fixtures import FixturesLoader
     from py_yaml_fixtures.factories import SQLAlchemyModelFactory
 except ImportError:
-    maybe_db_command = lambda: lambda fn: None
+    maybe_db_command = lambda *a, **kw: lambda fn: None
 
 from .extensions import SQLAlchemy, migrate
 
@@ -57,7 +57,7 @@ def reset_command(reset):
     click.echo('Done.')
 
 
-@maybe_db_command()
+@maybe_db_command(name='import-fixtures')
 @with_appcontext
 @unchained.inject('db')
 def import_fixtures(db: SQLAlchemy = injectable):
@@ -71,7 +71,7 @@ def import_fixtures(db: SQLAlchemy = injectable):
                                      unchained.sqlalchemy_bundle.models)
     loader = FixturesLoader(factory, fixtures_dir=fixtures_dir)
 
-    click.echo(f'Loading fixtures from {fixtures_dir}')
+    click.echo(f'Loading fixtures from `{fixtures_dir}` directory')
     for identifier_key, model in loader.create_all().items():
         click.echo(f'Created {identifier_key}: {model!r}')
     click.echo('Finished adding fixtures')
