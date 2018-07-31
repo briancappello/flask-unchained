@@ -57,6 +57,7 @@ setup(
             'lxml>=4.2.1',
         ],
         'session': [
+            'dill',
             'flask_session',
         ],
         'sqlalchemy': [

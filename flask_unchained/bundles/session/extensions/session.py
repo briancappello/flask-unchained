@@ -1,9 +1,15 @@
+import dill
+
 from flask_session import Session as BaseSession
 
 from ..session_interfaces import SqlAlchemySessionInterface
 
 
 class Session(BaseSession):
+    def init_app(self, app):
+        super().init_app(app)
+        app.session_interface.serializer = dill
+
     def _get_interface(self, app):
         if app.config['SESSION_TYPE'] == 'sqlalchemy':
             return SqlAlchemySessionInterface(
