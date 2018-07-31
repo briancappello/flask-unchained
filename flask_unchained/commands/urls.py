@@ -39,15 +39,19 @@ def url(url: str, method: str):
 
 
 @cli.command()
-@click.option('--order_by', default=None,
-              help='Property on :class:`~werkzeug.routing.Rule` to order by '
-                   '(default: app registration order)')
+@click.option('--order-by', default='priority',
+              help='Property to order by: methods, rule, endpoint, view, or '
+                   'priority (aka registration order with the app)')
 def urls(order_by: Optional[str] = None):
     """List all URLs registered with the app."""
     url_rules: List[Rule] = current_app.url_map._rules
-    if order_by is not None:
-        url_rules = sorted(url_rules,
-                           key=lambda url_rule: getattr(url_rule, order_by))
+
+    # sort the rules. by default they're sorted by priority,
+    # ie in the order they were registered with the app
+    if order_by == 'view':
+        url_rules = sorted(url_rules, key=lambda rule: _get_rule_view(rule))
+    elif order_by != 'priority':
+        url_rules = sorted(url_rules, key=lambda rule: getattr(rule, order_by))
 
     headings = ('Method(s)', 'Rule', 'Endpoint', 'View', 'Options')
     print_table(headings,
@@ -85,7 +89,7 @@ def _get_rule_view(url_rule: Rule) -> str:
     elif '.method_as_view.' in view_fn.__qualname__:
         view_fn_name = f'{view_class.__name__}.{view_fn.__name__}'
 
-    return f'{view_module.__name__}:{view_fn_name}'
+    return f'{view_module.__name__} :: {view_fn_name}'
 
 
 def _format_rule_options(url_rule: Rule) -> str:
