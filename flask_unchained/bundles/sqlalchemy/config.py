@@ -1,9 +1,4 @@
-# import sqlalchemy_bundle into generated migrations when needed
-# http://alembic.zzzcomputing.com/en/latest/autogenerate.html#affecting-the-rendering-of-types-themselves
-def render_migration_item(type_, obj, autogen_context):
-    if obj is not None and 'flask_unchained.bundles.sqlalchemy' in obj.__module__:
-        autogen_context.imports.add('import flask_unchained.bundles.sqlalchemy')
-    return False
+from .alembic.migrations import render_migration_item
 
 
 class Config:
