@@ -17,6 +17,7 @@ from _pytest.fixtures import FixtureLookupError
 
 from .app_factory import AppFactory
 from .constants import TEST
+from .unchained import unchained
 
 
 RenderedTemplate = namedtuple('RenderedTemplate', 'template context')
@@ -40,12 +41,16 @@ def optional_pytest_fixture(required_module_name, scope='function', params=None,
 
 
 @pytest.fixture(autouse=True, scope='session')
-def app():
+def app(request):
     """
     Automatically used test fixture. Returns the application instance-under-test with
     a valid app context.
     """
-    app = AppFactory.create_app(TEST)
+    unchained._reset()
+    options = request.keywords.get('options', None)
+    if options is not None:
+        options = {k.upper(): v for k, v in options.kwargs.items()}
+    app = AppFactory.create_app(TEST, _config_overrides=options)
     ctx = app.app_context()
     ctx.push()
     yield app

@@ -23,12 +23,19 @@ class ConfigureAppHook(AppFactoryHook):
     name = 'configure_app'
     run_after = ['extensions']
 
-    def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
+    def run_hook(self,
+                 app: Flask,
+                 bundles: List[Type[Bundle]],
+                 _config_overrides: Optional[Dict[str, Any]] = None,
+                 ):
         env = self.unchained.env
         for bundle_ in bundles:
             for bundle in bundle_.iter_class_hierarchy():
                 bundle_config = self.get_config(bundle, env)
                 app.config.from_mapping(bundle_config)
+
+        if _config_overrides and isinstance(_config_overrides, dict):
+            app.config.from_mapping(_config_overrides)
 
     def get_config(self, bundle: Type[Bundle],
                    env: Union[DEV, PROD, STAGING, TEST],

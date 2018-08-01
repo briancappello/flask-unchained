@@ -78,6 +78,7 @@ class Unchained:
                  # FIXME: properly type hint this once on 3.7+, on 3.6 we get
                  # FIXME: circular import errors
                  bundles: Optional[List] = None,
+                 _config_overrides: Optional[Dict[str, Any]] = None,
                  ) -> None:
         self.bundles = bundles
         self.env = env or self.env
@@ -97,7 +98,7 @@ class Unchained:
 
         # must import the RunHooksHook here to prevent a circular dependency
         from .hooks.run_hooks_hook import RunHooksHook
-        RunHooksHook(self).run_hook(app, bundles or [])
+        RunHooksHook(self).run_hook(app, bundles or [], _config_overrides=_config_overrides)
         self._initialized = True
 
     def _reset(self):

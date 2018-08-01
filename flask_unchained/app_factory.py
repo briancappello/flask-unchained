@@ -33,6 +33,7 @@ class AppFactory:
     def create_app(cls,
                    env: Union[DEV, PROD, STAGING, TEST],
                    bundles: Optional[List[str]] = None,
+                   _config_overrides: Optional[Dict[str, Any]] = None,
                    **flask_kwargs,
                    ) -> FlaskUnchained:
         """
@@ -60,7 +61,7 @@ class AppFactory:
 
         app_bundle, bundles = _load_bundles(bundles)
         if app_bundle is None and env != TEST:
-            return cls._create_bundle_app(bundles)
+            return cls._create_bundle_app(bundles, _config_overrides=_config_overrides)
 
         for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
             flask_kwargs.setdefault(k.lower(), getattr(unchained_config, k, None))
@@ -80,7 +81,7 @@ class AppFactory:
         for bundle in bundles:
             bundle.before_init_app(app)
 
-        unchained.init_app(app, env, bundles)
+        unchained.init_app(app, env, bundles, _config_overrides=_config_overrides)
 
         for bundle in bundles:
             bundle.after_init_app(app)
@@ -88,7 +89,7 @@ class AppFactory:
         return app
 
     @classmethod
-    def _create_bundle_app(cls, bundles):
+    def _create_bundle_app(cls, bundles, _config_overrides=None):
         """
         Creates an app for use while developing bundles
         """
@@ -98,7 +99,7 @@ class AppFactory:
         for bundle in bundles:
             bundle.before_init_app(app)
 
-        unchained.init_app(app, DEV, bundles)
+        unchained.init_app(app, DEV, bundles, _config_overrides=_config_overrides)
 
         for bundle in bundles:
             bundle.after_init_app(app)
