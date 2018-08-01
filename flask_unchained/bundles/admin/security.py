@@ -2,7 +2,7 @@ from flask import abort, current_app, request
 from http import HTTPStatus
 
 try:
-    from flask_security import current_user as user
+    from flask_security_bundle import current_user as user
 except ImportError:
     user = None
 
