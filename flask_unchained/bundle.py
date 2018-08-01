@@ -1,14 +1,14 @@
 """
     Bundle
-    ------
+    ^^^^^^
 """
 import importlib
 import sys
 
-from flask import Flask
 from os import path
 from typing import *
 
+from .flask_unchained import FlaskUnchained
 from .string_utils import right_replace, slugify, snake_case
 from .utils import safe_import_module
 
@@ -126,14 +126,14 @@ class Bundle(metaclass=BundleMeta):
     _deferred_functions = []
 
     @classmethod
-    def before_init_app(cls, app: Flask):
+    def before_init_app(cls, app: FlaskUnchained):
         """
         Give bundles an opportunity to modify attributes on the Flask instance
         """
         pass
 
     @classmethod
-    def after_init_app(cls, app: Flask):
+    def after_init_app(cls, app: FlaskUnchained):
         """
         Give bundles an opportunity to finalize app initialization
         """
