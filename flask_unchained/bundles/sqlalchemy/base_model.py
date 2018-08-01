@@ -139,3 +139,28 @@ class BaseModel(FlaskSQLAlchemyBaseModel):
                 e.column = key
                 raise e
         super().__setattr__(key, value)
+
+    def __eq__(self, other):
+        """
+        Checks the equality of two `User` objects using `get_id`.
+        """
+        if not issubclass(other.__class__, BaseModel):
+            return False
+
+        if not self.Meta.pk or not other.Meta.pk:
+            return super().__eq__(other)
+
+        if isinstance(other, self.__class__):
+            return getattr(self, self.Meta.pk) == getattr(other, other.Meta.pk)
+
+        return False
+
+    def __ne__(self, other):
+        """
+        Checks the inequality of two `UserMixin` objects using `get_id`.
+        """
+        return not self.__eq__(other)
+
+    # Python 3 implicitly sets __hash__ to None if we override __eq__
+    # Therefore, we set it back to its default implementation
+    __hash__ = object.__hash__
