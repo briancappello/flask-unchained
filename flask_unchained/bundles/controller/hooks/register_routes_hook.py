@@ -69,7 +69,7 @@ class RegisterRoutesHook(AppFactoryHook):
     def get_explicit_routes(self, bundle: Type[Bundle]):
         routes_module = self.import_bundle_module(bundle)
         try:
-            return getattr(routes_module, 'routes')
+            return getattr(routes_module, 'routes')()
         except AttributeError:
             module_name = self.get_module_name(bundle)
             raise AttributeError(f'Could not find a variable named `routes` '

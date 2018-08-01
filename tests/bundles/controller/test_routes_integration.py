@@ -75,7 +75,7 @@ EXPECTED_DEEP_BP_RESULTS = convert_to_results_with_blueprint(EXPECTED_DEEP_RESUL
 
 class TestReduceRoutes:
     def test_explicit_routes(self):
-        routes = list(reduce_routes(test_routes.explicit_routes))
+        routes = list(reduce_routes(test_routes.explicit_routes()))
         for i, expected in enumerate(t for t in EXPECTED_RESULTS
                                      if 'foobar' not in t[0]):
             route = routes[i]
@@ -84,7 +84,7 @@ class TestReduceRoutes:
             assert route.methods == expected[2], route.endpoint
 
     def test_implicit_routes(self):
-        routes = list(reduce_routes(test_routes.implicit_routes))
+        routes = list(reduce_routes(test_routes.implicit_routes()))
         for i, expected in enumerate(EXPECTED_RESULTS):
             route = routes[i]
             assert route.endpoint == expected[0], route.endpoint
@@ -92,7 +92,7 @@ class TestReduceRoutes:
             assert route.methods == expected[2], route.endpoint
 
     def test_deep_routes(self):
-        routes = list(reduce_routes(test_routes.deep))
+        routes = list(reduce_routes(test_routes.deep()))
         for i, expected in enumerate(EXPECTED_DEEP_RESULTS):
             route = routes[i]
             assert route.endpoint == expected[0], route.endpoint
@@ -102,7 +102,7 @@ class TestReduceRoutes:
 
 class TestReduceRoutesWithBlueprints:
     def test_explicit_routes(self):
-        routes = list(reduce_routes(bp_test_routes.explicit_routes))
+        routes = list(reduce_routes(bp_test_routes.explicit_routes()))
         for i, expected in enumerate(t for t in EXPECTED_BP_RESULTS
                                      if 'foobar' not in t[0]):
             route = routes[i]
@@ -111,7 +111,7 @@ class TestReduceRoutesWithBlueprints:
             assert route.methods == expected[2], route.endpoint
 
     def test_implicit_routes(self):
-        routes = list(reduce_routes(bp_test_routes.implicit_routes))
+        routes = list(reduce_routes(bp_test_routes.implicit_routes()))
         for i, expected in enumerate(EXPECTED_BP_RESULTS):
             route = routes[i]
             assert route.endpoint == expected[0], route.endpoint
@@ -119,7 +119,7 @@ class TestReduceRoutesWithBlueprints:
             assert route.methods == expected[2], route.endpoint
 
     def test_deep_routes(self):
-        routes = list(reduce_routes(bp_test_routes.deep))
+        routes = list(reduce_routes(bp_test_routes.deep()))
         for i, expected in enumerate(EXPECTED_DEEP_BP_RESULTS):
             route = routes[i]
             assert route.endpoint == expected[0], route.endpoint

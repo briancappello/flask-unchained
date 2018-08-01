@@ -5,7 +5,7 @@ from .views import (SiteController, ProductController, simple,
                     UserResource, RoleResource, AnotherResource)
 
 
-explicit_routes = [
+explicit_routes = lambda: [
     controller('/', SiteController, rules=[
         rule('/', 'index'),
         rule('/about', 'about'),
@@ -19,7 +19,7 @@ explicit_routes = [
     include('tests.bundles.controller.fixtures.other_routes', attr='explicit'),
 ]
 
-implicit_routes = [
+implicit_routes = lambda: [
     controller(SiteController),
     resource(UserResource, subresources=[
         resource(RoleResource),
@@ -29,7 +29,7 @@ implicit_routes = [
     include('tests.bundles.controller.fixtures.other_routes', attr='implicit'),
 ]
 
-deep = [
+deep = lambda: [
     prefix('/app', [
         controller('/site', SiteController),
         prefix('/pre', [

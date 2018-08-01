@@ -1,6 +1,5 @@
 import importlib
 import inspect
-import sys
 
 from flask import Blueprint, Flask
 from typing import *
@@ -101,29 +100,19 @@ def include(module_name: str,
             exclude: Optional[Endpoints] = None,
             only: Optional[Endpoints] = None,
             ) -> RouteGenerator:
-    # because routes are generators, once they've been "drained", they can't be
-    # used again. under normal end-user-app circumstances this reload probably
-    # wouldn't be needed, but it's at least required for the tests to pass
-    if module_name in sys.modules:
-        del sys.modules[module_name]
     module = importlib.import_module(module_name)
-
     try:
-        routes = reduce_routes(getattr(module, attr))
+        routes = getattr(module, attr)()
     except AttributeError:
         raise AttributeError(f'Could not find a variable named `{attr}` '
                              f'in the {module_name} module!')
 
-    def should_include_route(route):
+    for route in reduce_routes(routes):
         excluded = exclude and route.endpoint in exclude
         not_included = only and route.endpoint not in only
         if excluded or not_included:
-            return False
-        return True
-
-    for route in routes:
-        if should_include_route(route):
-            yield route
+            continue
+        yield route
 
 
 def patch(rule: str,

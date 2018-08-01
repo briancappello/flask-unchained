@@ -1,7 +1,7 @@
 from flask_unchained.bundles.controller import Controller, include, route
 
 
-routes = [
+routes = lambda: [
     include('tests.bundles.controller.fixtures.vendor_bundle.routes'),
 ]
 

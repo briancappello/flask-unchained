@@ -3,6 +3,6 @@ from .views import silly_condition
 from flask_unchained.bundles.controller import func
 
 
-routes = [
+routes = lambda: [
     func(silly_condition),
 ]
