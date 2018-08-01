@@ -46,3 +46,14 @@ class ControllerBundle(Bundle):
         app.jinja_options = {**app.jinja_options,
                              'loader': UnchainedJinjaLoader(app)}
         app.jinja_env.globals['url_for'] = url_for
+
+    @classmethod
+    def after_init_app(cls, app):
+        from flask_wtf.csrf import generate_csrf
+
+        # send CSRF token in the cookie
+        @app.after_request
+        def set_csrf_cookie(response):
+            if response:
+                response.set_cookie('csrf_token', generate_csrf())
+            return response

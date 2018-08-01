@@ -11,6 +11,7 @@
 * improve the `--order-by` option of the `flask urls` command
 * rename command `flask db import_fixtures` to `flask db import-fixtures`
 * add a `FlaskForm` base class extending :class:`~flask_wtf.FlaskForm` that adds support for specifying the rendered field order
+* automatically set the `csrf_token` cookie on responses
 
 ## 0.5.1 (2018/07/25)
 
