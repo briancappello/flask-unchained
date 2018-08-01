@@ -62,7 +62,7 @@ class ConfigPropertyMeta(type):
     """
     def __init__(cls, class_name, bases, clsdict):
         super().__init__(class_name, bases, clsdict)
-        config_prefix = clsdict.get('__config_prefix__', class_name).strip('_')
+        config_prefix = clsdict.get('__config_prefix__', class_name).rstrip('_')
         for property_name, descriptor in clsdict.items():
             if isinstance(descriptor, ConfigProperty) and not descriptor.key:
                 descriptor.key = f'{config_prefix}_{property_name}'.upper()

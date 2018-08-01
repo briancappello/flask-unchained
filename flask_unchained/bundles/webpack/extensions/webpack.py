@@ -48,7 +48,6 @@ class Webpack:
 
         with open(manifest_path) as f:
             self.assets = json.load(f)
-            print('fucking bs', self.assets)
 
     def _refresh_assets(self):
         self._load_assets(current_app)

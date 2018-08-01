@@ -175,7 +175,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
             else:
                 is_local_declaration = False  # FIXME this is shit
                 if self._limit_discovery_to_local_declarations:
-                    print('hrm crap', self.__class__.__name__)
+                    raise NotImplementedError
 
             # FIXME obj.__module__ in module.__name__ probably isn't right
             # for instance variables (works fine for classes, but instances
