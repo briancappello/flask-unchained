@@ -1,12 +1,4 @@
-from flask_unchained import unchained
-
-try:
-    from flask_wtf import FlaskForm
-    from wtforms.form import FormMeta
-    from wtforms.compat import iteritems
-except ImportError:
-    from flask_unchained.utils import OptionalClass as FlaskForm
-    from flask_unchained.utils import OptionalClass as FormMeta
+from flask_unchained import FlaskForm, unchained
 
 from .validation import ValidationError, ValidationErrors
 
@@ -57,8 +49,8 @@ class ModelForm(FlaskForm):
     def errors(self):
         if self._errors:
             return self._errors
-        return dict((name, f.errors) for name, f in iteritems(self._fields) if f.errors)
+        return dict((name, f.errors) for name, f in self._fields.items() if f.errors)
 
     @property
     def data(self):
-        return dict((name, f.data) for name, f in iteritems(self._fields))
+        return dict((name, f.data) for name, f in self._fields.items())

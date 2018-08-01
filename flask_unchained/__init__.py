@@ -19,6 +19,7 @@ from .constants import DEV, PROD, STAGING, TEST
 from .decorators import param_converter
 from .di import BaseService, injectable
 from .flask_unchained import FlaskUnchained
+from .forms import FlaskForm
 from .unchained import unchained
 from .utils import OptionalClass, OptionalMetaclass, get_boolean_env
 
