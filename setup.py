@@ -23,6 +23,7 @@ setup(
         'blinker>=1.4',
         'flask>=0.12.2',
         'flask_babelex>=0.9.3',
+        'flask_wtf',
         'networkx>=2.1',
     ],
     extras_require={
@@ -55,6 +56,9 @@ setup(
         'mail': [
             'beautifulsoup4>=4.6.0',
             'lxml>=4.2.1',
+        ],
+        'security': [
+            'flask_security_bundle',
         ],
         'session': [
             'dill',
