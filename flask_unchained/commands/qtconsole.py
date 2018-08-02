@@ -8,7 +8,7 @@ import sys
 import tempfile
 import time
 
-from flask.cli import cli
+from flask_unchained.cli import cli
 
 from .shell import _get_shell_banner, _get_shell_ctx
 

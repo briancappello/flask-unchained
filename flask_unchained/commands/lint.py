@@ -1,9 +1,7 @@
 # This command is adapted to click from Flask-Script 0.4.0
-
-import click
 import os
 
-from flask.cli import cli
+from flask_unchained.cli import cli, click
 
 
 @cli.command()

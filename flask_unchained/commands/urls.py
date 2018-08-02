@@ -1,10 +1,8 @@
 # These commands are adapted to click from Flask-Script 0.4.0 (and extended)
-
-import click
 import inspect
 
-from flask import current_app
-from flask.cli import cli
+from flask_unchained import current_app
+from flask_unchained.cli import cli, click
 from typing import *
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 from werkzeug.routing import Rule

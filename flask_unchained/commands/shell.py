@@ -1,7 +1,7 @@
 import os
 import sys
 
-from flask.cli import cli
+from flask_unchained.cli import cli
 from flask.globals import _app_ctx_stack
 
 

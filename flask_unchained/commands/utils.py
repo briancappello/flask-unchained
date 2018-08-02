@@ -1,4 +1,4 @@
-import click
+from flask_unchained import click
 import subprocess
 
 from typing import *
@@ -12,6 +12,19 @@ def print_table(column_names: IterableOfStrings,
                 column_alignments: Optional[IterableOfStrings] = None,
                 primary_column_idx = 0,
                 ) -> None:
+    """
+    Prints a table of information to the console. Automatically determines if the
+    console is wide enough, and if not, displays the information in list form.
+
+    :param column_names: The heading labels
+    :param rows: A list of lists
+    :param column_alignments: An optional list of strings, using either '<' or '>'
+        to specify left or right alignment respectively
+    :param primary_column_idx: Used when displaying information in list form,
+        to determine which label should be the top-most one. Defaults to the first
+        label in ``column_names``.
+    :return:
+    """
     header_template = ''
     row_template = ''
     table_width = 0

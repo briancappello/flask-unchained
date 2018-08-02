@@ -1,8 +1,9 @@
-import click
 import subprocess
 
+from flask_unchained.cli import cli
 
-@click.group()
+
+@cli.group()
 def celery():
     """Celery commands"""
 

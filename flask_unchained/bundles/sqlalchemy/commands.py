@@ -1,19 +1,17 @@
-import click
 import os
 
 from alembic import command as alembic
 from flask import current_app
-from flask.cli import with_appcontext
 from flask_migrate.cli import db
-from flask_unchained import unchained, injectable
+from flask_unchained import click, unchained, injectable
 
-maybe_db_command = db.command
+maybe_fixtures_command = db.command
 
 try:
     from py_yaml_fixtures import FixturesLoader
     from py_yaml_fixtures.factories import SQLAlchemyModelFactory
 except ImportError:
-    maybe_db_command = lambda *a, **kw: lambda fn: None
+    maybe_fixtures_command = lambda *a, **kw: lambda fn: None
 
 from .extensions import SQLAlchemy, migrate
 
@@ -21,7 +19,6 @@ from .extensions import SQLAlchemy, migrate
 @db.command('drop')
 @click.option('--drop', is_flag=True, expose_value=True,
               prompt='Drop DB tables?')
-@with_appcontext
 def drop_command(drop):
     """Drop database tables."""
     if not drop:
@@ -42,7 +39,6 @@ def drop_all(db: SQLAlchemy = injectable):
 @db.command('reset')
 @click.option('--reset', is_flag=True, expose_value=True,
               prompt='Drop DB tables and run migrations?')
-@with_appcontext
 def reset_command(reset):
     """Drop database tables and run migrations."""
     if not reset:
@@ -57,8 +53,7 @@ def reset_command(reset):
     click.echo('Done.')
 
 
-@maybe_db_command(name='import-fixtures')
-@with_appcontext
+@maybe_fixtures_command(name='import-fixtures')
 @unchained.inject('db')
 def import_fixtures(db: SQLAlchemy = injectable):
     fixtures_dir = current_app.config.get('PY_YAML_FIXTURES_DIR')

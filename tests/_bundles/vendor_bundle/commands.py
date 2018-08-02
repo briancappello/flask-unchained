@@ -1,6 +1,6 @@
 import click
 
-from flask.cli import cli
+from flask_unchained.cli import cli
 
 
 @cli.command()

@@ -12,6 +12,8 @@
 * rename command `flask db import_fixtures` to `flask db import-fixtures`
 * add a `FlaskForm` base class extending :class:`~flask_wtf.FlaskForm` that adds support for specifying the rendered field order
 * automatically set the `csrf_token` cookie on responses
+* override the `click` module to also support documenting arguments with `help`
+ - also make the default help options `-h` and `--help` instead of just `--help`
 
 ## 0.5.1 (2018/07/25)
 

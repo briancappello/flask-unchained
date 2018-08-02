@@ -1,6 +1,4 @@
-import click
-
-from flask.cli import cli, with_appcontext
+from flask_unchained.cli import cli, click
 
 from ..unchained import unchained
 from ..string_utils import title_case
@@ -13,7 +11,6 @@ def unchained_group():
 
 
 @unchained_group.command()
-@with_appcontext
 def bundles():
     """List discovered bundles"""
     action_log = unchained.get_action_log('bundle')
@@ -25,7 +22,6 @@ def bundles():
 
 
 @unchained_group.command()
-@with_appcontext
 def hooks():
     """List registered hooks"""
     action_log = unchained.get_action_log('hook')

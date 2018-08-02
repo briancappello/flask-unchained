@@ -5,7 +5,7 @@ import sys
 
 from babel.messages.frontend import CommandLineInterface
 from flask import current_app
-from flask.cli import cli, with_appcontext
+from flask_unchained.cli import cli
 from flask_unchained import AppBundle
 
 DEFAULT_DOMAIN = 'messages'
@@ -18,7 +18,6 @@ def babel():
 
 @babel.command()
 @click.option('--domain', '-d', default=DEFAULT_DOMAIN)
-@with_appcontext
 def extract(domain):
     """extract messages"""
     translations_dir = _get_translations_dir()
@@ -31,7 +30,6 @@ def extract(domain):
 @babel.command()
 @click.argument('lang')
 @click.option('--domain', '-d', default=DEFAULT_DOMAIN)
-@with_appcontext
 def init(lang, domain):
     """init language translations"""
     translations_dir = _get_translations_dir()
@@ -42,7 +40,6 @@ def init(lang, domain):
 
 @babel.command()
 @click.option('--domain', '-d', default=DEFAULT_DOMAIN)
-@with_appcontext
 def compile(domain):
     """compile translations"""
     translations_dir = _get_translations_dir()
@@ -52,7 +49,6 @@ def compile(domain):
 
 @babel.command()
 @click.option('--domain', '-d', default=DEFAULT_DOMAIN)
-@with_appcontext
 def update(domain):
     """update translations"""
     translations_dir = _get_translations_dir()
