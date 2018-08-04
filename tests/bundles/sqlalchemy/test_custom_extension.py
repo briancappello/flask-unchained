@@ -1,6 +1,7 @@
 import pytest
 
 from flask_unchained import unchained
+from werkzeug.local import LocalProxy
 
 from tests.bundles.sqlalchemy._bundles.custom_extension.extensions import (
     SQLAlchemy as CustomSQLAlchemy,
@@ -15,6 +16,8 @@ class TestCustomExtension:
     def test_it_works(self, app, db):
         exts = [db, app.extensions['sqlalchemy'].db, unchained.extensions.db]
         for i, ext in enumerate(exts):
+            if isinstance(ext, LocalProxy):
+                ext = ext._get_current_object()
             assert isinstance(ext, CustomSQLAlchemy), i
             assert ext == db, i
 

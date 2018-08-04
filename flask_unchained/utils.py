@@ -4,6 +4,8 @@ import re
 
 from flask import current_app
 from importlib import import_module
+from werkzeug.local import LocalProxy
+
 
 _missing = type('_missing', (), {'__bool__': lambda s: False})()
 
@@ -20,7 +22,12 @@ class AttrDict(dict):
         self[key] = value
 
     def __repr__(self):
-        return f'AttrDict({super().__repr__()})'
+        return f'{self.__class__.__name__}({super().__repr__()})'
+
+
+class LazyAttrDict(AttrDict):
+    def __getattr__(self, key):
+        return LocalProxy(lambda: self[key])
 
 
 class ConfigProperty:

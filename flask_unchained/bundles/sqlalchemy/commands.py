@@ -3,7 +3,7 @@ import os
 from alembic import command as alembic
 from flask import current_app
 from flask_migrate.cli import db
-from flask_unchained import click, unchained, injectable
+from flask_unchained import click, unchained
 
 maybe_fixtures_command = db.command
 
@@ -14,6 +14,8 @@ except ImportError:
     maybe_fixtures_command = lambda *a, **kw: lambda fn: None
 
 from .extensions import SQLAlchemy, migrate
+
+db_ext: SQLAlchemy = unchained.extensions.db
 
 
 @db.command('drop')
@@ -30,10 +32,9 @@ def drop_command(drop):
     click.echo('Done.')
 
 
-@unchained.inject('db')
-def drop_all(db: SQLAlchemy = injectable):
-    db.drop_all()
-    db.engine.execute('DROP TABLE IF EXISTS alembic_version;')
+def drop_all():
+    db_ext.drop_all()
+    db_ext.engine.execute('DROP TABLE IF EXISTS alembic_version;')
 
 
 @db.command('reset')
@@ -54,15 +55,14 @@ def reset_command(reset):
 
 
 @maybe_fixtures_command(name='import-fixtures')
-@unchained.inject('db')
-def import_fixtures(db: SQLAlchemy = injectable):
+def import_fixtures():
     fixtures_dir = current_app.config.get('PY_YAML_FIXTURES_DIR')
     if not fixtures_dir or not os.path.exists(fixtures_dir):
         msg = (f'Could not find the {fixtures_dir} directory, please make sure '
                'PY_YAML_FIXTURES_DIR is set correctly and the directory exists')
         raise NotADirectoryError(msg)
 
-    factory = SQLAlchemyModelFactory(db.session,
+    factory = SQLAlchemyModelFactory(db_ext.session,
                                      unchained.sqlalchemy_bundle.models)
     loader = FixturesLoader(factory, fixtures_dir=fixtures_dir)
 

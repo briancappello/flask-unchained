@@ -16,7 +16,7 @@ from typing import *
 from .constants import DEV, PROD, STAGING, TEST
 from .di import ensure_service_name, injectable
 from .exceptions import ServiceUsageError
-from .utils import AttrDict, format_docstring
+from .utils import LazyAttrDict, format_docstring
 
 
 CategoryActionLog = namedtuple('CategoryActionLog',
@@ -35,8 +35,11 @@ class Unchained:
     def __init__(self, env: Optional[Union[DEV, PROD, STAGING, TEST]] = None):
         self._initialized = False
         self._services_registry = {}
-        self.extensions = AttrDict()
-        self.services = AttrDict()
+
+        # support lazily accessing extensions and services via attributes on the
+        # unchained extension instance
+        self.extensions = LazyAttrDict()
+        self.services = LazyAttrDict()
 
         self.bundles = []
         self.babel_bundle = None
@@ -107,8 +110,8 @@ class Unchained:
         """
         self._initialized = False
         self._services_registry = {}
-        self.extensions = AttrDict()
-        self.services = AttrDict()
+        self.extensions = LazyAttrDict()
+        self.services = LazyAttrDict()
 
     def service(self, name: str = None):
         """
