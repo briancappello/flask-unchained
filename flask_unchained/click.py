@@ -3,9 +3,12 @@ import inspect as _inspect
 
 from click import *
 from click.formatting import join_options as _join_options
+from click.utils import make_default_short_help as _make_default_short_help
 
 
+CLI_HELP_STRING_MAX_LEN = 120
 DEFAULT_CONTEXT_SETTINGS = dict(help_option_names=('-h', '--help'))
+
 
 def _update_ctx_settings(context_settings):
     rv = DEFAULT_CONTEXT_SETTINGS.copy()
@@ -35,30 +38,30 @@ class Command(click.Command):
                             option.  This can be disabled by this parameter.
     :param options_metavar: The options metavar to display in the usage.
                             Defaults to ``[OPTIONS]``.
-    :param args_before_options: Whether or not to display the options
-                                        metavar before the arguments.
-                                        Defaults to False.
     """
     def __init__(self, name, context_settings=None, callback=None, params=None,
                  help=None, epilog=None, short_help=None, add_help_option=True,
-                 options_metavar='[OPTIONS]', args_before_options=True):
+                 options_metavar='[OPTIONS]'):
         super().__init__(
             name, callback=callback, params=params, help=help, epilog=epilog,
             short_help=short_help, add_help_option=add_help_option,
             context_settings=_update_ctx_settings(context_settings),
             options_metavar=options_metavar)
-        self.args_before_options = args_before_options
+
+        # FIXME: these two lines are for backwards compatibility with click 6.7,
+        # FIXME: and should be removed once on 7+
+        self.short_help = short_help
+        self.short_help = self.get_short_help_str()
 
     # overridden to support displaying args before the options metavar
     def collect_usage_pieces(self, ctx):
-        rv = [] if self.args_before_options else [self.options_metavar]
+        rv = []
         for param in self.get_params(ctx):
             rv.extend(param.get_usage_pieces(ctx))
-        if self.args_before_options:
-            rv.append(self.options_metavar)
+        rv.append(self.options_metavar)
         return rv
 
-    # overridden to group arguments separately from options
+    # overridden to print arguments first, separately from options
     def format_options(self, ctx, formatter):
         args = []
         opts = []
@@ -69,37 +72,34 @@ class Command(click.Command):
                     args.append(rv)
                 else:
                     opts.append(rv)
+        if args:
+            with formatter.section('Arguments'):
+                formatter.write_dl(args)
+        if opts:
+            with formatter.section(self.options_metavar):
+                formatter.write_dl(opts)
 
-        def print_args():
-            if args:
-                with formatter.section('Arguments'):
-                    formatter.write_dl(args)
-
-        def print_opts():
-            if opts:
-                with formatter.section(self.options_metavar):
-                    formatter.write_dl(opts)
-
-        if self.args_before_options:
-            print_args()
-            print_opts()
-        else:
-            print_opts()
-            print_args()
+    # overridden to set the limit parameter to always be CLI_HELP_STRING_MAX_LEN
+    def get_short_help_str(self, limit=0):
+        if self.short_help:
+            return self.short_help
+        elif not self.help:
+            return ''
+        rv = _make_default_short_help(self.help, CLI_HELP_STRING_MAX_LEN)
+        return rv
 
 
-# overridden to make sure our custom classes propagate recursively in trees of commands
-class Group(click.Group):
-    """
-    A group allows a command to have subcommands attached.  This is the
-    most common way to implement nesting in Click.
-
-    :param name: the name of the group (optional)
-    :param commands: a dictionary of commands.
-    """
+class GroupOverrideMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, context_settings=_update_ctx_settings(
             kwargs.pop('context_settings', None)), **kwargs)
+        self.subcommand_metavar = 'COMMAND [<args>...]'
+        self.subcommands_metavar = 'COMMAND1 [<args>...] [COMMAND2 [<args>...]]'
+
+        # FIXME: these two lines are for backwards compatibility with click 6.7,
+        # FIXME: and should be removed once on 7+
+        self.short_help = kwargs.get('short_help')
+        self.short_help = self.get_short_help_str()
 
     def command(self, *args, **kwargs):
         """
@@ -107,9 +107,6 @@ class Group(click.Group):
         Click.  A basic command handles command line parsing and might dispatch
         more parsing to commands nested below it.
 
-        :param param_decls: the parameter declarations for this option or
-                            argument.  This is a list of flags or argument
-                            names.
         :param name: the name of the command to use unless a group overrides it.
         :param context_settings: an optional dictionary with defaults that are
                                  passed to the context object.
@@ -129,7 +126,33 @@ class Group(click.Group):
                                             Defaults to False.
         """
         return super().command(
-            *args, cls=kwargs.pop('cls', Command) or Command, **kwargs)
+            *args, cls=kwargs.pop('cls', Command) or click.Command, **kwargs)
+
+    def collect_usage_pieces(self, ctx):
+        if self.chain:
+            rv = [self.subcommands_metavar]
+        else:
+            rv = [self.subcommand_metavar]
+        rv.extend(click.Command.collect_usage_pieces(self, ctx))
+        return rv
+
+    # overridden to set the limit parameter to always be CLI_HELP_STRING_MAX_LEN
+    def get_short_help_str(self, limit=0):
+        if self.short_help:
+            return self.short_help
+        elif not self.help:
+            return ''
+        return _make_default_short_help(self.help, CLI_HELP_STRING_MAX_LEN)
+
+
+class Group(GroupOverrideMixin, click.Group):
+    """
+    A group allows a command to have subcommands attached.  This is the
+    most common way to implement nesting in Click.
+
+    :param name: the name of the group (optional)
+    :param commands: a dictionary of commands.
+    """
 
     def group(self, *args, **kwargs):
         """

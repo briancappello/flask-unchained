@@ -16,6 +16,8 @@ from flask_unchained.constants import DEV, PROD, STAGING, TEST
 from flask_unchained.utils import get_boolean_env
 from traceback import format_exc
 
+from .click import GroupOverrideMixin
+
 
 ENV_ALIASES = {'dev': DEV, 'prod': PROD}
 ENV_CHOICES = list(ENV_ALIASES.keys()) + [DEV, PROD, STAGING, TEST]
@@ -43,38 +45,13 @@ def cli_create_app(_):
         sys.exit(1)
 
 
-class FlaskGroup(flask_cli.FlaskGroup):
-    def __init__(self, *args, **kwargs):
-        from .click import _update_ctx_settings
-        super().__init__(*args, context_settings=_update_ctx_settings(
-            kwargs.pop('context_settings', None)), **kwargs)
+class FlaskGroup(GroupOverrideMixin, flask_cli.FlaskGroup):
+    """
+    Top-level click group class for all Flask commands.
 
-    def command(self, *args, **kwargs):
-        """
-        Commands are the basic building block of command line interfaces in
-        Click.  A basic command handles command line parsing and might dispatch
-        more parsing to commands nested below it.
-
-        :param name: the name of the command to use unless a group overrides it.
-        :param context_settings: an optional dictionary with defaults that are
-                                 passed to the context object.
-        :param params: the parameters to register with this command.  This can
-                       be either :class:`Option` or :class:`Argument` objects.
-        :param help: the help string to use for this command.
-        :param epilog: like the help string but it's printed at the end of the
-                       help page after everything else.
-        :param short_help: the short help to use for this command.  This is
-                           shown on the command listing of the parent command.
-        :param add_help_option: by default each command registers a ``--help``
-                                option.  This can be disabled by this parameter.
-        :param options_metavar: The options metavar to display in the usage.
-                                Defaults to ``[OPTIONS]``.
-        :param args_before_options: Whether or not to display the options
-                                            metavar before the arguments.
-                                            Defaults to False.
-        """
-        return super().command(
-            *args, cls=kwargs.pop('cls', click.Command) or click.Command, **kwargs)
+    Automatically makes the app context available to commands, using
+    :meth:`~flsak.cli.with_appcontext`.
+    """
 
     def group(self, *args, **kwargs):
         """
@@ -88,38 +65,13 @@ class FlaskGroup(flask_cli.FlaskGroup):
             *args, cls=kwargs.pop('cls', AppGroup) or AppGroup, **kwargs)
 
 
-class AppGroup(flask_cli.AppGroup):
-    def __init__(self, *args, **kwargs):
-        from .click import _update_ctx_settings
-        super().__init__(*args, context_settings=_update_ctx_settings(
-            kwargs.pop('context_settings', None)), **kwargs)
+class AppGroup(GroupOverrideMixin, flask_cli.AppGroup):
+    """
+    Click group class for all Flask subcommands.
 
-    def command(self, *args, **kwargs):
-        """
-        Commands are the basic building block of command line interfaces in
-        Click.  A basic command handles command line parsing and might dispatch
-        more parsing to commands nested below it.
-
-        :param name: the name of the command to use unless a group overrides it.
-        :param context_settings: an optional dictionary with defaults that are
-                                 passed to the context object.
-        :param params: the parameters to register with this command.  This can
-                       be either :class:`Option` or :class:`Argument` objects.
-        :param help: the help string to use for this command.
-        :param epilog: like the help string but it's printed at the end of the
-                       help page after everything else.
-        :param short_help: the short help to use for this command.  This is
-                           shown on the command listing of the parent command.
-        :param add_help_option: by default each command registers a ``--help``
-                                option.  This can be disabled by this parameter.
-        :param options_metavar: The options metavar to display in the usage.
-                                Defaults to ``[OPTIONS]``.
-        :param args_before_options: Whether or not to display the options
-                                            metavar before the arguments.
-                                            Defaults to False.
-        """
-        return super().command(
-            *args, cls=kwargs.pop('cls', click.Command) or click.Command, **kwargs)
+    Automatically makes the app context available to commands, using
+    :meth:`~flsak.cli.with_appcontext`.
+    """
 
     def group(self, *args, **kwargs):
         """

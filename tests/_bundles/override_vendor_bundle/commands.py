@@ -1,6 +1,4 @@
-import click
-
-from flask_unchained.cli import cli
+from flask_unchained.cli import cli, click
 
 from ..vendor_bundle.commands import foo_group
 
