@@ -134,12 +134,12 @@ class AppGroup(flask_cli.AppGroup):
 
 
 @click.group(cls=FlaskGroup, add_default_commands=False,
-             help='A utility script for Flask')
+             help='A utility script for Flask Unchained')
 @click.option('--env', default=os.getenv('FLASK_ENV', DEV),
               type=click.Choice(ENV_CHOICES),
-              help='Which env config to run with (dev by default)')
+              help='Which env to run in (dev by default).')
 @click.option('--warn/--no-warn', default=True,
-              help='Whether or not to warn if not running in dev')
+              help='Whether or not to warn if not running in prod/staging.')
 @click.pass_context
 def cli(ctx, env, warn):
     ctx.obj.data['env'] = env

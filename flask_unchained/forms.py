@@ -2,6 +2,11 @@ from flask_wtf import FlaskForm as BaseForm
 
 
 class FlaskForm(BaseForm):
+    """
+    Base form class extending :class:`~flask_wtf.FlaskForm`. Adds support for
+    specifying the field order via a ``field_order`` class attribute.
+    """
+
     field_order = ()
 
     def __iter__(self):

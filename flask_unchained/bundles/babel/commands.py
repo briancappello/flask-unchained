@@ -13,13 +13,17 @@ DEFAULT_DOMAIN = 'messages'
 
 @cli.group()
 def babel():
-    """Flask Babel Bundle commands"""
+    """
+    Babel translations commands.
+    """
 
 
 @babel.command()
 @click.option('--domain', '-d', default=DEFAULT_DOMAIN)
 def extract(domain):
-    """extract messages"""
+    """
+    Extract newly added translations keys from source code.
+    """
     translations_dir = _get_translations_dir()
     domain = _get_translations_domain(domain)
     babel_cfg = _get_babel_cfg()
@@ -28,10 +32,12 @@ def extract(domain):
 
 
 @babel.command()
-@click.argument('lang')
+@click.argument('lang', help='The language code to initialize translations for.')
 @click.option('--domain', '-d', default=DEFAULT_DOMAIN)
 def init(lang, domain):
-    """init language translations"""
+    """
+    Initialize translations for a language code.
+    """
     translations_dir = _get_translations_dir()
     domain = _get_translations_domain(domain)
     pot = os.path.join(translations_dir, f'{domain}.pot')
@@ -41,7 +47,9 @@ def init(lang, domain):
 @babel.command()
 @click.option('--domain', '-d', default=DEFAULT_DOMAIN)
 def compile(domain):
-    """compile translations"""
+    """
+    Compile translations into a distributable ``.mo`` file.
+    """
     translations_dir = _get_translations_dir()
     domain = _get_translations_domain(domain)
     return _run(f'compile --directory={translations_dir} --domain={domain}')
@@ -50,7 +58,10 @@ def compile(domain):
 @babel.command()
 @click.option('--domain', '-d', default=DEFAULT_DOMAIN)
 def update(domain):
-    """update translations"""
+    """
+    Update language-specific translations files with new keys discovered by
+    ``flask babel extract``.
+    """
     translations_dir = _get_translations_dir()
     domain = _get_translations_domain(domain)
     pot = os.path.join(translations_dir, f'{domain}.pot')

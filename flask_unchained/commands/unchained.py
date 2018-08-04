@@ -7,12 +7,16 @@ from .utils import print_table
 
 @cli.group('unchained')
 def unchained_group():
-    """Flask Unchained commands"""
+    """
+    Flask Unchained commands.
+    """
 
 
 @unchained_group.command()
 def bundles():
-    """List discovered bundles"""
+    """
+    List discovered bundles.
+    """
     action_log = unchained.get_action_log('bundle')
     click.echo('=' * 80)
     click.echo('Bundles')
@@ -23,7 +27,9 @@ def bundles():
 
 @unchained_group.command()
 def hooks():
-    """List registered hooks"""
+    """
+    List registered hooks (in the order they run).
+    """
     action_log = unchained.get_action_log('hook')
     click.echo('=' * 80)
     click.echo('Hooks')

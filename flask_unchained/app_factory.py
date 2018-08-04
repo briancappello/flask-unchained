@@ -45,12 +45,12 @@ class AppFactory:
             app = AppFactory.create_app(DEV)
 
         :param env: Which environment the app should run in. Should be one of
-            "development", "production", "staging", or "test" (you can import
-            them: ``from flask_unchained import DEV, PROD, STAGING, TEST``)
+                    "development", "production", "staging", or "test" (you can import
+                    them: ``from flask_unchained import DEV, PROD, STAGING, TEST``)
         :param bundles: An optional list of bundle modules names to use (mainly
-            useful for testing)
+                        useful for testing)
         :param flask_kwargs: keyword argument overrides for the :class:`FlaskUnchained`
-            constructor
+                             constructor
         :return: the :class:`FlaskUnchained` application instance
         """
         unchained_config = _load_unchained_config(env)
