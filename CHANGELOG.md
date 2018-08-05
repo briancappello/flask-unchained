@@ -18,6 +18,7 @@
 * add an `env` attribute on the `FlaskUnchained` app instance
 * make the `bundles` attribute on the `Unchained` extension an `AttrDict`
 * add default config options, making `DEBUG` and `TESTING` unnecessary to set manually
+* add a `_form_name` attribute to `FlaskForm` to automatically name forms when rendering them programmatically
 
 ## 0.5.1 (2018/07/25)
 
