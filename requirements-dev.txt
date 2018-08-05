@@ -8,4 +8,5 @@ pytest-flask>=0.10.0
 sphinx
 sphinx-autobuild
 sphinx-click
+sphinx-rtd-theme
 tox

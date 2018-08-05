@@ -49,8 +49,9 @@ setup(
             'pytest',
             'pytest-flask',
             'sphinx',
-            'sphinx-click',
             'sphinx-autobuild',
+            'sphinx-click',
+            'sphinx-rtd-theme',
             'tox',
         ],
         'mail': [
