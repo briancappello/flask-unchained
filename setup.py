@@ -44,15 +44,20 @@ setup(
         'dev': [
             'coverage',
             'factory_boy',
+            'IPython',
             'm2r',
             'mock',
             'pytest',
             'pytest-flask',
+            'tox',
+        ],
+        'docs': [
             'sphinx',
             'sphinx-autobuild',
             'sphinx-click',
             'sphinx-rtd-theme',
-            'tox',
+            'PyQt5',
+            'qtconsole',
         ],
         'mail': [
             'beautifulsoup4>=4.6.0',
