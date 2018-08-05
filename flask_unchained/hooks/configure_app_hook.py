@@ -28,10 +28,9 @@ class ConfigureAppHook(AppFactoryHook):
                  bundles: List[Type[Bundle]],
                  _config_overrides: Optional[Dict[str, Any]] = None,
                  ):
-        env = self.unchained.env
         for bundle_ in bundles:
             for bundle in bundle_.iter_class_hierarchy():
-                bundle_config = self.get_config(bundle, env)
+                bundle_config = self.get_config(bundle, app.env)
                 app.config.from_mapping(bundle_config)
 
         if _config_overrides and isinstance(_config_overrides, dict):

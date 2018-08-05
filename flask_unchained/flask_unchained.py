@@ -12,7 +12,14 @@ class FlaskUnchained(Flask):
     automatic (optional) registration of URLs prefixed with a language code.
     """
 
+    env: str = None
+    """
+    The environment the application is running in. Will be one of ``development``,
+    ``production``, ``staging``, or ``test``.
+    """
+
     from .unchained import Unchained, unchained
+
     unchained: Unchained = unchained
     """
     The Flask Unchained extension instance.

@@ -85,6 +85,7 @@ class Unchained:
                  ) -> None:
         self.bundles = bundles
         self.env = env or self.env
+        app.env = self.env
         app.extensions['unchained'] = self
         app.unchained = self
         app.shell_context_processor(lambda: {b.__name__: b for b in bundles})
