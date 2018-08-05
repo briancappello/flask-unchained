@@ -51,6 +51,8 @@ class AppFactory:
                         useful for testing)
         :param flask_kwargs: keyword argument overrides for the :class:`FlaskUnchained`
                              constructor
+        :param _config_overrides: a dictionary of config option overrides; meant for
+                                  test fixtures.
         :return: the :class:`FlaskUnchained` application instance
         """
         unchained_config = _load_unchained_config(env)

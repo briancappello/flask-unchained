@@ -37,7 +37,3 @@ class ProdConfig:
 
 class StagingConfig(ProdConfig):
     pass
-
-
-class TestConfig:
-    TESTING = True

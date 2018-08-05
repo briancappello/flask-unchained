@@ -57,7 +57,3 @@ class Config:
 
     ADMIN_POST_LOGOUT_ENDPOINT = '/'
     """Endpoint to redirect to after the user logs out of the admin."""
-
-
-class TestConfig:
-    TESTING = True

@@ -28,6 +28,7 @@ class ConfigureAppHook(AppFactoryHook):
                  bundles: List[Type[Bundle]],
                  _config_overrides: Optional[Dict[str, Any]] = None,
                  ):
+        self.apply_default_config(app)
         for bundle_ in bundles:
             for bundle in bundle_.iter_class_hierarchy():
                 bundle_config = self.get_config(bundle, app.env)
@@ -35,6 +36,17 @@ class ConfigureAppHook(AppFactoryHook):
 
         if _config_overrides and isinstance(_config_overrides, dict):
             app.config.from_mapping(_config_overrides)
+
+    def apply_default_config(self, app):
+        from ..app_config import _ConfigDefaults
+        app.config.from_object(_ConfigDefaults)
+
+        if app.env == DEV:
+            from ..app_config import _DevConfigDefaults
+            app.config.from_object(_DevConfigDefaults)
+        elif app.env == TEST:
+            from ..app_config import _TestConfigDefaults
+            app.config.from_object(_TestConfigDefaults)
 
     def get_config(self, bundle: Type[Bundle],
                    env: Union[DEV, PROD, STAGING, TEST],

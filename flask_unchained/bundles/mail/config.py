@@ -35,11 +35,3 @@ class DevConfig:
 class ProdConfig:
     MAIL_PORT = os.getenv('FLASK_MAIL_PORT', 465)
     MAIL_USE_SSL = get_boolean_env('FLASK_MAIL_USE_SSL', True)
-
-
-class StagingConfig(ProdConfig):
-    pass
-
-
-class TestConfig:
-    TESTING = True

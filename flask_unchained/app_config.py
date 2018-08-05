@@ -5,10 +5,13 @@
     Base class for app-bundle configs. Example usage::
 
         # file: project_root/your_app_bundle/config.py
+
+        import os
+
         from flask_unchained import AppConfig
 
         class Config(AppConfig):
-            pass
+            SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key')
 
         class DevConfig(Config):
             pass
@@ -24,6 +27,8 @@
 """
 import os
 import sys
+
+from .utils import get_boolean_env
 
 
 class AppRootDescriptor:
@@ -52,4 +57,13 @@ class AppConfig:
     """
 
 
+class _ConfigDefaults:
+    DEBUG = get_boolean_env('FLASK_DEBUG', False)
 
+
+class _DevConfigDefaults:
+    DEBUG = get_boolean_env('FLASK_DEBUG', True)
+
+
+class _TestConfigDefaults:
+    TESTING = True
