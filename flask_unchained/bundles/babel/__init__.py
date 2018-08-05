@@ -28,6 +28,7 @@ class BabelBundle(Bundle):
 
     @classmethod
     def before_init_app(cls, app: Flask):
+        app.jinja_env.add_extension('jinja2.ext.i18n')
         babel.locale_selector_func = cls.get_locale
         if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
             app.url_value_preprocessor(cls.lang_code_url_value_preprocessor)
