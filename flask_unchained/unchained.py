@@ -101,7 +101,8 @@ class Unchained:
 
         # must import the RunHooksHook here to prevent a circular dependency
         from .hooks.run_hooks_hook import RunHooksHook
-        RunHooksHook(self).run_hook(app, bundles or [], _config_overrides=_config_overrides)
+        RunHooksHook(self).run_hook(app, bundles or [],
+                                    _config_overrides=_config_overrides)
         self._initialized = True
 
     def _reset(self):

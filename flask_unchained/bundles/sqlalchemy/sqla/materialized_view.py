@@ -34,8 +34,8 @@ def create_materialized_view(name, selectable, db=injectable):
             idx.create(connection)
 
     # to support using db.drop_all()
-    db.event.listen(db.metadata, 'before_drop',
-                    db.DDL(f'DROP MATERIALIZED VIEW IF EXISTS {name}'))
+    db.event.listen(db.metadata, 'before_drop', db.DDL(
+        f'DROP MATERIALIZED VIEW IF EXISTS {name}'))
 
     # to support auto-generated migrations
     db.metadata.info.setdefault('materialized_views', set()).add((name, selectable))
@@ -69,6 +69,4 @@ class _CreateMaterializedView(DDLElement):
 def _compile_create_materialized_view(element, compiler, **kwargs):
     return 'CREATE MATERIALIZED VIEW {name} AS {query}'.format(
         name=element.name,
-        query=compiler.sql_compiler.process(element.selectable,
-                                            literal_binds=True)
-    )
+        query=compiler.sql_compiler.process(element.selectable, literal_binds=True))
