@@ -14,6 +14,7 @@
 * automatically set the `csrf_token` cookie on responses
 * override the `click` module to also support documenting arguments with `help`
  - also make the default help options `-h` and `--help` instead of just `--help`
+* refactor the hook store to be a class attribute of the bundle the hook(s) belong to
 
 ## 0.5.1 (2018/07/25)
 

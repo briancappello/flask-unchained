@@ -6,6 +6,7 @@
 """
 
 from flask_unchained import Bundle
+from flask_unchained.utils import AttrDict
 
 from .alembic import MaterializedViewMigration
 from .base_model import BaseModel
@@ -20,6 +21,11 @@ from .validation import (
 class SQLAlchemyBundle(Bundle):
     name = 'sqlalchemy_bundle'
     command_group_names = ['db']
+
+    store = AttrDict(
+        # model class name -> model class
+        models={},
+    )
 
     @classmethod
     def after_init_app(cls, app):

@@ -2,9 +2,11 @@ import pytest
 from typing import *
 
 from flask_unchained import unchained
+from flask_unchained.utils import AttrDict
 
 from flask_sqlalchemy import Model
-from flask_unchained.bundles.sqlalchemy.hooks import RegisterModelsHook, Store
+from flask_unchained.bundles.sqlalchemy import SQLAlchemyBundle
+from flask_unchained.bundles.sqlalchemy.hooks import RegisterModelsHook
 from tests.conftest import POSTGRES
 
 from ._bundles.app import MyAppBundle
@@ -18,8 +20,8 @@ from ._bundles.vendor_two import VendorTwoBundle
 
 @pytest.fixture()
 def hook():
-    store = Store()
-    return RegisterModelsHook(unchained, store)
+    SQLAlchemyBundle.store = AttrDict(models={})
+    return RegisterModelsHook(unchained, SQLAlchemyBundle)
 
 
 def _to_dict(models: List[Type[Model]]) -> Dict[str, Type[Model]]:

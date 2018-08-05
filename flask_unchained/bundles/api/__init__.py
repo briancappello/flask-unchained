@@ -9,6 +9,7 @@ import enum
 
 from flask import Flask
 from flask_unchained import Bundle, unchained
+from flask_unchained.utils import AttrDict
 from speaklater import _LazyString
 
 from .extensions import api, ma
@@ -16,6 +17,23 @@ from .model_resource import ModelResource
 
 
 class ApiBundle(Bundle):
+    store = AttrDict(
+        # model class name -> resource class
+        resources_by_model={},
+
+        # serializer class name -> serializer class
+        serializers={},
+
+        # model class name -> serializer class (serializer.__kind__ == 'all')
+        serializers_by_model={},
+
+        # model class name -> serializer class (serializer.__kind__ == 'create')
+        create_by_model={},
+
+        # model class name -> serializer class (serializer.__kind__ == 'many')
+        many_by_model={},
+    )
+
     # the template folder gets set manually by the OpenAPI bp
     template_folder = None
 
@@ -26,7 +44,7 @@ class ApiBundle(Bundle):
 
     @classmethod
     def register_model_resources(cls):
-        for resource in unchained.api_bundle.resources_by_model.values():
+        for resource in unchained.api_bundle.store.resources_by_model.values():
             api.register_model_resource(resource)
 
     @classmethod

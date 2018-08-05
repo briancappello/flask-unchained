@@ -83,7 +83,7 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
     def __init__(self, session_manager: SessionManager = injectable):
         self.session_manager = session_manager
         if isinstance(self.model, str):
-            self.model = unchained.sqlalchemy_bundle.models[self.model]
+            self.model = unchained.sqlalchemy_bundle.store.models[self.model]
 
     @classmethod
     def methods(cls):

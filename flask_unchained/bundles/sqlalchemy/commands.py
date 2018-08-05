@@ -63,7 +63,7 @@ def import_fixtures():
         raise NotADirectoryError(msg)
 
     factory = SQLAlchemyModelFactory(db_ext.session,
-                                     unchained.sqlalchemy_bundle.models)
+                                     unchained.sqlalchemy_bundle.store.models)
     loader = FixturesLoader(factory, fixtures_dir=fixtures_dir)
 
     click.echo(f'Loading fixtures from `{fixtures_dir}` directory')

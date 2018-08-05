@@ -1,9 +1,12 @@
 import pytest
 
-from flask_unchained.bundles.controller.hooks import RegisterRoutesHook, Store
+from collections import defaultdict
+from flask_unchained.bundles.controller import ControllerBundle
+from flask_unchained.bundles.controller.hooks import RegisterRoutesHook
 from flask_unchained.bundles.controller.route import Route
 from flask_unchained.bundles.controller.routes import reduce_routes
 from flask_unchained.unchained import Unchained
+from flask_unchained.utils import AttrDict
 
 from .fixtures.app_bundle import AppBundle
 from .fixtures.auto_route_app_bundle import AutoRouteAppBundle
@@ -12,10 +15,14 @@ from .fixtures.empty_bundle import EmptyBundle
 
 
 @pytest.fixture
-def hook():
+def hook(app):
+    app.view_functions = {}
     unchained = Unchained()
-    bundle_store = Store()
-    return RegisterRoutesHook(unchained, bundle_store)
+    ControllerBundle.store = AttrDict(endpoints={},
+                                      controller_endpoints={},
+                                      bundle_routes=defaultdict(list),
+                                      other_routes=[])
+    return RegisterRoutesHook(unchained, ControllerBundle)
 
 
 class TestRegisterRoutesHook:

@@ -10,7 +10,7 @@ from typing import *
 
 from .flask_unchained import FlaskUnchained
 from .string_utils import right_replace, slugify, snake_case
-from .utils import safe_import_module
+from .utils import AttrDict, safe_import_module
 
 
 def _normalize_module_name(module_name):
@@ -121,6 +121,11 @@ class Bundle(metaclass=BundleMeta):
     """
     Url path where this bundle's static assets will be served from. If static_folder is
     set, this will default to ``/<bundle.name>/static``, otherwise None.
+    """
+
+    store = AttrDict()
+    """
+    A place for hooks to register discovered objects with the bundle.
     """
 
     _deferred_functions = []

@@ -83,9 +83,9 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
     imported from other places, like third-party code).
     """
 
-    def __init__(self, unchained: Unchained, store=None):
+    def __init__(self, unchained: Unchained, bundle=None):
         self.unchained = unchained
-        self.store = store
+        self.store = bundle.store if bundle else None
 
     def run_hook(self, app: FlaskUnchained, bundles: List[Type[Bundle]]):
         """

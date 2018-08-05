@@ -10,7 +10,7 @@ from ..app_factory_hook import AppFactoryHook
 from ..bundle import Bundle
 
 
-HookTuple = namedtuple('HookTuple', ('Hook', 'store'))
+HookTuple = namedtuple('HookTuple', ('Hook', 'bundle'))
 
 
 class RunHooksHook(AppFactoryHook):
@@ -45,7 +45,7 @@ class RunHooksHook(AppFactoryHook):
         for bundle in bundles:
             hooks += self.collect_from_bundle(bundle)
         hook_tuples = self.resolve_hook_order(hooks)
-        return [hook_tuple.Hook(self.unchained, hook_tuple.store)
+        return [hook_tuple.Hook(self.unchained, hook_tuple.bundle)
                 for hook_tuple in hook_tuples]
 
     def collect_from_unchained(self) -> List[HookTuple]:
@@ -54,18 +54,8 @@ class RunHooksHook(AppFactoryHook):
                 for Hook in self._collect_from_package(hooks_pkg).values()]
 
     def collect_from_bundle(self, bundle: Type[Bundle]) -> List[HookTuple]:
-        bundle_store = self.find_bundle_store(bundle)
-        if bundle_store:
-            bundle_store = bundle_store()
-            self.unchained._bundle_stores[bundle.name] = bundle_store
-        return [HookTuple(Hook, bundle_store)
+        return [HookTuple(Hook, bundle)
                 for Hook in super().collect_from_bundle(bundle).values()]
-
-    def find_bundle_store(self, bundle):
-        for bundle in bundle.iter_class_hierarchy():
-            hooks_pkg = self.import_bundle_module(bundle)
-            if hasattr(hooks_pkg, 'Store'):
-                return hooks_pkg.Store
 
     def type_check(self, obj):
         is_class = inspect.isclass(obj) and issubclass(obj, AppFactoryHook)

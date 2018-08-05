@@ -5,7 +5,6 @@ from flask_unchained.unchained import Unchained
 
 from ._bundles.myapp import MyAppBundle
 from ._bundles.vendor_bundle import VendorBundle, awesome
-from ._bundles.vendor_bundle.hooks import Store as VendorBundleStore
 
 
 def test_unchained(app):
@@ -17,5 +16,5 @@ def test_unchained(app):
     with pytest.raises(AttributeError):
         fail = unchained.app
 
-    assert isinstance(unchained.vendor_bundle, VendorBundleStore)
+    assert issubclass(unchained.vendor_bundle, VendorBundle)
     assert unchained.extensions.awesome == awesome

@@ -16,7 +16,7 @@ class ModelManager(SessionManager):
     def __init__(self):
         super().__init__()
         if isinstance(self.model, str):
-            self.model = unchained.sqlalchemy_bundle.models[self.model]
+            self.model = unchained.sqlalchemy_bundle.store.models[self.model]
 
     @property
     def q(self) -> BaseQuery:

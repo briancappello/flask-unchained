@@ -17,8 +17,10 @@
         ]
 """
 
+from collections import defaultdict
 from flask import Flask
 from flask_unchained import Bundle
+from flask_unchained.utils import AttrDict
 
 from .constants import (ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,
                         CREATE, DELETE, GET, LIST, PATCH, PUT)
@@ -34,6 +36,20 @@ class ControllerBundle(Bundle):
     """
     Controller Bundle class.
     """
+
+    store = AttrDict(
+        # endpoint name -> Route
+        endpoints={},
+
+        # f'{ControllerClassName}.{view_method_name}' -> Route
+        controller_endpoints={},
+
+        # bundle name -> List[Route]
+        bundle_routes=defaultdict(list),
+
+        # List[Route]
+        other_routes=[],
+    )
 
     @classmethod
     def before_init_app(cls, app: Flask):
