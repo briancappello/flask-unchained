@@ -1,8 +1,9 @@
 from flask import Flask, Config
 from typing import *
 
+from ..app_config import AppConfig
 from ..app_factory_hook import AppFactoryHook
-from ..bundle import Bundle
+from ..bundle import Bundle, AppBundle
 from ..constants import DEV, PROD, STAGING, TEST
 from ..utils import AttrDict
 
@@ -55,8 +56,19 @@ class ConfigureAppHook(AppFactoryHook):
         base_config = getattr(bundle_config_module, BASE_CONFIG, None)
         env_config = getattr(bundle_config_module, ENV_CONFIGS[env], None)
 
+        if (issubclass(bundle, AppBundle) and (
+                not base_config
+                or not issubclass(base_config, AppConfig))):
+            raise Exception("Could not find an AppConfig subclass in your app "
+                            "bundle's config module.")
+
         merged = Config(None)
         for config in [base_config, env_config]:
             if config:
                 merged.from_object(config)
+
+        if issubclass(bundle, AppBundle) and 'SECRET_KEY' not in merged:
+            raise Exception("The `SECRET_KEY` config option is required. "
+                            "Please set it in your app bundle's base `Config` class.")
+
         return AttrDict(merged)
