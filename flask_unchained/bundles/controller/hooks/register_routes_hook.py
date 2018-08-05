@@ -39,9 +39,9 @@ class RegisterRoutesHook(AppFactoryHook):
                     key = f'{route._controller_name}.{route.method_name}'
                     self.store.controller_endpoints[key] = route
 
-        bundle_names = [(b.name, [cb.module_name for cb in b.iter_class_hierarchy()
+        bundle_names = [(name, [cb.module_name for cb in b.iter_class_hierarchy()
                                   if cb.has_views()])
-                        for b in app.unchained.bundles]
+                        for name, b in app.unchained.bundles.items()]
 
         bundle_route_endpoints = set()
         for endpoint, route in self.store.endpoints.items():

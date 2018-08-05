@@ -16,6 +16,7 @@
  - also make the default help options `-h` and `--help` instead of just `--help`
 * refactor the hook store to be a class attribute of the bundle the hook(s) belong to
 * add an `env` attribute on the `FlaskUnchained` app instance
+* make the `bundles` attribute on the `Unchained` extension an `AttrDict`
 
 ## 0.5.1 (2018/07/25)
 

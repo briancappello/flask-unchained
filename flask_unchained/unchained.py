@@ -16,7 +16,7 @@ from typing import *
 from .constants import DEV, PROD, STAGING, TEST
 from .di import ensure_service_name, injectable
 from .exceptions import ServiceUsageError
-from .utils import LazyAttrDict, format_docstring
+from .utils import AttrDict, LazyAttrDict, format_docstring
 
 
 CategoryActionLog = namedtuple('CategoryActionLog',
@@ -41,10 +41,9 @@ class Unchained:
         self.extensions = LazyAttrDict()
         self.services = LazyAttrDict()
 
-        self.bundles = []
+        self.bundles = AttrDict()
         self.babel_bundle = None
         self.env = env
-        self._bundle_stores = {}
         self._shell_ctx = {}
         self._deferred_functions = []
         self._initialized = False
@@ -83,7 +82,7 @@ class Unchained:
                  bundles: Optional[List] = None,
                  _config_overrides: Optional[Dict[str, Any]] = None,
                  ) -> None:
-        self.bundles = bundles
+        self.bundles = {b.name: b for b in bundles} if bundles else AttrDict()
         self.env = env or self.env
         app.env = self.env
         app.extensions['unchained'] = self
@@ -583,8 +582,8 @@ class Unchained:
         return sorted(items, key=lambda row: row.timestamp)
 
     def __getattr__(self, name: str):
-        if name in self._bundle_stores:
-            return self._bundle_stores[name]
+        if name in self.bundles:
+            return self.bundles[name]
         raise AttributeError(name)
 
 
