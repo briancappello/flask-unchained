@@ -1,3 +1,1 @@
-class Store:
-    def __init__(self):
-        pass
+from .register_admins_hook import RegisterAdminsHook

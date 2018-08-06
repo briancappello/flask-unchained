@@ -26,11 +26,11 @@ class RegisterExtensionsHook(AppFactoryHook):
                                           ext.extension.__class__.__name__,
                                           ext.dependencies]
 
-    def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
+    def run_hook(self, app: Flask, bundles: List[Bundle]):
         extensions = self.collect_from_bundles(bundles)
         self.process_objects(app, self.get_extension_tuples(extensions))
 
-    def collect_from_bundle(self, bundle: Type[Bundle]):
+    def collect_from_bundle(self, bundle: Bundle):
         extensions = {}
         for bundle in bundle.iter_class_hierarchy():
             module = self.import_bundle_module(bundle)

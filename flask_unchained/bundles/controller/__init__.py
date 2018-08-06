@@ -37,22 +37,22 @@ class ControllerBundle(Bundle):
     Controller Bundle class.
     """
 
-    store = AttrDict(
-        # endpoint name -> Route
-        endpoints={},
+    def __init__(self):
+        self.store = AttrDict(
+            # endpoint name -> Route
+            endpoints={},
 
-        # f'{ControllerClassName}.{view_method_name}' -> Route
-        controller_endpoints={},
+            # f'{ControllerClassName}.{view_method_name}' -> Route
+            controller_endpoints={},
 
-        # bundle name -> List[Route]
-        bundle_routes=defaultdict(list),
+            # bundle name -> List[Route]
+            bundle_routes=defaultdict(list),
 
-        # List[Route]
-        other_routes=[],
-    )
+            # List[Route]
+            other_routes=[],
+        )
 
-    @classmethod
-    def before_init_app(cls, app: Flask):
+    def before_init_app(self, app: Flask):
         """
         Configure the Jinja environment and template loader
         """
@@ -63,8 +63,7 @@ class ControllerBundle(Bundle):
                              'loader': UnchainedJinjaLoader(app)}
         app.jinja_env.globals['url_for'] = url_for
 
-    @classmethod
-    def after_init_app(cls, app):
+    def after_init_app(self, app):
         from flask_wtf.csrf import generate_csrf
 
         # send CSRF token in the cookie

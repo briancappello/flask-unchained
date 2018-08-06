@@ -17,6 +17,7 @@
 * refactor the hook store to be a class attribute of the bundle the hook(s) belong to
 * add an `env` attribute on the `FlaskUnchained` app instance
 * make the `bundles` attribute on the `Unchained` extension an `AttrDict`
+   - bundles are now instantiated instead of passing the classes around directly
 * add default config options, making `DEBUG` and `TESTING` unnecessary to set manually
 * add a `_form_name` attribute to `FlaskForm` to automatically name forms when rendering them programmatically
 

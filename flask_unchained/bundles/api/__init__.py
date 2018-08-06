@@ -17,38 +17,36 @@ from .model_resource import ModelResource
 
 
 class ApiBundle(Bundle):
-    store = AttrDict(
-        # model class name -> resource class
-        resources_by_model={},
+    def __init__(self):
+        self.store = AttrDict(
+            # model class name -> resource class
+            resources_by_model={},
 
-        # serializer class name -> serializer class
-        serializers={},
+            # serializer class name -> serializer class
+            serializers={},
 
-        # model class name -> serializer class (serializer.__kind__ == 'all')
-        serializers_by_model={},
+            # model class name -> serializer class (serializer.__kind__ == 'all')
+            serializers_by_model={},
 
-        # model class name -> serializer class (serializer.__kind__ == 'create')
-        create_by_model={},
+            # model class name -> serializer class (serializer.__kind__ == 'create')
+            create_by_model={},
 
-        # model class name -> serializer class (serializer.__kind__ == 'many')
-        many_by_model={},
-    )
+            # model class name -> serializer class (serializer.__kind__ == 'many')
+            many_by_model={},
+        )
 
     # the template folder gets set manually by the OpenAPI bp
     template_folder = None
 
-    @classmethod
-    def after_init_app(cls, app: Flask):
-        cls.set_json_encoder(app)
-        app.before_first_request(cls.register_model_resources)
+    def after_init_app(self, app: Flask):
+        self.set_json_encoder(app)
+        app.before_first_request(self.register_model_resources)
 
-    @classmethod
-    def register_model_resources(cls):
+    def register_model_resources(self):
         for resource in unchained.api_bundle.store.resources_by_model.values():
             api.register_model_resource(resource)
 
-    @classmethod
-    def set_json_encoder(cls, app: Flask):
+    def set_json_encoder(self, app: Flask):
         from flask_unchained.bundles.sqlalchemy import BaseModel
         from flask_unchained import unchained
         from werkzeug.local import LocalProxy
@@ -63,7 +61,7 @@ class ApiBundle(Bundle):
                 elif isinstance(obj, _LazyString):
                     return str(obj)
 
-                api_store = unchained.api_bundle
+                api_store = unchained.api_bundle.store
                 if isinstance(obj, BaseModel):
                     model_name = obj.__class__.__name__
                     serializer_cls = api_store.serializers_by_model.get(model_name)

@@ -26,7 +26,7 @@ class ConfigureAppHook(AppFactoryHook):
 
     def run_hook(self,
                  app: Flask,
-                 bundles: List[Type[Bundle]],
+                 bundles: List[Bundle],
                  _config_overrides: Optional[Dict[str, Any]] = None,
                  ):
         self.apply_default_config(app)
@@ -49,14 +49,14 @@ class ConfigureAppHook(AppFactoryHook):
             from ..app_config import _TestConfigDefaults
             app.config.from_object(_TestConfigDefaults)
 
-    def get_config(self, bundle: Type[Bundle],
+    def get_config(self, bundle: Bundle,
                    env: Union[DEV, PROD, STAGING, TEST],
                    ) -> AttrDict:
         bundle_config_module = self.import_bundle_module(bundle)
         base_config = getattr(bundle_config_module, BASE_CONFIG, None)
         env_config = getattr(bundle_config_module, ENV_CONFIGS[env], None)
 
-        if (issubclass(bundle, AppBundle) and (
+        if (isinstance(bundle, AppBundle) and (
                 not base_config
                 or not issubclass(base_config, AppConfig))):
             raise Exception("Could not find an AppConfig subclass in your app "
@@ -67,7 +67,7 @@ class ConfigureAppHook(AppFactoryHook):
             if config:
                 merged.from_object(config)
 
-        if issubclass(bundle, AppBundle) and 'SECRET_KEY' not in merged:
+        if isinstance(bundle, AppBundle) and 'SECRET_KEY' not in merged:
             raise Exception("The `SECRET_KEY` config option is required. "
                             "Please set it in your app bundle's base `Config` class.")
 

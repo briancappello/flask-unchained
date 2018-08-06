@@ -130,40 +130,35 @@ class Bundle(metaclass=BundleMeta):
 
     _deferred_functions = []
 
-    @classmethod
-    def before_init_app(cls, app: FlaskUnchained):
+    def before_init_app(self, app: FlaskUnchained):
         """
         Give bundles an opportunity to modify attributes on the Flask instance
         """
         pass
 
-    @classmethod
-    def after_init_app(cls, app: FlaskUnchained):
+    def after_init_app(self, app: FlaskUnchained):
         """
         Give bundles an opportunity to finalize app initialization
         """
         pass
 
-    @classmethod
-    def before_request(cls, fn):
+    def before_request(self, fn):
         """
         Like :meth:`~flask.Flask.before_request` but for a bundle.  This function
         is only executed before each request that is handled by a function of
         that bundle.
         """
-        cls._defer(lambda bp: bp.before_request(fn))
+        self._defer(lambda bp: bp.before_request(fn))
 
-    @classmethod
-    def after_request(cls, fn):
+    def after_request(self, fn):
         """
         Like :meth:`~flask.Flask.after_request` but for a bundle.  This function
         is only executed after each request that is handled by a function of
         that bundle.
         """
-        cls._defer(lambda bp: bp.after_request(fn))
+        self._defer(lambda bp: bp.after_request(fn))
 
-    @classmethod
-    def teardown_request(cls, fn):
+    def teardown_request(self, fn):
         """
         Like :meth:`~flask.Flask.teardown_request` but for a bundle.  This
         function is only executed when tearing down requests handled by a
@@ -171,39 +166,35 @@ class Bundle(metaclass=BundleMeta):
         when the request context is popped, even when no actual request was
         performed.
         """
-        cls._defer(lambda bp: bp.teardown_request(fn))
+        self._defer(lambda bp: bp.teardown_request(fn))
 
-    @classmethod
-    def context_processor(cls, fn):
+    def context_processor(self, fn):
         """
         Like :meth:`~flask.Flask.context_processor` but for a bundle.  This
         function is only executed for requests handled by a bundle.
         """
-        cls._defer(lambda bp: bp.context_processor(fn))
+        self._defer(lambda bp: bp.context_processor(fn))
         return fn
 
-    @classmethod
-    def url_defaults(cls, fn):
+    def url_defaults(self, fn):
         """
         Callback function for URL defaults for this bundle.  It's called
         with the endpoint and values and should update the values passed
         in place.
         """
-        cls._defer(lambda bp: bp.url_defaults(fn))
+        self._defer(lambda bp: bp.url_defaults(fn))
         return fn
 
-    @classmethod
-    def url_value_preprocessor(cls, fn):
+    def url_value_preprocessor(self, fn):
         """
         Registers a function as URL value preprocessor for this
         bundle.  It's called before the view functions are called and
         can modify the url values provided.
         """
-        cls._defer(lambda bp: bp.url_value_preprocessor(fn))
+        self._defer(lambda bp: bp.url_value_preprocessor(fn))
         return fn
 
-    @classmethod
-    def errorhandler(cls, code_or_exception):
+    def errorhandler(self, code_or_exception):
         """
         Registers an error handler that becomes active for this bundle
         only.  Please be aware that routing does not happen local to a
@@ -216,12 +207,11 @@ class Bundle(metaclass=BundleMeta):
         of the :class:`~flask.Flask` object.
         """
         def decorator(fn):
-            cls._defer(lambda bp: bp.register_error_handler(code_or_exception, fn))
+            self._defer(lambda bp: bp.register_error_handler(code_or_exception, fn))
             return fn
         return decorator
 
-    @classmethod
-    def iter_class_hierarchy(cls, include_self=True, reverse=True):
+    def iter_class_hierarchy(self, include_self=True, reverse=True):
         """
         Iterate over the bundle classes in the hierarchy. Yields base-most
         super classes first (aka opposite of Method Resolution Order).
@@ -231,31 +221,28 @@ class Bundle(metaclass=BundleMeta):
         :param include_self: Whether or not to yield the top-level bundle.
         :param reverse: Pass False to yield bundles in Method Resolution Order.
         """
-        supers = cls.__mro__[(0 if include_self else 1):]
+        supers = self.__class__.__mro__[(0 if include_self else 1):]
         for bundle in (supers if not reverse else reversed(supers)):
             if issubclass(bundle, Bundle) and bundle not in {AppBundle, Bundle}:
-                yield bundle
+                yield bundle()
 
-    @classmethod
-    def has_views(cls):
+    def has_views(self):
         """
         Returns True if any of the bundles in the hierarchy has a views module.
 
         For internal use only.
         """
-        for bundle in cls.iter_class_hierarchy():
+        for bundle in self.iter_class_hierarchy():
             if bundle._has_views_module():
                 return True
         return False
 
-    @classmethod
-    def _has_views_module(cls):
-        views_module_name = getattr(cls, 'views_module_name', 'views')
-        return bool(safe_import_module(f'{cls.module_name}.{views_module_name}'))
+    def _has_views_module(self):
+        views_module_name = getattr(self, 'views_module_name', 'views')
+        return bool(safe_import_module(f'{self.module_name}.{views_module_name}'))
 
-    @classmethod
-    def _defer(cls, fn):
-        cls._deferred_functions.append(fn)
+    def _defer(self, fn):
+        self._deferred_functions.append(fn)
 
 
 class AppBundle(Bundle):

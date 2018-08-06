@@ -87,7 +87,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         self.unchained = unchained
         self.store = bundle.store if bundle else None
 
-    def run_hook(self, app: FlaskUnchained, bundles: List[Type[Bundle]]):
+    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         """
         Hook entry point. Override to disable standard behavior of iterating
         over bundles to discover objects and processing them.
@@ -101,8 +101,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         """
         raise NotImplementedError
 
-    def collect_from_bundles(self, bundles: List[Type[Bundle]],
-                             ) -> Dict[str, Any]:
+    def collect_from_bundles(self, bundles: List[Bundle]) -> Dict[str, Any]:
         """
         Collect objects where :meth:`type_check` returns ``True`` from bundles.
         Names (keys) are expected to be unique across bundles, except for the
@@ -113,7 +112,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         object_keys = set()  # keys in all_objects, used to ensure uniqueness
         for bundle in bundles:
             from_bundle = self.collect_from_bundle(bundle)
-            if issubclass(bundle, AppBundle):
+            if isinstance(bundle, AppBundle):
                 all_objects.update(from_bundle)
                 break  # app_bundle is last, no need to update keys
 
@@ -132,7 +131,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
 
         return all_objects
 
-    def collect_from_bundle(self, bundle: Type[Bundle]) -> Dict[str, Any]:
+    def collect_from_bundle(self, bundle: Bundle) -> Dict[str, Any]:
         """
         Collect objects where :meth:`type_check` returns ``True`` from bundles.
         bundle subclasses can override objects discovered in superclass bundles.
@@ -202,14 +201,14 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         """
         raise NotImplementedError
 
-    def import_bundle_module(self, bundle: Type[Bundle]):
+    def import_bundle_module(self, bundle: Bundle):
         if self.bundle_module_name is None:
             raise NotImplementedError('you must set the `bundle_module_name` '
                                       'class attribute on your hook to use '
                                       'this feature')
         return safe_import_module(self.get_module_name(bundle))
 
-    def get_module_name(self, bundle: Type[Bundle]) -> str:
+    def get_module_name(self, bundle: Bundle) -> str:
         module_name = getattr(bundle,
                               self.bundle_override_module_name_attr,
                               self.bundle_module_name)

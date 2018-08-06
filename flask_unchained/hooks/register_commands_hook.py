@@ -18,7 +18,7 @@ class RegisterCommandsHook(AppFactoryHook):
 
     _limit_discovery_to_local_declarations = False
 
-    def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
+    def run_hook(self, app: Flask, bundles: List[Bundle]):
         commands = {}
         for bundle in bundles:
             command_groups = self.get_bundle_command_groups(bundle)
@@ -32,7 +32,7 @@ class RegisterCommandsHook(AppFactoryHook):
             app.cli.add_command(command, name)
         return commands
 
-    def get_bundle_commands(self, bundle: Type[Bundle], command_groups):
+    def get_bundle_commands(self, bundle: Bundle, command_groups):
         # when a command belongs to a group, we don't also want to register the command
         # therefore we collect all the command names belonging to groups, and use that
         # in our is_click_command type-checking fn below
@@ -51,7 +51,7 @@ class RegisterCommandsHook(AppFactoryHook):
             commands.update(inherit_docstrings(new, commands))
         return commands
 
-    def get_bundle_command_groups(self, bundle: Type[Bundle]):
+    def get_bundle_command_groups(self, bundle: Bundle):
         command_groups = {}
         module_found = False
         for bundle in bundle.iter_class_hierarchy():

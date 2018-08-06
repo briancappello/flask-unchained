@@ -1,13 +1,11 @@
 import pytest
-from typing import *
-
-from flask_unchained import unchained
-from flask_unchained.utils import AttrDict
 
 from flask_sqlalchemy import Model
+from flask_unchained import unchained
 from flask_unchained.bundles.sqlalchemy import SQLAlchemyBundle
 from flask_unchained.bundles.sqlalchemy.hooks import RegisterModelsHook
 from tests.conftest import POSTGRES
+from typing import *
 
 from ._bundles.app import MyAppBundle
 from ._bundles.backref import BackrefBundle
@@ -20,8 +18,7 @@ from ._bundles.vendor_two import VendorTwoBundle
 
 @pytest.fixture()
 def hook():
-    SQLAlchemyBundle.store = AttrDict(models={})
-    return RegisterModelsHook(unchained, SQLAlchemyBundle)
+    return RegisterModelsHook(unchained, SQLAlchemyBundle())
 
 
 def _to_dict(models: List[Type[Model]]) -> Dict[str, Type[Model]]:
@@ -113,40 +110,40 @@ class TestRegisterModelsHookTypeCheck:
 
 class TestRegisterModelsHookCollectFromBundle:
     def test_it_works_vendor_one(self, db, hook: RegisterModelsHook):
-        hook.run_hook(None, [VendorOneBundle])
+        hook.run_hook(None, [VendorOneBundle()])
         expected_one = get_vendor_one_models()
         assert hook.store.models == expected_one
         assert db.metadata.tables == _to_metadata_tables(expected_one)
 
     def test_it_works_vendor_two(self, db, hook: RegisterModelsHook):
-        hook.run_hook(None, [VendorTwoBundle])
+        hook.run_hook(None, [VendorTwoBundle()])
         expected_two = get_vendor_two_models()
         assert hook.store.models == expected_two
         assert db.metadata.tables == _to_metadata_tables(expected_two)
 
     def test_it_works_vendor_one_and_two(self, db, hook: RegisterModelsHook):
-        hook.run_hook(None, [VendorOneBundle, VendorTwoBundle])
+        hook.run_hook(None, [VendorOneBundle(), VendorTwoBundle()])
         expected_both = {**get_vendor_one_models(),
                          **get_vendor_two_models()}
         assert hook.store.models == expected_both
         assert db.metadata.tables == _to_metadata_tables(expected_both)
 
     def test_vendor_bundle_subclassing(self, db, hook: RegisterModelsHook):
-        hook.run_hook(None, [ExtVendorOneBundle])
+        hook.run_hook(None, [ExtVendorOneBundle()])
         expected_ext_one = get_ext_vendor_one_models()
         assert hook.store.models == expected_ext_one
         assert hasattr(hook.store.models['OneBasic'], 'ext')
         assert db.metadata.tables == _to_metadata_tables(expected_ext_one)
 
     def test_vendor_bundle_subsubclassing(self, db, hook: RegisterModelsHook):
-        hook.run_hook(None, [ExtExtVendorOneBundle])
+        hook.run_hook(None, [ExtExtVendorOneBundle()])
         expected_ext_ext_one = get_ext_ext_vendor_one_models()
         assert hook.store.models == expected_ext_ext_one
         assert db.metadata.tables == _to_metadata_tables(expected_ext_ext_one)
 
     def test_lazy_backrefs_throw_exception(self, hook: RegisterModelsHook):
         with pytest.raises(Exception) as e:
-            hook.run_hook(None, [BackrefBundle])
+            hook.run_hook(None, [BackrefBundle()])
         error = 'Discovered a lazy-mapped backref `backrefs` on ' \
                 '`tests.bundles.sqlalchemy._bundles.backref.models.OneRelationship`. Currently ' \
                 'this is unsupported; please use `db.relationship` with '\
@@ -154,13 +151,13 @@ class TestRegisterModelsHookCollectFromBundle:
         assert error in str(e)
 
     def test_it_works_with_polymorphic(self, db, hook: RegisterModelsHook):
-        hook.run_hook(None, [PolymorphicBundle])
+        hook.run_hook(None, [PolymorphicBundle()])
         expected = get_polymorphic_models()
         assert hook.store.models == expected
         assert db.metadata.tables == _to_metadata_tables(expected)
 
     def test_app_bundle_overrides_others(self, db, hook: RegisterModelsHook):
-        hook.run_hook(None, [VendorOneBundle, VendorTwoBundle, MyAppBundle])
+        hook.run_hook(None, [VendorOneBundle(), VendorTwoBundle(), MyAppBundle()])
         expected = get_app_models()
         assert hook.store.models == expected
         assert db.metadata.tables == _to_metadata_tables(expected)

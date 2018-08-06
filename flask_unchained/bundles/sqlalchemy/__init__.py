@@ -22,12 +22,12 @@ class SQLAlchemyBundle(Bundle):
     name = 'sqlalchemy_bundle'
     command_group_names = ['db']
 
-    store = AttrDict(
-        # model class name -> model class
-        models={},
-    )
+    def __init__(self):
+        self.store = AttrDict(
+            # model class name -> model class
+            models={},
+        )
 
-    @classmethod
-    def after_init_app(cls, app):
+    def after_init_app(self, app):
         from .meta.model_registry import _model_registry
         _model_registry.finalize_mappings()

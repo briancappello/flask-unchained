@@ -92,7 +92,7 @@ class Unchained:
         try:
             # must import BabelBundle here to prevent circular dependency
             from .bundles.babel import BabelBundle
-            self.babel_bundle = [b for b in bundles if issubclass(b, BabelBundle)][0]
+            self.babel_bundle = [b for b in bundles if isinstance(b, BabelBundle)][0]
         except IndexError:
             self.babel_bundle = None
 

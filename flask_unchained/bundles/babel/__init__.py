@@ -26,61 +26,53 @@ class BabelBundle(Bundle):
     command_group_names = ('babel',)
     language_code_key = 'lang_code'
 
-    @classmethod
-    def before_init_app(cls, app: Flask):
+    def before_init_app(self, app: Flask):
         app.jinja_env.add_extension('jinja2.ext.i18n')
-        babel.locale_selector_func = cls.get_locale
+        babel.locale_selector_func = self.get_locale
         if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
-            app.url_value_preprocessor(cls.lang_code_url_value_preprocessor)
-            app.url_defaults(cls.set_url_defaults)
+            app.url_value_preprocessor(self.lang_code_url_value_preprocessor)
+            app.url_defaults(self.set_url_defaults)
 
-    @classmethod
-    def after_init_app(cls, app: Flask):
+    def after_init_app(self, app: Flask):
         if not app.config.get('LAZY_TRANSLATIONS'):
             app.jinja_env.install_gettext_callables(gettext, ngettext, newstyle=True)
         else:
             app.jinja_env.install_gettext_callables(lazy_gettext, lazy_ngettext,
                                                     newstyle=True)
 
-    @classmethod
-    def get_url_rule(cls, rule: Optional[str]):
+    def get_url_rule(self, rule: Optional[str]):
         if not rule:
-            return f'/<{cls.language_code_key}>'
-        return f'/<{cls.language_code_key}>' + rule
+            return f'/<{self.language_code_key}>'
+        return f'/<{self.language_code_key}>' + rule
 
-    @classmethod
-    def register_blueprint(cls, app: Flask, blueprint: Blueprint, **options):
+    def register_blueprint(self, app: Flask, blueprint: Blueprint, **options):
         if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
             url_prefix = (options.get('url_prefix', (blueprint.url_prefix or ''))
                                  .rstrip('/'))
             options = dict(**options,
-                           url_prefix=cls.get_url_rule(url_prefix),
+                           url_prefix=self.get_url_rule(url_prefix),
                            register_with_babel=False)
             app.register_blueprint(blueprint, **options)
 
-    @classmethod
-    def add_url_rule(cls, app: Flask, rule: str, **kwargs):
+    def add_url_rule(self, app: Flask, rule: str, **kwargs):
         if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
-            app.add_url_rule(cls.get_url_rule(rule), register_with_babel=False, **kwargs)
+            app.add_url_rule(self.get_url_rule(rule), register_with_babel=False, **kwargs)
 
-    @classmethod
-    def get_locale(cls):
+    def get_locale(self):
         languages = current_app.config['LANGUAGES']
-        return g.get(cls.language_code_key,
+        return g.get(self.language_code_key,
                      request.accept_languages.best_match(languages))
 
-    @classmethod
-    def set_url_defaults(cls, endpoint: str, values: Dict[str, Any]):
-        if cls.language_code_key in values or not g.get(cls.language_code_key, None):
+    def set_url_defaults(self, endpoint: str, values: Dict[str, Any]):
+        if self.language_code_key in values or not g.get(self.language_code_key, None):
             return
 
-        if current_app.url_map.is_endpoint_expecting(endpoint, cls.language_code_key):
-            values[cls.language_code_key] = g.lang_code
+        if current_app.url_map.is_endpoint_expecting(endpoint, self.language_code_key):
+            values[self.language_code_key] = g.lang_code
 
-    @classmethod
-    def lang_code_url_value_preprocessor(cls, endpoint: str, values: Dict[str, Any]):
+    def lang_code_url_value_preprocessor(self, endpoint: str, values: Dict[str, Any]):
         if values is not None:
-            g.lang_code = values.pop(cls.language_code_key, None)
+            g.lang_code = values.pop(self.language_code_key, None)
 
 
 def gettext(*args, **kwargs):

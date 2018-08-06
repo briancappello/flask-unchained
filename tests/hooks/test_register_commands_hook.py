@@ -32,14 +32,15 @@ def assert_cmd(cli_runner, cmd, *args, expected=None):
 
 
 class TestRegisterCommandsHook:
-    def test_top_level_command(self, app, hook, cli_runner):
-        hook.run_hook(app, [VendorBundle, MyAppBundle])
+    def test_top_level_command(self, app, hook: RegisterCommandsHook, cli_runner):
+        hook.run_hook(app, [VendorBundle(), MyAppBundle()])
 
         assert 'top_level' in app.cli.commands
         assert_cmd(cli_runner, app.cli.commands['top_level'], expected='myapp')
 
-    def test_app_bundle_overrides_vendor(self, app, hook, cli_runner):
-        hook.run_hook(app, [VendorBundle, MyAppBundle])
+    def test_app_bundle_overrides_vendor(self, app, hook: RegisterCommandsHook,
+                                         cli_runner):
+        hook.run_hook(app, [VendorBundle(), MyAppBundle()])
 
         assert 'vendor_top_level' in app.cli.commands
         vendor_top_level = app.cli.commands['vendor_top_level']
@@ -73,8 +74,8 @@ class TestRegisterCommandsHook:
 
         assert 'gaz' not in goo_group.commands
 
-    def test_vendor_bundle_overrides(self, app, hook, cli_runner):
-        hook.run_hook(app, [OverrideVendorBundle, MyAppBundle])
+    def test_vendor_bundle_overrides(self, app, hook: RegisterCommandsHook, cli_runner):
+        hook.run_hook(app, [OverrideVendorBundle(), MyAppBundle()])
 
         assert 'vendor_top_level' in app.cli.commands
         vendor_top_level = app.cli.commands['vendor_top_level']

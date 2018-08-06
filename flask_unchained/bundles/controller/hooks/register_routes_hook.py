@@ -19,7 +19,7 @@ class RegisterRoutesHook(AppFactoryHook):
                                             route.endpoint,
                                             route.full_name]
 
-    def run_hook(self, app: FlaskUnchained, bundles):
+    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         app_bundle = bundles[-1]
         routes_module = self.import_bundle_module(app_bundle)
         routes = (self.get_explicit_routes(app_bundle) if routes_module
@@ -66,7 +66,7 @@ class RegisterRoutesHook(AppFactoryHook):
                              **route.rule_options)
             self.log_action(route)
 
-    def get_explicit_routes(self, bundle: Type[Bundle]):
+    def get_explicit_routes(self, bundle: Bundle):
         routes_module = self.import_bundle_module(bundle)
         try:
             return getattr(routes_module, 'routes')()
@@ -75,7 +75,7 @@ class RegisterRoutesHook(AppFactoryHook):
             raise AttributeError(f'Could not find a variable named `routes` '
                                  f'in the {module_name} module!')
 
-    def collect_from_bundle(self, bundle: Type[Bundle]):
+    def collect_from_bundle(self, bundle: Bundle):
         if not bundle.has_views():
             raise StopIteration
 

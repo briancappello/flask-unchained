@@ -21,7 +21,7 @@ class RunHooksHook(AppFactoryHook):
 
     def run_hook(self,
                  app: Flask,
-                 bundles: List[Type[Bundle]],
+                 bundles: List[Bundle],
                  _config_overrides: Optional[Dict[str, Any]] = None,
                  ):
         for hook in self.collect_from_bundles(bundles):
@@ -39,8 +39,7 @@ class RunHooksHook(AppFactoryHook):
 
         app.shell_context_processor(lambda: self.unchained._shell_ctx)
 
-    def collect_from_bundles(self, bundles: List[Type[Bundle]],
-                             ) -> List[AppFactoryHook]:
+    def collect_from_bundles(self, bundles: List[Bundle]) -> List[AppFactoryHook]:
         hooks = self.collect_from_unchained()
         for bundle in bundles:
             hooks += self.collect_from_bundle(bundle)
@@ -53,7 +52,7 @@ class RunHooksHook(AppFactoryHook):
         return [HookTuple(Hook, None)
                 for Hook in self._collect_from_package(hooks_pkg).values()]
 
-    def collect_from_bundle(self, bundle: Type[Bundle]) -> List[HookTuple]:
+    def collect_from_bundle(self, bundle: Bundle) -> List[HookTuple]:
         return [HookTuple(Hook, bundle)
                 for Hook in super().collect_from_bundle(bundle).values()]
 

@@ -27,17 +27,17 @@ class TestRegisterBlueprintsHook:
 
     def test_collect_from_bundle(self, hook: RegisterBlueprintsHook):
         # blueprints get reversed again by process_objects, so these are correct
-        assert list(hook.collect_from_bundle(AppBundle)) == [two, one]
-        assert list(hook.collect_from_bundle(VendorBundle)) == [four, three]
-        assert list(hook.collect_from_bundle(EmptyBundle)) == []
+        assert list(hook.collect_from_bundle(AppBundle())) == [two, one]
+        assert list(hook.collect_from_bundle(VendorBundle())) == [four, three]
+        assert list(hook.collect_from_bundle(EmptyBundle())) == []
 
         with pytest.warns(None) as warnings:
-            assert list(hook.collect_from_bundle(WarningBundle)) == []
+            assert list(hook.collect_from_bundle(WarningBundle())) == []
             assert len(warnings) == 1
             assert 'there was no blueprint named fail' in str(warnings[0])
 
     def test_run_hook(self, app, hook: RegisterBlueprintsHook):
         # later bundles override earlier ones
         # within bundles, earlier blueprints override later ones
-        hook.run_hook(app, [VendorBundle, AppBundle])
+        hook.run_hook(app, [VendorBundle(), AppBundle()])
         assert list(app.iter_blueprints()) == [one, two, three, four]

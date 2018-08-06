@@ -14,7 +14,7 @@ class RegisterResourcesHook(AppFactoryHook):
     def process_objects(self, app, objects):
         for name, resource_cls in objects.items():
             if isinstance(resource_cls.model, str):
-                resource_cls.model = (self.unchained.sqlalchemy_bundle
+                resource_cls.model = (self.unchained.sqlalchemy_bundle.store
                                       .models[resource_cls.model])
             model_name = resource_cls.model.__name__
 

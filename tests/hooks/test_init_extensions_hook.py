@@ -20,18 +20,18 @@ def hook():
 
 
 class TestRegisterExtensionsHook:
-    def test_type_check(self, hook):
+    def test_type_check(self, hook: InitExtensionsHook):
         assert hook.type_check(AwesomeExtension) is False
         assert hook.type_check(awesome) is True
 
         assert hook.type_check(MyExtension) is False
         assert hook.type_check(myext) is True
 
-    def test_collect_from_bundle(self, hook):
-        assert hook.collect_from_bundle(EmptyBundle) == {}
+    def test_collect_from_bundle(self, hook: InitExtensionsHook):
+        assert hook.collect_from_bundle(EmptyBundle()) == {}
 
         vendor_extensions = hook.get_extension_tuples(
-            hook.collect_from_bundle(VendorBundle))
+            hook.collect_from_bundle(VendorBundle()))
         assert len(vendor_extensions) == 1
         vendor_ext = vendor_extensions[0]
         assert vendor_ext.name == 'awesome'
@@ -39,14 +39,14 @@ class TestRegisterExtensionsHook:
         assert vendor_ext.dependencies == []
 
         app_extensions = hook.get_extension_tuples(
-            hook.collect_from_bundle(MyAppBundle))
+            hook.collect_from_bundle(MyAppBundle()))
         assert len(app_extensions) == 1
         vendor_ext = app_extensions[0]
         assert vendor_ext.name == 'myext'
         assert vendor_ext.extension == myext
         assert vendor_ext.dependencies == ['awesome']
 
-    def test_resolve_extension_order(self, hook):
+    def test_resolve_extension_order(self, hook: InitExtensionsHook):
         exts = [
             ExtensionTuple('four', None, []),
             ExtensionTuple('three', None, ['four']),
@@ -56,7 +56,7 @@ class TestRegisterExtensionsHook:
         order = [ext.name for ext in hook.resolve_extension_order(exts)]
         assert order == ['four', 'two', 'three', 'one']
 
-    def test_resolve_broken_extension_order(self, hook):
+    def test_resolve_broken_extension_order(self, hook: InitExtensionsHook):
         exts = [
             ExtensionTuple('one', None, ['two']),
             ExtensionTuple('two', None, ['one']),
@@ -65,7 +65,7 @@ class TestRegisterExtensionsHook:
             hook.resolve_extension_order(exts)
         assert 'Circular dependency detected' in str(e)
 
-    def test_process_objects(self, app, hook):
+    def test_process_objects(self, app, hook: InitExtensionsHook):
         class FakeExt:
             def __init__(self, name):
                 self.app = None
@@ -88,8 +88,8 @@ class TestRegisterExtensionsHook:
             assert name == ext.name
             assert ext.app == app
 
-    def test_run_hook(self, app, hook):
-        hook.run_hook(app, [EmptyBundle, VendorBundle, MyAppBundle])
+    def test_run_hook(self, app, hook: InitExtensionsHook):
+        hook.run_hook(app, [EmptyBundle(), VendorBundle(), MyAppBundle()])
 
         registered = list(hook.unchained.extensions.keys())
         exts = list(hook.unchained.extensions.values())
@@ -98,7 +98,7 @@ class TestRegisterExtensionsHook:
         assert awesome.app == app
         assert myext.app == app
 
-    def test_update_shell_context(self, hook):
+    def test_update_shell_context(self, hook: InitExtensionsHook):
         ctx = {}
         data = {'one': 1, 'two': 2, 'three': 3}
         hook.unchained.extensions = AttrDict(data)

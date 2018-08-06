@@ -137,17 +137,17 @@ def _load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):
 
 
 def _load_bundles(bundle_package_names: List[str],
-                  ) -> Tuple[Union[None, Type[AppBundle]], List[Type[Bundle]]]:
+                  ) -> Tuple[Union[None, AppBundle], List[Bundle]]:
     if not bundle_package_names:
         return None, []
 
     bundles = []
     for bundle_package_name in bundle_package_names:
         bundle = _load_bundle(bundle_package_name, _is_bundle)
-        bundles.append(bundle)
+        bundles.append(bundle())
         unchained.log_action('bundle', bundle)
 
-    if not issubclass(bundles[-1], AppBundle):
+    if not isinstance(bundles[-1], AppBundle):
         return None, bundles
     return bundles[-1], bundles
 

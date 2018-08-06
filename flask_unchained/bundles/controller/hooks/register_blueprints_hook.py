@@ -15,7 +15,7 @@ class RegisterBlueprintsHook(AppFactoryHook):
 
     _limit_discovery_to_local_declarations = False
 
-    def run_hook(self, app: Flask, bundles: List[Type[Bundle]]):
+    def run_hook(self, app: Flask, bundles: List[Bundle]):
         super().run_hook(app, bundles)
 
     def process_objects(self, app: Flask, blueprints: List[Blueprint]):
@@ -27,14 +27,13 @@ class RegisterBlueprintsHook(AppFactoryHook):
             app.register_blueprint(blueprint, url_prefix=url_prefix)
             self.log_action(blueprint)
 
-    def collect_from_bundles(self, bundles: List[Type[Bundle]],
-                             ) -> List[Blueprint]:
+    def collect_from_bundles(self, bundles: List[Bundle]) -> List[Blueprint]:
         objects = []
         for bundle in bundles:
             objects += self.collect_from_bundle(bundle)
         return objects
 
-    def collect_from_bundle(self, bundle: Type[Bundle]) -> Iterable[Blueprint]:
+    def collect_from_bundle(self, bundle: Bundle) -> Iterable[Blueprint]:
         bundle_blueprints = super().collect_from_bundle(bundle)
         if not bundle_blueprints:
             return []
