@@ -27,7 +27,18 @@ class AttrDict(dict):
 
 class LazyAttrDict(AttrDict):
     def __getattr__(self, key):
-        return LocalProxy(lambda: self[key])
+        return LocalProxy(lambda: AttrDict.__getitem__(self, key))
+
+    def __getitem__(self, key):
+        return LocalProxy(lambda: AttrDict.__getitem__(self, key))
+
+    def items(self):
+        for k in self.keys():
+            yield k, self.__getitem__(k)
+
+    def values(self):
+        for k in self.keys():
+            yield self.__getitem__(k)
 
 
 class ConfigProperty:

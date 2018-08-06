@@ -3,7 +3,7 @@ import pytest
 from flask_unchained.hooks.init_extensions_hook import (
     ExtensionTuple, InitExtensionsHook)
 from flask_unchained.unchained import Unchained
-from flask_unchained.utils import AttrDict
+from flask_unchained.utils import LazyAttrDict
 
 from .._bundles.myapp import MyAppBundle, myext
 from .._bundles.myapp.extensions import MyExtension
@@ -101,7 +101,7 @@ class TestRegisterExtensionsHook:
     def test_update_shell_context(self, hook: InitExtensionsHook):
         ctx = {}
         data = {'one': 1, 'two': 2, 'three': 3}
-        hook.unchained.extensions = AttrDict(data)
+        hook.unchained.extensions = LazyAttrDict(data)
         hook.update_shell_context(ctx)
         data['unchained'] = hook.unchained
         assert ctx == data
