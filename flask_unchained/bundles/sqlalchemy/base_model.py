@@ -49,7 +49,7 @@ class BaseModel(FlaskSQLAlchemyBaseModel):
             email = Column(String)
 
         user = User(id=1, email='foo@bar.com')
-        print(user)  # prints <User id=1 email="foo@bar.com">
+        print(user)  # prints User(id=1 email="foo@bar.com")
     """
 
     def __init__(self, **kwargs):
@@ -59,7 +59,7 @@ class BaseModel(FlaskSQLAlchemyBaseModel):
     def __repr__(self):
         properties = [f'{prop}={getattr(self, prop)!r}'
                       for prop in self.__repr_props__ if hasattr(self, prop)]
-        return f"<{self.__class__.__name__} {' '.join(properties)}>"
+        return f"{self.__class__.__name__}({', '.join(properties)})"
 
     @declared_attr
     def __plural__(self):
