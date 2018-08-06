@@ -93,7 +93,7 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
                         or bundle.static_folder
                         or bundle.has_views()):
                     bp = BundleBlueprint(bundle)
-                    for route in self.store.bundle_routes.get(bundle.name, []):
+                    for route in self.store.bundle_routes.get(bundle.module_name, []):
                         bp.add_url_rule(route.full_rule,
                                         defaults=route.defaults,
                                         endpoint=route.endpoint,

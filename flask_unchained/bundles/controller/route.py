@@ -40,6 +40,7 @@ class Route:
 
         # extra private (should only be used by controller metaclasses)
         self._controller_name = None
+        self._controller = None
 
     def should_register(self, app):
         if self.only_if is None:
@@ -123,6 +124,9 @@ class Route:
     def module_name(self):
         if not self.view_func:
             return None
+        elif self._controller:
+            rv = inspect.getmodule(self._controller).__name__
+            return rv
         return inspect.getmodule(self.view_func).__name__
 
     @property

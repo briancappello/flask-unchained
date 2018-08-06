@@ -316,6 +316,7 @@ def _normalize_controller_routes(rules: Iterable[Route],
         route = route.copy()
         route.blueprint = controller_cls.blueprint
         route._controller_name = controller_cls.__name__
+        route._controller = controller_cls
         route.view_func = controller_cls.method_as_view(route.method_name)
         route.rule = controller_cls.route_rule(route)
         yield route

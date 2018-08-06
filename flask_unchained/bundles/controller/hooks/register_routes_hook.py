@@ -5,6 +5,7 @@ from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
 from typing import *
 
 from ..attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
+from ..route import Route
 from ..routes import reduce_routes, _normalize_controller_routes, include
 
 
@@ -26,7 +27,7 @@ class RegisterRoutesHook(AppFactoryHook):
                   else self.collect_from_bundle(app_bundle))
         self.process_objects(app, routes)
 
-    def process_objects(self, app: FlaskUnchained, routes):
+    def process_objects(self, app: FlaskUnchained, routes: Iterable[Route]):
         for route in reduce_routes(routes):
             # FIXME maybe validate routes first? (eg for duplicates?)
             # Flask doesn't complain; it will match the first route found,
@@ -39,9 +40,12 @@ class RegisterRoutesHook(AppFactoryHook):
                     key = f'{route._controller_name}.{route.method_name}'
                     self.store.controller_endpoints[key] = route
 
-        bundle_names = [(name, [cb.module_name for cb in b.iter_class_hierarchy()
-                                  if cb.has_views()])
-                        for name, b in app.unchained.bundles.items()]
+        bundle_names = [(
+            bundle.module_name,
+            [bundle_super.module_name
+             for bundle_super in bundle.iter_class_hierarchy(include_self=False)
+             if bundle_super.has_views()],
+        ) for bundle in app.unchained.bundles.values()]
 
         bundle_route_endpoints = set()
         for endpoint, route in self.store.endpoints.items():
