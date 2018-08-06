@@ -16,7 +16,8 @@ from typing import *
 from .constants import DEV, PROD, STAGING, TEST
 from .di import ensure_service_name, injectable
 from .exceptions import ServiceUsageError
-from .utils import AttrDict, LazyAttrDict, format_docstring
+from .utils import (
+    AttrDict, LazyExtensionsAttrDict, LazyServicesAttrDict, format_docstring)
 
 
 CategoryActionLog = namedtuple('CategoryActionLog',
@@ -38,8 +39,8 @@ class Unchained:
 
         # support lazily accessing extensions and services via attributes on the
         # unchained extension instance
-        self.extensions = LazyAttrDict()
-        self.services = LazyAttrDict()
+        self.extensions = LazyExtensionsAttrDict()
+        self.services = LazyServicesAttrDict()
 
         self.bundles = AttrDict()
         self.babel_bundle = None
@@ -111,8 +112,8 @@ class Unchained:
         """
         self._initialized = False
         self._services_registry = {}
-        self.extensions = LazyAttrDict()
-        self.services = LazyAttrDict()
+        self.extensions = LazyExtensionsAttrDict()
+        self.services = LazyServicesAttrDict()
 
     def service(self, name: str = None):
         """
@@ -189,9 +190,11 @@ class Unchained:
                     if param_name not in need:
                         continue
                     if param_name in self.extensions:
-                        fn_kwargs[param_name] = self.extensions[param_name]
+                        fn_kwargs[param_name] = dict.__getitem__(self.extensions,
+                                                                 param_name)
                     elif param_name in self.services:
-                        fn_kwargs[param_name] = self.services[param_name]
+                        fn_kwargs[param_name] = dict.__getitem__(self.services,
+                                                                 param_name)
 
                 # check to make sure we we're not missing anything required
                 bound_args = sig.bind(*fn_args, **fn_kwargs)

@@ -25,20 +25,23 @@ class AttrDict(dict):
         return f'{self.__class__.__name__}({super().__repr__()})'
 
 
-class LazyAttrDict(AttrDict):
+class LazyExtensionsAttrDict(AttrDict):
     def __getattr__(self, key):
-        return LocalProxy(lambda: AttrDict.__getitem__(self, key))
+        return LocalProxy(lambda: dict.__getitem__(
+            current_app.extensions['unchained'].extensions, key))
 
     def __getitem__(self, key):
-        return LocalProxy(lambda: AttrDict.__getitem__(self, key))
+        return LocalProxy(lambda: dict.__getitem__(
+            current_app.extensions['unchained'].extensions, key))
 
-    def items(self):
-        for k in self.keys():
-            yield k, self.__getitem__(k)
+class LazyServicesAttrDict(AttrDict):
+    def __getattr__(self, key):
+        return LocalProxy(lambda: dict.__getitem__(
+            current_app.extensions['unchained'].services, key))
 
-    def values(self):
-        for k in self.keys():
-            yield self.__getitem__(k)
+    def __getitem__(self, key):
+        return LocalProxy(lambda: dict.__getitem__(
+            current_app.extensions['unchained'].services, key))
 
 
 class ConfigProperty:

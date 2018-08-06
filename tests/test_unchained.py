@@ -9,6 +9,7 @@ from ._bundles.vendor_bundle import VendorBundle, awesome
 
 def test_unchained(app):
     unchained = Unchained()
+    app.unchained = unchained
     unchained.init_app(app, DEV, [VendorBundle(), MyAppBundle()])
     assert 'unchained' in app.extensions
     assert app.extensions['unchained'] == unchained
