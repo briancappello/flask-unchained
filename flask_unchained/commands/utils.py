@@ -10,7 +10,7 @@ IterableOfTuples = Union[List[tuple], Tuple[tuple, ...]]
 def print_table(column_names: IterableOfStrings,
                 rows: IterableOfTuples,
                 column_alignments: Optional[IterableOfStrings] = None,
-                primary_column_idx = 0,
+                primary_column_idx: int = 0,
                 ) -> None:
     """
     Prints a table of information to the console. Automatically determines if the
@@ -23,7 +23,6 @@ def print_table(column_names: IterableOfStrings,
     :param primary_column_idx: Used when displaying information in list form,
         to determine which label should be the top-most one. Defaults to the first
         label in ``column_names``.
-    :return:
     """
     header_template = ''
     row_template = ''
