@@ -50,7 +50,7 @@ class FlaskGroup(GroupOverrideMixin, flask_cli.FlaskGroup):
     Top-level click group class for all Flask commands.
 
     Automatically makes the app context available to commands, using
-    :meth:`~flsak.cli.with_appcontext`.
+    :meth:`~flask.cli.with_appcontext`.
     """
 
     def group(self, *args, **kwargs):
@@ -70,7 +70,7 @@ class AppGroup(GroupOverrideMixin, flask_cli.AppGroup):
     Click group class for all Flask subcommands.
 
     Automatically makes the app context available to commands, using
-    :meth:`~flsak.cli.with_appcontext`.
+    :meth:`~flask.cli.with_appcontext`.
     """
 
     def group(self, *args, **kwargs):
