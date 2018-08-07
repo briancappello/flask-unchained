@@ -67,3 +67,4 @@ class _DevConfigDefaults:
 
 class _TestConfigDefaults:
     TESTING = True
+    WTF_CSRF_ENABLED = False
