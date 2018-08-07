@@ -28,8 +28,11 @@ class DateTime(types.TypeDecorator):
             return value.astimezone(dt.timezone.utc)
 
     def process_result_value(self, value, dialect=None):
-        if value is not None:
-            return value.astimezone(dt.timezone.utc)
+        if not value:
+            return
+        if not value.tzinfo:
+            return value.replace(tzinfo=dt.timezone.utc)
+        return value.astimezone(tz=dt.timezone.utc)
 
     @property
     def python_type(self):
