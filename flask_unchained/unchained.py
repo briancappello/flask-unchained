@@ -88,7 +88,8 @@ class Unchained:
         app.env = self.env
         app.extensions['unchained'] = self
         app.unchained = self
-        app.shell_context_processor(lambda: {b.__name__: b for b in bundles})
+        app.shell_context_processor(lambda: {b.__class__.__name__: b
+                                             for b in bundles})
 
         try:
             # must import BabelBundle here to prevent circular dependency
