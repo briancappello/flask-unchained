@@ -1,3 +1,12 @@
+"""
+Tasks
+^^^^^
+
+Celery tasks included with the bundle.
+
+.. autofunction:: async_mail_task
+"""
+
 from flask import current_app
 
 from .extensions import celery
@@ -14,6 +23,9 @@ def _send_mail_async(subject_or_message=None, to=None, template=None, **kwargs):
 
 @celery.task(serializer='dill')
 def async_mail_task(subject_or_message, to=None, template=None, **kwargs):
+    """
+    Celery task to send emails asynchronously using the mail bundle.
+    """
     to = to or kwargs.pop('recipients', [])
     msg = make_message(subject_or_message, to, template, **kwargs)
     with mail.connect() as connection:

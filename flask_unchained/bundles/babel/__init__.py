@@ -1,16 +1,23 @@
 """
-    Babel Bundle
-    ------------
+Babel Bundle
+------------
 
-    Adds support for translations to Flask Unchained
+Adds support for translations to Flask Unchained.
+
+.. autoclass:: BabelBundle
+    :members:
+
+.. automodule:: flask_unchained.bundles.babel.config
+
+.. automodule:: flask_unchained.bundles.babel.commands
 """
 
 import pkg_resources
 import re
 
-from flask import Flask, Blueprint, current_app, g, request
+from flask import Blueprint, current_app, g, request
 from flask_babelex import Domain, gettext as _gettext, ngettext as _ngettext
-from flask_unchained import Bundle
+from flask_unchained import Bundle, FlaskUnchained
 from speaklater import make_lazy_string
 from typing import *
 from werkzeug.local import LocalProxy
@@ -23,17 +30,30 @@ PLURAL_TRANSLATION_KEY_RE = re.compile(r'^(?P<domain>[a-z_]+)\.[a-z_.]+\.plural$
 
 
 class BabelBundle(Bundle):
-    command_group_names = ('babel',)
-    language_code_key = 'lang_code'
+    """
+    The :class:`Bundle` subclass for the Babel Bundle. Responsible for configuring
+    the correct gettext callables with Jinja, as well as optionally registering
+    endpoints for language-specific URLs (if enabled).
+    """
 
-    def before_init_app(self, app: Flask):
+    command_group_names = ('babel',)
+    """
+    Names of the command groups included in this bundle.
+    """
+
+    language_code_key = 'lang_code'
+    """
+    Default werkzeug parameter name to be used when registering language-specific URLs.
+    """
+
+    def before_init_app(self, app: FlaskUnchained):
         app.jinja_env.add_extension('jinja2.ext.i18n')
         babel.locale_selector_func = self.get_locale
         if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
             app.url_value_preprocessor(self.lang_code_url_value_preprocessor)
             app.url_defaults(self.set_url_defaults)
 
-    def after_init_app(self, app: Flask):
+    def after_init_app(self, app: FlaskUnchained):
         if not app.config.get('LAZY_TRANSLATIONS'):
             app.jinja_env.install_gettext_callables(gettext, ngettext, newstyle=True)
         else:
@@ -45,7 +65,7 @@ class BabelBundle(Bundle):
             return f'/<{self.language_code_key}>'
         return f'/<{self.language_code_key}>' + rule
 
-    def register_blueprint(self, app: Flask, blueprint: Blueprint, **options):
+    def register_blueprint(self, app: FlaskUnchained, blueprint: Blueprint, **options):
         if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
             url_prefix = (options.get('url_prefix', (blueprint.url_prefix or ''))
                                  .rstrip('/'))
@@ -54,7 +74,7 @@ class BabelBundle(Bundle):
                            register_with_babel=False)
             app.register_blueprint(blueprint, **options)
 
-    def add_url_rule(self, app: Flask, rule: str, **kwargs):
+    def add_url_rule(self, app: FlaskUnchained, rule: str, **kwargs):
         if app.config.get('ENABLE_URL_LANG_CODE_PREFIX'):
             app.add_url_rule(self.get_url_rule(rule), register_with_babel=False, **kwargs)
 

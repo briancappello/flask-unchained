@@ -1,3 +1,12 @@
+"""
+Commands
+^^^^^^^^
+
+.. click:: flask_unchained.bundles.babel.commands:babel
+   :prog: flask babel
+   :show-nested:
+"""
+
 import flask_unchained
 import os
 import sys

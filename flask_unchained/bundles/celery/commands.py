@@ -1,3 +1,12 @@
+"""
+Commands
+^^^^^^^^
+
+.. click:: flask_unchained.bundles.celery.commands:celery
+    :prog: flask celery
+    :show-nested:
+"""
+
 import subprocess
 
 from flask_unchained.cli import cli
@@ -5,16 +14,22 @@ from flask_unchained.cli import cli
 
 @cli.group()
 def celery():
-    """Celery commands"""
+    """
+    Celery commands.
+    """
 
 
 @celery.command()
 def worker():
-    """Start the celery worker."""
+    """
+    Start the celery worker.
+    """
     subprocess.run('celery worker -A celery_app.celery -l debug', shell=True)
 
 
 @celery.command()
 def beat():
-    """Start the celery beat."""
+    """
+    Start the celery beat.
+    """
     subprocess.run('celery beat -A celery_app.celery -l debug', shell=True)
