@@ -34,6 +34,9 @@ class ModelFactory(factory.Factory):
     @classmethod
     @unchained.inject('session_manager')
     def _create(cls, model_class, session_manager=injectable, *args, **kwargs):
+        # make sure we get the correct mapped class
+        model_class = unchained.sqlalchemy_bundle.store.models[model_class.__name__]
+
         # try to query for existing by primary key or unique column(s)
         filter_kwargs = {}
         for col in model_class.__mapper__.columns:
