@@ -2,6 +2,7 @@ import os
 
 from alembic import command as alembic
 from flask import current_app
+from flask.cli import with_appcontext
 from flask_migrate.cli import db
 from flask_unchained import click, unchained
 
@@ -21,6 +22,7 @@ db_ext: SQLAlchemy = unchained.extensions.db
 @db.command('drop')
 @click.option('--drop', is_flag=True, expose_value=True,
               prompt='Drop DB tables?')
+@with_appcontext
 def drop_command(drop):
     """Drop database tables."""
     if not drop:
@@ -40,6 +42,7 @@ def drop_all():
 @db.command('reset')
 @click.option('--reset', is_flag=True, expose_value=True,
               prompt='Drop DB tables and run migrations?')
+@with_appcontext
 def reset_command(reset):
     """Drop database tables and run migrations."""
     if not reset:
@@ -55,6 +58,7 @@ def reset_command(reset):
 
 
 @maybe_fixtures_command(name='import-fixtures')
+@with_appcontext
 def import_fixtures():
     fixtures_dir = current_app.config.get('PY_YAML_FIXTURES_DIR')
     if not fixtures_dir or not os.path.exists(fixtures_dir):
