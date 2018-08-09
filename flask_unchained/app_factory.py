@@ -68,7 +68,8 @@ class AppFactory:
         for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
             flask_kwargs.setdefault(k.lower(), getattr(unchained_config, k, None))
 
-        app_import_name = app_bundle and app_bundle.module_name or 'tests'
+        app_import_name = (app_bundle.module_name.split('.')[0]
+                           if app_bundle else 'tests')
         app = FlaskUnchained(app_import_name, **flask_kwargs)
 
         # Flask assumes the root_path is based on the app_import_name, but
