@@ -1,15 +1,6 @@
-"""
-    API Bundle
-    ----------
-
-    Adds RESTful API support to Flask Unchained
-"""
-
 import enum
 
-from flask import Flask
-from flask_unchained import Bundle, unchained
-from flask_unchained.utils import AttrDict
+from flask_unchained import Bundle, FlaskUnchained, unchained
 from speaklater import _LazyString
 
 from .extensions import api, ma
@@ -18,35 +9,47 @@ from .model_resource import ModelResource
 
 class ApiBundle(Bundle):
     def __init__(self):
-        self.store = AttrDict(
-            # model class name -> resource class
-            resources_by_model={},
+        self.resources_by_model = {}
+        """
+        Lookup of resource classes by class name.
+        """
 
-            # serializer class name -> serializer class
-            serializers={},
+        self.serializers = {}
+        """
+        Lookup of serializer classes by class name.
+        """
 
-            # model class name -> serializer class (serializer.__kind__ == 'all')
-            serializers_by_model={},
+        self.serializers_by_model = {}
+        """
+        Lookup of serializer classes (__kind__ == 'all') by model class name
+        """
 
-            # model class name -> serializer class (serializer.__kind__ == 'create')
-            create_by_model={},
+        self.create_by_model = {}
+        """
+        Lookup of serializer classes (__kind__ == 'create') by model class name
+        """
 
-            # model class name -> serializer class (serializer.__kind__ == 'many')
-            many_by_model={},
-        )
+        self.many_by_model = {}
+        """
+        Lookup of serializer classes (__kind__ == 'many') by model class name
+        """
 
     # the template folder gets set manually by the OpenAPI bp
     template_folder = None
 
-    def after_init_app(self, app: Flask):
+    def after_init_app(self, app: FlaskUnchained):
+        """
+        Configure the JSON encoder for Flask to be able to serialize Enums,
+        LocalProxy objects, and SQLAlchemy models.
+        """
         self.set_json_encoder(app)
         app.before_first_request(self.register_model_resources)
 
     def register_model_resources(self):
-        for resource in unchained.api_bundle.store.resources_by_model.values():
+        for resource in unchained.api_bundle.resources_by_model.values():
             api.register_model_resource(resource)
 
-    def set_json_encoder(self, app: Flask):
+    def set_json_encoder(self, app: FlaskUnchained):
         from flask_unchained.bundles.sqlalchemy import BaseModel
         from flask_unchained import unchained
         from werkzeug.local import LocalProxy
@@ -61,19 +64,19 @@ class ApiBundle(Bundle):
                 elif isinstance(obj, _LazyString):
                     return str(obj)
 
-                api_store = unchained.api_bundle.store
+                api_bundle = unchained.api_bundle
                 if isinstance(obj, BaseModel):
                     model_name = obj.__class__.__name__
-                    serializer_cls = api_store.serializers_by_model.get(model_name)
+                    serializer_cls = api_bundle.serializers_by_model.get(model_name)
                     if serializer_cls:
                         return serializer_cls().dump(obj).data
 
                 elif (obj and isinstance(obj, (list, tuple))
                         and isinstance(obj[0], BaseModel)):
                     model_name = obj[0].__class__.__name__
-                    serializer_cls = api_store.many_by_model.get(
+                    serializer_cls = api_bundle.many_by_model.get(
                         model_name,
-                        api_store.serializers_by_model.get(model_name))
+                        api_bundle.serializers_by_model.get(model_name))
                     if serializer_cls:
                         return serializer_cls(many=True).dump(obj).data
 

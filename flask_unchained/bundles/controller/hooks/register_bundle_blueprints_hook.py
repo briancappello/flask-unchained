@@ -78,6 +78,10 @@ class BundleBlueprint(Blueprint):
 
 
 class RegisterBundleBlueprintsHook(AppFactoryHook):
+    """
+    Registers a blueprint with each bundle's routes and template folder.
+    """
+
     bundle_module_name = None
     name = 'bundle_blueprints'
     run_before = ['blueprints']
@@ -93,7 +97,7 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
                         or bundle.static_folder
                         or bundle.has_views()):
                     bp = BundleBlueprint(bundle)
-                    for route in self.store.bundle_routes.get(bundle.module_name, []):
+                    for route in self.bundle.bundle_routes.get(bundle.module_name, []):
                         bp.add_url_rule(route.full_rule,
                                         defaults=route.defaults,
                                         endpoint=route.endpoint,

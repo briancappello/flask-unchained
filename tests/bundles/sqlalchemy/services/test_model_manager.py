@@ -11,7 +11,7 @@ def setup(db: SQLAlchemy):
         name = db.Column(db.String)
 
     # simulate the register models hook
-    unchained.sqlalchemy_bundle.store.models['Foo'] = Foo
+    unchained.sqlalchemy_bundle.models['Foo'] = Foo
 
     class FooManager(ModelManager):
         model = 'Foo'

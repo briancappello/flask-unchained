@@ -27,7 +27,7 @@ class TestRegisterRoutesHook:
         for route in discovered_routes:
             assert isinstance(route, Route)
 
-        registered_routes = hook.store.endpoints.values()
+        registered_routes = hook.bundle.endpoints.values()
         assert len(registered_routes) == len(app.url_map._rules) == 4
 
         with pytest.raises(AttributeError) as e:
@@ -44,9 +44,9 @@ class TestRegisterRoutesHook:
                          'four.view_four': 'view_four rendered'}
 
             # check endpoints added to store
-            assert list(hook.store.endpoints.keys()) == list(expected.keys())
+            assert list(hook.bundle.endpoints.keys()) == list(expected.keys())
             for endpoint in expected:
-                route = hook.store.endpoints[endpoint]
+                route = hook.bundle.endpoints[endpoint]
                 assert route.view_func() == expected[endpoint]
 
             # check endpoints registered with app
@@ -67,9 +67,9 @@ class TestRegisterRoutesHook:
                         'four.view_four': 'view_four rendered'}
 
             # check endpoints added to store
-            assert list(hook.store.endpoints.keys()) == list(expected.keys())
+            assert list(hook.bundle.endpoints.keys()) == list(expected.keys())
             for endpoint in expected:
-                route = hook.store.endpoints[endpoint]
+                route = hook.bundle.endpoints[endpoint]
                 assert route.view_func() == expected[endpoint]
 
             # check endpoints registered with app

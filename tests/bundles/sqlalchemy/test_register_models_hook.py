@@ -112,33 +112,33 @@ class TestRegisterModelsHookCollectFromBundle:
     def test_it_works_vendor_one(self, db, hook: RegisterModelsHook):
         hook.run_hook(None, [VendorOneBundle()])
         expected_one = get_vendor_one_models()
-        assert hook.store.models == expected_one
+        assert hook.bundle.models == expected_one
         assert db.metadata.tables == _to_metadata_tables(expected_one)
 
     def test_it_works_vendor_two(self, db, hook: RegisterModelsHook):
         hook.run_hook(None, [VendorTwoBundle()])
         expected_two = get_vendor_two_models()
-        assert hook.store.models == expected_two
+        assert hook.bundle.models == expected_two
         assert db.metadata.tables == _to_metadata_tables(expected_two)
 
     def test_it_works_vendor_one_and_two(self, db, hook: RegisterModelsHook):
         hook.run_hook(None, [VendorOneBundle(), VendorTwoBundle()])
         expected_both = {**get_vendor_one_models(),
                          **get_vendor_two_models()}
-        assert hook.store.models == expected_both
+        assert hook.bundle.models == expected_both
         assert db.metadata.tables == _to_metadata_tables(expected_both)
 
     def test_vendor_bundle_subclassing(self, db, hook: RegisterModelsHook):
         hook.run_hook(None, [ExtVendorOneBundle()])
         expected_ext_one = get_ext_vendor_one_models()
-        assert hook.store.models == expected_ext_one
-        assert hasattr(hook.store.models['OneBasic'], 'ext')
+        assert hook.bundle.models == expected_ext_one
+        assert hasattr(hook.bundle.models['OneBasic'], 'ext')
         assert db.metadata.tables == _to_metadata_tables(expected_ext_one)
 
     def test_vendor_bundle_subsubclassing(self, db, hook: RegisterModelsHook):
         hook.run_hook(None, [ExtExtVendorOneBundle()])
         expected_ext_ext_one = get_ext_ext_vendor_one_models()
-        assert hook.store.models == expected_ext_ext_one
+        assert hook.bundle.models == expected_ext_ext_one
         assert db.metadata.tables == _to_metadata_tables(expected_ext_ext_one)
 
     def test_lazy_backrefs_throw_exception(self, hook: RegisterModelsHook):
@@ -153,11 +153,11 @@ class TestRegisterModelsHookCollectFromBundle:
     def test_it_works_with_polymorphic(self, db, hook: RegisterModelsHook):
         hook.run_hook(None, [PolymorphicBundle()])
         expected = get_polymorphic_models()
-        assert hook.store.models == expected
+        assert hook.bundle.models == expected
         assert db.metadata.tables == _to_metadata_tables(expected)
 
     def test_app_bundle_overrides_others(self, db, hook: RegisterModelsHook):
         hook.run_hook(None, [VendorOneBundle(), VendorTwoBundle(), MyAppBundle()])
         expected = get_app_models()
-        assert hook.store.models == expected
+        assert hook.bundle.models == expected
         assert db.metadata.tables == _to_metadata_tables(expected)

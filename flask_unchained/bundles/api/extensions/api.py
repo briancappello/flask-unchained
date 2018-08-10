@@ -83,7 +83,7 @@ class Api:
 
             docs[http_method]['tags'] = [model_name]
             key = f'{resource.__name__}.{method}'
-            route = unchained.controller_bundle.store.controller_endpoints[key]
+            route = unchained.controller_bundle.controller_endpoints[key]
 
             display_name = title_case(model_name)
             if method == LIST:

@@ -10,7 +10,7 @@ class ModelForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         if isinstance(self.Meta.model, str):
-            self.Meta.model = unchained.sqlalchemy_bundle.store.models[self.Meta.model]
+            self.Meta.model = unchained.sqlalchemy_bundle.models[self.Meta.model]
         super().__init__(*args, **kwargs)
 
     def validate(self):

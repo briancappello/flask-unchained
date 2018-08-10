@@ -20,19 +20,19 @@ class RegisterSerializersHook(AppFactoryHook):
 
     def process_objects(self, app: Flask, objects):
         for name, serializer in objects.items():
-            self.store.serializers[name] = serializer
+            self.bundle.serializers[name] = serializer
             class_registry.register(name, serializer)
 
             model = serializer.Meta.model
             model_name = model if isinstance(model, str) else model.__name__
             kind = getattr(serializer, '__kind__', 'all')
             if kind == 'all':
-                self.store.serializers_by_model[model_name] = serializer
+                self.bundle.serializers_by_model[model_name] = serializer
                 api.register_serializer(serializer, name=title_case(model_name))
             elif kind == 'create':
-                self.store.create_by_model[model_name] = serializer
+                self.bundle.create_by_model[model_name] = serializer
             elif kind == 'many':
-                self.store.many_by_model[model_name] = serializer
+                self.bundle.many_by_model[model_name] = serializer
 
     def type_check(self, obj):
         if not inspect.isclass(obj):
@@ -40,4 +40,4 @@ class RegisterSerializersHook(AppFactoryHook):
         return issubclass(obj, ModelSerializer) and obj != ModelSerializer
 
     def update_shell_context(self, ctx: dict):
-        ctx.update(self.store.serializers)
+        ctx.update(self.bundle.serializers)

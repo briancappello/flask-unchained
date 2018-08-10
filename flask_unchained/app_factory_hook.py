@@ -55,9 +55,8 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
     Subclasses should implement at a minimum :attr:`bundle_module_name`,
     :meth:`process_objects`, and :meth:`type_check`. You may also need to set
     one or both of :attr:`run_before` and/or :attr:`run_after`. Also of interest,
-    hooks can store objects in their bundle's store, using :attr:`store`, which is
-    an instance of :class:`AttrDict` defined in the bundle's ``hooks/__init__.py``
-    file. Hooks can also modify the shell context using :meth:`update_shell_context`.
+    hooks can store objects on their bundle's instance, using :attr:`bundle`.
+    Hooks can also modify the shell context using :meth:`update_shell_context`.
     """
 
     name: str = HookNameDescriptor()
@@ -85,7 +84,7 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
 
     def __init__(self, unchained: Unchained, bundle=None):
         self.unchained = unchained
-        self.store = bundle.store if bundle else None
+        self.bundle = bundle
 
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         """

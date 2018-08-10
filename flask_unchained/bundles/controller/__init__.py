@@ -1,50 +1,13 @@
-"""
-Controller Bundle
------------------
-
-Adds class-based views and declarative routing to Flask Unchained.
-
-Installation
-~~~~~~~~~~~~
-
-The controller bundle is always used, even if not specified in your
-``unchained_config.py``. But it doesn't hurt to list it if you want::
-
-    # file: your_project_root/unchained_config.py
-    BUNDLES = [
-        'flask_unchained.bundles.controller',
-        # ...
-    ]
-
-.. autoclass:: ControllerBundle
-    :members:
-    :exclude-members: method_as_view
-
-.. automodule:: flask_unchained.bundles.controller.controller
-    :members:
-
-.. automodule:: flask_unchained.bundles.controller.decorators
-    :members:
-
-.. automodule:: flask_unchained.bundles.controller.resource
-    :members:
-
-.. automodule:: flask_unchained.bundles.controller.routes
-    :members:
-
-.. automodule:: flask_unchained.bundles.controller.utils
-    :members:
-"""
-
 from collections import defaultdict
 from flask_unchained import Bundle, FlaskUnchained
-from flask_unchained.utils import AttrDict
+from typing import *
 
 from .constants import (ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,
                         CREATE, DELETE, GET, LIST, PATCH, PUT)
 from .controller import Controller
 from .decorators import no_route, route
 from .resource import Resource
+from .route import Route
 from .routes import (
     controller, func, get, include, patch, post, prefix, put, resource, rule)
 from .utils import redirect, url_for
@@ -56,19 +19,26 @@ class ControllerBundle(Bundle):
     """
 
     def __init__(self):
-        self.store = AttrDict(
-            # endpoint name -> Route
-            endpoints={},
 
-            # f'{ControllerClassName}.{view_method_name}' -> Route
-            controller_endpoints={},
+        self.endpoints: Dict[str, Route] = {}
+        """
+        Lookup of routes by endpoint name.
+        """
 
-            # bundle name -> List[Route]
-            bundle_routes=defaultdict(list),
+        self.controller_endpoints: Dict[str, Route] = {}
+        """
+        Lookup of routes by keys: f'{ControllerClassName}.{view_method_name}'
+        """
 
-            # List[Route]
-            other_routes=[],
-        )
+        self.bundle_routes: Dict[str, List[Route]] = defaultdict(list)
+        """
+        Lookup of routes belonging to each bundle by bundle name.
+        """
+
+        self.other_routes: List[Route] = []
+        """
+        List of routes not associated with any bundles.
+        """
 
     def before_init_app(self, app: FlaskUnchained):
         """

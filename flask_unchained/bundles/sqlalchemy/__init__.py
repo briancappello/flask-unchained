@@ -1,12 +1,4 @@
-"""
-    SQLAlchemy Bundle
-    -----------------
-
-    Adds SQLAlchemy and Alembic to Flask Unchained
-"""
-
 from flask_unchained import Bundle
-from flask_unchained.utils import AttrDict
 
 from .alembic import MaterializedViewMigration
 from .base_model import BaseModel
@@ -23,10 +15,10 @@ class SQLAlchemyBundle(Bundle):
     command_group_names = ['db']
 
     def __init__(self):
-        self.store = AttrDict(
-            # model class name -> model class
-            models={},
-        )
+        self.models = {}
+        """
+        A lookup of model classes keyed by class name.
+        """
 
     def after_init_app(self, app):
         from .meta.model_registry import _model_registry

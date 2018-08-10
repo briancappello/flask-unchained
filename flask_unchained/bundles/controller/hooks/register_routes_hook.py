@@ -10,6 +10,10 @@ from ..routes import reduce_routes, _normalize_controller_routes, include
 
 
 class RegisterRoutesHook(AppFactoryHook):
+    """
+    Registers routes.
+    """
+
     bundle_module_name = 'routes'
     name = 'routes'
     run_before = ['blueprints', 'bundle_blueprints']
@@ -33,12 +37,12 @@ class RegisterRoutesHook(AppFactoryHook):
             # Flask doesn't complain; it will match the first route found,
             # but maybe we should at least warn the user?
             if route.should_register(app):
-                self.store.endpoints[route.endpoint] = route
+                self.bundle.endpoints[route.endpoint] = route
 
                 # FIXME this assumes a single endpoint per view function
                 if route._controller_name:
                     key = f'{route._controller_name}.{route.method_name}'
-                    self.store.controller_endpoints[key] = route
+                    self.bundle.controller_endpoints[key] = route
 
         bundle_names = [(
             bundle.module_name,
@@ -48,20 +52,20 @@ class RegisterRoutesHook(AppFactoryHook):
         ) for bundle in app.unchained.bundles.values()]
 
         bundle_route_endpoints = set()
-        for endpoint, route in self.store.endpoints.items():
+        for endpoint, route in self.bundle.endpoints.items():
             module_name = route.module_name
             for top_level_bundle_name, hierarchy in bundle_names:
                 for bundle_name in hierarchy:
                     if module_name and module_name.startswith(bundle_name):
-                        self.store.bundle_routes[top_level_bundle_name].append(route)
+                        self.bundle.bundle_routes[top_level_bundle_name].append(route)
                         bundle_route_endpoints.add(endpoint)
                         break
 
-        self.store.other_routes = [route for endpoint, route
-                                   in self.store.endpoints.items()
-                                   if endpoint not in bundle_route_endpoints]
+        self.bundle.other_routes = [route for endpoint, route
+                                    in self.bundle.endpoints.items()
+                                    if endpoint not in bundle_route_endpoints]
 
-        for route in self.store.other_routes:
+        for route in self.bundle.other_routes:
             app.add_url_rule(route.full_rule,
                              defaults=route.defaults,
                              endpoint=route.endpoint,
