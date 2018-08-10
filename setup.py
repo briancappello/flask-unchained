@@ -39,7 +39,6 @@ setup(
         'celery': [
             'celery',
             'dill',
-            'redis',
         ],
         'dev': [
             'coverage',
