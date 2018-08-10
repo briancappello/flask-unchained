@@ -1,11 +1,12 @@
 import importlib
 import inspect
 
-from flask import Blueprint, Flask
+from flask import Blueprint
+from flask_unchained import FlaskUnchained
+from flask_unchained.utils import _missing
 from typing import *
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
-from .constants import _missing
 from .controller import Controller
 from .resource import Resource
 from .route import Route
@@ -54,7 +55,7 @@ def func(rule_or_view_func: Union[str, Callable],
          defaults: Optional[Defaults] = _missing,
          endpoint: Optional[str] = _missing,
          methods: Optional[Methods] = _missing,
-         only_if: Optional[Union[bool, Callable[[Flask], bool]]] = _missing,
+         only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
          **rule_options,
          ) -> RouteGenerator:
     rule, view_func = _normalize_args(
@@ -85,7 +86,7 @@ def get(rule: str,
         defaults: Optional[Defaults] = _missing,
         endpoint: Optional[str] = _missing,
         is_member: Optional[bool] = _missing,
-        only_if: Optional[Union[bool, Callable[[Flask], bool]]] = _missing,
+        only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
         **rule_options,
         ) -> RouteGenerator:
     rule_options.pop('methods', None)
@@ -121,7 +122,7 @@ def patch(rule: str,
           defaults: Optional[Defaults] = _missing,
           endpoint: Optional[str] = _missing,
           is_member: Optional[bool] = _missing,
-          only_if: Optional[Union[bool, Callable[[Flask], bool]]] = _missing,
+          only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
           **rule_options,
           ) -> RouteGenerator:
     rule_options.pop('methods', None)
@@ -136,7 +137,7 @@ def post(rule: str,
          defaults: Optional[Defaults] = _missing,
          endpoint: Optional[str] = _missing,
          is_member: Optional[bool] = _missing,
-         only_if: Optional[Union[bool, Callable[[Flask], bool]]] = _missing,
+         only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
          **rule_options,
          ) -> RouteGenerator:
     rule_options.pop('methods', None)
@@ -160,7 +161,7 @@ def put(rule: str,
         defaults: Optional[Defaults] = _missing,
         endpoint: Optional[str] = _missing,
         is_member: Optional[bool] = _missing,
-        only_if: Optional[Union[bool, Callable[[Flask], bool]]] = _missing,
+        only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
         **rule_options,
         ) -> RouteGenerator:
     rule_options.pop('methods', None)
@@ -231,7 +232,7 @@ def rule(rule: str,
          endpoint: Optional[str] = _missing,
          is_member: Optional[bool] = _missing,
          methods: Optional[Methods] = _missing,
-         only_if: Optional[Union[bool, Callable[[Flask], bool]]] = _missing,
+         only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
          **rule_options,
          ) -> RouteGenerator:
     yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,

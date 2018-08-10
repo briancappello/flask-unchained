@@ -1,8 +1,8 @@
 import inspect
 
 from flask_unchained.string_utils import snake_case
+from flask_unchained.utils import _missing
 
-from .constants import _missing
 from .utils import join, method_name_to_url
 
 

@@ -7,7 +7,7 @@ from importlib import import_module
 from werkzeug.local import LocalProxy
 
 
-_missing = type('_missing', (), {'__bool__': lambda s: False})()
+_missing = type('_missing', (), {'__bool__': lambda self: False})()
 
 
 class AttrDict(dict):

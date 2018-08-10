@@ -8,13 +8,13 @@ from flask import (
     url_for as flask_url_for,
 )
 from flask_unchained.string_utils import kebab_case, right_replace, snake_case
+from flask_unchained.utils import _missing
 from typing import *
 from urllib.parse import urlsplit
 from werkzeug.local import LocalProxy
 from werkzeug.routing import BuildError
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
-from .constants import _missing
 
 
 PARAM_NAME_RE = re.compile(r'<(\w+:)?(?P<param_name>\w+)>')

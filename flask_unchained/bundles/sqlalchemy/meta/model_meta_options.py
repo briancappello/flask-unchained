@@ -1,4 +1,5 @@
 from flask_unchained.string_utils import snake_case
+from flask_unchained.utils import _missing
 from sqlalchemy import func as sa_func, types as sa_types
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import RelationshipProperty
@@ -8,8 +9,6 @@ from ..sqla.relationships import foreign_key
 from ..sqla.types import BigInteger, DateTime
 
 from .types import McsArgs
-
-_default = type('_default', (), {'__bool__': lambda x: False})()
 
 
 class MetaOption:
@@ -280,7 +279,7 @@ class PolymorphicMetaOption(MetaOption):
 
 class TableMetaOption(MetaOption):
     def __init__(self):
-        super().__init__(name='table', default=_default, inherit=False)
+        super().__init__(name='table', default=_missing, inherit=False)
 
     def get_value(self, meta, base_model_meta, mcs_args: McsArgs):
         manual = mcs_args.clsdict.get('__tablename__')
