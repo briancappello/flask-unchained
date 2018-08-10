@@ -1,17 +1,3 @@
-"""
-Babel Bundle
-------------
-
-Adds support for translations to Flask Unchained.
-
-.. autoclass:: BabelBundle
-    :members:
-
-.. automodule:: flask_unchained.bundles.babel.config
-
-.. automodule:: flask_unchained.bundles.babel.commands
-"""
-
 import pkg_resources
 import re
 

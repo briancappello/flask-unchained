@@ -15,7 +15,7 @@ HookTuple = namedtuple('HookTuple', ('Hook', 'bundle'))
 
 class RunHooksHook(AppFactoryHook):
     """
-    An internal hook to discover and run all the other hooks
+    An internal hook to discover and run all the other hooks.
     """
     bundle_module_name = 'hooks'
 

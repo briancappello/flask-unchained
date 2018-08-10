@@ -228,7 +228,7 @@ class HtmlTestResponse(Response):
         """
         Returns the path part of the response's url.
         """
-        return self._loc.path or '/'
+        return self._loc.path
 
     @cached_property
     def params(self):

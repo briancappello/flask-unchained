@@ -1,11 +1,3 @@
-"""
-Config
-^^^^^^
-
-.. autoclass:: Config
-    :members:
-"""
-
 class Config:
     """
     Default configuration options for the controller bundle.

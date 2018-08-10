@@ -1,10 +1,3 @@
-"""
-Controller
-^^^^^^^^^^
-
-.. autoclass:: Controller
-    :members:
-"""
 import functools
 import os
 

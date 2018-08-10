@@ -1,8 +1,3 @@
-"""
-    Configuration Options
-    ^^^^^^^^^^^^^^^^^^^^^
-"""
-
 from .views import AdminDashboardView
 
 

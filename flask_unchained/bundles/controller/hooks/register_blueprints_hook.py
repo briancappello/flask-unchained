@@ -4,6 +4,10 @@ from typing import *
 
 
 class RegisterBlueprintsHook(AppFactoryHook):
+    """
+    Registers blueprints with the app.
+    """
+
     bundle_module_name = 'views'
     bundle_override_module_name_attr = 'views_module_name'
     name = 'blueprints'

@@ -67,7 +67,9 @@ class APISpec(apispec.APISpec):
                                           mimetype='application/json')
 
     def _openapi_redoc(self):
-        """Expose OpenAPI spec with ReDoc
+        """
+        Expose OpenAPI spec with ReDoc
+
         The ReDoc script URL can be specified as OPENAPI_REDOC_URL.
         Otherwise, a CDN script is used based on the ReDoc version. The
         version can - and should - be specified as OPENAPI_REDOC_VERSION,
@@ -89,7 +91,9 @@ class APISpec(apispec.APISpec):
                                redoc_url=redoc_url)
 
     def register_converter(self, converter, conv_type, conv_format=None):
-        """Register custom path parameter converter
+        """
+        Register custom path parameter converter
+
         :param BaseConverter converter: Converter.
             Subclass of werkzeug's BaseConverter
         :param str conv_type: Parameter type
@@ -98,7 +102,9 @@ class APISpec(apispec.APISpec):
         self.flask_plugin.register_converter(converter, conv_type, conv_format)
 
     def register_field(self, field, *args):
-        """Register custom Marshmallow field
+        """
+        Register custom Marshmallow field
+
         Registering the Field class allows the Schema parser to set the proper
         type and format when documenting parameters from Schema fields.
         :param Field field: Marshmallow Field class

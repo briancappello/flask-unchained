@@ -6,8 +6,9 @@ from ..di import BaseService
 
 class RegisterServicesHook(AppFactoryHook):
     """
-    Registers services for dependency injection
+    Registers services for dependency injection.
     """
+
     bundle_module_name = 'services'
     name = 'services'
     run_after = ['init_extensions']

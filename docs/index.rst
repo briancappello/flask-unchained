@@ -22,7 +22,9 @@ The better way to build large Flask apps.
    :caption: Table of Contents:
 
    introduction
+   how_it_works
    tutorial/index
+   bundles/index
    commands
    testing
    api

@@ -83,7 +83,8 @@ class Unchained:
                  bundles: Optional[List] = None,
                  _config_overrides: Optional[Dict[str, Any]] = None,
                  ) -> None:
-        self.bundles = {b.name: b for b in bundles} if bundles else AttrDict()
+        self.bundles = (AttrDict({b.name: b for b in bundles})
+                        if bundles else AttrDict())
         self.env = env or self.env
         app.env = self.env
         app.extensions['unchained'] = self
@@ -103,8 +104,10 @@ class Unchained:
 
         # must import the RunHooksHook here to prevent a circular dependency
         from .hooks.run_hooks_hook import RunHooksHook
-        RunHooksHook(self).run_hook(app, bundles or [],
-                                    _config_overrides=_config_overrides)
+        run_hooks_hook = RunHooksHook(self)
+        self.log_action('hook', run_hooks_hook)
+        run_hooks_hook.run_hook(app, bundles or [],
+                                _config_overrides=_config_overrides)
         self._initialized = True
 
     def _reset(self):

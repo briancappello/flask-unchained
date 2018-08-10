@@ -1,12 +1,3 @@
-"""
-Commands
-^^^^^^^^
-
-.. click:: flask_unchained.bundles.celery.commands:celery
-    :prog: flask celery
-    :show-nested:
-"""
-
 import subprocess
 
 from flask_unchained.cli import cli

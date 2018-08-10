@@ -1,44 +1,193 @@
-
 # Flask Unchained
 
 ## The better way to build large Flask applications.
 
-Flask Unchained is an extension that implements the Application Factory Pattern. It provides a standardized (by convention) way to organize "bundles" of code, such that they become easily distributable, reusable, and customizable across multiple independent Flask Unchained projects (similar to Django's "apps", with an architecture inspired by [Symfony](https://symfony.com/). The ultimate goal is to provide an integrated, optional-batteries-included web application framework built on top of Flask.
+Flask Unchained is an extension that implements the Application Factory Pattern. It provides a standardized (by convention) way to organize "bundles" of code, such that they become easily distributable, reusable, and customizable across multiple independent Flask Unchained projects (similar to Django's "apps", with an architecture inspired by [Symfony](https://symfony.com/)). The ultimate goal is to provide an integrated, optional-batteries-included web application framework built on top of Flask.
 
-Currently Flask Unchained includes the following bundles:
+## Useful Links
 
-* **Admin Bundle**
-   - integrates [Flask-Admin](https://flask-admin.readthedocs.io/en/latest/)
+* [Read the docs](http://example.com)
+* [Fork it on GitHub](https://github.com/briancappello/flask-unchained)
+* [Download from PyPI](https://pypi.org/project/Flask-Unchained/)
 
-* **API Bundle**
-    - extends the Controller Bundle with support for ModelResource controllers integrated with SQLAlchemy and Marshmallow
-    - includes optional support generating API docs via APISpec/OpenAPI (using ReDoc as the frontend)
+## Features
 
-* **Babel Bundle**
-   - integrates support for translations via [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/)
+* MVC framework built on top of Flask
+* automatic discovery and registration of:
+   - configuration
+   - controllers, resources, and views
+   - services and extensions
+   - Click cli groups and commands
+   - SQLAlchemy models
+   - Marshmallow serializers
+   - Flask-Admin admin classes
+   - Celery tasks
+* declarative routing
+* dependency injection of services and extensions
+* a REST framework for building APIs, integrated with Marshmallow
+   - work-in-progress support for OpenAPI (swagger) docs using APISpec
+* server-side sessions
+* vastly simplified customization of third-party code
+* out-of-the-box support for testing with pytest
 
-* **Celery Bundle**
-   - integrates [Celery](http://www.celeryproject.org/)
-   - auto-discovers tasks across bundles
+## Quickstart
 
-* **Controller Bundle**
-    - auto-discovers blueprints, controllers, and views across bundles
-    - support for declarative routing (similar to Django's `urls.py`)
-    - (think of it as the best ideas from Flask-RESTful, Flask-Classful, Flask's MethodView, and Flask-Via - all combined into one coherent solution)
+```bash
+$ pip install cookiecutter
+$ cookiecutter gh:briancappello/cookiecutter-flask-unchained
 
-* **Mail Bundle**
-   - integrates [Flask-Mail](https://pythonhosted.org/flask-mail/)
+# (answer the questions and `cd` into the new directory)
+# (create a virtualenv using your tool of choice)
+$ pip install -r requirements-dev.txt
+$ flask run
+```
 
-* [**Security Bundle**](https://github.com/briancappello/flask-security-bundle)
-   - integrates a heavily cleaned up [Flask-Security](https://pythonhosted.org/Flask-Security/index.html) (just about everything except for the core session and encryption logic has been rewritten for your sanity)
+## What does it look like?
 
-* **Session Bundle**
-   - integrates support for server-side sessions via [Flask-Session](https://pythonhosted.org/Flask-Session/)
+A minimal Hello World application structure looks like this:
 
-* **SQLAlchemy Bundle**
-   - integrates Flask-SQLAlchemy and Flask-Migrate
-   - auto-discovers models across bundles
-   - adds support for performing validation on models (including integration with Flask-WTF and Marshmallow, so that validation rules can be as DRY as possible)
+```
+/home/user/dev/project-root
+├── app
+│   ├── templates
+│   │   └── site
+│   │       └── hello.html
+│   ├── __init__.py
+│   ├── config.py
+│   ├── routes.py
+│   └── views.py
+└── unchained_config.py
+```
 
-* **Webpack Bundle**
-   - integrates Webpack
+A larger application structure might look like this:
+
+```
+/home/user/dev/project-root
+├── app                 # your app bundle package
+│   ├── admins          # model admins
+│   ├── commands        # Click groups/commands
+│   ├── extensions      # Flask extensions
+│   ├── models          # SQLAlchemy models
+│   ├── serializers     # Marshmallow serializers (aka schemas)
+│   ├── services        # dependency-injectable services
+│   ├── tasks           # Celery tasks
+│   ├── templates       # Jinja2 templates
+│   ├── views           # Controllers and Resources
+│   └── __init__.py
+│   └── config.py       # app config
+│   └── routes.py       # declarative routes
+├── assets              # static assets to be handled by Webpack
+│   ├── images
+│   ├── scripts
+│   └── styles
+├── bundles             # third-party bundle extensions/overrides
+│   └── security        # a customized/extended Flask Security Bundle
+│       ├── models
+│       ├── serializers
+│       ├── services
+│       ├── templates
+│       └── __init__.py
+├── db
+│   ├── fixtures        # SQLAlchemy model fixtures (for seeding the dev db)
+│   └── migrations      # Alembic migrations (generated by Flask-Migrate)
+├── static              # static assets (Webpack compiles to here, and Flask
+│                       #  serves this folder at /static (by default))
+├── templates           # the top-level templates folder
+├── tests               # your pytest tests
+├── webpack             # Webpack configs
+└── unchained_config.py # the flask unchained config
+```
+
+To learn how to build such a larger example application using many more of the features of Flask Unchained, check out the [official tutorial](FIXME) in the docs.
+
+Going back to the minimal hello world app, the code is as follows. Create the `app` module in your project root, with an `AppBundle` subclass in it:
+
+```python
+# app/__init__.py
+
+from flask_unchained import AppBundle
+
+
+class App(AppBundle):
+    pass
+```
+
+Add the minimal required configuration:
+
+```python
+# app/config.py
+
+import os
+
+from flask_unchained import AppConfig
+
+
+class Config(AppConfig):
+    SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key')
+```
+
+And a hello world view and its template:
+
+```python
+# app/views.py
+
+from flask_unchained import Controller, route
+
+
+class SiteController(Controller):
+    @route('/')
+    def index(self):
+        return self.render('index')
+```
+
+```html
+<!-- app/templates/site/index.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World from Flaskr Unchained!</title>
+</head>
+<body>
+    <h1>Hello World from Flaskr Unchained!</h1>
+</body>
+</html>
+```
+
+Now we can register the controller with our routes:
+
+
+```python
+# app/routes.py
+
+from flask_unchained import (include, prefix, controller, resource, func, 
+                             get, post, patch, put, rule)
+
+from .views import SiteController
+
+
+routes = lambda: [
+    controller(SiteController),
+]
+```
+
+Enable the bundle in your `unchained_config.py`:
+
+```python
+# unchained_config.py
+
+BUNDLES = [
+    'app',
+]
+```
+
+And run it:
+
+```bash
+flask run
+ * Environment: development
+ * Debug mode: on
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+```
+
+Now you should be able to browse to [http://localhost:5000](http://localhost:5000) to view your incredibly stylish new site!

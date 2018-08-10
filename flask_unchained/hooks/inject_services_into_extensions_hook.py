@@ -4,6 +4,10 @@ from ..app_factory_hook import AppFactoryHook
 
 
 class InjectServicesIntoExtensions(AppFactoryHook):
+    """
+    Injects services into extensions.
+    """
+
     bundle_module_name = None
     name = 'extension_services'
     run_after = ['init_extensions', 'services']
