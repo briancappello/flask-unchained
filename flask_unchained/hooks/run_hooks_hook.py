@@ -2,12 +2,12 @@ import inspect
 import networkx as nx
 
 from collections import namedtuple
-from flask import Flask
 from importlib import import_module
 from typing import *
 
 from ..app_factory_hook import AppFactoryHook
 from ..bundle import Bundle
+from ..flask_unchained import FlaskUnchained
 
 
 HookTuple = namedtuple('HookTuple', ('Hook', 'bundle'))
@@ -17,13 +17,14 @@ class RunHooksHook(AppFactoryHook):
     """
     An internal hook to discover and run all the other hooks.
     """
+
     bundle_module_name = 'hooks'
 
     def run_hook(self,
-                 app: Flask,
+                 app: FlaskUnchained,
                  bundles: List[Bundle],
                  _config_overrides: Optional[Dict[str, Any]] = None,
-                 ):
+                 ) -> None:
         for hook in self.collect_from_bundles(bundles):
             if hook.action_category and hook.action_table_columns:
                 self.unchained.register_action_table(hook.action_category,
@@ -56,12 +57,11 @@ class RunHooksHook(AppFactoryHook):
         return [HookTuple(Hook, bundle)
                 for Hook in super().collect_from_bundle(bundle).values()]
 
-    def type_check(self, obj):
+    def type_check(self, obj: Any) -> bool:
         is_class = inspect.isclass(obj) and issubclass(obj, AppFactoryHook)
         return is_class and obj not in {AppFactoryHook, RunHooksHook}
 
-    def resolve_hook_order(self, hook_tuples: List[HookTuple],
-                           ) -> List[HookTuple]:
+    def resolve_hook_order(self, hook_tuples: List[HookTuple]) -> List[HookTuple]:
         dag = nx.DiGraph()
 
         for hook_tuple in hook_tuples:

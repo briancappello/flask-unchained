@@ -1,7 +1,3 @@
-"""
-    AppFactoryHook
-    ^^^^^^^^^^^^^^
-"""
 import importlib
 import inspect
 import pkgutil
@@ -168,22 +164,23 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
 
     def _get_members(self, module, type_checker) -> List[Tuple[str, Any]]:
         for name, obj in inspect.getmembers(module, type_checker):
+            # FIXME
+            # currently, no hooks depend on this working correctly, however
+            # ``obj.__module__ in module.__name__`` isn't right for instance variables
+            # (it works fine for classes, but instances seem to keep the __module__ of
+            # their *class*, not where they themselves were defined/instantiated.)
+            #
+            # possible solution, should probably be done within a metaclass __init__ if
+            # it's ever needed:
+            #
+            # https://stackoverflow.com/questions/14413025/how-can-i-find-out-where-an-object-has-been-instantiated#14413108
             if inspect.isclass(obj):
                 is_local_declaration = obj.__module__ in module.__name__
             else:
-                is_local_declaration = False  # FIXME this is shit
+                is_local_declaration = False
                 if self._limit_discovery_to_local_declarations:
                     raise NotImplementedError
 
-            # FIXME obj.__module__ in module.__name__ probably isn't right
-            # for instance variables (works fine for classes, but instances
-            # seem to keep the __module__ of their *class*, not where they
-            # themselves were defined. which is fucking garbage for this.)
-            #
-            # possible solution, should probably be done within a metaclass __init__ if
-            # it's ever needed (currently, no hooks depend on this working correctly)
-            #
-            # https://stackoverflow.com/questions/14413025/how-can-i-find-out-where-an-object-has-been-instantiated#14413108
             if not self._limit_discovery_to_local_declarations or is_local_declaration:
                 yield self.key_name(name, obj), obj
 

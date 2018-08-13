@@ -1,24 +1,26 @@
 import click
 import itertools
 
-from flask import Flask
-from ..app_factory_hook import AppFactoryHook
-from ..bundle import Bundle
 from typing import *
 from warnings import warn
+
+from ..app_factory_hook import AppFactoryHook
+from ..bundle import Bundle
+from ..flask_unchained import FlaskUnchained
 
 
 class RegisterCommandsHook(AppFactoryHook):
     """
     Adds commands and command groups from bundles.
     """
+
     bundle_module_name = 'commands'
     name = 'commands'
     run_after = ['extension_services']
 
     _limit_discovery_to_local_declarations = False
 
-    def run_hook(self, app: Flask, bundles: List[Bundle]):
+    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         commands = {}
         for bundle in bundles:
             command_groups = self.get_bundle_command_groups(bundle)

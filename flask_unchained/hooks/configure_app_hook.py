@@ -1,10 +1,11 @@
-from flask import Flask, Config
+from flask import Config
 from typing import *
 
 from ..app_config import AppConfig
 from ..app_factory_hook import AppFactoryHook
 from ..bundle import Bundle, AppBundle
 from ..constants import DEV, PROD, STAGING, TEST
+from ..flask_unchained import FlaskUnchained
 from ..utils import AttrDict
 
 BASE_CONFIG = 'Config'
@@ -18,17 +19,31 @@ ENV_CONFIGS = {
 
 class ConfigureAppHook(AppFactoryHook):
     """
-    Updates app.config with the default settings of each bundle.
+    Updates app.config with the settings from each bundle.
+
+    For each bundle in ``unchained_config.BUNDLES``, iterate through that
+    bundle's class hierarchy, starting from the base-most bundle. For each
+    bundle in that order, look for a ``config`` module, and if it exists,
+    update ``app.config`` with the options first from a base ``Config`` class,
+    if it exists, and then also if it exists, from an env-specific config class:
+    one of ``DevConfig``, ``ProdConfig``, ``StagingConfig``, or ``TestConfig``.
     """
+
     bundle_module_name = 'config'
+    """
+    By default, look for config classes in the ``config`` module of bundles.
+
+    Override by setting the ``config_module_name`` attribute on your bundle class.
+    """
+
     name = 'configure_app'
     run_after = ['extensions']
 
     def run_hook(self,
-                 app: Flask,
+                 app: FlaskUnchained,
                  bundles: List[Bundle],
                  _config_overrides: Optional[Dict[str, Any]] = None,
-                 ):
+                 ) -> None:
         self.apply_default_config(app)
         for bundle_ in bundles:
             for bundle in bundle_.iter_class_hierarchy():
@@ -38,7 +53,7 @@ class ConfigureAppHook(AppFactoryHook):
         if _config_overrides and isinstance(_config_overrides, dict):
             app.config.from_mapping(_config_overrides)
 
-    def apply_default_config(self, app):
+    def apply_default_config(self, app: FlaskUnchained) -> None:
         from ..app_config import _ConfigDefaults
         app.config.from_object(_ConfigDefaults)
 
@@ -49,7 +64,8 @@ class ConfigureAppHook(AppFactoryHook):
             from ..app_config import _TestConfigDefaults
             app.config.from_object(_TestConfigDefaults)
 
-    def get_config(self, bundle: Bundle,
+    def get_config(self,
+                   bundle: Bundle,
                    env: Union[DEV, PROD, STAGING, TEST],
                    ) -> AttrDict:
         bundle_config_module = self.import_bundle_module(bundle)

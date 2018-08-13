@@ -1,7 +1,3 @@
-"""
-    FlaskUnchained
-    ^^^^^^^^^^^^^^
-"""
 from flask import Flask
 
 

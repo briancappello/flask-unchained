@@ -31,12 +31,6 @@ And enable the bundle in your ``unchained_config.py``:
        'flask_unchained.bundles.api',
    ]
 
-Config
-^^^^^^
-
-.. automodule:: flask_unchained.bundles.api.config
-   :members:
-
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
@@ -82,5 +76,5 @@ Model Serializer
 Utils
 ~~~~~
 
-.. automodule:: flask_unchained.bundles.api.uils
+.. automodule:: flask_unchained.bundles.api.utils
    :members:

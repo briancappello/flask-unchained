@@ -1,10 +1,24 @@
-"""
-    AppConfig
-    ^^^^^^^^^
+import os
+import sys
 
+from .utils import get_boolean_env
+
+
+class AppRootDescriptor:
+    def __get__(self, instance, cls):
+        return os.path.dirname(sys.modules[cls.__module__].__file__)
+
+
+class ProjectRootDescriptor:
+    def __get__(self, instance, cls):
+        return os.path.abspath(os.path.join(cls.APP_ROOT, os.pardir))
+
+
+class AppConfig:
+    """
     Base class for app-bundle configs. Example usage::
 
-        # file: project_root/your_app_bundle/config.py
+        # project_root/your_app_bundle/config.py
 
         import os
 
@@ -24,26 +38,6 @@
 
         class TestConfig(Config):
             pass
-"""
-import os
-import sys
-
-from .utils import get_boolean_env
-
-
-class AppRootDescriptor:
-    def __get__(self, instance, cls):
-        return os.path.dirname(sys.modules[cls.__module__].__file__)
-
-
-class ProjectRootDescriptor:
-    def __get__(self, instance, cls):
-        return os.path.abspath(os.path.join(cls.APP_ROOT, os.pardir))
-
-
-class AppConfig:
-    """
-    Base class for app-bundle configs.
     """
 
     APP_ROOT: str = AppRootDescriptor()

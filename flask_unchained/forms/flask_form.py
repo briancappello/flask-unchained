@@ -10,7 +10,8 @@ class FlaskForm(BaseForm):
 
     field_order = ()
 
-    def __init__(self, formdata=None, obj=None, prefix='', data=None, meta=None, **kwargs):
+    def __init__(self, formdata=None, obj=None, prefix='', data=None, meta=None,
+                 **kwargs):
         """
         :param formdata:
             Used to pass data coming from the enduser, usually `request.POST` or

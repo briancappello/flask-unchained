@@ -1,7 +1,3 @@
-"""
-    Unchained
-    ^^^^^^^^^
-"""
 import functools
 import inspect
 import jinja2

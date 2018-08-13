@@ -2,11 +2,11 @@ import inspect
 import networkx as nx
 
 from collections import namedtuple
-from flask import Flask
 from typing import *
 
 from ..app_factory_hook import AppFactoryHook
 from ..bundle import Bundle
+from ..flask_unchained import FlaskUnchained
 
 
 ExtensionTuple = namedtuple('ExtensionTuple',
@@ -15,8 +15,9 @@ ExtensionTuple = namedtuple('ExtensionTuple',
 
 class RegisterExtensionsHook(AppFactoryHook):
     """
-    Registers extensions found in bundles with the current app.
+    Registers extensions found in bundles with the ``unchained`` extension.
     """
+
     bundle_module_name = 'extensions'
     name = 'extensions'
 
@@ -26,25 +27,21 @@ class RegisterExtensionsHook(AppFactoryHook):
                                           ext.extension.__class__.__name__,
                                           ext.dependencies]
 
-    def run_hook(self, app: Flask, bundles: List[Bundle]):
+    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]) -> None:
         extensions = self.collect_from_bundles(bundles)
         self.process_objects(app, self.get_extension_tuples(extensions))
 
-    def collect_from_bundle(self, bundle: Bundle):
-        extensions = {}
-        for bundle in bundle.iter_class_hierarchy():
-            module = self.import_bundle_module(bundle)
-            extensions.update(getattr(module, 'EXTENSIONS', {}))
-        return extensions
-
-    def process_objects(self, app: Flask,
-                        extension_tuples: List[ExtensionTuple]):
+    def process_objects(self,
+                        app: FlaskUnchained,
+                        extension_tuples: List[ExtensionTuple],
+                        ) -> None:
         for ext in self.resolve_extension_order(extension_tuples):
             self.log_action(ext)
             if ext.name not in self.unchained.extensions:
                 self.unchained.extensions[ext.name] = ext.extension
 
-    def get_extension_tuples(self, extensions: dict):
+    def get_extension_tuples(self, extensions: Dict[str, object],
+                             ) -> List[ExtensionTuple]:
         extension_tuples = []
         for name, extension in extensions.items():
             dependencies = []
@@ -54,7 +51,14 @@ class RegisterExtensionsHook(AppFactoryHook):
                 ExtensionTuple(name, extension, dependencies))
         return extension_tuples
 
-    def update_shell_context(self, ctx: dict):
+    def collect_from_bundle(self, bundle: Bundle) -> Dict[str, object]:
+        extensions = {}
+        for bundle in bundle.iter_class_hierarchy():
+            module = self.import_bundle_module(bundle)
+            extensions.update(getattr(module, 'EXTENSIONS', {}))
+        return extensions
+
+    def update_shell_context(self, ctx: Dict[str, Any]):
         ctx.update(self.unchained.extensions)
         ctx.update({'unchained': self.unchained})
 
@@ -75,5 +79,5 @@ class RegisterExtensionsHook(AppFactoryHook):
                                        for a, b in nx.find_cycle(dag)])
             raise Exception(f'{msg}: {problem_graph}')
 
-    def type_check(self, obj):
+    def type_check(self, obj: Any) -> bool:
         return not inspect.isclass(obj) and hasattr(obj, 'init_app')

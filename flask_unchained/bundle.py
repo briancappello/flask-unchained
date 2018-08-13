@@ -1,7 +1,3 @@
-"""
-    Bundle
-    ^^^^^^
-"""
 import importlib
 import sys
 
