@@ -7,11 +7,19 @@ from .session_manager import SessionManager
 
 
 class ModelManager(SessionManager):
+    """
+    Base class for model managers.
+    """
     __abstract__ = True
 
     # FIXME there must *some* way to get these fscking type hints to understand
     # that they're returning a specific subclass of db.Model as set by this attr
-    model: Type[Model] = Model
+    model: Union[str, Type[Model]] = Model
+    """
+    The model class a manager is for. In bundles this should be the model's class
+    name as a string, however in user app bundles it's safe to make it the model
+    class itself.
+    """
 
     def __init__(self):
         super().__init__()

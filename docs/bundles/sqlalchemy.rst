@@ -72,31 +72,34 @@ Metaclasses
 Services
 ~~~~~~~~
 
-.. automodule:: flask_unchained.bundles.sqlalchemy.services
+.. autoclass:: flask_unchained.bundles.sqlalchemy.services.model_manager.ModelManager
    :members:
 
-sqla
-~~~~
+.. autoclass:: flask_unchained.bundles.sqlalchemy.services.session_manager.SessionManager
+   :members:
+
+SQLAlchemy
+~~~~~~~~~~
 
 .. automodule:: flask_unchained.bundles.sqlalchemy.sqla
    :members:
 
-Base Model
+BaseModel
 ~~~~~~~~~~
 
-.. automodule:: flask_unchained.bundles.sqlalchemy.base_model
+.. autoclass:: flask_unchained.bundles.sqlalchemy.base_model.BaseModel
    :members:
 
-Base Query
+BaseQuery
 ~~~~~~~~~~
 
-.. automodule:: flask_unchained.bundles.sqlalchemy.base_query
+.. autoclass:: flask_unchained.bundles.sqlalchemy.base_query.BaseQuery
    :members:
 
-Model Form
+ModelForm
 ~~~~~~~~~~
 
-.. automodule:: flask_unchained.bundles.sqlalchemy.model_form
+.. autoclass:: flask_unchained.bundles.sqlalchemy.model_form.ModelForm
    :members:
 
 Validation

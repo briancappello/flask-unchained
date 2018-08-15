@@ -1,10 +1,11 @@
 """
-This code defers the registration of (some) model classes with SQLAlchemy.
-This allows for an external process to decide which model classes it wants
-the Mapper to know about. In effect this makes it possible for a vendor
-bundle subclass (or the user's app bundle) to extend or override models from
-other bundles by defining a new model with the same name. In order for this to
-work, a model must declare itself extendable and/or overridable::
+The code in this module allows the ability to defer the registration of model classes
+with SQLAlchemy. This allows for us to decide which model classes we want the
+SQLAlchemy :class:`~sqlalchemy.orm.mapper.Mapper` to know about. In effect this
+makes it possible for the user's app bundle (or a vendor bundle subclass) to extend
+or override models from other bundles by defining a new model with the same name.
+In order for this to work, a model must declare itself as extendable/overridable
+by setting ``Meta.lazy_mapped`` to ``True``::
 
     class SomeModel(db.Model):
         class Meta:

@@ -21,8 +21,9 @@ API Documentation
 Controller
 ~~~~~~~~~~
 
-.. automodule:: flask_unchained.bundles.controller.controller
+.. autoclass:: flask_unchained.bundles.controller.controller.Controller
    :members:
+   :exclude-members: method_as_view
 
 Decorators
 ~~~~~~~~~~
@@ -45,8 +46,9 @@ Metaclasses
 Resource
 ~~~~~~~~
 
-.. automodule:: flask_unchained.bundles.controller.resource
+.. autoclass:: flask_unchained.bundles.controller.resource.Resource
    :members:
+   :exclude-members: method_as_view
 
 Route
 ~~~~~

@@ -6,6 +6,9 @@ from ..extensions import SQLAlchemy
 
 
 class SessionManager(BaseService):
+    """
+    The session manager.
+    """
     def __init__(self, db: SQLAlchemy = injectable):
         self.db = db
 
