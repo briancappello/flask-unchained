@@ -90,4 +90,4 @@ def get_terminal_width():
     else:
         if r.returncode == 0:
             return int(r.stdout.decode('ascii').strip())
-    return 0
+    return 80

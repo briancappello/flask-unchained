@@ -1,6 +1,6 @@
-include CHANGELOG.md LICENSE README.md requirements.txt setup.cfg tox.ini babel.cfg
-include *.py
+include CHANGELOG.md LICENSE README.md tox.ini
+include flask_mail.py unchained_config.py
+recursive-include flask_unchained *.py
 recursive-include flask_unchained *.html
-recursive-include tests *.py
-recursive-include *.mo
-recursive-include *.cfg
+recursive-include flask_unchained *.mo
+recursive-include flask_unchained *.cfg
