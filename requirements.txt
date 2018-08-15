@@ -2,7 +2,9 @@ apispec
 bcrypt
 beautifulsoup4
 blinker>=1.4
+celery
 click>=6.7
+dill
 flask>=0.12
 flask-admin
 flask_babelex>=0.9.3
@@ -10,11 +12,15 @@ flask-login
 flask-marshmallow
 flask_migrate
 flask-principal
+flask-session
 flask_sqlalchemy
 flask_wtf
+ipython
 itsdangerous
 lxml
 marshmallow
 marshmallow-sqlalchemy
 networkx>=2.1
 passlib
+pyqt5
+qtconsole
