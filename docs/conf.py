@@ -182,4 +182,5 @@ intersphinx_mapping = {
     'flask': ('http://flask.pocoo.org/docs/', None),
     'werkzeug': ('http://werkzeug.pocoo.org/docs/0.14/', None),
     'flask_admin': ('https://flask-admin.readthedocs.io/en/latest/', None),
+    'sqlalchemy': ('http://docs.sqlalchemy.org/en/latest/', None),
 }

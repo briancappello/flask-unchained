@@ -13,6 +13,7 @@ Config
 ^^^^^^
 
 .. automodule:: flask_unchained.bundles.babel.config
+   :members:
 
 Commands
 ^^^^^^^^
@@ -24,4 +25,5 @@ Commands
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-.. automodule:: flask_unchained.bundles.babel
+.. autoclass:: flask_unchained.bundles.babel.BabelBundle
+   :members:

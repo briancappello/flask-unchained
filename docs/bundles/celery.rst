@@ -35,7 +35,7 @@ NOTE: If you have enabled the :doc:`mail`, and want to send emails asynchronousl
 Config
 ^^^^^^
 
-.. automodule:: flask_unchained.bundles.celery.config
+.. autoclass:: flask_unchained.bundles.celery.config.Config
    :members:
 
 Commands

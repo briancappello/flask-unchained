@@ -1,10 +1,3 @@
-"""
-Config
-^^^^^^
-
-.. autoclass:: Config
-    :members:
-"""
 import os
 
 from .tasks import async_mail_task, _send_mail_async

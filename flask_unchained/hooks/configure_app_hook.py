@@ -20,13 +20,6 @@ ENV_CONFIGS = {
 class ConfigureAppHook(AppFactoryHook):
     """
     Updates app.config with the settings from each bundle.
-
-    For each bundle in ``unchained_config.BUNDLES``, iterate through that
-    bundle's class hierarchy, starting from the base-most bundle. For each
-    bundle in that order, look for a ``config`` module, and if it exists,
-    update ``app.config`` with the options first from a base ``Config`` class,
-    if it exists, and then also if it exists, from an env-specific config class:
-    one of ``DevConfig``, ``ProdConfig``, ``StagingConfig``, or ``TestConfig``.
     """
 
     bundle_module_name = 'config'
@@ -44,6 +37,14 @@ class ConfigureAppHook(AppFactoryHook):
                  bundles: List[Bundle],
                  _config_overrides: Optional[Dict[str, Any]] = None,
                  ) -> None:
+        """
+        For each bundle in ``unchained_config.BUNDLES``, iterate through that
+        bundle's class hierarchy, starting from the base-most bundle. For each
+        bundle in that order, look for a ``config`` module, and if it exists,
+        update ``app.config`` with the options first from a base ``Config`` class,
+        if it exists, and then also if it exists, from an env-specific config class:
+        one of ``DevConfig``, ``ProdConfig``, ``StagingConfig``, or ``TestConfig``.
+        """
         self.apply_default_config(app)
         for bundle_ in bundles:
             for bundle in bundle_.iter_class_hierarchy():
