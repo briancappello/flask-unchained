@@ -23,7 +23,7 @@ setup(
         'blinker>=1.4',
         'flask>=0.12.2',
         'flask_babelex>=0.9.3',
-        'flask_wtf',
+        'flask-wtf>=0.13.1',
         'networkx>=2.1',
     ],
     extras_require={
@@ -63,7 +63,14 @@ setup(
             'lxml>=4.2.1',
         ],
         'security': [
-            'flask_security_bundle',
+            'bcrypt>=3.1.3',
+            'blinker>=1.4',
+            'flask>=0.12.2',
+            'flask-babelex>=0.9.3',
+            'flask-login>=0.3.0',
+            'flask-principal>=0.3.3',
+            'itsdangerous>=0.21',
+            'passlib>=1.7',
         ],
         'session': [
             'dill',

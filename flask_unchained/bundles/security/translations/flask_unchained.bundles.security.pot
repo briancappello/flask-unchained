@@ -1,0 +1,191 @@
+# Translations template for PROJECT.
+# Copyright (C) 2018 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2018-08-14 19:43-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: forms.py:14 forms.py:16
+msgid "flask_unchained.bundles.security:error.retype_password_mismatch"
+msgstr ""
+
+#: forms.py:23
+msgid "flask_unchained.bundles.security:error.email_already_associated"
+msgstr ""
+
+#: forms.py:32 forms.py:87
+msgid "flask_unchained.bundles.security:error.user_does_not_exist"
+msgstr ""
+
+#: forms.py:48
+msgid "flask_unchained.bundles.security:error.invalid_next_redirect"
+msgstr ""
+
+#: forms.py:58 forms.py:116 forms.py:168 forms.py:196
+msgid "flask_unchained.bundles.security:form_field.email"
+msgstr ""
+
+#: forms.py:59 forms.py:122 forms.py:135
+msgid "flask_unchained.bundles.security:form_field.password"
+msgstr ""
+
+#: forms.py:60
+msgid "flask_unchained.bundles.security:form_field.remember_me"
+msgstr ""
+
+#: forms.py:61
+msgid "flask_unchained.bundles.security:form_submit.login"
+msgstr ""
+
+#: forms.py:91
+msgid "flask_unchained.bundles.security:error.password_not_set"
+msgstr ""
+
+#: forms.py:96 forms.py:155
+msgid "flask_unchained.bundles.security:error.invalid_password"
+msgstr ""
+
+#: forms.py:102 services/security_service.py:102
+msgid "flask_unchained.bundles.security:error.confirmation_required"
+msgstr ""
+
+#: forms.py:106 services/security_service.py:101
+msgid "flask_unchained.bundles.security:error.disabled_account"
+msgstr ""
+
+#: forms.py:118
+msgid "flask_unchained.bundles.security:form_submit.recover_password"
+msgstr ""
+
+#: forms.py:124 forms.py:139
+msgid "flask_unchained.bundles.security:form_field.retype_password"
+msgstr ""
+
+#: forms.py:137
+msgid "flask_unchained.bundles.security:form_field.new_password"
+msgstr ""
+
+#: forms.py:142
+msgid "flask_unchained.bundles.security:form_submit.change_password"
+msgstr ""
+
+#: forms.py:159
+msgid "flask_unchained.bundles.security:error.password_is_the_same"
+msgstr ""
+
+#: forms.py:171
+msgid "flask_unchained.bundles.security:form_submit.register"
+msgstr ""
+
+#: forms.py:188
+msgid "flask_unchained.bundles.security:form_submit.reset_password"
+msgstr ""
+
+#: forms.py:198
+msgid "flask_unchained.bundles.security:form_submit.send_confirmation"
+msgstr ""
+
+#: forms.py:210
+msgid "flask_unchained.bundles.security:error.already_confirmed"
+msgstr ""
+
+#: validators.py:34
+msgid "flask_unchained.bundles.security:email_invalid"
+msgstr ""
+
+#: extensions/security.py:195
+msgid "flask_unchained.bundles.security:error.login_required"
+msgstr ""
+
+#: extensions/security.py:197
+msgid "flask_unchained.bundles.security:error.fresh_login_required"
+msgstr ""
+
+#: models/user.py:38
+msgid "flask_unchained.bundles.security:email_required"
+msgstr ""
+
+#: models/user.py:41
+msgid "flask_unchained.bundles.security:password_required"
+msgstr ""
+
+#: services/security_service.py:162
+msgid "flask_unchained.bundles.security:email_subject.register"
+msgstr ""
+
+#: services/security_service.py:189
+msgid "flask_unchained.bundles.security:email_subject.password_changed_notice"
+msgstr ""
+
+#: services/security_service.py:210
+msgid "flask_unchained.bundles.security:email_subject.password_reset_notice"
+msgstr ""
+
+#: services/security_service.py:228
+msgid "flask_unchained.bundles.security:email_subject.email_confirmation_instructions"
+msgstr ""
+
+#: services/security_service.py:248
+msgid "flask_unchained.bundles.security:email_subject.reset_password_instructions"
+msgstr ""
+
+#: views/security_controller.py:50
+msgid "flask_unchained.bundles.security:flash.login"
+msgstr ""
+
+#: views/security_controller.py:74
+msgid "flask_unchained.bundles.security:flash.logout"
+msgstr ""
+
+#: views/security_controller.py:103
+msgid "flask_unchained.bundles.security:flash.confirmation_request"
+msgstr ""
+
+#: views/security_controller.py:126
+msgid "flask_unchained.bundles.security:flash.invalid_confirmation_token"
+msgstr ""
+
+#: views/security_controller.py:134
+msgid "flask_unchained.bundles.security:flash.confirmation_expired"
+msgstr ""
+
+#: views/security_controller.py:143
+msgid "flask_unchained.bundles.security:flash.email_confirmed"
+msgstr ""
+
+#: views/security_controller.py:146
+msgid "flask_unchained.bundles.security:flash.already_confirmed"
+msgstr ""
+
+#: views/security_controller.py:168
+msgid "flask_unchained.bundles.security:flash.password_reset_request"
+msgstr ""
+
+#: views/security_controller.py:192
+msgid "flask_unchained.bundles.security:flash.invalid_reset_password_token"
+msgstr ""
+
+#: views/security_controller.py:199
+msgid "flask_unchained.bundles.security:flash.password_reset_expired"
+msgstr ""
+
+#: views/security_controller.py:212
+msgid "flask_unchained.bundles.security:flash.password_reset"
+msgstr ""
+
+#: views/security_controller.py:242
+msgid "flask_unchained.bundles.security:flash.password_change"
+msgstr ""
+

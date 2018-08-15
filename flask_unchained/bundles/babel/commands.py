@@ -40,7 +40,7 @@ def init(lang, domain):
     translations_dir = _get_translations_dir()
     domain = _get_translations_domain(domain)
     pot = os.path.join(translations_dir, f'{domain}.pot')
-    return _run(f'init -i {pot} -d {translations_dir} -l {lang}')
+    return _run(f'init -i {pot} -d {translations_dir} -l {lang} --domain={domain}')
 
 
 @babel.command()
@@ -72,10 +72,13 @@ def _run(str):
 
 
 def _get_babel_cfg():
-    app_bundle = list(current_app.unchained.bundles.values())[-1]
-    app_babel_cfg = os.path.join(app_bundle.root_folder, 'babel.cfg')
-    if os.path.exists(app_babel_cfg):
-        return app_babel_cfg
+    bundle = list(current_app.unchained.bundles.values())[-1]
+    babel_cfg = os.path.join(bundle.root_folder, 'babel.cfg')
+    bundle_babel_cfg = os.path.join(bundle.folder, 'babel.cfg')
+    if os.path.exists(babel_cfg):
+        return babel_cfg
+    elif os.path.exists(bundle_babel_cfg):
+        return bundle_babel_cfg
 
     # default to using flask_unchained's babel.cfg
     return os.path.join(
@@ -84,10 +87,10 @@ def _get_babel_cfg():
 
 
 def _get_translations_dir():
-    app_bundle = list(current_app.unchained.bundles.values())[-1]
-    is_user_app = isinstance(app_bundle, AppBundle)
+    bundle = list(current_app.unchained.bundles.values())[-1]
+    is_user_app = isinstance(bundle, AppBundle)
 
-    root_dir = app_bundle.root_folder if is_user_app else app_bundle.folder
+    root_dir = bundle.root_folder if is_user_app else bundle.folder
     translations_dir = os.path.join(root_dir, 'translations')
     if not os.path.exists(translations_dir):
         os.makedirs(translations_dir, exist_ok=True)
@@ -99,8 +102,8 @@ def _get_translations_domain(domain):
     if domain != DEFAULT_DOMAIN:
         return domain
 
-    app_bundle = list(current_app.unchained.bundles.values())[-1]
-    if isinstance(app_bundle, AppBundle):
+    bundle = list(current_app.unchained.bundles.values())[-1]
+    if isinstance(bundle, AppBundle):
         return DEFAULT_DOMAIN
 
-    return app_bundle.module_name
+    return bundle.module_name

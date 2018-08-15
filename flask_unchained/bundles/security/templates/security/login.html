@@ -1,0 +1,9 @@
+{% extends 'security/layout.html' %}
+
+{% from 'security/_macros.html' import render_form %}
+
+{% block content %}
+  {{ super() }}
+  <h1>{{ _('flask_unchained.bundles.security:heading.login') }}</h1>
+  {{ render_form(login_user_form, endpoint='security_controller.login') }}
+{% endblock %}

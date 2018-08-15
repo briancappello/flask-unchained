@@ -1,0 +1,35 @@
+{% macro render_form(form) %}
+  {% set action = kwargs.get('action', url_for(kwargs['endpoint'])) %}
+  <form name="{{ form._form_name }}" action="{{ action }}" method="POST">
+    {{ render_errors(form.errors.get('_error', [])) }}
+    {% for field in form %}
+      {{ render_field(field) }}
+    {% endfor %}
+  </form>
+{% endmacro %}
+
+{% macro render_field(field) %}
+  {% set input_type = field.widget.input_type %}
+  {% if input_type in ('submit', 'hidden') %}
+    {{ field(**kwargs)|safe }}
+  {% else %}
+    <p>
+      {{ field.label }}
+      {{ field(**kwargs)|safe }}
+      {% if field.description %}
+        <small class="form-field-description">{{ field.description }}</small>
+      {% endif %}
+      {{ render_errors(field.errors) }}
+    </p>
+  {% endif %}
+{% endmacro %}
+
+{% macro render_errors(errors) %}
+  {% if errors %}
+    <ul class="errors">
+    {% for error in errors %}
+      <li class="error">{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}

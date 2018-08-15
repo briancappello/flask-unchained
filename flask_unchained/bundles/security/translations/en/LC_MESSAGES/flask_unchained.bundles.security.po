@@ -1,0 +1,226 @@
+# English translations for PROJECT.
+# Copyright (C) 2018 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2018-08-01 09:58-0600\n"
+"PO-Revision-Date: 2018-07-11 17:48-0600\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: flask_unchained.bundles.security/forms.py:14 flask_unchained.bundles.security/forms.py:16
+msgid "flask_unchained.bundles.security:error.retype_password_mismatch"
+msgstr "Passwords do not match."
+
+#: flask_unchained.bundles.security/forms.py:23
+msgid "flask_unchained.bundles.security:error.email_already_associated"
+msgstr "%(email)s is already associated with an account."
+
+#: flask_unchained.bundles.security/forms.py:32 flask_unchained.bundles.security/forms.py:83
+msgid "flask_unchained.bundles.security:error.user_does_not_exist"
+msgstr "Specified user does not exist."
+
+#: flask_unchained.bundles.security/forms.py:48
+msgid "flask_unchained.bundles.security:error.invalid_next_redirect"
+msgstr "Redirections outside the domain are forbidden"
+
+#: flask_unchained.bundles.security/forms.py:57 flask_unchained.bundles.security/forms.py:111
+#: flask_unchained.bundles.security/forms.py:156 flask_unchained.bundles.security/forms.py:182
+msgid "flask_unchained.bundles.security:form_field.email"
+msgstr "Email"
+
+#: flask_unchained.bundles.security/forms.py:58 flask_unchained.bundles.security/forms.py:117
+#: flask_unchained.bundles.security/forms.py:129
+msgid "flask_unchained.bundles.security:form_field.password"
+msgstr "Password"
+
+#: flask_unchained.bundles.security/forms.py:59
+msgid "flask_unchained.bundles.security:form_field.remember_me"
+msgstr "Remember me?"
+
+#: flask_unchained.bundles.security/forms.py:60
+msgid "flask_unchained.bundles.security:form_submit.login"
+msgstr "Login"
+
+#: flask_unchained.bundles.security/forms.py:87
+msgid "flask_unchained.bundles.security:error.password_not_set"
+msgstr "No password is set for this user."
+
+#: flask_unchained.bundles.security/forms.py:91 flask_unchained.bundles.security/forms.py:143
+msgid "flask_unchained.bundles.security:error.invalid_password"
+msgstr "Invalid password."
+
+#: flask_unchained.bundles.security/forms.py:97
+#: flask_unchained.bundles.security/services/security_service.py:83
+msgid "flask_unchained.bundles.security:error.confirmation_required"
+msgstr "Email requires confirmation."
+
+#: flask_unchained.bundles.security/forms.py:101
+#: flask_unchained.bundles.security/services/security_service.py:82
+msgid "flask_unchained.bundles.security:error.disabled_account"
+msgstr "Account is disabled."
+
+#: flask_unchained.bundles.security/forms.py:113
+msgid "flask_unchained.bundles.security:form_submit.recover_password"
+msgstr "Recover Password"
+
+#: flask_unchained.bundles.security/forms.py:119 flask_unchained.bundles.security/forms.py:133
+msgid "flask_unchained.bundles.security:form_field.retype_password"
+msgstr "Retype Password"
+
+#: flask_unchained.bundles.security/forms.py:131
+msgid "flask_unchained.bundles.security:form_field.new_password"
+msgstr "New Password"
+
+#: flask_unchained.bundles.security/forms.py:136
+msgid "flask_unchained.bundles.security:form_submit.change_password"
+msgstr "Change Password"
+
+#: flask_unchained.bundles.security/forms.py:147
+msgid "flask_unchained.bundles.security:error.password_is_the_same"
+msgstr "Your new password must be different than your previous password."
+
+#: flask_unchained.bundles.security/forms.py:159
+msgid "flask_unchained.bundles.security:form_submit.register"
+msgstr "Register"
+
+#: flask_unchained.bundles.security/forms.py:174
+msgid "flask_unchained.bundles.security:form_submit.reset_password"
+msgstr "Reset Password"
+
+#: flask_unchained.bundles.security/forms.py:184
+msgid "flask_unchained.bundles.security:form_submit.send_confirmation"
+msgstr "Resend Confirmation Instructions"
+
+#: flask_unchained.bundles.security/forms.py:196
+msgid "flask_unchained.bundles.security:error.already_confirmed"
+msgstr "Your email has already been confirmed."
+
+#: flask_unchained.bundles.security/validators.py:34
+msgid "flask_unchained.bundles.security:email_invalid"
+msgstr "Invalid email address."
+
+#: flask_unchained.bundles.security/extensions/security.py:133
+msgid "flask_unchained.bundles.security:error.login_required"
+msgstr "Please login to access this page."
+
+#: flask_unchained.bundles.security/extensions/security.py:135
+msgid "flask_unchained.bundles.security:error.fresh_login_required"
+msgstr "Please re-authenticate to access this page."
+
+#: flask_unchained.bundles.security/models/user.py:41
+msgid "flask_unchained.bundles.security:email_required"
+msgstr "Email is required."
+
+#: flask_unchained.bundles.security/models/user.py:44
+msgid "flask_unchained.bundles.security:password_required"
+msgstr "Password is required."
+
+#: flask_unchained.bundles.security/services/security_service.py:139
+msgid "flask_unchained.bundles.security:email_subject.register"
+msgstr "Welcome!"
+
+#: flask_unchained.bundles.security/services/security_service.py:156
+msgid "flask_unchained.bundles.security:email_subject.password_changed_notice"
+msgstr "Your password has been changed."
+
+#: flask_unchained.bundles.security/services/security_service.py:168
+msgid "flask_unchained.bundles.security:email_subject.password_reset_notice"
+msgstr "Your password has been reset."
+
+#: flask_unchained.bundles.security/services/security_service.py:185
+msgid "flask_unchained.bundles.security:email_subject.email_confirmation_instructions"
+msgstr "Please confirm your email"
+
+#: flask_unchained.bundles.security/services/security_service.py:204
+msgid "flask_unchained.bundles.security:email_subject.reset_password_instructions"
+msgstr "Password reset instructions"
+
+#: flask_unchained.bundles.security/templates/security/change_password.html:7
+msgid "flask_unchained.bundles.security:heading.change_password"
+msgstr "Change Password"
+
+#: flask_unchained.bundles.security/templates/security/forgot_password.html:7
+msgid "flask_unchained.bundles.security:heading.forgot_password"
+msgstr "Forgot Password?"
+
+#: flask_unchained.bundles.security/templates/security/login.html:7
+msgid "flask_unchained.bundles.security:heading.login"
+msgstr "Login"
+
+#: flask_unchained.bundles.security/templates/security/register.html:7
+msgid "flask_unchained.bundles.security:heading.register"
+msgstr "Register"
+
+#: flask_unchained.bundles.security/templates/security/reset_password.html:7
+msgid "flask_unchained.bundles.security:heading.reset_password"
+msgstr "Reset Password"
+
+#: flask_unchained.bundles.security/templates/security/send_confirmation_email.html:7
+msgid "flask_unchained.bundles.security:heading.send_confirmation_email"
+msgstr "Resend Confirmation Email"
+
+#: flask_unchained.bundles.security/views/security_controller.py:41
+msgid "flask_unchained.bundles.security:flash.login"
+msgstr "Welcome!"
+
+#: flask_unchained.bundles.security/views/security_controller.py:63
+msgid "flask_unchained.bundles.security:flash.logout"
+msgstr "You have been successfully logged out."
+
+#: flask_unchained.bundles.security/views/security_controller.py:89
+msgid "flask_unchained.bundles.security:flash.confirmation_request"
+msgstr "Confirmation instructions have been sent to %(email)s."
+
+#: flask_unchained.bundles.security/views/security_controller.py:107
+msgid "flask_unchained.bundles.security:flash.invalid_confirmation_token"
+msgstr "Invalid confirmation token."
+
+#: flask_unchained.bundles.security/views/security_controller.py:115
+msgid "flask_unchained.bundles.security:flash.confirmation_expired"
+msgstr ""
+"You did not confirm your email within %(within)s. New instructions to "
+"confirm your email have been sent to %(email)s."
+
+#: flask_unchained.bundles.security/views/security_controller.py:124
+msgid "flask_unchained.bundles.security:flash.email_confirmed"
+msgstr "Thank you. Your email has been confirmed."
+
+#: flask_unchained.bundles.security/views/security_controller.py:127
+msgid "flask_unchained.bundles.security:flash.already_confirmed"
+msgstr "Your email has already been confirmed."
+
+#: flask_unchained.bundles.security/views/security_controller.py:145
+msgid "flask_unchained.bundles.security:flash.password_reset_request"
+msgstr "Instructions to reset your password have been sent to %(email)s."
+
+#: flask_unchained.bundles.security/views/security_controller.py:163
+msgid "flask_unchained.bundles.security:flash.invalid_reset_password_token"
+msgstr "Invalid reset password token."
+
+#: flask_unchained.bundles.security/views/security_controller.py:170
+msgid "flask_unchained.bundles.security:flash.password_reset_expired"
+msgstr ""
+"You did not reset your password within %(within)s. New instructions have "
+"been sent to %(email)s."
+
+#: flask_unchained.bundles.security/views/security_controller.py:183
+msgid "flask_unchained.bundles.security:flash.password_reset"
+msgstr ""
+"You successfully reset your password and you have been logged in "
+"automatically."
+
+#: flask_unchained.bundles.security/views/security_controller.py:209
+msgid "flask_unchained.bundles.security:flash.password_change"
+msgstr "You successfully changed your password."
+

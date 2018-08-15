@@ -23,7 +23,7 @@ from .forms import FlaskForm
 from .unchained import unchained
 from .utils import OptionalClass, OptionalMetaclass, get_boolean_env
 
-from .bundles.babel import _, gettext, ngettext, lazy_gettext, lazy_ngettext
+from .bundles.babel import gettext, ngettext, lazy_gettext, lazy_ngettext
 from .bundles.controller.constants import (ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,
                                            CREATE, DELETE, GET, LIST, PATCH, PUT)
 from .bundles.controller.controller import Controller

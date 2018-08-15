@@ -3,3 +3,4 @@ include *.py
 recursive-include flask_unchained *.html
 recursive-include tests *.py
 recursive-include *.mo
+recursive-include *.cfg

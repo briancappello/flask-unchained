@@ -6,13 +6,12 @@ from flask_babelex import Domain, gettext as _gettext, ngettext as _ngettext
 from flask_unchained import Bundle, FlaskUnchained
 from speaklater import make_lazy_string
 from typing import *
-from werkzeug.local import LocalProxy
 
 from .extensions import babel
 
 
-TRANSLATION_KEY_RE = re.compile(r'^(?P<domain>[a-z_]+)\.[a-z_.]+$')
-PLURAL_TRANSLATION_KEY_RE = re.compile(r'^(?P<domain>[a-z_]+)\.[a-z_.]+\.plural$')
+TRANSLATION_KEY_RE = re.compile(r'^(?P<domain>[a-z_.]+):[a-z_.]+$')
+PLURAL_TRANSLATION_KEY_RE = re.compile(r'^(?P<domain>[a-z_.]+):[a-z_.]+\.plural$')
 
 
 class BabelBundle(Bundle):
@@ -123,8 +122,3 @@ def _get_domain(match):
         return current_app.extensions['babel']._default_domain
 
     return Domain(domain_resources, domain=domain_name)
-
-
-# FIXME this doesn't quite work (app context not always available)....
-_ = LocalProxy(
-    lambda: lazy_gettext if current_app.config.get('LAZY_TRANSLATIONS') else gettext)

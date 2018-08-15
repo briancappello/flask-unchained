@@ -17,7 +17,7 @@ Let's update our test fixtures configuration file to include the test fixtures p
    # tests/conftest.py
 
    from flask_unchained.bundles.sqlalchemy.pytest import *
-   from flask_security_bundle.pytest import *  # add this line
+   from flask_unchained.bundles.security.pytest import *  # add this line
 
 The security bundle overrides the ``client`` and ``api_client`` test fixtures to add support for logging in and logging out. It also includes three fixtures specific to testing security views: ``registrations``, ``confirmations``, and ``password_resets``. We'll cover using these later on.
 
@@ -44,8 +44,8 @@ Let's start with configuring our database models, because the views will be brok
 
    from flask_unchained.bundles.sqlalchemy import db
    from flask_unchained import unchained, injectable, lazy_gettext as _
-   from flask_security_bundle.models.user_role import UserRole
-   from flask_security_bundle.validators import EmailValidator
+   from flask_unchained.bundles.security.models.user_role import UserRole
+   from flask_unchained.bundles.security.validators import EmailValidator
 
    MIN_PASSWORD_LENGTH = 8
 
@@ -60,10 +60,10 @@ Let's start with configuring our database models, because the views will be brok
            lazy_mapped = True
 
        email = db.Column(db.String(64), unique=True, index=True, info=dict(
-           required=_('flask_security_bundle.email_required'),
+           required=_('flask_unchained.bundles.security:email_required'),
            validators=[EmailValidator]))
        _password = db.Column('password', db.String, info=dict(
-           required=_('flask_security_bundle.password_required')))
+           required=_('flask_unchained.bundles.security:password_required')))
        active = db.Column(db.Boolean(name='active'), default=False)
        confirmed_at = db.Column(db.DateTime(), nullable=True)
 
@@ -120,7 +120,7 @@ Let's start with configuring our database models, because the views will be brok
    # flask_security_bundle/models/role.py
 
    from flask_unchained.bundles.sqlalchemy import db
-   from flask_security_bundle.models.user_role import UserRole
+   from flask_unchained.bundles.security.models.user_role import UserRole
 
    class Role(db.Model):
        """
@@ -182,7 +182,7 @@ We're going to leave them as-is for now, but in preparation for later customizat
 
    # flaskr_unchained/models.py
 
-   from flask_security_bundle import User as BaseUser, Role as BaseRole, UserRole
+   from flask_unchained.bundles.security import User as BaseUser, Role as BaseRole, UserRole
 
 
    class User(BaseUser):
@@ -349,7 +349,7 @@ The first thing we need to do is to include the :class:`~flask_security_bundle.v
    from flask_unchained import (include, prefix, controller, resource, func,
                                 get, post, patch, put, rule)
 
-   from flask_security_bundle import SecurityController
+   from flask_unchained.bundles.security import SecurityController
 
    from .views import SiteController
 
@@ -477,7 +477,7 @@ Unlike all of our earlier tests, testing the security bundle views requires that
    import pytest
 
    from flask_unchained.bundles.sqlalchemy.pytest import *
-   from flask_security_bundle.pytest import *
+   from flask_unchained.bundles.security.pytest import *
 
    from datetime import datetime, timezone
    from flaskr_unchained.models import User, Role, UserRole
@@ -537,7 +537,7 @@ And our tests look like this:
 
    # tests/security/test_security_controller.py
 
-   from flask_security_bundle import AnonymousUser, current_user
+   from flask_unchained.bundles.security import AnonymousUser, current_user
    from flask_unchained import url_for
 
 

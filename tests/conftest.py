@@ -1,12 +1,18 @@
+import factory
 import importlib
 import os
 import pytest
 import sys
 
+from datetime import datetime, timezone
+from flask_unchained.bundles.security.pytest import *
 from flask_unchained.bundles.sqlalchemy.meta.model_registry import _model_registry
+from flask_unchained.bundles.sqlalchemy.pytest import ModelFactory
 from flask_unchained import AppFactory, TEST, unchained
 from sqlalchemy import MetaData
 from sqlalchemy.orm import clear_mappers
+
+from tests.bundles.security._bundles.security.models import User, Role, UserRole
 
 PRIOR_FLASK_ENV = os.getenv('FLASK_ENV', None)
 
@@ -24,105 +30,136 @@ def bundles(request):
     try:
         return request.keywords.get('bundles').args[0]
     except AttributeError:
-        return ['flask_unchained.bundles.sqlalchemy']
-
-
-# reset the Flask-SQLAlchemy extension and the _model_registry to clean slate,
-# support loading the extension from different test bundles.
-# NOTE: luckily none of these hacks are required in end users' test suites that
-# make use of flask_unchained.bundles.sqlalchemy
-@pytest.fixture(autouse=True)
-def db_ext(bundles):
-    os.environ['FLASK_ENV'] = TEST
-
-    sqla_bundle = 'flask_unchained.bundles.sqlalchemy'
-    db_bundles = [sqla_bundle, 'tests.bundles.sqlalchemy._bundles.custom_extension']
-    try:
-        bundle_under_test = [m for m in db_bundles if m in bundles][0]
-    except (IndexError, TypeError):
-        bundle_under_test = sqla_bundle
-
-    _model_registry._reset()
-    unchained._reset()
-    clear_mappers()
-
-    # NOTE: this logic is only correct for one level deep of bundle extension
-    # (the proper behavior from unchained hooks is to import the full
-    # inheritance hierarchy, and that is especially essential for all of the
-    # metaclass magic in this bundle to work correctly)
-    modules_to_import = ([bundle_under_test] if bundle_under_test == sqla_bundle
-                         else [sqla_bundle, bundle_under_test])
-
-    for module_name in modules_to_import:
-        if module_name in sys.modules:
-            del sys.modules[module_name]
-        db_module = importlib.import_module(module_name)
-
-        ext_module_name = f'{module_name}.extensions'
-        if ext_module_name in sys.modules:
-            del sys.modules[ext_module_name]
-        db_extensions_module = importlib.import_module(ext_module_name)
-
-    kwargs = getattr(db_extensions_module, 'kwargs', dict(
-        metadata=MetaData(naming_convention={
-            'ix': 'ix_%(column_0_label)s',
-            'uq': 'uq_%(table_name)s_%(column_0_name)s',
-            'ck': 'ck_%(table_name)s_%(constraint_name)s',
-            'fk': 'fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s',
-            'pk': 'pk_%(table_name)s',
-        }),
-    ))
-
-    db = db_extensions_module.SQLAlchemy(**kwargs)
-    unchained.extensions.db = db
-
-    for module in [db_module, db_extensions_module]:
-        setattr(module, 'db', db)
-
-    EXTENSIONS = getattr(db_extensions_module, 'EXTENSIONS')
-    EXTENSIONS['db'] = db
-    setattr(db_extensions_module, 'EXTENSIONS', EXTENSIONS)
-
-    yield db
-
+        from ._unchained_config import BUNDLES
+        return BUNDLES
 
 @pytest.fixture(autouse=True)
-def app(bundles, db_ext):
-    if (bundles and 'tests.bundles.sqlalchemy._bundles.custom_extension' not in bundles
-            and 'flask_unchained.bundles.sqlalchemy' not in bundles):
-        bundles.insert(0, 'flask_unchained.bundles.sqlalchemy')
-
+def app(request, bundles):
+    """
+    Automatically used test fixture. Returns the application instance-under-test with
+    a valid app context.
+    """
     unchained._reset()
-    app = AppFactory.create_app(TEST, bundles=bundles)
+    options = request.keywords.get('options', None)
+    if options is not None:
+        options = {k.upper(): v for k, v in options.kwargs.items()}
+    app = AppFactory.create_app(TEST, bundles=bundles, _config_overrides=options)
     ctx = app.app_context()
     ctx.push()
     yield app
     ctx.pop()
 
-    if PRIOR_FLASK_ENV:
-        os.environ['FLASK_ENV'] = PRIOR_FLASK_ENV
-    else:
-        del os.environ['FLASK_ENV']
-
 
 @pytest.fixture(autouse=True)
-def db(db_ext):
-    db_ext.create_all()
-    yield db_ext
-    db_ext.drop_all()
+def db(app):
+    db_ext = app.unchained.extensions.get('db', None)
+    if db_ext:
+        # FIXME might need to reflect the current db, drop, and then create...
+        db_ext.create_all()
+        yield db_ext
+        db_ext.drop_all()
+    else:
+        yield None
 
 
 @pytest.fixture(autouse=True)
 def db_session(db):
-    connection = db.engine.connect()
-    transaction = connection.begin()
+    if not db:
+        yield None
+    else:
+        connection = db.engine.connect()
+        transaction = connection.begin()
 
-    session = db.create_scoped_session(options=dict(bind=connection, binds={}))
-    db.session = session
+        session = db.create_scoped_session(options=dict(bind=connection, binds={}))
+        db.session = session
 
-    try:
-        yield session
-    finally:
-        transaction.rollback()
-        connection.close()
-        session.remove()
+        try:
+            yield session
+        finally:
+            transaction.rollback()
+            connection.close()
+            session.remove()
+
+
+class UserFactory(ModelFactory):
+    class Meta:
+        model = User
+
+    username = 'user'
+    email = 'user@example.com'
+    password = 'password'
+    first_name = 'first'
+    last_name = 'last'
+    active = True
+    confirmed_at = datetime.now(timezone.utc)
+
+
+class RoleFactory(ModelFactory):
+    class Meta:
+        model = Role
+
+    name = 'ROLE_USER'
+
+
+class UserRoleFactory(ModelFactory):
+    class Meta:
+        model = UserRole
+
+    user = factory.SubFactory(UserFactory)
+    role = factory.SubFactory(RoleFactory)
+
+
+class UserWithRoleFactory(UserFactory):
+    user_role = factory.RelatedFactory(UserRoleFactory, 'user')
+
+
+class UserWithTwoRolesFactory(UserFactory):
+    _user_role = factory.RelatedFactory(UserRoleFactory, 'user',
+                                        role__name='ROLE_USER')
+    user_role = factory.RelatedFactory(UserRoleFactory, 'user',
+                                       role__name='ROLE_USER1')
+
+
+@pytest.fixture()
+def user(request):
+    kwargs = getattr(request.keywords.get('user'), 'kwargs', {})
+    return UserWithTwoRolesFactory(**kwargs)
+
+
+@pytest.fixture()
+def users(request):
+    users_request = request.keywords.get('users')
+    if not users_request:
+        return
+
+    rv = []
+    for kwargs in users_request.args:
+        rv.append(UserWithTwoRolesFactory(**kwargs))
+    return rv
+
+
+@pytest.fixture()
+def role(request):
+    kwargs = getattr(request.keywords.get('role'), 'kwargs', {})
+    return RoleFactory(**kwargs)
+
+
+@pytest.fixture()
+def roles(request):
+    roles_request = request.keywords.get('roles')
+    if not roles_request:
+        return
+
+    rv = []
+    for kwargs in roles_request.args:
+        rv.append(RoleFactory(**kwargs))
+    return rv
+
+
+@pytest.fixture()
+def admin(request):
+    kwargs = getattr(request.keywords.get('admin'), 'kwargs', {})
+    kwargs = dict(**kwargs, username='admin', email='admin@example.com',
+                  _user_role__role__name='ROLE_ADMIN')
+    kwargs.setdefault('user_role__role__name', 'ROLE_USER')
+    return UserWithTwoRolesFactory(**kwargs)

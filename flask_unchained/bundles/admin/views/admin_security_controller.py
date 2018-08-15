@@ -1,5 +1,5 @@
 try:
-    from flask_security_bundle import SecurityController
+    from flask_unchained.bundles.security import SecurityController
 except ImportError:
     from flask_unchained import OptionalClass as SecurityController
 

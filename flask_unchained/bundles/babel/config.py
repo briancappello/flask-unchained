@@ -1,11 +1,3 @@
-"""
-Config
-^^^^^^
-
-.. autoclass:: Config
-    :members:
-"""
-
 from flask_babelex import Domain
 from werkzeug import ImmutableDict
 
