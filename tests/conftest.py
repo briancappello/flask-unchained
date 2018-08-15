@@ -1,18 +1,13 @@
 import factory
-import importlib
 import os
-import pytest
-import sys
 
 from datetime import datetime, timezone
 from flask_unchained.bundles.security.pytest import *
-from flask_unchained.bundles.sqlalchemy.meta.model_registry import _model_registry
 from flask_unchained.bundles.sqlalchemy.pytest import ModelFactory
 from flask_unchained import AppFactory, TEST, unchained
-from sqlalchemy import MetaData
-from sqlalchemy.orm import clear_mappers
 
 from tests.bundles.security._bundles.security.models import User, Role, UserRole
+
 
 PRIOR_FLASK_ENV = os.getenv('FLASK_ENV', None)
 
