@@ -1,7 +1,6 @@
 from flask_unchained.cli import cli, click
 
-from ..unchained import unchained
-from ..string_utils import title_case
+from ..utils import format_docstring
 from .utils import print_table
 
 
@@ -13,26 +12,37 @@ def unchained_group():
 
 
 @unchained_group.command()
-def bundles():
+@click.pass_context
+def bundles(ctx):
     """
     List discovered bundles.
     """
-    action_log = unchained.get_action_log('bundle')
-    click.echo('=' * 80)
-    click.echo('Bundles')
-    click.echo('=' * 80)
-    print_table([title_case(x) for x in action_log.column_names],
-                [item.data for item in action_log.items])
+    from ..app_factory import _load_bundles, _load_unchained_config
+    unchained_config = _load_unchained_config(ctx.obj.data['env'])
+    _, bundles = _load_bundles(getattr(unchained_config, 'BUNDLES', []))
+
+    print_table(('Name', 'Location'),
+                [(bundle.name, f'{bundle.__module__}.{bundle.__class__.__name__}')
+                 for bundle in bundles])
 
 
 @unchained_group.command()
-def hooks():
+@click.pass_context
+def hooks(ctx):
     """
     List registered hooks (in the order they run).
     """
-    action_log = unchained.get_action_log('hook')
-    click.echo('=' * 80)
-    click.echo('Hooks')
-    click.echo('=' * 80)
-    print_table([title_case(x) for x in action_log.column_names],
-                [item.data for item in action_log.items])
+    from ..hooks.run_hooks_hook import RunHooksHook
+    from ..app_factory import _load_bundles, _load_unchained_config
+    unchained_config = _load_unchained_config(ctx.obj.data['env'])
+    _, bundles = _load_bundles(getattr(unchained_config, 'BUNDLES', []))
+    hooks = RunHooksHook(None).collect_from_bundles(bundles)
+
+    print_table(('Hook Name',
+                 'Default Bundle Module',
+                 'Bundle Module Override Attr',
+                 'Description'),
+                [(hook.name,
+                 hook.bundle_module_name or '(None)',
+                 hook.bundle_override_module_name_attr or '(None)',
+                 format_docstring(hook.__doc__) or '(None)') for hook in hooks])

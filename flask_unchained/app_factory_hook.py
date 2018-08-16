@@ -215,6 +215,3 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
         Implement to add objects to the cli shell context.
         """
         pass
-
-    def log_action(self, data):
-        self.unchained.log_action(self.action_category, data)

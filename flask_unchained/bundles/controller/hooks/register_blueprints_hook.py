@@ -29,7 +29,6 @@ class RegisterBlueprintsHook(AppFactoryHook):
             # will end up looking like '/prefix//endpoint', which is no good
             url_prefix = (blueprint.url_prefix or '').rstrip('/')
             app.register_blueprint(blueprint, url_prefix=url_prefix)
-            self.log_action(blueprint)
 
     def collect_from_bundles(self, bundles: List[Bundle]) -> List[Blueprint]:
         objects = []

@@ -36,7 +36,6 @@ class RegisterExtensionsHook(AppFactoryHook):
                         extension_tuples: List[ExtensionTuple],
                         ) -> None:
         for ext in self.resolve_extension_order(extension_tuples):
-            self.log_action(ext)
             if ext.name not in self.unchained.extensions:
                 self.unchained.extensions[ext.name] = ext.extension
 

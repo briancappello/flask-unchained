@@ -72,7 +72,6 @@ class RegisterRoutesHook(AppFactoryHook):
                              methods=route.methods,
                              view_func=route.view_func,
                              **route.rule_options)
-            self.log_action(route)
 
     def get_explicit_routes(self, bundle: Bundle):
         routes_module = self.import_bundle_module(bundle)

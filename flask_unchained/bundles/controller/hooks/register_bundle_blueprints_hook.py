@@ -105,4 +105,3 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
                                         view_func=route.view_func,
                                         **route.rule_options)
                     app.register_blueprint(bp)
-                    self.log_action(bp)

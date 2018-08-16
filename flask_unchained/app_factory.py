@@ -70,10 +70,6 @@ class AppFactory:
         app.root_path = os.path.dirname(app.root_path)
         app.static_folder = flask_kwargs['static_folder']
 
-        unchained.log_action('flask', {'app_name': app_import_name,
-                                       'root_path': app.root_path,
-                                       'kwargs': flask_kwargs})
-
         for bundle in bundles:
             bundle.before_init_app(app)
 
@@ -143,7 +139,6 @@ def _load_bundles(bundle_package_names: List[str],
     for bundle_package_name in bundle_package_names:
         bundle = _load_bundle(bundle_package_name, _is_bundle)
         bundles.append(bundle())
-        unchained.log_action('bundle', bundle)
 
     if not isinstance(bundles[-1], AppBundle):
         return None, bundles
