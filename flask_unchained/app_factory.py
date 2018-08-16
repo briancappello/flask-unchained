@@ -52,12 +52,9 @@ class AppFactory:
         :return: the :class:`FlaskUnchained` application instance
         """
         unchained_config = _load_unchained_config(env)
-        bundles = bundles or getattr(unchained_config, 'BUNDLES', [])
-        for b in REQUIRED_BUNDLES:
-            if b not in bundles:
-                bundles.insert(0, b)
+        app_bundle, bundles = _load_bundles(
+            bundles or getattr(unchained_config, 'BUNDLES', []))
 
-        app_bundle, bundles = _load_bundles(bundles)
         if app_bundle is None and env != TEST:
             return cls._create_bundle_app(bundles, _config_overrides=_config_overrides)
 
@@ -135,6 +132,10 @@ def _load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):
 
 def _load_bundles(bundle_package_names: List[str],
                   ) -> Tuple[Union[None, AppBundle], List[Bundle]]:
+    for b in REQUIRED_BUNDLES:
+        if b not in bundle_package_names:
+            bundle_package_names.insert(0, b)
+
     if not bundle_package_names:
         return None, []
 
