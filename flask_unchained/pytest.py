@@ -80,12 +80,12 @@ def maybe_inject_extensions_and_services(app, request):
 
 class FlaskCliRunner(CliRunner):
     """
+    Extended from upstream to run commands within the Flask app context.
+
     The CLI runner provides functionality to invoke a Click command line
     script for unittesting purposes in a isolated environment. This only
     works in single-threaded systems without any concurrency as it changes the
     global interpreter state.
-
-    Extended from upstream to run commands with the Flask application context.
 
     :param charset: the character set for the input and output data.  This is
                     UTF-8 by default and should not be changed currently as
@@ -96,7 +96,6 @@ class FlaskCliRunner(CliRunner):
                        some circumstances.  Note that regular prompts
                        will automatically echo the input.
     """
-
     def __init__(self, app, **kwargs):
         super().__init__(**kwargs)
         self.app = app
@@ -136,8 +135,8 @@ def cli_runner(app):
 
         def test_some_command(cli_runner):
             result = cli_runner.invoke(some_command)
-            assert result.output.strip() == 'output of some_command'
             assert result.exit_code == 0
+            assert result.output.strip() == 'output of some_command'
     """
     yield FlaskCliRunner(app)
 
