@@ -175,5 +175,5 @@ def _is_bundle(module):
         if not inspect.isclass(obj):
             return False
         is_subclass = issubclass(obj, Bundle) and obj not in {AppBundle, Bundle}
-        return is_subclass and module.__name__ in obj.__module__
+        return is_subclass and obj.__module__.startswith(module.__name__)
     return is_bundle
