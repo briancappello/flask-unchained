@@ -2,7 +2,7 @@
 
 ## The better way to build large Flask applications.
 
-Flask Unchained is an extension that implements the Application Factory Pattern. It provides a standardized (by convention) way to organize "bundles" of code, such that they become easily distributable, reusable, and customizable across multiple independent Flask Unchained projects (similar to Django's "apps", with an architecture inspired by [Symfony](https://symfony.com/)). The ultimate goal is to provide an integrated, optional-batteries-included web application framework built on top of Flask.
+Flask Unchained is an extension that implements the Application Factory Pattern. It provides a standardized (by convention) way to organize "bundles" of code, such that they become easily distributable, reusable, and customizable across multiple independent Flask Unchained projects (similar to Django's "apps", with an architecture inspired by [Symfony](https://symfony.com/)). The ultimate goal is to provide a fully integrated, optional-batteries-included web application framework built on top of Flask.
 
 ## Useful Links
 
@@ -12,23 +12,33 @@ Flask Unchained is an extension that implements the Application Factory Pattern.
 
 ## Features
 
-* MVC framework built on top of Flask
+* MVC framework built on top of Flask and many of its extensions
+* includes out-of-the-box (mostly optional) integrations with:
+   - [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) (translations, **required**)
+   - [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/) (forms and CSRF protection, **required**)
+   - [Flask-SQLAlchemy](http://flask-sqlalchemy.pocoo.org/latest/) and [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/) (database ORM and migrations, optional)
+   - [Flask-Login](http://flask-login.readthedocs.io/) and [Flask-Principal](https://pythonhosted.org/Flask-Principal/) (authentication and authorization, optional)
+   - [Flask-Mail](https://pythonhosted.org/flask-mail/) (email sending support, optional)
+   - [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/) (database model serialization, optional)
+   - [Flask-Session](https://pythonhosted.org/Flask-Session/) (server-side sessions, optional)
+   - [Flask-Admin](https://flask-admin.readthedocs.io/en/latest/) (admin interface, optional)
+   - [Celery](http://docs.celeryproject.org/en/latest/index.html) (distributed task queue, optional)
+* out-of-the-box support for testing with [pytest](https://docs.pytest.org/en/latest/)
+* improved class-based views with the [Controller]() and [Resource]() base classes
+* declarative routing
+* dependency injection of services and extensions
+* a REST API framework, integrated with Marshmallow and SQLAlchemy
+   - work-in-progress support for [OpenAPI](https://swagger.io/specification/) (aka Swagger) docs, using [ReDoc](https://github.com/Rebilly/ReDoc) as the frontend (internally, it uses the [APISpec](http://apispec.readthedocs.io/en/stable/) library)
 * automatic discovery and registration of:
-   - configuration
-   - controllers, resources, and views
-   - services and extensions
-   - Click cli groups and commands
-   - SQLAlchemy models
+   - Configuration
+   - Controllers, Resources, and Views
+   - Services and Extensions
+   - Click groups and commands
+   - SQLAlchemy database models
    - Marshmallow serializers
    - Flask-Admin admin classes
    - Celery tasks
-* declarative routing
-* dependency injection of services and extensions
-* a REST framework for building APIs, integrated with Marshmallow
-   - work-in-progress support for OpenAPI (swagger) docs using APISpec
-* server-side sessions
-* vastly simplified customization of third-party code
-* out-of-the-box support for testing with pytest
+* much simplified customization of third-party code
 
 ## Quickstart
 
@@ -98,12 +108,14 @@ A larger application structure might look like this:
 └── unchained_config.py # the flask unchained config
 ```
 
-To learn how to build such a larger example application using many more of the features of Flask Unchained, check out the [official tutorial](FIXME) in the docs.
+To learn how to build such a larger example application, check out the [official tutorial](https://flask-unchained.readthedocs.io/en/latest/tutorial/index.html).
 
-Going back to the minimal hello world app, the code is as follows. Create the `app` module in your project root, with an `AppBundle` subclass in it:
+Going back to the minimal hello world app, the code is as follows:
+
+The first step is to create an app bundle module in your project root, we'll call ours `app`, with an `AppBundle` subclass in it:
 
 ```python
-# app/__init__.py
+# project-root/app/__init__.py
 
 from flask_unchained import AppBundle
 
@@ -115,7 +127,7 @@ class App(AppBundle):
 Add the minimal required configuration:
 
 ```python
-# app/config.py
+# project-root/app/config.py
 
 import os
 
@@ -126,10 +138,10 @@ class Config(AppConfig):
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key')
 ```
 
-And a hello world view and its template:
+And a hello world view along with its template:
 
 ```python
-# app/views.py
+# project-root/app/views.py
 
 from flask_unchained import Controller, route
 
@@ -141,24 +153,23 @@ class SiteController(Controller):
 ```
 
 ```html
-<!-- app/templates/site/index.html -->
+<!-- project-root/app/templates/site/index.html -->
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hello World from Flaskr Unchained!</title>
+    <title>Hello World from Flask Unchained!</title>
 </head>
 <body>
-    <h1>Hello World from Flaskr Unchained!</h1>
+    <h1>Hello World from Flask Unchained!</h1>
 </body>
 </html>
 ```
 
-Now we can register the controller with our routes:
-
+Now we can register the controller with our `routes`:
 
 ```python
-# app/routes.py
+# project-root/app/routes.py
 
 from flask_unchained import (include, prefix, controller, resource, func, 
                              get, post, patch, put, rule)
@@ -171,10 +182,10 @@ routes = lambda: [
 ]
 ```
 
-Enable the bundle in your `unchained_config.py`:
+Enable the bundle in `unchained_config.py`:
 
 ```python
-# unchained_config.py
+# project-root/unchained_config.py
 
 BUNDLES = [
     'app',
@@ -184,10 +195,18 @@ BUNDLES = [
 And run it:
 
 ```bash
-flask run
+$ flask run
  * Environment: development
  * Debug mode: on
  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 ```
 
-Now you should be able to browse to [http://localhost:5000](http://localhost:5000) to view your incredibly stylish new site!
+Now you should be able to browse to [http://localhost:5000](http://localhost:5000) to view your new site!
+
+## Contributing
+
+Contributions are more than welcome! This is a big project with a lot of different kinds of things that need doing. If you've got an idea, open an issue or a PR and let's chat.
+
+## License
+
+MIT
