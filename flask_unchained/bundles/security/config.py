@@ -18,10 +18,10 @@ def _should_send_mail(config_option, default=None):
     def get_value():
         if 'mail_bundle' not in current_app.unchained.bundles:
             return False
-        value = current_app.config.get(config_option, None)
-        if value is not None:
-            return value
-        return default
+        value = current_app.config.get(config_option, default)
+        if isinstance(value, LocalProxy):
+            return default
+        return value
     return LocalProxy(lambda: get_value())
 
 
