@@ -4,7 +4,6 @@ import re
 
 from flask import current_app
 from importlib import import_module
-from werkzeug.local import LocalProxy
 
 
 _missing = type('_missing', (), {'__bool__': lambda self: False})()
@@ -23,25 +22,6 @@ class AttrDict(dict):
 
     def __repr__(self):
         return f'{self.__class__.__name__}({super().__repr__()})'
-
-
-class LazyExtensionsAttrDict(AttrDict):
-    def __getattr__(self, key):
-        return LocalProxy(lambda: dict.__getitem__(
-            current_app.extensions['unchained'].extensions, key))
-
-    def __getitem__(self, key):
-        return LocalProxy(lambda: dict.__getitem__(
-            current_app.extensions['unchained'].extensions, key))
-
-class LazyServicesAttrDict(AttrDict):
-    def __getattr__(self, key):
-        return LocalProxy(lambda: dict.__getitem__(
-            current_app.extensions['unchained'].services, key))
-
-    def __getitem__(self, key):
-        return LocalProxy(lambda: dict.__getitem__(
-            current_app.extensions['unchained'].services, key))
 
 
 class ConfigProperty:

@@ -6,9 +6,9 @@ from .utils import _query_to_role, _query_to_user
 from ..extensions import Security
 from ..services import SecurityService, UserManager
 
-security: Security = unchained.extensions.security
-security_service: SecurityService = unchained.services.security_service
-user_manager: UserManager = unchained.services.user_manager
+security: Security = unchained.get_extension_local_proxy('security')
+security_service: SecurityService = unchained.get_service_local_proxy('security_service')
+user_manager: UserManager = unchained.get_service_local_proxy('user_manager')
 
 
 @cli.group()

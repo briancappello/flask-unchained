@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.5.2 (unreleased)
+## 0.6.0 (unreleased)
 
 * export `get_boolean_env` from core `flask_unchained` package
 * export `param_converter` from core `flask_unchained` package
@@ -20,6 +20,7 @@
    - bundles are now instantiated instead of passing the classes around directly
 * add default config options, making `DEBUG` and `TESTING` unnecessary to set manually
 * add a `_form_name` attribute to `FlaskForm` to automatically name forms when rendering them programmatically
+* add `get_extension_local_proxy` and `get_service_local_proxy` methods to the `Unchained` extension
 
 ## 0.5.1 (2018/07/25)
 

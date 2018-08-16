@@ -6,14 +6,14 @@ import networkx as nx
 
 from collections import defaultdict, namedtuple
 from datetime import datetime
-from flask import Flask
+from flask import Flask, current_app
 from typing import *
+from werkzeug.local import LocalProxy
 
 from .constants import DEV, PROD, STAGING, TEST
 from .di import ensure_service_name, injectable
 from .exceptions import ServiceUsageError
-from .utils import (
-    AttrDict, LazyExtensionsAttrDict, LazyServicesAttrDict, format_docstring)
+from .utils import AttrDict, format_docstring
 
 
 CategoryActionLog = namedtuple('CategoryActionLog',
@@ -35,8 +35,8 @@ class Unchained:
 
         # support lazily accessing extensions and services via attributes on the
         # unchained extension instance
-        self.extensions = LazyExtensionsAttrDict()
-        self.services = LazyServicesAttrDict()
+        self.extensions = AttrDict()
+        self.services = AttrDict()
 
         self.bundles = AttrDict()
         self.babel_bundle = None
@@ -106,14 +106,20 @@ class Unchained:
                                 _config_overrides=_config_overrides)
         self._initialized = True
 
+    def get_extension_local_proxy(self, ext_name):
+        return LocalProxy(lambda: current_app.unchained.extensions[ext_name])
+
+    def get_service_local_proxy(self, svc_name):
+        return LocalProxy(lambda: current_app.unchained.services[svc_name])
+
     def _reset(self):
         """
         This method is for use by tests only!
         """
         self._initialized = False
         self._services_registry = {}
-        self.extensions = LazyExtensionsAttrDict()
-        self.services = LazyServicesAttrDict()
+        self.extensions = AttrDict()
+        self.services = AttrDict()
 
     def service(self, name: str = None):
         """

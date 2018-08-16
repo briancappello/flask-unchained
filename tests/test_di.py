@@ -22,24 +22,18 @@ class TestInject:
     def test_it_works(self):
         from tests._bundles.services_bundle.services import (
             OneService, TwoService, FunkyService)
-        assert isinstance(unchained.services.one_service._get_current_object(),
-                          OneService)
-        assert isinstance(unchained.services.two_service._get_current_object(),
-                          TwoService)
-        assert isinstance(unchained.services.funky_service._get_current_object(),
-                          FunkyService)
+        assert isinstance(unchained.services.one_service, OneService)
+        assert isinstance(unchained.services.two_service, TwoService)
+        assert isinstance(unchained.services.funky_service, FunkyService)
 
     # FIXME this is really a test for the load services hook
     @pytest.mark.bundles(['tests._bundles.services_ext_bundle'])
     def test_bundle_overriding_works(self, app):
         from tests._bundles.services_ext_bundle.services import (
             OneService, TwoService, FunkyService)
-        assert isinstance(unchained.services.one_service._get_current_object(),
-                          OneService)
-        assert isinstance(unchained.services.two_service._get_current_object(),
-                          TwoService)
-        assert isinstance(unchained.services.funky_service._get_current_object(),
-                          FunkyService)
+        assert isinstance(unchained.services.one_service, OneService)
+        assert isinstance(unchained.services.two_service, TwoService)
+        assert isinstance(unchained.services.funky_service, FunkyService)
 
     @pytest.mark.bundles(['tests._bundles.services_ext_bundle'])
     def test_it(self):

@@ -5,7 +5,7 @@ from flask_unchained.commands.utils import print_table
 from .utils import _query_to_role
 from ..services import RoleManager
 
-role_manager: RoleManager = unchained.services.role_manager
+role_manager: RoleManager = unchained.get_service_local_proxy('role_manager')
 
 
 @cli.group()
