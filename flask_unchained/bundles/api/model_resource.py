@@ -82,8 +82,10 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
 
     def __init__(self, session_manager: SessionManager = injectable):
         self.session_manager = session_manager
-        if isinstance(self.model, str):
-            self.model = unchained.sqlalchemy_bundle.models[self.model]
+        try:
+            self.model = unchained.sqlalchemy_bundle.models[self.model.__name__]
+        except KeyError:
+            pass
 
     @classmethod
     def methods(cls):

@@ -9,8 +9,11 @@ class ModelForm(FlaskForm):
         model_fields = {}
 
     def __init__(self, *args, **kwargs):
-        if isinstance(self.Meta.model, str):
-            self.Meta.model = unchained.sqlalchemy_bundle.models[self.Meta.model]
+        try:
+            model_name = self.Meta.model.__name__
+            self.Meta.model = unchained.sqlalchemy_bundle.models[model_name]
+        except KeyError:
+            pass
         super().__init__(*args, **kwargs)
 
     def validate(self):

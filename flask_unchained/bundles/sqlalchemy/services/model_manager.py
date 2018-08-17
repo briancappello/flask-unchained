@@ -23,8 +23,10 @@ class ModelManager(SessionManager):
 
     def __init__(self):
         super().__init__()
-        if isinstance(self.model, str):
-            self.model = unchained.sqlalchemy_bundle.models[self.model]
+        try:
+            self.model = unchained.sqlalchemy_bundle.models[self.model.__name__]
+        except KeyError:
+            pass
 
     @property
     def q(self) -> BaseQuery:

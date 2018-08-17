@@ -107,8 +107,15 @@ class ModelSerializerMeta(ModelSchemaMeta):
         if model_missing:
             raise AttributeError(f'{name} is missing the class '
                                  f'Meta model attribute')
-        elif isinstance(meta.model, str):
-            meta.model = unchained.sqlalchemy_bundle.models[meta.model]
+        else:
+            try:
+                meta.model = unchained.sqlalchemy_bundle.models[meta.model.__name__]
+            except AttributeError:
+                # this happens when attempting to generate documentation and the
+                # sqlalchemy bundle hasn't been loaded
+                pass
+            except KeyError:
+                pass
 
         clsdict['Meta'] = meta
         return super().__new__(mcs, name, bases, clsdict)

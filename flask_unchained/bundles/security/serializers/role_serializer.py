@@ -3,11 +3,13 @@ try:
 except ImportError:
     from flask_unchained import OptionalClass as ma
 
+from ..models import Role
+
 
 class RoleSerializer(ma.ModelSerializer):
     """
     Marshmallow serializer for the :class:`Role` model.
     """
     class Meta:
-        model = 'Role'
+        model = Role
         fields = ('id', 'name')

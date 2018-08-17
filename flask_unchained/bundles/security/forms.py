@@ -7,6 +7,7 @@ from flask_unchained import unchained, injectable, lazy_gettext as _
 from wtforms import (Field, HiddenField, StringField, SubmitField, ValidationError,
                      fields, validators)
 
+from .models import User
 from .services import SecurityService, SecurityUtilsService, UserManager
 from .utils import current_user
 
@@ -53,7 +54,7 @@ class NextFormMixin:
 class LoginForm(BaseForm, NextFormMixin):
     """The default login form"""
     class Meta:
-        model = 'User'
+        model = User
 
     email = fields.StringField(_('flask_unchained.bundles.security:form_field.email'))
     password = fields.PasswordField(_('flask_unchained.bundles.security:form_field.password'))
@@ -110,7 +111,7 @@ class LoginForm(BaseForm, NextFormMixin):
 
 class ForgotPasswordForm(BaseForm):
     class Meta:
-        model = 'User'
+        model = User
 
     user = None
     email = StringField(_('flask_unchained.bundles.security:form_field.email'),
@@ -128,7 +129,7 @@ class PasswordFormMixin:
 @unchained.inject('security_utils_service')
 class ChangePasswordForm(BaseForm):
     class Meta:
-        model = 'User'
+        model = User
         model_fields = {'new_password': 'password',
                         'new_password_confirm': 'password'}
 
@@ -163,7 +164,7 @@ class ChangePasswordForm(BaseForm):
 
 class RegisterForm(BaseForm, PasswordFormMixin, NextFormMixin):
     class Meta:
-        model = 'User'
+        model = User
 
     email = StringField(_('flask_unchained.bundles.security:form_field.email'),
                         validators=[unique_user_email])
@@ -182,7 +183,7 @@ class RegisterForm(BaseForm, PasswordFormMixin, NextFormMixin):
 
 class ResetPasswordForm(BaseForm, PasswordFormMixin):
     class Meta:
-        model = 'User'
+        model = User
         model_fields = {'password_confirm': 'password'}
 
     submit = SubmitField(_('flask_unchained.bundles.security:form_submit.reset_password'))
@@ -190,7 +191,7 @@ class ResetPasswordForm(BaseForm, PasswordFormMixin):
 
 class SendConfirmationForm(BaseForm):
     class Meta:
-        model = 'User'
+        model = User
 
     user = None
     email = StringField(_('flask_unchained.bundles.security:form_field.email'),

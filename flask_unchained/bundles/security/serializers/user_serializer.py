@@ -5,6 +5,7 @@ except ImportError:
 
 from flask_unchained import injectable
 
+from ..models import User
 from ..services import UserManager
 
 
@@ -16,7 +17,7 @@ class UserSerializer(ma.ModelSerializer):
     roles = ma.Nested('RoleSerializer', only='name', many=True)
 
     class Meta:
-        model = 'User'
+        model = User
         exclude = ('confirmed_at', 'created_at', 'updated_at', 'user_roles')
         dump_only = ('active', 'roles')
         load_only = ('password',)
