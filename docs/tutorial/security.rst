@@ -29,7 +29,7 @@ Now we can enable the bundle by updating ``unchained_config.py``:
 
    BUNDLES = [
        # ...
-       'flask_security_bundle',
+       'flask_unchained.bundles.security',
        'flaskr',
    ]
 
@@ -40,7 +40,7 @@ Let's start with configuring our database models, because the views will be brok
 
 .. code:: python
 
-   # flask_security_bundle/models/user.py
+   # flask_unchained.bundles.security/models/user.py
 
    from flask_unchained.bundles.sqlalchemy import db
    from flask_unchained import unchained, injectable, lazy_gettext as _
@@ -117,7 +117,7 @@ Let's start with configuring our database models, because the views will be brok
 
 .. code:: python
 
-   # flask_security_bundle/models/role.py
+   # flask_unchained.bundles.security/models/role.py
 
    from flask_unchained.bundles.sqlalchemy import db
    from flask_unchained.bundles.security.models.user_role import UserRole
@@ -145,7 +145,7 @@ Let's start with configuring our database models, because the views will be brok
 
 .. code:: python
 
-   # flask_security_bundle/models/user_role.py
+   # flask_unchained.bundles.security/models/user_role.py
 
    from flask_unchained.bundles.sqlalchemy import db
 
@@ -340,7 +340,7 @@ Sweet. Let's set up our views so we can actually login to our site!
 Configuring and Customizing Views
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The first thing we need to do is to include the :class:`~flask_security_bundle.views.security_controller.SecurityController` in our ``routes.py``:
+The first thing we need to do is to include the :class:`~flask_unchained.bundles.security.views.security_controller.SecurityController` in our ``routes.py``:
 
 .. code:: python
 
@@ -369,8 +369,8 @@ By default, Flask Security Bundle only comes with the login and logout endpoints
          GET  /static/<path:filename>         static                                       flask.helpers :: send_static_file                                                              strict_slashes
          GET  /                               site_controller.index                        flaskr.views :: SiteController.index                                                           strict_slashes
          GET  /hello                          site_controller.hello                        flaskr.views :: SiteController.hello                                                           strict_slashes
-   GET, POST  /login                          security_controller.login                    flask_security_bundle.views.security_controller :: SecurityController.login                    strict_slashes
-         GET  /logout                         security_controller.logout                   flask_security_bundle.views.security_controller :: SecurityController.logout                   strict_slashes
+   GET, POST  /login                          security_controller.login                    flask_unchained.bundles.security.views.security_controller :: SecurityController.login                    strict_slashes
+         GET  /logout                         security_controller.logout                   flask_unchained.bundles.security.views.security_controller :: SecurityController.logout                   strict_slashes
 
 The security bundle comes with optional support for registration, required email confirmation, change password functionality, and last but not least, forgot password functionality. For now, let's just enable registration:
 
@@ -388,7 +388,7 @@ Rerunning :code:`flask urls`, you should see the following line added:
 
    Method(s)  Rule                            Endpoint                                     View                                                                                           Options
    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-   GET, POST  /register                       security_controller.register                 flask_security_bundle.views.security_controller :: SecurityController.register                 strict_slashes
+   GET, POST  /register                       security_controller.register                 flask_unchained.bundles.security.views.security_controller :: SecurityController.register                 strict_slashes
 
 Let's add these routes to our navbar:
 

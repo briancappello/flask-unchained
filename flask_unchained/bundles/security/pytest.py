@@ -1,7 +1,7 @@
 import json
 import pytest
 
-from flask_unchained.bundles.security import FlaskSecurityBundle
+from flask_unchained.bundles.security import SecurityBundle
 from flask_unchained.bundles.security.signals import (reset_password_instructions_sent,
                                                       user_confirmed, user_registered)
 from flask_unchained.pytest import ApiTestResponse, HtmlTestClient, HtmlTestResponse
@@ -52,7 +52,7 @@ class SecurityApiTestClient(SecurityTestClient):
 @pytest.fixture()
 def client(app):
     for bundle in app.unchained.bundles.values():
-        if isinstance(bundle, FlaskSecurityBundle):
+        if isinstance(bundle, SecurityBundle):
             app.test_client_class = SecurityTestClient
             app.response_class = HtmlTestResponse
             break
@@ -64,7 +64,7 @@ def client(app):
 @pytest.fixture()
 def api_client(app):
     for bundle in app.unchained.bundles.values():
-        if isinstance(bundle, FlaskSecurityBundle):
+        if isinstance(bundle, SecurityBundle):
             app.test_client_class = SecurityApiTestClient
             app.response_class = ApiTestResponse
             break

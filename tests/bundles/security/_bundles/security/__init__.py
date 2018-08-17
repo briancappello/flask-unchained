@@ -1,5 +1,5 @@
-from flask_unchained.bundles.security import FlaskSecurityBundle
+from flask_unchained.bundles.security import SecurityBundle as BaseSecurityBundle
 
 
-class SecurityBundle(FlaskSecurityBundle):
+class SecurityBundle(BaseSecurityBundle):
     pass

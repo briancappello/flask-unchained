@@ -6,7 +6,7 @@ from flask_unchained.bundles.security.commands.users import (
     deactivate_user, add_role_to_user, remove_role_from_user)
 
 
-@pytest.mark.security_bundle('flask_security_bundle')
+@pytest.mark.security_bundle('flask_unchained.bundles.security')
 class TestUsersCommands:
     @pytest.mark.users(dict(username='user1', email='user1@example.com'),
                        dict(username='user2', email='user2@example.com'),
