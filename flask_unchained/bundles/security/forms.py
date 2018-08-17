@@ -56,10 +56,14 @@ class LoginForm(BaseForm, NextFormMixin):
     class Meta:
         model = User
 
-    email = fields.StringField(_('flask_unchained.bundles.security:form_field.email'))
-    password = fields.PasswordField(_('flask_unchained.bundles.security:form_field.password'))
-    remember = fields.BooleanField(_('flask_unchained.bundles.security:form_field.remember_me'))
-    submit = fields.SubmitField(_('flask_unchained.bundles.security:form_submit.login'))
+    email = fields.StringField(
+        _('flask_unchained.bundles.security:form_field.email'))
+    password = fields.PasswordField(
+        _('flask_unchained.bundles.security:form_field.password'))
+    remember = fields.BooleanField(
+        _('flask_unchained.bundles.security:form_field.remember_me'))
+    submit = fields.SubmitField(
+        _('flask_unchained.bundles.security:form_submit.login'))
 
     def __init__(self, *args,
                  security_service: SecurityService = injectable,
@@ -116,11 +120,13 @@ class ForgotPasswordForm(BaseForm):
     user = None
     email = StringField(_('flask_unchained.bundles.security:form_field.email'),
                         validators=[valid_user_email])
-    submit = fields.SubmitField(_('flask_unchained.bundles.security:form_submit.recover_password'))
+    submit = fields.SubmitField(
+        _('flask_unchained.bundles.security:form_submit.recover_password'))
 
 
 class PasswordFormMixin:
-    password = fields.PasswordField(_('flask_unchained.bundles.security:form_field.password'))
+    password = fields.PasswordField(
+        _('flask_unchained.bundles.security:form_field.password'))
     password_confirm = fields.PasswordField(
         _('flask_unchained.bundles.security:form_field.retype_password'),
         validators=[password_equal])
@@ -186,7 +192,8 @@ class ResetPasswordForm(BaseForm, PasswordFormMixin):
         model = User
         model_fields = {'password_confirm': 'password'}
 
-    submit = SubmitField(_('flask_unchained.bundles.security:form_submit.reset_password'))
+    submit = SubmitField(
+        _('flask_unchained.bundles.security:form_submit.reset_password'))
 
 
 class SendConfirmationForm(BaseForm):
@@ -196,7 +203,8 @@ class SendConfirmationForm(BaseForm):
     user = None
     email = StringField(_('flask_unchained.bundles.security:form_field.email'),
                         validators=[valid_user_email])
-    submit = SubmitField(_('flask_unchained.bundles.security:form_submit.send_confirmation'))
+    submit = SubmitField(
+        _('flask_unchained.bundles.security:form_submit.send_confirmation'))
 
     def __init__(self, *args, **kwargs):
         super(SendConfirmationForm, self).__init__(*args, **kwargs)
