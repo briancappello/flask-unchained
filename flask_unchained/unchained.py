@@ -169,11 +169,9 @@ class Unchained:
                     if param_name not in need:
                         continue
                     if param_name in self.extensions:
-                        fn_kwargs[param_name] = dict.__getitem__(self.extensions,
-                                                                 param_name)
+                        fn_kwargs[param_name] = self.extensions[param_name]
                     elif param_name in self.services:
-                        fn_kwargs[param_name] = dict.__getitem__(self.services,
-                                                                 param_name)
+                        fn_kwargs[param_name] = self.services[param_name]
 
                 # check to make sure we we're not missing anything required
                 bound_args = sig.bind(*fn_args, **fn_kwargs)
