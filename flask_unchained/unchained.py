@@ -4,8 +4,7 @@ import jinja2
 import markupsafe
 import networkx as nx
 
-from collections import defaultdict, namedtuple
-from datetime import datetime
+from collections import namedtuple
 from flask import Flask, current_app
 from typing import *
 from werkzeug.local import LocalProxy
@@ -13,7 +12,7 @@ from werkzeug.local import LocalProxy
 from .constants import DEV, PROD, STAGING, TEST
 from .di import ensure_service_name, injectable
 from .exceptions import ServiceUsageError
-from .utils import AttrDict, format_docstring
+from .utils import AttrDict
 
 
 CategoryActionLog = namedtuple('CategoryActionLog',
@@ -544,11 +543,6 @@ class Unchained:
         if callable(arg):
             return wrapper(arg)
         return wrapper
-
-    def _action_log_items_by_category(self, category: str):
-        items = [ActionLogItem(data, timestamp)
-                 for data, timestamp in self._action_log[category]]
-        return sorted(items, key=lambda row: row.timestamp)
 
     def __getattr__(self, name: str):
         if name in self.bundles:

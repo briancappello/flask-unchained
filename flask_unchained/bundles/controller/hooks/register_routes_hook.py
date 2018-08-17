@@ -18,12 +18,6 @@ class RegisterRoutesHook(AppFactoryHook):
     name = 'routes'
     run_before = ['blueprints', 'bundle_blueprints']
 
-    action_category = 'routes'
-    action_table_columns = ['rule', 'endpoint', 'view']
-    action_table_converter = lambda route: [route.full_rule,
-                                            route.endpoint,
-                                            route.full_name]
-
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         app_bundle = bundles[-1]
         routes_module = self.import_bundle_module(app_bundle)

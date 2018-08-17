@@ -29,16 +29,7 @@ class HookNameDescriptor:
         return snake_case(cls.__name__)
 
 
-class AppFactoryMeta(type):
-    def __new__(mcs, name, bases, clsdict):
-        # automatically make action_table_converter a staticmethod
-        converter = clsdict.get('action_table_converter')
-        if isinstance(converter, FunctionType):
-            clsdict['action_table_converter'] = staticmethod(converter)
-        return super().__new__(mcs, name, bases, clsdict)
-
-
-class AppFactoryHook(metaclass=AppFactoryMeta):
+class AppFactoryHook:
     """
     Base class for hooks. It has one entry point, :meth:`run_hook`, which can be
     overridden to completely customize the behavior of the subclass. The default
@@ -58,10 +49,6 @@ class AppFactoryHook(metaclass=AppFactoryMeta):
     name: str = HookNameDescriptor()
     run_before: Union[List[str], Tuple[str, ...]] = []
     run_after: Union[List[str], Tuple[str, ...]] = []
-
-    action_category: str = ActionCategoryDescriptor()
-    action_table_columns: Union[List[str], Tuple[str, ...]] = None
-    action_table_converter: FunctionType = lambda x: x
 
     bundle_module_name: str = None
     bundle_override_module_name_attr: str = \

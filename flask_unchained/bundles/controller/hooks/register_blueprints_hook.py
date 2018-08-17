@@ -13,10 +13,6 @@ class RegisterBlueprintsHook(AppFactoryHook):
     name = 'blueprints'
     run_after = ['bundle_blueprints']
 
-    action_category = 'blueprints'
-    action_table_columns = ['name', 'url_prefix']
-    action_table_converter = lambda bp: [bp.name, bp.url_prefix]
-
     _limit_discovery_to_local_declarations = False
 
     def run_hook(self, app: Flask, bundles: List[Bundle]):

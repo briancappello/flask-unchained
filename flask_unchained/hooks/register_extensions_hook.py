@@ -21,12 +21,6 @@ class RegisterExtensionsHook(AppFactoryHook):
     bundle_module_name = 'extensions'
     name = 'extensions'
 
-    action_category = 'extensions'
-    action_table_columns = ['name', 'class', 'dependencies']
-    action_table_converter = lambda ext: [ext.name,
-                                          ext.extension.__class__.__name__,
-                                          ext.dependencies]
-
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]) -> None:
         extensions = self.collect_from_bundles(bundles)
         self.process_objects(app, self.get_extension_tuples(extensions))

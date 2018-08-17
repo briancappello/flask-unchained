@@ -86,10 +86,6 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
     name = 'bundle_blueprints'
     run_before = ['blueprints']
 
-    action_category = 'template_folders'
-    action_table_columns = ['name', 'folder']
-    action_table_converter = lambda bp: [bp.name, bp.template_folder]
-
     def run_hook(self, app: Flask, bundles: List[Bundle]):
         for bundle_ in reversed(bundles):
             for bundle in bundle_.iter_class_hierarchy(reverse=False):

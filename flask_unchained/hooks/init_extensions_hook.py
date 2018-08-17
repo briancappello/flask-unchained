@@ -13,12 +13,6 @@ class InitExtensionsHook(RegisterExtensionsHook):
     name = 'init_extensions'
     run_after = ['extensions']
 
-    action_category = 'extensions'
-    action_table_columns = ['name', 'class', 'dependencies']
-    action_table_converter = lambda ext: [ext.name,
-                                          ext.extension.__class__.__name__,
-                                          ext.dependencies]
-
     def process_objects(self,
                         app: FlaskUnchained,
                         extension_tuples: List[ExtensionTuple],
