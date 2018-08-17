@@ -73,7 +73,7 @@ class BundleMeta(type):
         return super().__new__(mcs, name, bases, clsdict)
 
     def __repr__(cls):
-        return f'class <Bundle name={cls.name!r} module={cls.module_name!r}>'
+        return f'<{cls.__name__} name={cls.name!r} module={cls.module_name!r}>'
 
 
 class Bundle(metaclass=BundleMeta):

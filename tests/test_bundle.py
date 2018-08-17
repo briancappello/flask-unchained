@@ -32,5 +32,5 @@ class TestBundle:
         assert MyAppBundle.name == 'my_app'
 
     def test_repr(self):
-        expected = "class <Bundle name='foobaz' module='tests.test_bundle'>"
+        expected = "<FoobarBundle name='foobaz' module='tests.test_bundle'>"
         assert str(FoobarBundle) == expected
