@@ -10,7 +10,7 @@ def anonymous_user_required(*decorator_args, msg=None, category=None, redirect_u
     """
     Decorator requiring that there is no user currently logged in.
 
-    Aborts with HTTP 403: Forbidden if there is an authenticated user.
+    Aborts with ``HTTP 403: Forbidden`` if there is an authenticated user.
     """
     def wrapper(fn):
         @wraps(fn)

@@ -61,4 +61,11 @@ class _DevConfigDefaults:
 
 class _TestConfigDefaults:
     TESTING = True
+    """
+    Tell Flask we're in testing mode.
+    """
+
     WTF_CSRF_ENABLED = False
+    """
+    Disable CSRF tokens in tests.
+    """

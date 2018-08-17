@@ -14,16 +14,18 @@ def auth_required(decorated_fn=None, **role_rules):
     """
     Decorator for requiring an authenticated user, optionally with roles.
 
-    Roles are passed as keyword arguments, like so:
-    @auth_required(role='REQUIRE_THIS_ONE_ROLE')
-    @auth_required(roles=['REQUIRE', 'ALL', 'OF', 'THESE', 'ROLES'])
-    @auth_required(one_of=['EITHER_THIS_ROLE', 'OR_THIS_ONE'])
+    Roles are passed as keyword arguments, like so::
 
-    One of role or roles kwargs can also be combined with one_of:
-    @auth_required(role='REQUIRED', one_of=['THIS', 'OR_THIS'])
+        @auth_required(role='REQUIRE_THIS_ONE_ROLE')
+        @auth_required(roles=['REQUIRE', 'ALL', 'OF', 'THESE', 'ROLES'])
+        @auth_required(one_of=['EITHER_THIS_ROLE', 'OR_THIS_ONE'])
 
-    Aborts with HTTP 401: Unauthorized if no user is logged in, or
-    HTTP 403: Forbidden if any of the specified role checks fail.
+    One of role or roles kwargs can also be combined with one_of::
+
+        @auth_required(role='REQUIRED', one_of=['THIS', 'OR_THIS'])
+
+    Aborts with ``HTTP 401: Unauthorized`` if no user is logged in, or
+    ``HTTP 403: Forbidden`` if any of the specified role checks fail.
     """
     required_roles = []
     one_of_roles = []

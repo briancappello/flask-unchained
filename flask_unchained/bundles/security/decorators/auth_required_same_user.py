@@ -10,18 +10,19 @@ def auth_required_same_user(*args, **kwargs):
     """
     Decorator for requiring an authenticated user to be the same as the
     user in the URL parameters. By default the user url parameter name to
-    lookup is 'id', but this can be customized by passing an argument:
+    lookup is ``id``, but this can be customized by passing an argument::
 
-    @auth_require_same_user('user_id')
-    @bp.route('/users/<int:user_id>/foo/<int:id>')
-    def get(user_id, id):
-        # do stuff
+        @auth_require_same_user('user_id')
+        @bp.route('/users/<int:user_id>/foo/<int:id>')
+        def get(user_id, id):
+            # do stuff
 
     Any keyword arguments are passed along to the @auth_required decorator,
-    so roles can also be specified in the same was as it, eg:
-    @auth_required_same_user('user_id', role='ROLE_ADMIN')
+    so roles can also be specified in the same was as it, eg::
 
-    Aborts with HTTP 403: Forbidden if the user-check fails.
+        @auth_required_same_user('user_id', role='ROLE_ADMIN')
+
+    Aborts with ``HTTP 403: Forbidden`` if the user-check fails.
     """
     auth_kwargs = {}
     user_id_parameter_name = 'id'
