@@ -40,17 +40,17 @@ class NameDescriptor:
 
 class StaticFolderDescriptor:
     def __get__(self, instance, cls):
-        if not hasattr(cls, '_static_folder'):
-            bundle_dir = path.dirname(sys.modules[cls.module_name].__file__)
-            cls._static_folder = path.join(bundle_dir, 'static')
-            if not path.exists(cls._static_folder):
-                cls._static_folder = None
-        return cls._static_folder
+        if not hasattr(instance, '_static_folder'):
+            bundle_dir = path.dirname(sys.modules[instance.module_name].__file__)
+            instance._static_folder = path.join(bundle_dir, 'static')
+            if not path.exists(instance._static_folder):
+                instance._static_folder = None
+        return instance._static_folder
 
 
 class StaticUrlPathDescriptor:
     def __get__(self, instance, cls):
-        if cls.static_folder:
+        if cls.static_folders:
             return f'/{slugify(cls.name)}/static'
 
 
@@ -215,7 +215,10 @@ class Bundle(metaclass=BundleMeta):
         supers = self.__class__.__mro__[(0 if include_self else 1):]
         for bundle in (supers if not reverse else reversed(supers)):
             if issubclass(bundle, Bundle) and bundle not in {AppBundle, Bundle}:
-                yield bundle()
+                if bundle == self.__class__:
+                    yield self
+                else:
+                    yield bundle()
 
     def has_views(self):
         """
@@ -227,6 +230,40 @@ class Bundle(metaclass=BundleMeta):
             if bundle._has_views_module():
                 return True
         return False
+
+    @property
+    def blueprint_name(self):
+        if self._is_top_bundle() or not self._has_hierarchy_name_conflicts():
+            return self.name
+
+        for i, bundle in enumerate(self.iter_class_hierarchy()):
+            if bundle.__class__ == self.__class__:
+                break
+        return f'{self.name}_{i}'
+
+    @property
+    def static_folders(self):
+        if not self._has_hierarchy_name_conflicts():
+            return [self.static_folder] if self.static_folder else []
+        elif not self._is_top_bundle():
+            return []
+
+        return [b.static_folder for b in self.iter_class_hierarchy(reverse=False)
+                if b.static_folder and b.name == self.name]
+
+    def _is_top_bundle(self):
+        return not self.__class__.__subclasses__()
+
+    def _has_hierarchy_name_conflicts(self):
+        top_bundle = self.__class__
+        subclasses = top_bundle.__subclasses__()
+        while subclasses:
+            top_bundle = subclasses[0]
+            subclasses = top_bundle.__subclasses__()
+
+        top_bundle = top_bundle()
+        return any([b.name == self.name and b.__class__ != self.__class__
+                    for b in top_bundle.iter_class_hierarchy()])
 
     def _has_views_module(self):
         views_module_name = getattr(self, 'views_module_name', 'views')

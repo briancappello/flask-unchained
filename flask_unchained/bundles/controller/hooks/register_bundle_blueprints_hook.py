@@ -1,8 +1,12 @@
-from flask import Flask, Blueprint
+import os
+
+from flask import Blueprint, current_app
+from flask.helpers import safe_join, send_file
 from flask.blueprints import BlueprintSetupState as BaseSetupState
 from flask.helpers import _endpoint_from_view_func
-from flask_unchained import AppFactoryHook, Bundle
-from typing import List
+from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
+from werkzeug.exceptions import BadRequest, NotFound
+from typing import *
 
 # FIXME test template resolution order when this is used in combination with
 # RegisterBlueprintsHook
@@ -35,10 +39,22 @@ class BundleBlueprint(Blueprint):
 
     def __init__(self, bundle: Bundle):
         self.bundle = bundle
-        super().__init__(bundle.name, bundle.module_name,
-                         static_folder=bundle.static_folder,
+        super().__init__(bundle.blueprint_name, bundle.module_name,
                          static_url_path=bundle.static_url_path,
                          template_folder=bundle.template_folder)
+
+    @property
+    def has_static_folder(self):
+        return bool(self.bundle.static_folders)
+
+    def send_static_file(self, filename):
+        if not self.has_static_folder:
+            raise RuntimeError('No static folder for this object')
+        # Ensure get_send_file_max_age is called in all cases.
+        # Here, we ensure get_send_file_max_age is called for Blueprints.
+        cache_timeout = self.get_send_file_max_age(filename)
+        return _send_from_directories(self.bundle.static_folders, filename,
+                                      cache_timeout=cache_timeout)
 
     def make_setup_state(self, app, options, first_registration=False):
         return BlueprintSetupState(self, app, options, first_registration)
@@ -64,7 +80,7 @@ class BundleBlueprint(Blueprint):
         if self.has_static_folder:
             state.add_url_rule(self.static_url_path + '/<path:filename>',
                                view_func=self.send_static_file,
-                               endpoint=f'{self.bundle.name}.static',
+                               endpoint=f'{self.bundle.blueprint_name}.static',
                                register_with_babel=False)
 
         for deferred in self.bundle._deferred_functions:
@@ -86,11 +102,11 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
     name = 'bundle_blueprints'
     run_before = ['blueprints']
 
-    def run_hook(self, app: Flask, bundles: List[Bundle]):
+    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         for bundle_ in reversed(bundles):
             for bundle in bundle_.iter_class_hierarchy(reverse=False):
                 if (bundle.template_folder
-                        or bundle.static_folder
+                        or bundle.static_folders
                         or bundle.has_views()):
                     bp = BundleBlueprint(bundle)
                     for route in self.bundle.bundle_routes.get(bundle.module_name, []):
@@ -101,3 +117,42 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
                                         view_func=route.view_func,
                                         **route.rule_options)
                     app.register_blueprint(bp)
+
+
+def _send_from_directories(directories, filename, **options):
+    """Send a file from a given directory with :func:`send_file`.  This
+    is a secure way to quickly expose static files from an upload folder
+    or something similar.
+
+    Example usage::
+
+        @app.route('/uploads/<path:filename>')
+        def download_file(filename):
+            return send_from_directory(app.config['UPLOAD_FOLDER'],
+                                       filename, as_attachment=True)
+
+    .. admonition:: Sending files and Performance
+
+       It is strongly recommended to activate either ``X-Sendfile`` support in
+       your webserver or (if no authentication happens) to tell the webserver
+       to serve files for the given path on its own without calling into the
+       web application for improved performance.
+
+    :param directories: the list of directories to look for filename.
+    :param filename: the filename relative to that directory to
+                     download.
+    :param options: optional keyword arguments that are directly
+                    forwarded to :func:`send_file`.
+    """
+    for directory in directories:
+        filename = safe_join(directory, filename)
+        if not os.path.isabs(filename):
+            filename = os.path.join(current_app.root_path, filename)
+        try:
+            if not os.path.isfile(filename):
+                continue
+        except (TypeError, ValueError):
+            raise BadRequest()
+        options.setdefault('conditional', True)
+        return send_file(filename, **options)
+    raise NotFound()
