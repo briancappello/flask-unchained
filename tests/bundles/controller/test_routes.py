@@ -117,7 +117,7 @@ class TestFunc:
         assert route.endpoint == 'tests.bundles.controller.test_routes.undecorated_view'
         assert route.defaults == {}
         assert route.methods == ['GET']
-        assert route.only_if is None
+        assert route.only_if is True
 
     def test_override_rule_options_with_undecorated_view(self):
         route = list(func('/a/<id>', undecorated_view, blueprint=bp,

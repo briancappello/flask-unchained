@@ -132,7 +132,7 @@ class Route:
     @property
     def only_if(self):
         if self._only_if is _missing:
-            return None
+            return True
         return self._only_if
 
     @only_if.setter
