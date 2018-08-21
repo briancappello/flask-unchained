@@ -43,6 +43,10 @@ class Route:
         self._controller = None
 
     def should_register(self, app):
+        """
+        Determines whether or not this route should be registered with the app,
+        based on :attr:`only_if`.
+        """
         if self.only_if is None:
             return True
         elif callable(self.only_if):
@@ -73,6 +77,9 @@ class Route:
 
     @property
     def defaults(self):
+        """
+        The URL defaults for this route.
+        """
         if self._defaults is _missing:
             return {}
         return self._defaults
@@ -83,11 +90,14 @@ class Route:
 
     @property
     def endpoint(self):
+        """
+        The endpoint for this route.
+        """
         if self._endpoint:
             return self._endpoint
         elif self._controller_name:
-            suffix = f'{snake_case(self._controller_name)}.{self.method_name}'
-            return self.bp_name and f'{self.bp_name}.{suffix}' or suffix
+            endpoint = f'{snake_case(self._controller_name)}.{self.method_name}'
+            return endpoint if not self.bp_name else f'{self.bp_name}.{endpoint}'
         elif self.bp_name:
             return f'{self.bp_name}.{self.method_name}'
         return f'{self.view_func.__module__}.{self.method_name}'
@@ -98,6 +108,9 @@ class Route:
 
     @property
     def is_member(self):
+        """
+        Whether or not this route is for a resource member route.
+        """
         if self._is_member is _missing:
             return False
         return self._is_member
@@ -108,12 +121,18 @@ class Route:
 
     @property
     def method_name(self):
+        """
+        The string name of this route's view function.
+        """
         if isinstance(self.view_func, str):
             return self.view_func
         return self.view_func.__name__
 
     @property
     def methods(self):
+        """
+        The HTTP methods supported by this route.
+        """
         return getattr(self.view_func, 'methods', self._methods) or ['GET']
 
     @methods.setter
@@ -122,6 +141,9 @@ class Route:
 
     @property
     def module_name(self):
+        """
+        The module where this route's view function was defined.
+        """
         if not self.view_func:
             return None
         elif self._controller:
@@ -131,6 +153,10 @@ class Route:
 
     @property
     def only_if(self):
+        """
+        A boolean or callable to determine whether or not this route should be
+        registered with the app. Defaults to ``True``.
+        """
         if self._only_if is _missing:
             return True
         return self._only_if
@@ -141,6 +167,9 @@ class Route:
 
     @property
     def rule(self):
+        """
+        The (partial) url rule for this route.
+        """
         if self._rule:
             return self._rule
         elif self._controller_name:
@@ -153,6 +182,9 @@ class Route:
 
     @property
     def full_rule(self):
+        """
+        The full url rule for this route, including any blueprint prefix.
+        """
         if not self.rule:
             raise Exception(f'{self} not fully initialized (missing url rule)')
         return join(self.bp_prefix, self.rule)
@@ -164,6 +196,10 @@ class Route:
 
     @property
     def full_name(self):
+        """
+        The full name of this route's view function, including the module path
+        and controller name, if any.
+        """
         if not self.view_func:
             return None
 

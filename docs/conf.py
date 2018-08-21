@@ -178,9 +178,17 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/', None),
+    'click': ('http://click.pocoo.org/6/', None),
     'flask': ('http://flask.pocoo.org/docs/', None),
-    'werkzeug': ('http://werkzeug.pocoo.org/docs/0.14/', None),
     'flask_admin': ('https://flask-admin.readthedocs.io/en/latest/', None),
+    'flask_babelex': ('https://pythonhosted.org/Flask-BabelEx/', None),
+    'flask_mail': ('https://pythonhosted.org/flask-mail/', None),
+    'flask_marshmallow': ('https://flask-marshmallow.readthedocs.io/en/latest/', None),
+    'flask_migrate': ('https://flask-migrate.readthedocs.io/en/latest/', None),
+    'flask_session': ('https://pythonhosted.org/Flask-Session/', None),
+    'flask_sqlalchemy': ('http://flask-sqlalchemy.pocoo.org/latest/', None),
+    'flask_wtf': ('https://flask-wtf.readthedocs.io/en/stable/', None),
+    'python': ('https://docs.python.org/', None),
     'sqlalchemy': ('http://docs.sqlalchemy.org/en/latest/', None),
+    'werkzeug': ('http://werkzeug.pocoo.org/docs/0.14/', None),
 }

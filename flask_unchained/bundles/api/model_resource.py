@@ -61,24 +61,92 @@ class ModelResourceMeta(ResourceMeta):
 
 
 class ModelResource(Resource, metaclass=ModelResourceMeta):
+    """
+    Base class for model resources. This is intended for building RESTful APIs
+    with SQLAlchemy models and Marshmallow serializers.
+    """
+
     __abstract__ = True
 
     # FIXME all of these might be nicer as class Meta attributes (mostly just
     # for consistency with other places, eg model and serializer classes)
     model: Type[BaseModel] = None
+    """
+    The model class this model resource is for.
+    """
+
     serializer: ModelSerializer = None
+    """
+    The serializer class to use. If left unspecified, it will be looked up by
+    model name and automatically assigned.
+    """
+
     serializer_create: ModelSerializer = None
+    """
+    The serializer class to use for creating models. If left unspecified, it
+    will be looked up by model name and automatically assigned.
+    """
+
     serializer_many: ModelSerializer = None
+    """
+    The serializer class to use for listing models. If left unspecified, it
+    will be looked up by model name and automatically assigned.
+    """
 
     include_methods: Union[List[str], Set[str], Tuple[str]] = ALL_METHODS
+    """
+    A list of methods to automatically include. Defaults to
+    ``('list', 'create', 'get', 'patch', 'put', 'delete')``.
+    """
+
     exclude_methods: Union[List[str], Set[str], Tuple[str]] = set()
+    """
+    A list of methods to exclude. Defaults to ``()``.
+    """
 
     include_decorators: Union[List[str], Set[str], Tuple[str]] = ALL_METHODS
+    """
+    A list of methods for which to automatically apply the default decorators.
+    Defaults to ``('list', 'create', 'get', 'patch', 'put', 'delete')``.
+
+    .. list-table::
+        :widths: 10 30
+        :header-rows: 1
+
+        * - Method Name
+          - Decorator(s)
+        * - list
+          - :func:`~flask_unchained.bundles.api.decorators.list_loader`
+        * - create
+          - :func:`~flask_unchained.bundles.api.decorators.post_loader`
+        * - get
+          - :func:`~flask_unchained.decorators.param_converter`
+        * - patch
+          - :func:`~flask_unchained.decorators.param_converter`,
+            :func:`~flask_unchained.bundles.api.decorators.patch_loader`
+        * - put
+          - :func:`~flask_unchained.decorators.param_converter`,
+            :func:`~flask_unchained.bundles.api.decorators.put_loader`
+        * - delete
+          - :func:`~flask_unchained.decorators.param_converter`
+    """
+
     exclude_decorators: Union[List[str], Set[str], Tuple[str]] = set()
+    """
+    A list of methods for which to *not* apply the default decorators, as
+    outlined in :attr:`include_decorators`. Defaults to ``()``.
+    """
+
     method_decorators: Union[
         Union[List[FunctionType], Tuple[FunctionType]],
         Dict[str, Union[List[FunctionType], Tuple[FunctionType]]],
     ] = {}
+    """
+    This can either be a list of decorators to apply to *all* methods, or a
+    dictionary of method names to a list of decorators to apply for each method.
+    In both cases, decorators specified here are run *before* the default
+    decorators.
+    """
 
     def __init__(self, session_manager: SessionManager = injectable):
         self.session_manager = session_manager
@@ -95,39 +163,73 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
                 continue
             yield method
 
-    # NOTE:
-    # docstrings for these default methods must be 2 lines with the ---
-    # (otherwise flasgger will shit a brick)
-
     @route
     def list(self, instances):
-        """list models"""
+        """
+        List model instances.
+
+        :param instances: The list of model instances.
+        :return: The list of model instances.
+        """
         return instances
 
     @route
     def create(self, instance, errors):
+        """
+        Create an instance of a model.
+
+        :param instance: The created model instance.
+        :param errors: Any errors.
+        :return: The created model instance, or a dictionary of errors.
+        """
         if errors:
             return self.errors(errors)
         return self.created(instance)
 
     @route
     def get(self, instance):
+        """
+        Get an instance of a model.
+
+        :param instance: The model instance.
+        :return: The model instance.
+        """
         return instance
 
     @route
     def patch(self, instance, errors):
+        """
+        Partially update a model instance.
+
+        :param instance: The model instance.
+        :param errors: Any errors.
+        :return: The updated model instance, or a dictionary of errors.
+        """
         if errors:
             return self.errors(errors)
         return self.updated(instance)
 
     @route
     def put(self, instance, errors):
+        """
+        Update a model instance.
+
+        :param instance: The model instance.
+        :param errors: Any errors.
+        :return: The updated model instance, or a dictionary of errors.
+        """
         if errors:
             return self.errors(errors)
         return self.updated(instance)
 
     @route
     def delete(self, instance):
+        """
+        Delete a model instance.
+
+        :param instance: The model instance.
+        :return: HTTPStatus.NO_CONTENT
+        """
         return self.deleted(instance)
 
     def created(self, instance, commit=True):

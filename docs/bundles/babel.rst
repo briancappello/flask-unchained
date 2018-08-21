@@ -8,7 +8,6 @@ Installation
 
 The Babel Bundle comes enabled by default.
 
-
 Config
 ^^^^^^
 
@@ -25,5 +24,4 @@ Commands
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-.. autoclass:: flask_unchained.bundles.babel.BabelBundle
-   :members:
+:doc:`../api/bundles/babel`

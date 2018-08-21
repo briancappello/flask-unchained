@@ -1,12 +1,7 @@
 import re
 
-from flask import (
-    Response,
-    current_app as app,
-    redirect as flask_redirect,
-    request,
-    url_for as flask_url_for,
-)
+from flask import (Response, current_app, request, redirect as flask_redirect,
+                   url_for as flask_url_for)
 from flask_unchained.string_utils import kebab_case, right_replace, snake_case
 from flask_unchained.utils import _missing
 from typing import *
@@ -22,6 +17,14 @@ LAST_PARAM_NAME_RE = re.compile(r'<(\w+:)?(?P<param_name>\w+)>$')
 
 
 def controller_name(cls) -> str:
+    """
+    Returns the snake-cased name for a controller/resource class. Automatically
+    strips ``Controller``, ``View``, and ``MethodView`` suffixes, eg::
+
+        SiteController -> site
+        FooBarBazView -> foo_bar_baz
+        UsersMethodView -> users
+    """
     name = cls.__name__
     for suffix in getattr(cls, REMOVE_SUFFIXES_ATTR):
         if name.endswith(suffix):
@@ -31,13 +34,28 @@ def controller_name(cls) -> str:
 
 
 def get_param_tuples(url_rule) -> List[Tuple[str, str]]:
+    """
+    Returns a list of parameter tuples in a URL rule, eg::
+
+        url_rule = '/users/<string:username>/roles/<int:id>'
+        param_tuples = get_param_tuples(url_rule)
+        assert param_tuples == [('string', 'username'), ('int', 'id')]
+    """
     if not url_rule:
         return []
     return [(type_[:-1], name) for type_, name
             in re.findall(PARAM_NAME_RE, url_rule)]
 
 
-def get_last_param_name(url_rule) -> Optional[str]:
+def get_last_param_name(url_rule) -> Union[str, None]:
+    """
+    Returns the name of the last parameter in a URL rule, eg::
+
+        assert get_last_param_name('/foo/<int:id>/roles') is None
+
+        url_rule = '/foo/<int:id>/bar/<any:something>/baz/<string:spam>'
+        assert get_last_param_name(url_rule) == 'spam'
+    """
     if not url_rule:
         return None
     match = re.search(LAST_PARAM_NAME_RE, url_rule)
@@ -79,7 +97,7 @@ def url_for(endpoint_or_url_or_config_key: str,
 
     # if what is a config key
     if what and what.isupper():
-        what = app.config.get(what)
+        what = current_app.config.get(what)
 
     if isinstance(what, LocalProxy):
         what = what._get_current_object()
@@ -111,9 +129,16 @@ def url_for(endpoint_or_url_or_config_key: str,
 
 def join(*args, trailing_slash=False):
     """
-    Return a url path joined from the arguments
+    Return a url path joined from the arguments. It correctly handles blank/None
+    arguments, and removes back-to-back slashes, eg::
 
-    (correctly handles blank/None arguments, and removes back-to-back slashes)
+        assert join('/', 'foo', None, 'bar', '', 'baz') == '/foo/bar/baz'
+        assert join('/', '/foo', '/', '/bar/') == '/foo/bar'
+
+    Note that it removes trailing slashes by default, so if you want to keep those,
+    then you need to pass the ``trailing_slash`` keyword argument::
+
+        assert join('/foo', 'baz', None, trailing_slash=True) == '/foo/baz/'
     """
     dirty_path = '/'.join(map(lambda x: x and x or '', args))
     path = re.sub(r'/+', '/', dirty_path)
@@ -124,6 +149,9 @@ def join(*args, trailing_slash=False):
 
 
 def method_name_to_url(method_name) -> str:
+    """
+    Converts a method name to a url.
+    """
     return '/' + kebab_case(method_name).strip('-')
 
 
@@ -201,7 +229,7 @@ def _url_for(endpoint: str, **values) -> Union[str, None]:
     """
     _external_host = values.pop('_external_host', None)
     is_external = bool(_external_host or values.get('_external'))
-    external_host = (_external_host or app.config.get('EXTERNAL_SERVER_NAME'))
+    external_host = _external_host or current_app.config.get('EXTERNAL_SERVER_NAME')
     if not is_external or not external_host:
         return flask_url_for(endpoint, **values)
 
@@ -217,7 +245,7 @@ def _validate_redirect_url(url, _external_host=None):
         return False
     url_next = urlsplit(url)
     url_base = urlsplit(request.host_url)
-    external_host = _external_host or app.config.get('EXTERNAL_SERVER_NAME') or ''
+    external_host = _external_host or current_app.config.get('EXTERNAL_SERVER_NAME') or ''
     if ((url_next.netloc or url_next.scheme)
             and url_next.netloc != url_base.netloc
             and url_next.netloc not in external_host):

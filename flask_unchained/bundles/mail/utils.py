@@ -12,6 +12,7 @@ except ImportError:
 
 from flask import render_template
 from flask_mail import Message
+from typing import *
 
 from .extensions import mail
 
@@ -22,6 +23,12 @@ message_kwargs = {name for name, param in message_sig.parameters.items()
 
 
 def get_message_plain_text(msg: Message):
+    """
+    Converts an HTML message to plain text.
+
+    :param msg: A :class:`~flask_mail.Message`
+    :return: The plain text message.
+    """
     if msg.body:
         return msg.body
 
@@ -33,7 +40,20 @@ def get_message_plain_text(msg: Message):
     return re.sub(r'\n\n+', '\n\n', plain_text).strip()
 
 
-def make_message(subject_or_message, to, template=None, **kwargs):
+def make_message(subject_or_message: Union[str, Message],
+                 to: Union[str, List[str]],
+                 template: Optional[str] = None,
+                 **kwargs):
+    """
+    Creates a new :class:`~flask_mail.Message` from the given arguments.
+
+    :param subject_or_message: A subject string, or for backwards compatibility with
+                               stock Flask-Mail, a :class:`~flask_mail.Message` instance
+    :param to: An email address, or a list of email addresses
+    :param template: Which template to render.
+    :param kwargs: Extra kwargs to pass on to :class:`~flask_mail.Message`
+    :return: The created :class:`~flask_mail.Message`
+    """
     if isinstance(subject_or_message, Message):
         return subject_or_message
 
@@ -51,7 +71,19 @@ def make_message(subject_or_message, to, template=None, **kwargs):
     return msg
 
 
-def _send_mail(subject_or_message=None, to=None, template=None, **kwargs):
+def _send_mail(subject_or_message: Optional[Union[str, Message]] = None,
+               to: Optional[Union[str, List[str]]] = None,
+               template: Optional[str] = None,
+               **kwargs):
+    """
+    The default function used for sending emails.
+
+    :param subject_or_message: A subject string, or for backwards compatibility with
+                               stock Flask-Mail, a :class:`~flask_mail.Message` instance
+    :param to: An email address, or a list of email addresses
+    :param template: Which template to render.
+    :param kwargs: Extra kwargs to pass on to :class:`~flask_mail.Message`
+    """
     subject_or_message = subject_or_message or kwargs.pop('subject')
     to = to or kwargs.pop('recipients', [])
     msg = make_message(subject_or_message, to, template, **kwargs)

@@ -16,8 +16,9 @@ class TemplateFolderDescriptor:
 
 class Controller(metaclass=ControllerMeta):
     """
-    Base class for controller views.
+    Base class for class-based views in Flask Unchained.
     """
+
     __abstract__ = True
 
     template_folder = TemplateFolderDescriptor()
@@ -36,7 +37,7 @@ class Controller(metaclass=ControllerMeta):
 
     decorators = None
     """
-    A list of decorators to apply to *all* views in this controller.
+    A list of decorators to apply to all views in this controller.
     """
 
     url_prefix = None
@@ -51,7 +52,7 @@ class Controller(metaclass=ControllerMeta):
         :param msg: The message to flash.
         :param category: The category of the message.
         """
-        if not request.is_json and app.config.get('FLASH_MESSAGES', True):
+        if not request.is_json and app.config.get('FLASH_MESSAGES'):
             flash(msg, category)
 
     def render(self, template_name, **ctx):
@@ -119,6 +120,12 @@ class Controller(metaclass=ControllerMeta):
         return jsonify({key: errors}), code, headers or {}
 
     def after_this_request(self, fn):
+        """
+        Register a function to run after this request.
+
+        :param fn: The function to run. It should accept one argument, the
+                   response, which it should also return
+        """
         after_this_request(fn)
 
     ################################################

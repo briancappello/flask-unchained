@@ -55,7 +55,7 @@ class ModelConverter(BaseModelConverter):
             attr_name = prop.key
             if hasattr(prop, 'columns'):
                 if not include_fk:
-                    # Only skip a column if there is no overriden column
+                    # Only skip a column if there is no overridden column
                     # which does not have a Foreign Key.
                     for column in prop.columns:
                         if not column.foreign_keys:
@@ -73,18 +73,24 @@ class ModelConverter(BaseModelConverter):
         return result
 
     def property2field(self, prop, instance=True, field_class=None, **kwargs):
+        """
+        Overridden to mark non-nullable model columns as required (unless it's the
+        primary key, because there's no way to tell if we're generating fields
+        for a create or an update).
+        """
         field = super().property2field(prop, instance, field_class, **kwargs)
         # when a column is not nullable, mark the field as required
         if hasattr(prop, 'columns'):
             col = prop.columns[0]
-            # we skip primary key columns because there's no way to tell here if
-            # we're generating fields for a create or an update
             if not col.primary_key and not col.nullable:
                 field.required = True
         return field
 
 
 class ModelSerializerOpts(SchemaOpts):
+    """
+    Sets the default ``model_converter`` to :class:`ModelConverter`.
+    """
     def __init__(self, meta, **kwargs):
         super().__init__(meta, **kwargs)
         self.model_converter = getattr(meta, 'model_converter', ModelConverter)
@@ -168,7 +174,7 @@ class ModelSerializer(ModelSchema, metaclass=ModelSerializerMeta):
             updated_at = fields.DateTime(dump_to='updatedAt',
                                          load_from='updatedAt')
 
-    Obviously you probably shouldn't be loading `created_at` or `updated_at`
+    Obviously you probably shouldn't be loading ``created_at`` or ``updated_at``
     from JSON; it's just an example to show the automatic snake-to-camelcase
     field naming conversion.
     """

@@ -1,12 +1,3 @@
-"""
-Tasks
-^^^^^
-
-Celery tasks included with the bundle.
-
-.. autofunction:: async_mail_task
-"""
-
 from flask import current_app
 
 from .extensions import celery

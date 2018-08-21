@@ -1,21 +1,23 @@
-..
-   heading hierarchy = {
-        1: '=',
-        2: '-',
-        3: '^',
-        4: '~',
-        5: '"',
-        6: '#',
-    }
+.. BEGIN setup/comments -------------------------------------------------------
 
+   The heading hierarchy is defined as:
+        h1: =
+        h2: -
+        h3: ^
+        h4: ~
+        h5: "
+        h6: #
+
+.. support inline python code highlighting using :python:`foo = bar(5)`
 .. role:: python(code)
    :language: python
 
+
+.. BEGIN document -------------------------------------------------------------
+
+
 Flask Unchained
 ===============
-
-The better way to build large Flask apps.
------------------------------------------
 
 .. toctree::
    :maxdepth: 3
@@ -27,4 +29,4 @@ The better way to build large Flask apps.
    bundles/index
    commands
    testing
-   api
+   api/index

@@ -18,27 +18,27 @@ It does the following:
 
 2. Initializes all of the ``Bundle`` subclasses from the bundles listed in ``unchained_config.BUNDLES``.
 
-3. Initializes a ``FlaskUnchained`` app instance.
+3. Initializes a ``FlaskUnchained`` app instance (a minimally customized ``flask.Flask`` subclass).
 
-4. For each bundle, call ``bundle.before_init_app(app)``.
+4. For each bundle, it calls ``bundle.before_init_app(app)``.
 
-5. Calls ``unchained.init_app(app, env, bundles)``.
+5. It then finishes initializing the ``Unchained`` extension, by calling ``unchained.init_app(app, env, bundles)``.
 
-   The ``Unchained`` extension will then register itself with the app, and it calls ``RunHooksHook.run_hook(app, bundles)``. Hooks are subclasses of ``AppFactoryHook``, and the ``RunHooksHook`` will discover them in both core Flask Unchained as well as in bundles' ``hooks`` module. It is hooks that are responsible for the majority of the hard work required to initialize the application. Hooks do things like loading configuration from all the bundles, initializing extensions, discovering models, and registering views and routes - to name a few examples.
+   * The ``Unchained`` extension will then register itself with the app, and it calls ``RunHooksHook.run_hook(app, bundles)``.
+   * Hooks are subclasses of ``AppFactoryHook``, and the ``RunHooksHook`` will discover them in both core Flask Unchained as well as in each loaded bundle's ``hooks`` module. Hooks are responsible for the majority of the hard work required to initialize the application. They do things like loading configuration from all the bundles, initializing extensions, discovering models, and registering views and routes with Flask - to name some examples.
 
-6. For each bundle, call ``bundle.after_init_app(app)``.
+6. Afterwards, for each bundle, the app factory calls ``bundle.after_init_app(app)``.
+
+7. Lastly, it returns the application instance, ready to rock and roll.
 
 Hooks and Bundle Structure
 --------------------------
 
-Generally speaking, hooks are responsible for importing and discovering code, and then typically somehow registering those things with the app. They run in a specific order, determined dynamically from each hook's listed dependencies. Each hook can define an attribute, ``bundle_module_name``, that determines the module name in bundles that the hook will load from. Flask Unchained provides a command to make it easier to discover hooks and the location they load from:
+Generally speaking, hooks are responsible for importing and discovering code, and then typically somehow registering those things with the app. They run in a specific order, determined dynamically from each hook's listed dependencies. Each hook can define an attribute, ``bundle_module_name``, that determines the module name in bundles that the hook will load from. Flask Unchained provides a command to make it easier to discover hooks and where they load from:
 
 .. code:: bash
 
    $ flask unchained hooks
-   ================================================================================
-   Hooks
-   ================================================================================
    Hook Name                    Default Bundle Module  Bundle Module Override Attr  Description
    ----------------------------------------------------------------------------------------------------------------------------------------------
    run_hooks_hook               hooks                  hooks_module_name            An internal hook to discover and run all the other hooks.

@@ -6,8 +6,6 @@ Integrates `Celery <http://www.celeryproject.org/>`_ with Flask Unchained.
 Dependencies
 ^^^^^^^^^^^^
 
-* celery
-* dill
 * A `broker <http://docs.celeryproject.org/en/latest/getting-started/brokers/index.html>`_ of some sort; Redis or RabbitMQ are popular choices.
 
 Installation
@@ -48,11 +46,4 @@ Commands
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-.. automodule:: flask_unchained.bundles.celery
-   :members:
-
-Tasks
-~~~~~
-
-.. automodule:: flask_unchained.bundles.celery.tasks
-   :members:
+:doc:`../api/bundles/celery`

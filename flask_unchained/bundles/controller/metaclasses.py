@@ -65,15 +65,8 @@ class ControllerMeta(type):
 class ResourceMeta(ControllerMeta):
     """
     Metaclass for Resource class
-
-    Sets up special rules for RESTful behavior:
-    - GET    '/' -> cls.list()
-    - POST   '/' -> cls.create()
-    - GET    '/<cls.member_param>' -> cls.get(<param_name>=<param_value>)
-    - PATCH  '/<cls.member_param>' -> cls.patch(<param_name>=<param_value>)
-    - PUT    '/<cls.member_param>' -> cls.put(<param_name>=<param_value>)
-    - DELETE '/<cls.member_param>' -> cls.delete(<param_name>=<param_value>)
     """
+
     resource_methods = {LIST: ['GET'], CREATE: ['POST'],
                         GET: ['GET'], PATCH: ['PATCH'],
                         PUT: ['PUT'], DELETE: ['DELETE']}
@@ -126,8 +119,8 @@ def get_not_views(clsdict, bases):
 def get_remove_suffixes(name, bases, extras):
     existing_suffixes = deep_getattr({}, bases, REMOVE_SUFFIXES_ATTR, [])
     new_suffixes = [name] + extras
-    return ([x for x in new_suffixes if x not in existing_suffixes]
-            + existing_suffixes)
+    return ([suffix for suffix in new_suffixes
+             if suffix not in existing_suffixes] + existing_suffixes)
 
 
 def is_view_func(method_name, method):

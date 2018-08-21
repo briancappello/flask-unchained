@@ -3,13 +3,6 @@ Mail Bundle
 
 Integrates `Flask Mail <https://pythonhosted.org/flask-mail/>`_ with Flask Unchained.
 
-Dependencies
-^^^^^^^^^^^^
-
-* Flask Mail
-* BeautifulSoup4
-* lxml
-
 Installation
 ^^^^^^^^^^^^
 
@@ -46,18 +39,4 @@ Commands
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-.. automodule:: flask_unchained.bundles.mail
-   :members:
-
-Extensions
-~~~~~~~~~~
-
-.. automodule:: flask_unchained.bundles.mail.extensions
-   :members:
-
-Utils
-~~~~~
-
-.. automodule:: flask_unchained.bundles.mail.utils
-   :members:
-
+:doc:`../api/bundles/mail`

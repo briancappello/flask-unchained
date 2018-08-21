@@ -23,6 +23,39 @@ def controller(url_prefix_or_controller_cls: Union[str, Type[Controller]],
                *,
                rules: Optional[Iterable[Union[Route, RouteGenerator]]] = None,
                ) -> RouteGenerator:
+    """
+    This function is used to register a controller class's routes.
+
+    Example usage::
+
+        routes = lambda: [
+            controller(SiteController),
+        ]
+
+    Or with the optional prefix argument::
+
+        routes = lambda: [
+            controller('/products', ProductController),
+        ]
+
+    Specify ``rules`` to only include those routes from the controller::
+
+        routes = lambda: [
+            controller(SecurityController, rules=[
+               rule('/login', SecurityController.login),
+               rule('/logout', SecurityController.logout),
+               rule('/sign-up', SecurityController.register),
+            ]),
+        ]
+
+    :param url_prefix_or_controller_cls: The controller class, or a url prefix for
+                                         all of the rules from the controller class
+                                         passed as the second argument
+    :param controller_cls: If a url prefix was given as the first argument, then
+                           the controller class must be passed as the second argument
+    :param rules: An optional list of rules to limit/customize the routes included
+                  from the controller
+    """
     url_prefix, controller_cls = _normalize_args(
         url_prefix_or_controller_cls, controller_cls, _is_controller_cls)
 
@@ -58,6 +91,39 @@ def func(rule_or_view_func: Union[str, Callable],
          only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
          **rule_options,
          ) -> RouteGenerator:
+    """
+    This function allows to register legacy view functions as routes, eg::
+
+        @route('/')
+        def index():
+            return render_template('site/index.html')
+
+        routes = lambda: [
+            func(index),
+        ]
+
+    It accepts an optional url rule argument::
+
+        routes = lambda: [
+            func('/products', product_list_view),
+        ]
+
+    As well as supporting the same kwargs as Werkzeug's :class:`~werkzeug.routing.Rule`,
+    eg::
+
+        routes = lambda: [
+            func('/', index, endpoint='home', methods=['GET', 'POST']),
+        ]
+
+    :param rule_or_view_func: The view function, or an optional url rule for the view
+                              function given as the second argument
+    :param view_func: The view function if passed a url rule as the first argument
+    :param only_if: An optional function to decide at runtime whether or not to register
+                    the route with Flask. It gets passed the configured app as a single
+                    argument, and should return a boolean.
+    :param rule_options: Keyword arguments that ultimately end up getting passed on to
+                         :class:`~werkzeug.routing.Rule`
+    """
     rule, view_func = _normalize_args(
         rule_or_view_func, view_func, _is_view_func)
 
@@ -89,6 +155,18 @@ def get(rule: str,
         only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
         **rule_options,
         ) -> RouteGenerator:
+    """
+    Like :func:`rule`, except specifically for HTTP GET requests.
+
+    :param rule: The url rule for this route.
+    :param cls_method_name_or_view_fn: The view function for this route.
+    :param is_member: Whether or not this route is a member function.
+    :param only_if: An optional function to decide at runtime whether or not to register
+                    the route with Flask. It gets passed the configured app as a single
+                    argument, and should return a boolean.
+    :param rule_options: Keyword arguments that ultimately end up getting passed on to
+                         :class:`~werkzeug.routing.Rule`
+    """
     rule_options.pop('methods', None)
     yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
                 endpoint=endpoint, is_member=is_member, methods=['GET'],
@@ -101,6 +179,28 @@ def include(module_name: str,
             exclude: Optional[Endpoints] = None,
             only: Optional[Endpoints] = None,
             ) -> RouteGenerator:
+    """
+    Include the routes from another module. For example::
+
+        # some_bundle/routes.py
+
+        routes = lambda: [
+            controller(OneController),
+            controller(TwoController),
+        ]
+
+        # your_app_bundle/routes.py
+
+        routes = lambda: [
+            controller(SiteController),
+            include('some_bundle.routes'),
+        ]
+
+    :param module_name: The module name of the routes to include.
+    :param attr: The attribute name in the module, if different from ``routes``.
+    :param exclude: An optional list of endpoints to exclude.
+    :param only: An optional list of endpoints to only include.
+    """
     module = importlib.import_module(module_name)
     try:
         routes = getattr(module, attr)()
@@ -125,6 +225,18 @@ def patch(rule: str,
           only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
           **rule_options,
           ) -> RouteGenerator:
+    """
+    Like :func:`rule`, except specifically for HTTP PATCH requests.
+
+    :param rule: The url rule for this route.
+    :param cls_method_name_or_view_fn: The view function for this route.
+    :param is_member: Whether or not this route is a member function.
+    :param only_if: An optional function to decide at runtime whether or not to register
+                    the route with Flask. It gets passed the configured app as a single
+                    argument, and should return a boolean.
+    :param rule_options: Keyword arguments that ultimately end up getting passed on to
+                         :class:`~werkzeug.routing.Rule`
+    """
     rule_options.pop('methods', None)
     yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
                 endpoint=endpoint, is_member=is_member, methods=['PATCH'],
@@ -140,6 +252,18 @@ def post(rule: str,
          only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
          **rule_options,
          ) -> RouteGenerator:
+    """
+    Like :func:`rule`, except specifically for HTTP POST requests.
+
+    :param rule: The url rule for this route.
+    :param cls_method_name_or_view_fn: The view function for this route.
+    :param is_member: Whether or not this route is a member function.
+    :param only_if: An optional function to decide at runtime whether or not to register
+                    the route with Flask. It gets passed the configured app as a single
+                    argument, and should return a boolean.
+    :param rule_options: Keyword arguments that ultimately end up getting passed on to
+                         :class:`~werkzeug.routing.Rule`
+    """
     rule_options.pop('methods', None)
     yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
                 endpoint=endpoint, is_member=is_member, methods=['POST'],
@@ -149,6 +273,23 @@ def post(rule: str,
 def prefix(url_prefix: str,
            children: Iterable[Union[Route, RouteGenerator]],
            ) -> RouteGenerator:
+    """
+    Sets a prefix on all of the child routes passed to it. It also supports nesting, eg::
+
+        routes = lambda: [
+            prefix('/foobar', [
+                controller('/one', OneController),
+                controller('/two', TwoController),
+                prefix('/baz', [
+                    controller('/three', ThreeController),
+                    controller('/four', FourController),
+                ])
+            ])
+        ]
+
+    :param url_prefix: The url prefix to set on the child routes
+    :param children:
+    """
     for route in _reduce_routes(children):
         route = route.copy()
         route.rule = join(url_prefix, route.rule)
@@ -164,6 +305,18 @@ def put(rule: str,
         only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
         **rule_options,
         ) -> RouteGenerator:
+    """
+    Like :func:`rule`, except specifically for HTTP PUT requests.
+
+    :param rule: The url rule for this route.
+    :param cls_method_name_or_view_fn: The view function for this route.
+    :param is_member: Whether or not this route is a member function.
+    :param only_if: An optional function to decide at runtime whether or not to register
+                    the route with Flask. It gets passed the configured app as a single
+                    argument, and should return a boolean.
+    :param rule_options: Keyword arguments that ultimately end up getting passed on to
+                         :class:`~werkzeug.routing.Rule`
+    """
     rule_options.pop('methods', None)
     yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
                 endpoint=endpoint, is_member=is_member, methods=['PUT'],
@@ -176,6 +329,41 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
              rules: Optional[Iterable[Union[Route, RouteGenerator]]] = None,
              subresources: Optional[Iterable[RouteGenerator]] = None,
              ) -> RouteGenerator:
+    """
+    This function is used to register a :class:`Resource`'s routes.
+
+    Example usage::
+
+        routes = lambda: [
+            prefix('/api/v1', [
+                resource('/products', ProductResource),
+            ])
+        ]
+
+    Or with the optional prefix argument::
+
+        routes = lambda: [
+            resource('/products', ProductResource),
+        ]
+
+    Specify ``subresources`` to only include those routes from the resource::
+
+        routes = lambda: [
+            resource(SecurityResource, rules=[
+               rule('/login', SecurityResource.login),
+               rule('/logout', SecurityResource.logout),
+               rule('/sign-up', SecurityResource.register),
+            ]),
+        ]
+
+    :param url_prefix_or_resource_cls: The resource class, or a url prefix for
+                                       all of the rules from the resource class
+                                       passed as the second argument
+    :param resource_cls: If a url prefix was given as the first argument, then
+                         the resource class must be passed as the second argument
+    :param rules: An optional list of rules to limit/customize the routes included
+                  from the resource
+    """
     url_prefix, resource_cls = _normalize_args(
         url_prefix_or_resource_cls, resource_cls, _is_resource_cls)
 
@@ -235,6 +423,38 @@ def rule(rule: str,
          only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
          **rule_options,
          ) -> RouteGenerator:
+    """
+    Used to specify customizations to the route settings of class-based view function.
+    For example::
+
+        routes = lambda: [
+            prefix('/api/v1', [
+                controller(SecurityController, rules=[
+                   rule('/login', SecurityController.login,
+                        endpoint='security_api.login'),
+                   rule('/logout', SecurityController.logout,
+                        endpoint='security_api.logout'),
+                   rule('/sign-up', SecurityController.register,
+                        endpoint='security_api.register'),
+                ]),
+            ],
+        ]
+
+    :param rule: The URL rule.
+    :param cls_method_name_or_view_fn: The view function.
+    :param defaults: Any default values for parameters in the URL rule.
+    :param endpoint: The endpoint name of this view. Determined automatically if left
+                     unspecified.
+    :param is_member: Whether or not this view is for a
+                      :class:`~flask_unchained.bundles.resource.resource.Resource`
+                      member method.
+    :param methods: A list of HTTP methods supported by this view. Defaults to
+                    ``['GET']``.
+    :param only_if: A boolean or callable to dynamically determine whether or not to
+                    register this route with the app.
+    :param rule_options: Other kwargs passed on to :class:`~werkzeug.routing.Rule`.
+    :return:
+    """
     yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
                 endpoint=endpoint, is_member=is_member, methods=methods,
                 only_if=only_if, **rule_options)

@@ -81,6 +81,11 @@ class BabelBundle(Bundle):
 
 
 def gettext(*args, **kwargs):
+    """
+    Return the localized translation of message, based on the language, and
+    locale directory of the domain specified in the translation key (or the
+    current global domain). This function is usually aliased as ``_``.
+    """
     key = args[0]
     key_match = TRANSLATION_KEY_RE.match(key)
     translation = _gettext(*args, **kwargs)
@@ -91,10 +96,16 @@ def gettext(*args, **kwargs):
 
 
 def lazy_gettext(*args, **kwargs):
+    """
+    Like :func:`gettext`, except lazy. This function is usually aliased as ``_``.
+    """
     return make_lazy_string(gettext, *args, **kwargs)
 
 
 def ngettext(*args, **kwargs):
+    """
+    Like :func:`gettext`, except it supports pluralization.
+    """
     is_plural = args[2] > 1
     if not is_plural:
         key = args[0]
@@ -111,6 +122,9 @@ def ngettext(*args, **kwargs):
 
 
 def lazy_ngettext(*args, **kwargs):
+    """
+    Like :func:`ngettext`, except lazy.
+    """
     return make_lazy_string(ngettext, *args, **kwargs)
 
 
