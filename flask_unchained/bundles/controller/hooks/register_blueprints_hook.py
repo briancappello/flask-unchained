@@ -1,5 +1,5 @@
-from flask import Blueprint, Flask
-from flask_unchained import AppFactoryHook, Bundle
+from flask import Blueprint
+from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
 from typing import *
 
 
@@ -15,10 +15,7 @@ class RegisterBlueprintsHook(AppFactoryHook):
 
     _limit_discovery_to_local_declarations = False
 
-    def run_hook(self, app: Flask, bundles: List[Bundle]):
-        super().run_hook(app, bundles)
-
-    def process_objects(self, app: Flask, blueprints: List[Blueprint]):
+    def process_objects(self, app: FlaskUnchained, blueprints: List[Blueprint]):
         for blueprint in reversed(blueprints):
             # rstrip '/' off url_prefix because views should be declaring their
             # routes beginning with '/', and if url_prefix ends with '/', routes
