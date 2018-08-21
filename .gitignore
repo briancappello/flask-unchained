@@ -9,4 +9,5 @@ build/
 coverage_html_report/
 dist/
 docs/_build
+docs/.doctrees
 venv/
