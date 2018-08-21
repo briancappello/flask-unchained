@@ -37,7 +37,7 @@ def controller(url_prefix_or_controller_cls: Union[str, Type[Controller]],
     if rules is None:
         routes = controller_routes.values()
     else:
-        for route in reduce_routes(rules):
+        for route in _reduce_routes(rules):
             existing = controller_routes.get(route.method_name)
             if existing:
                 routes.append(_inherit_route_options(route, existing[0]))
@@ -108,7 +108,7 @@ def include(module_name: str,
         raise AttributeError(f'Could not find a variable named `{attr}` '
                              f'in the {module_name} module!')
 
-    for route in reduce_routes(routes):
+    for route in _reduce_routes(routes):
         excluded = exclude and route.endpoint in exclude
         not_included = only and route.endpoint not in only
         if excluded or not_included:
@@ -149,7 +149,7 @@ def post(rule: str,
 def prefix(url_prefix: str,
            children: Iterable[Union[Route, RouteGenerator]],
            ) -> RouteGenerator:
-    for route in reduce_routes(children):
+    for route in _reduce_routes(children):
         route = route.copy()
         route.rule = join(url_prefix, route.rule)
         yield route
@@ -193,7 +193,7 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
 
     yield from _normalize_controller_routes(routes.values(), resource_cls)
 
-    for subroute in reduce_routes(subresources):
+    for subroute in _reduce_routes(subresources):
         subroute = subroute.copy()
 
         # can't have a subresource with a different blueprint than its parent
@@ -210,8 +210,8 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
     resource_cls.url_prefix = resource_url_prefix
 
 
-def reduce_routes(routes: Iterable[Union[Route, RouteGenerator]],
-                  ) -> RouteGenerator:
+def _reduce_routes(routes: Iterable[Union[Route, RouteGenerator]],
+                   ) -> RouteGenerator:
     if not routes:
         raise StopIteration
 
@@ -220,7 +220,7 @@ def reduce_routes(routes: Iterable[Union[Route, RouteGenerator]],
             if isinstance(route, Route):
                 yield route
             else:
-                yield from reduce_routes(route)
+                yield from _reduce_routes(route)
     except TypeError as e:
         print(str(e), routes)
 
@@ -313,7 +313,7 @@ def _normalize_args(maybe_str, maybe_none, test):
 def _normalize_controller_routes(rules: Iterable[Route],
                                  controller_cls: Type[Controller],
                                  ) -> RouteGenerator:
-    for route in reduce_routes(rules):
+    for route in _reduce_routes(rules):
         route = route.copy()
         route.blueprint = controller_cls.blueprint
         route._controller_name = controller_cls.__name__

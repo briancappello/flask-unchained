@@ -3,7 +3,7 @@ import pytest
 from flask_unchained.bundles.controller import ControllerBundle
 from flask_unchained.bundles.controller.hooks import RegisterRoutesHook
 from flask_unchained.bundles.controller.route import Route
-from flask_unchained.bundles.controller.routes import reduce_routes
+from flask_unchained.bundles.controller.routes import _reduce_routes
 from flask_unchained.unchained import Unchained
 
 from .fixtures.app_bundle import AppBundle
@@ -22,7 +22,7 @@ def hook(app):
 class TestRegisterRoutesHook:
     def test_get_explicit_routes(self, app, hook: RegisterRoutesHook):
         hook.run_hook(app, [AppBundle()])
-        discovered_routes = list(reduce_routes(hook.get_explicit_routes(AppBundle())))
+        discovered_routes = list(_reduce_routes(hook.get_explicit_routes(AppBundle())))
         assert len(discovered_routes) == 5
         for route in discovered_routes:
             assert isinstance(route, Route)

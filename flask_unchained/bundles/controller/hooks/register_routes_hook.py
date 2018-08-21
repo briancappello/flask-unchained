@@ -6,7 +6,7 @@ from typing import *
 
 from ..attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
 from ..route import Route
-from ..routes import reduce_routes, _normalize_controller_routes, include
+from ..routes import _reduce_routes, _normalize_controller_routes, include
 
 
 class RegisterRoutesHook(AppFactoryHook):
@@ -26,7 +26,7 @@ class RegisterRoutesHook(AppFactoryHook):
         self.process_objects(app, routes)
 
     def process_objects(self, app: FlaskUnchained, routes: Iterable[Route]):
-        for route in reduce_routes(routes):
+        for route in _reduce_routes(routes):
             # FIXME maybe validate routes first? (eg for duplicates?)
             # Flask doesn't complain; it will match the first route found,
             # but maybe we should at least warn the user?
