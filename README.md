@@ -6,7 +6,7 @@ Flask Unchained is an extension that implements the Application Factory Pattern.
 
 ## Useful Links
 
-* [Read the docs](http://example.com)
+* [Read the docs](https://flask-unchained.readthedocs.io/en/latest/)
 * [Fork it on GitHub](https://github.com/briancappello/flask-unchained)
 * [Download from PyPI](https://pypi.org/project/Flask-Unchained/)
 
@@ -24,7 +24,7 @@ Flask Unchained is an extension that implements the Application Factory Pattern.
    - [Flask-Admin](https://flask-admin.readthedocs.io/en/latest/) (admin interface, optional)
    - [Celery](http://docs.celeryproject.org/en/latest/index.html) (distributed task queue, optional)
 * out-of-the-box support for testing with [pytest](https://docs.pytest.org/en/latest/)
-* improved class-based views with the [Controller]() and [Resource]() base classes
+* improved class-based views with the [Controller](https://flask-unchained.readthedocs.io/en/latest/api/bundles/controller.html#controller), [Resource](https://flask-unchained.readthedocs.io/en/latest/api/bundles/controller.html#resource), and [ModelResource](https://flask-unchained.readthedocs.io/en/latest/api/bundles/api.html#modelresource) base classes
 * declarative routing
 * dependency injection of services and extensions
 * a REST API framework, integrated with Marshmallow and SQLAlchemy
@@ -61,7 +61,7 @@ A minimal Hello World application structure looks like this:
 ├── app
 │   ├── templates
 │   │   └── site
-│   │       └── hello.html
+│   │       └── index.html
 │   ├── __init__.py
 │   ├── config.py
 │   ├── routes.py
