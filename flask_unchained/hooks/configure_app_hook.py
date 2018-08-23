@@ -19,7 +19,7 @@ ENV_CONFIGS = {
 
 class ConfigureAppHook(AppFactoryHook):
     """
-    Updates app.config with the settings from each bundle.
+    Updates ``app.config`` with the settings from each bundle.
     """
 
     bundle_module_name = 'config'

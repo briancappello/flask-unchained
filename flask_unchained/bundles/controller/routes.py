@@ -346,15 +346,26 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
             resource('/products', ProductResource),
         ]
 
-    Specify ``subresources`` to only include those routes from the resource::
+    Specify ``rules`` to only include those routes from the resource::
 
         routes = lambda: [
-            resource(SecurityResource, rules=[
-               rule('/login', SecurityResource.login),
-               rule('/logout', SecurityResource.logout),
-               rule('/sign-up', SecurityResource.register),
+            resource('/users', UserResource, rules=[
+               get('/', UserResource.list),
+               get('/<int:id>', UserResource.get),
             ]),
         ]
+
+    Specify ``subresources`` to nest resource routes::
+
+        routes = lambda: [
+            resource('/users', UserResource, subresources=[
+               resource('/roles', RoleResource)
+            ]),
+        ]
+
+    Subresources can be nested as deeply as you want, however it's not recommended
+    to go more than two or three levels deep at the most, otherwise your URLs will
+    become unwieldy.
 
     :param url_prefix_or_resource_cls: The resource class, or a url prefix for
                                        all of the rules from the resource class
@@ -363,6 +374,7 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
                          the resource class must be passed as the second argument
     :param rules: An optional list of rules to limit/customize the routes included
                   from the resource
+    :param subresources: An optional list of subresources.
     """
     url_prefix, resource_cls = _normalize_args(
         url_prefix_or_resource_cls, resource_cls, _is_resource_cls)

@@ -25,7 +25,7 @@ It does the following:
 5. It then finishes initializing the ``Unchained`` extension, by calling ``unchained.init_app(app, env, bundles)``.
 
    * The ``Unchained`` extension will then register itself with the app, and it calls ``RunHooksHook.run_hook(app, bundles)``.
-   * Hooks are subclasses of ``AppFactoryHook``, and the ``RunHooksHook`` will discover them in both core Flask Unchained as well as in each loaded bundle's ``hooks`` module. Hooks are responsible for the majority of the hard work required to initialize the application. They do things like loading configuration from all the bundles, initializing extensions, discovering models, and registering views and routes with Flask - to name some examples.
+   * Hooks are subclasses of ``AppFactoryHook``, and the ``RunHooksHook`` will discover them in both core Flask Unchained as well as from the ``hooks`` module of each bundle in ``unchained_config.BUNDLES``. Hooks are responsible for the majority of the hard work required to initialize the application. They do things like loading configuration from all the bundles, initializing extensions, discovering models, and registering views and routes with Flask - to name some examples.
 
 6. Afterwards, for each bundle, the app factory calls ``bundle.after_init_app(app)``.
 

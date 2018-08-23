@@ -10,7 +10,8 @@ from werkzeug.exceptions import BadRequest, NotFound
 
 class BlueprintSetupState(BaseSetupState):
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
-        """A helper method to register a rule (and optionally a view function)
+        """
+        A helper method to register a rule (and optionally a view function)
         to the application.  The endpoint is automatically prefixed with the
         blueprint's name.
         """
@@ -28,8 +29,12 @@ class BlueprintSetupState(BaseSetupState):
 class BundleBlueprint(Blueprint):
     """
     The purpose of this class is to register a custom template folder and/or
-    static folder with Flask. And it seems the only way to do that is to
-    pretend to be a blueprint...
+    static folder with Flask. For each bundle tht has a template folder, static
+    folder, and/or a views module, a ``BundleBlueprint`` will get registered.
+
+    If the ``BundleBlueprint`` is for the top-level bundle in a hierarchy, and
+    there exist views registered as routes with the app from the bundle hierarchy,
+    then that ``BundleBlueprint`` will also be assigned all of those views/routes.
     """
     url_prefix = None
 
@@ -56,7 +61,8 @@ class BundleBlueprint(Blueprint):
         return BlueprintSetupState(self, app, options, first_registration)
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
-        """Like :meth:`~flask.Flask.add_url_rule` but for a blueprint.  The endpoint for
+        """
+        Like :meth:`~flask.Flask.add_url_rule` but for a blueprint.  The endpoint for
         the :func:`url_for` function is prefixed with the name of the blueprint.
 
         Overridden to allow dots in endpoint names
@@ -65,7 +71,8 @@ class BundleBlueprint(Blueprint):
                                              register_with_babel=False, **options))
 
     def register(self, app, options, first_registration=False):
-        """Called by :meth:`~flask.Flask.register_blueprint` to register a blueprint
+        """
+        Called by :meth:`~flask.Flask.register_blueprint` to register a blueprint
         on the application.  This can be overridden to customize the register
         behavior.  Keyword arguments from
         :func:`~flask.Flask.register_blueprint` are directly forwarded to this
@@ -86,11 +93,12 @@ class BundleBlueprint(Blueprint):
             deferred(state)
 
     def __repr__(self):
-        return f'<BundleBlueprint "{self.name}">'
+        return f'BundleBlueprint(name={self.name!r}, bundle={self.bundle!r})'
 
 
 def _send_from_directories(directories, filename, **options):
-    """Send a file from a given directory with :func:`send_file`.  This
+    """
+    Send a file from a given directory with :func:`send_file`.  This
     is a secure way to quickly expose static files from an upload folder
     or something similar.
 

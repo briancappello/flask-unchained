@@ -69,6 +69,16 @@ class Marshmallow:
         app.extensions['ma'] = self
 
     def serializer(self, create=False, many=False):
+        """
+        Decorator to mark a :class:`Serializer` subclass for a specific purpose, ie,
+        to be used during object creation **OR** for serializing lists of objects.
+
+        :param create: Whether or not this serializer is for object creation.
+        :param many: Whether or not this serializer is for lists of objects.
+        """
+        if create and many:
+            raise Exception('Can only set one of `create` or `many` to `True`')
+
         def wrapper(cls):
             cls.__kind__ = (create and 'create'
                             or many and 'many'

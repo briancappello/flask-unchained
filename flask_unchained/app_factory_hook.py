@@ -116,7 +116,7 @@ class AppFactoryHook:
     def collect_from_bundle(self, bundle: Bundle) -> Dict[str, Any]:
         """
         Collect objects where :meth:`type_check` returns ``True`` from bundles.
-        bundle subclasses can override objects discovered in superclass bundles.
+        Bundle subclasses can override objects discovered in superclass bundles.
         """
         members = {}
         hierarchy = ([bundle] if not self._discover_from_bundle_superclasses
@@ -153,9 +153,10 @@ class AppFactoryHook:
         for name, obj in inspect.getmembers(module, type_checker):
             # FIXME
             # currently, no hooks depend on this working correctly, however
-            # ``obj.__module__ in module.__name__`` isn't right for instance variables
-            # (it works fine for classes, but instances seem to keep the __module__ of
-            # their *class*, not where they themselves were defined/instantiated.)
+            # ``obj.__module__.startswith(module.__name__)`` isn't right for
+            # instance variables (it works fine for classes, but instances seem
+            # to keep the __module__ of their *class*, not where they themselves
+            # were defined/instantiated)
             #
             # possible solution, should probably be done within a metaclass __init__ if
             # it's ever needed:

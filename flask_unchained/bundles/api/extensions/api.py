@@ -13,15 +13,12 @@ from ..model_resource import ModelResource
 
 class Api:
     def __init__(self):
-        self.app = None
-        self.spec = None
+        self.app: FlaskUnchained = None
+        self.spec: APISpec = None
 
     def init_app(self, app: FlaskUnchained):
         self.app = app
-
-        extensions = getattr(app, 'extensions', {})
-        extensions['api'] = self
-        app.extensions = extensions
+        app.extensions['api'] = self
 
         self.spec = APISpec(app, plugins=app.config.get('API_APISPEC_PLUGINS'))
 
@@ -95,7 +92,9 @@ class Api:
                                    view=route.view_func)
 
     def register_converter(self, converter, conv_type, conv_format=None, *, name=None):
-        """Register custom path parameter converter
+        """
+        Register custom path parameter converter.
+
         :param BaseConverter converter: Converter
             Subclass of werkzeug's BaseConverter
         :param str conv_type: Parameter type
@@ -108,8 +107,10 @@ class Api:
                 @blp.route('/pets/{uuid:pet_id}')
                     ...
                 api.register_blueprint(blp)
+
         This registers the converter in the Flask app and in the internal
         APISpec instance.
+
         Once the converter is registered, all paths using it will have
         corresponding path parameter documented with the right type and format.
         The `name` parameter need not be passed if the converter is already
@@ -121,13 +122,17 @@ class Api:
         self.spec.register_converter(converter, conv_type, conv_format)
 
     def register_field(self, field, *args):
-        """Register custom Marshmallow field
+        """
+        Register custom Marshmallow field.
+
         Registering the Field class allows the Schema parser to set the proper
         type and format when documenting parameters from Schema fields.
+
         :param Field field: Marshmallow Field class
         ``*args`` can be:
         - a pair of the form ``(type, format)`` to map to
         - a core marshmallow field type (then that type's mapping is used)
+
         Examples: ::
             # Map to ('string', 'UUID')
             api.register_field(UUIDField, 'string', 'UUID')

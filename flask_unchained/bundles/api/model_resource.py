@@ -68,8 +68,9 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
 
     __abstract__ = True
 
-    # FIXME all of these might be nicer as class Meta attributes (mostly just
-    # for consistency with other places, eg model and serializer classes)
+    # FIXME all of these class attributes might be nicer as Meta attributes (mostly
+    # just for consistency with other places, eg Model and Serializer classes)
+
     model: Type[BaseModel] = None
     """
     The model class this model resource is for.

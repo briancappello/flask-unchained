@@ -55,12 +55,6 @@ class Security(_SecurityConfigProperties):
         self.remember_token_serializer = None
         self.reset_serializer = None
 
-    def inject_services(self,
-                        security_utils_service: SecurityUtilsService = injectable,
-                        user_manager: UserManager = injectable):
-        self.security_utils_service = security_utils_service
-        self.user_manager = user_manager
-
     def init_app(self, app: FlaskUnchained):
         # NOTE: the order of these `self.get_*` initialization calls is important!
         self.confirm_serializer = self._get_serializer(app, 'confirm')
@@ -75,10 +69,16 @@ class Security(_SecurityConfigProperties):
 
         self.context_processor(lambda: dict(security=_SecurityConfigProperties()))
 
-        # FIXME: should this be easier to customizer for end users, perhaps by making
+        # FIXME: should this be easier to customize for end users, perhaps by making
         # FIXME: the function come from a config setting?
         identity_loaded.connect_via(app)(self._on_identity_loaded)
         app.extensions['security'] = self
+
+    def inject_services(self,
+                        security_utils_service: SecurityUtilsService = injectable,
+                        user_manager: UserManager = injectable):
+        self.security_utils_service = security_utils_service
+        self.user_manager = user_manager
 
     ######################################################
     # public api to register template context processors #

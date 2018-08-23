@@ -29,20 +29,16 @@ class Unchained:
     """
 
     def __init__(self, env: Optional[Union[DEV, PROD, STAGING, TEST]] = None):
-        self._initialized = False
-        self._services_registry = {}
-
-        # support lazily accessing extensions and services via attributes on the
-        # unchained extension instance
-        self.extensions = AttrDict()
-        self.services = AttrDict()
-
         self.bundles = AttrDict()
         self.babel_bundle = None
         self.env = env
-        self._shell_ctx = {}
+        self.extensions = AttrDict()
+        self.services = AttrDict()
+
         self._deferred_functions = []
         self._initialized = False
+        self._services_registry = {}
+        self._shell_ctx = {}
 
     def init_app(self,
                  app: Flask,
@@ -59,8 +55,8 @@ class Unchained:
         app.env = self.env
         app.extensions['unchained'] = self
         app.unchained = self
-        app.shell_context_processor(lambda: {b.__class__.__name__: b
-                                             for b in bundles})
+        app.shell_context_processor(lambda: {
+            bundle.__class__.__name__: bundle for bundle in bundles})
 
         try:
             # must import BabelBundle here to prevent circular dependency
