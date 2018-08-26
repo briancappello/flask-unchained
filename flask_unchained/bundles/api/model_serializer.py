@@ -1,7 +1,7 @@
 from flask_unchained.bundles.controller.attr_constants import ABSTRACT_ATTR
 from flask_unchained.bundles.sqlalchemy import db
 from flask_unchained import unchained
-from flask_unchained.di import setup_class_dependency_injection
+from flask_unchained.di import set_up_class_dependency_injection
 from flask_unchained.string_utils import camel_case, title_case
 from flask_unchained.utils import deep_getattr
 try:
@@ -98,7 +98,7 @@ class ModelSerializerOpts(SchemaOpts):
 
 class ModelSerializerMeta(ModelSchemaMeta):
     def __new__(mcs, name, bases, clsdict):
-        setup_class_dependency_injection(name, clsdict)
+        set_up_class_dependency_injection(name, clsdict)
         if ABSTRACT_ATTR in clsdict:
             return super().__new__(mcs, name, bases, clsdict)
 
@@ -154,8 +154,8 @@ class ModelSerializer(ModelSchema, metaclass=ModelSerializerMeta):
 
     For example::
 
-        from backend.api import ModelSerializer
-        from backend.security.models import Role
+        from flask_unchained.bundles.api import ModelSerializer
+        from flask_unchained.bundles.security.models import Role
 
         class RoleSerializer(ModelSerializer):
             class Meta:

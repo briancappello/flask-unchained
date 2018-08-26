@@ -81,7 +81,7 @@
 
 ## 0.2.1 (2018/04/08)
 
-* bugfix: check for `FunctionType` in `setup_class_dependency_injection`
+* bugfix: check for `FunctionType` in `set_up_class_dependency_injection`
 
 ## 0.2.0 (2018/04/06)
 

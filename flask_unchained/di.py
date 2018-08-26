@@ -12,18 +12,17 @@ Use this to mark a service parameter as injectable. For example::
         def __init__(self, a_dependency: ADependency = injectable):
             self.a_dependency = a_dependency
 
-This allows MyService to be used in one of three ways::
+This allows MyService to be used in two ways::
 
-    # using dependency injection with flask unchained
+    # 1. using dependency injection with Flask Unchained
     my_service = MyService()
 
-    # overriding the dependency injection (or used without flask unchained)
+    # 2. overriding the dependency injection (or used without Flask Unchained)
     a_dependency = ADependency()
     my_service = MyService(a_dependency)
 
-    # but try to use it without flask unchained and without parameters
-    my_service = MyService()
-    my_service.a_dependency.anything  # raises ServiceUsageError
+    # but, if you try to use it without Flask Unchained and without parameters:
+    my_service = MyService()  # raises ServiceUsageError
 """
 
 
@@ -39,7 +38,7 @@ def ensure_service_name(service, name=None):
     return name
 
 
-def setup_class_dependency_injection(class_name, clsdict):
+def set_up_class_dependency_injection(class_name, clsdict):
     if '__init__' in clsdict:
         from .unchained import unchained
         init = unchained.inject()(clsdict['__init__'])
@@ -54,7 +53,7 @@ def setup_class_dependency_injection(class_name, clsdict):
 
 class ServiceMeta(type):
     def __new__(mcs, name, bases, clsdict):
-        setup_class_dependency_injection(name, clsdict)
+        set_up_class_dependency_injection(name, clsdict)
 
         # extended concrete services should not inherit their super's di name
         if deep_getattr({}, bases, '__di_name__', None):
@@ -71,4 +70,10 @@ class ServiceMeta(type):
 
 
 class BaseService(metaclass=ServiceMeta):
+    """
+    Base class for services in Flask Unchained. Automatically sets up dependency
+    injection on the constructor of the subclass, and allows for your service to
+    be automatically detected and used.
+    """
+
     __abstract__ = True
