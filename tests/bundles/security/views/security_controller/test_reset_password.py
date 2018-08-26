@@ -1,4 +1,5 @@
 import pytest
+from flask_unchained.bundles.mail.pytest import *
 
 from flask_unchained import url_for
 from flask_unchained.bundles.security import AnonymousUser, current_user

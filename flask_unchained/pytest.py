@@ -9,7 +9,6 @@ from flask import Response, template_rendered
 from flask.cli import ScriptInfo
 from flask.testing import FlaskClient
 from flask_unchained import url_for
-from flask_unchained.bundles.mail import mail
 from urllib.parse import urlparse
 from werkzeug.test import EnvironBuilder
 from werkzeug.utils import cached_property
@@ -339,18 +338,3 @@ def templates(app):
         yield records
     finally:
         template_rendered.disconnect(record, app)
-
-
-@pytest.fixture()
-def outbox():
-    """
-    Fixture to record which messages got sent by the mail extension (if any).
-    Example Usage::
-
-        def test_some_view(client, outbox):
-            r = client.get('some.endpoint.that.sends.mail')
-            assert len(outbox) == 1
-            assert outbox[0].subject == "You've got mail!"
-    """
-    with mail.record_messages() as messages:
-        yield messages

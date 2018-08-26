@@ -1,4 +1,5 @@
 import pytest
+from flask_unchained.bundles.mail.pytest import *
 
 
 @pytest.mark.options(SECURITY_RECOVERABLE=True)
