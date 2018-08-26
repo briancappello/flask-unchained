@@ -11,7 +11,7 @@ install:
 services:
   - postgresql
 addons:
-  postgresql: "9.6"
+  postgresql: "10.5"
 before_script:
   - psql -c "CREATE DATABASE flask_test;" -U postgres
   - psql -c "CREATE USER flask_test WITH PASSWORD 'flask_test';" -U postgres
