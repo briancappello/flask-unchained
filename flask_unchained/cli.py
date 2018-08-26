@@ -45,7 +45,20 @@ def cli_create_app(_):
         sys.exit(1)
 
 
-class FlaskGroup(GroupOverrideMixin, flask_cli.FlaskGroup):
+class AppGroupMixin(GroupOverrideMixin):
+    def group(self, *args, **kwargs):
+        """
+        A group allows a command to have subcommands attached.  This is the
+        most common way to implement nesting in Click.
+
+        :param name: the name of the group (optional)
+        :param commands: a dictionary of commands.
+        """
+        return super().group(
+            *args, cls=kwargs.pop('cls', AppGroup) or AppGroup, **kwargs)
+
+
+class FlaskGroup(AppGroupMixin, flask_cli.FlaskGroup):
     """
     Top-level click group class for all Flask commands.
 
@@ -53,36 +66,14 @@ class FlaskGroup(GroupOverrideMixin, flask_cli.FlaskGroup):
     :meth:`~flask.cli.with_appcontext`.
     """
 
-    def group(self, *args, **kwargs):
-        """
-        A group allows a command to have subcommands attached.  This is the
-        most common way to implement nesting in Click.
 
-        :param name: the name of the group (optional)
-        :param commands: a dictionary of commands.
-        """
-        return super().group(
-            *args, cls=kwargs.pop('cls', AppGroup) or AppGroup, **kwargs)
-
-
-class AppGroup(GroupOverrideMixin, flask_cli.AppGroup):
+class AppGroup(AppGroupMixin, flask_cli.AppGroup):
     """
     Click group class for all Flask subcommands.
 
     Automatically makes the app context available to commands, using
     :meth:`~flask.cli.with_appcontext`.
     """
-
-    def group(self, *args, **kwargs):
-        """
-        A group allows a command to have subcommands attached.  This is the
-        most common way to implement nesting in Click.
-
-        :param name: the name of the group (optional)
-        :param commands: a dictionary of commands.
-        """
-        return super().group(
-            *args, cls=kwargs.pop('cls', AppGroup) or AppGroup, **kwargs)
 
 
 @click.group(cls=FlaskGroup, add_default_commands=False,
