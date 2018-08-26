@@ -5,4 +5,9 @@ except ImportError:
 
 
 class AdminSecurityController(SecurityController):
+    """
+    Extends :class:`~flask_unchained.bundles.security.SecurityController`, to
+    customize the template folder to use admin-specific templates.
+    """
+
     template_folder = 'admin'

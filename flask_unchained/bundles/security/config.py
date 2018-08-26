@@ -73,7 +73,8 @@ class Config:
     SECURITY_PASSWORD_HASH = 'bcrypt'
     """
     Specifies the password hash algorithm to use when hashing passwords.
-    Recommended values for production systems are argon2, bcrypt, or pbkdf2_sha512.
+    Recommended values for production systems are ``argon2``, ``bcrypt``,
+    or ``pbkdf2_sha512``. May require extra packages to be installed.
     """
 
     SECURITY_PASSWORD_SINGLE_HASH = False

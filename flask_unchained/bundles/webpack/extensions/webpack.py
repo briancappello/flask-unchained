@@ -7,6 +7,12 @@ from markupsafe import Markup
 
 
 class Webpack:
+    """
+    The `Webpack` extension::
+
+        from flask_unchained.bundles.webpack import webpack
+    """
+
     def __init__(self):
         self.assets = {}
         self.assets_host = None

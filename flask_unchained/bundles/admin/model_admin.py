@@ -35,6 +35,12 @@ class SlugDescriptor:
 
 
 class ModelAdmin(AdminSecurityMixin, BaseModelView):
+    """
+    Base class for SQLAlchemy model admins. More or less the same as
+    :class:`~flask_admin.contrib.sqla.ModelView`, except we set some
+    different defaults.
+    """
+
     can_view_details = True
 
     name = NameDescriptor()

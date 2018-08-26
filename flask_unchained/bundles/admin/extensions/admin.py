@@ -4,6 +4,12 @@ from flask_unchained import url_for
 
 
 class Admin(BaseAdmin):
+    """
+    The `Admin` extension::
+
+        from flask_unchained.bundles.admin import admin
+    """
+
     def init_app(self, app: Flask):
         self.app = app
         self.name = app.config.get('ADMIN_NAME')

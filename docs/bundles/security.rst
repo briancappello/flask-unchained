@@ -29,6 +29,7 @@ Config
 
 .. automodule:: flask_unchained.bundles.security.config
    :members:
+   :noindex:
 
 Commands
 ^^^^^^^^

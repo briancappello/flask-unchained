@@ -8,12 +8,16 @@ from celery import Celery as BaseCelery
 from dill import dumps as dill_dumps, load as dill_load
 from kombu.serialization import pickle_loads, pickle_protocol, registry
 from kombu.utils.encoding import str_to_bytes
-from werkzeug.local import LocalProxy
 
 
 class Celery(BaseCelery):
+    """
+    The `Celery` extension::
+
+        from flask_unchained.bundles.celery import celery
+    """
     def __init__(self, *args, **kwargs):
-        self.register_dill()
+        self._register_dill()
         super().__init__(*args, **kwargs)
         self.override_task_class()
 
@@ -42,7 +46,7 @@ class Celery(BaseCelery):
         self.autodiscover_tasks(lambda: [bundle.module_name
                                          for bundle in app.unchained.BUNDLES])
 
-    def register_dill(self):
+    def _register_dill(self):
         def encode(obj, dumper=dill_dumps):
             return dumper(obj, protocol=pickle_protocol)
 

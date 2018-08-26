@@ -7,7 +7,7 @@
 
 from flask_unchained import Bundle
 
-from .extensions import webpack
+from .extensions import Webpack, webpack
 
 
 class WebpackBundle(Bundle):

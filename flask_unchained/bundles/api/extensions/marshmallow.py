@@ -13,6 +13,12 @@ from ..model_serializer import ModelSerializer
 
 
 class Marshmallow:
+    """
+    The `Marshmallow` extension::
+
+        from flask_unchained.bundles.api import ma
+    """
+
     def __init__(self):
         self.Serializer = flask_ma.Schema
         self.ModelSerializer = ModelSerializer
@@ -71,7 +77,7 @@ class Marshmallow:
     def serializer(self, create=False, many=False):
         """
         Decorator to mark a :class:`Serializer` subclass for a specific purpose, ie,
-        to be used during object creation **OR** for serializing lists of objects.
+        to be used during object creation **or** for serializing lists of objects.
 
         :param create: Whether or not this serializer is for object creation.
         :param many: Whether or not this serializer is for lists of objects.

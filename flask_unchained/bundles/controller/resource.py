@@ -21,26 +21,26 @@ class Resource(Controller, metaclass=ResourceMeta):
        :header-rows: 1
 
        * - HTTP Method
-         - Rule
          - Resource class method name
+         - Rule
        * - GET
-         - /
          - list
-       * - POST
          - /
+       * - POST
          - create
+         - /
        * - GET
-         - /<cls.member_param>
          - get
+         - /<cls.member_param>
        * - PATCH
-         - /<cls.member_param>
          - patch
+         - /<cls.member_param>
        * - PUT
-         - /<cls.member_param>
          - put
-       * - DELETE
          - /<cls.member_param>
+       * - DELETE
          - delete
+         - /<cls.member_param>
 
     So, for example::
 
@@ -78,12 +78,12 @@ class Resource(Controller, metaclass=ResourceMeta):
 
     Would register the following routes::
 
-        GET     /users                      UserResource.list
-        POST    /users                      UserResource.create
-        GET     /users/<string:username>    UserResource.get
-        PATCH   /users/<string:username>    UserResource.patch
-        PUT     /users/<string:username>    UserResource.put
-        DELETE  /users/<string:username>    UserResource.delete
+        UserResource.list           => GET /users
+        UserResource.create         => POST /users
+        UserResource.get            => GET /users/<string:username>
+        UserResource.patch          => PATCH /users/<string:username>
+        UserResource.put            => PUT /users/<string:username>
+        UserResource.delete         => /users/<string:username>
 
     See also :class:`~flask_unchained.bundles.api.model_resource.ModelResource` from
     the API bundle.

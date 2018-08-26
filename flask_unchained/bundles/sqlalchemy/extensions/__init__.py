@@ -19,3 +19,11 @@ EXTENSIONS = {
     'db': db,
     'migrate': (migrate, ['db']),
 }
+
+
+__all__ = [
+    'db',
+    'SQLAlchemy',
+    'migrate',
+    'Migrate',
+]

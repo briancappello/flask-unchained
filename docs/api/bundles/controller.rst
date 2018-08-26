@@ -4,6 +4,12 @@ Controller Bundle
 .. autoclass:: flask_unchained.bundles.controller.ControllerBundle
    :members:
 
+Config
+~~~~~~
+
+.. autoclass:: flask_unchained.bundles.controller.config.Config
+   :members:
+
 Controller
 ~~~~~~~~~~
 

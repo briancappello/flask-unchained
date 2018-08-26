@@ -37,6 +37,12 @@ class _SecurityConfigProperties(metaclass=ConfigPropertyMeta):
 
 
 class Security(_SecurityConfigProperties):
+    """
+    The `Security` extension::
+
+        from flask_unchained.bundles.security import security
+    """
+
     def __init__(self):
         self._context_processors = {}
         self._send_mail_task = None

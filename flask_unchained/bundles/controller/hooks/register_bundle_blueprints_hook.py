@@ -8,7 +8,7 @@ from typing import *
 
 class RegisterBundleBlueprintsHook(AppFactoryHook):
     """
-    Registers a blueprint with each bundle's routes and template folder.
+    Registers a blueprint for each bundle with views and/or template/static folders.
     """
 
     bundle_module_name = None

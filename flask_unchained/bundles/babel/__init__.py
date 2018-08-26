@@ -7,7 +7,7 @@ from flask_unchained import Bundle, FlaskUnchained
 from speaklater import make_lazy_string
 from typing import *
 
-from .extensions import babel
+from .extensions import Babel, babel
 
 
 TRANSLATION_KEY_RE = re.compile(r'^(?P<domain>[a-z_.]+):[a-z_.]+$')

@@ -4,25 +4,34 @@ How it Works
 The App Factory
 ---------------
 
-Flask Unchained implements the application factory pattern. There is one entry point:
+Flask Unchained implements the application factory pattern. There is one entry point,
+:meth:`flask_unchained.AppFactory.create_app`:
 
 .. code:: python
 
-   from flask_unchained import AppFactory
+   # project-root/wsgi.py
 
-   app = AppFactory.create_app(env)
+   import os
 
-It does the following:
+   from flask_unchained import AppFactory, PROD
 
-1. Load's your project's ``unchained_config`` module.
 
-2. Initializes all of the ``Bundle`` subclasses from the bundles listed in ``unchained_config.BUNDLES``.
+   app = AppFactory.create_app(os.getenv('FLASK_ENV', PROD))
 
-3. Initializes a ``FlaskUnchained`` app instance (a minimally customized ``flask.Flask`` subclass).
+(In development and testing, this happens automatically behind the scenes when you call
+the ``flask`` or ``pytest`` commands.)
+
+The :meth:`~flask_unchained.AppFactory.create_app` class method does the following:
+
+1. It load's your project's ``unchained_config`` module.
+
+2. It initializes all of the ``Bundle`` subclasses from those listed in ``unchained_config.BUNDLES``.
+
+3. It initializes a ``FlaskUnchained`` app instance (which is just a minimally extended :class:`~flask.Flask` subclass).
 
 4. For each bundle, it calls ``bundle.before_init_app(app)``.
 
-5. It then finishes initializing the ``Unchained`` extension, by calling ``unchained.init_app(app, env, bundles)``.
+5. It then finishes initializing the :class:`~flask_unchained.Unchained` extension, by calling ``unchained.init_app(app, env, bundles)``.
 
    * The ``Unchained`` extension will then register itself with the app, and it calls ``RunHooksHook.run_hook(app, bundles)``.
    * Hooks are subclasses of ``AppFactoryHook``, and the ``RunHooksHook`` will discover them in both core Flask Unchained as well as from the ``hooks`` module of each bundle in ``unchained_config.BUNDLES``. Hooks are responsible for the majority of the hard work required to initialize the application. They do things like loading configuration from all the bundles, initializing extensions, discovering models, and registering views and routes with Flask - to name some examples.

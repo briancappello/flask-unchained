@@ -1,6 +1,6 @@
 from flask_unchained import Bundle
 
-from .extensions import celery
+from .extensions import Celery, celery
 
 
 class CeleryBundle(Bundle):

@@ -3,8 +3,9 @@ import enum
 from flask_unchained import Bundle, FlaskUnchained, unchained
 from speaklater import _LazyString
 
-from .extensions import api, ma
+from .extensions import Api, Marshmallow, api, ma
 from .model_resource import ModelResource
+from .model_serializer import ModelSerializer
 
 
 class ApiBundle(Bundle):
@@ -21,17 +22,21 @@ class ApiBundle(Bundle):
 
         self.serializers_by_model = {}
         """
-        Lookup of serializer classes (__kind__ == 'all') by model class name
+        Lookup of serializer classes by model class name
         """
 
         self.create_by_model = {}
         """
-        Lookup of serializer classes (__kind__ == 'create') by model class name
+        Lookup of serializer classes by model class name, as set by
+        ``@ma.serializer(create=True)`` (see
+        :meth:`~flask_unchained.bundles.api.extensions.Marshmallow.serializer`)
         """
 
         self.many_by_model = {}
         """
-        Lookup of serializer classes (__kind__ == 'many') by model class name
+        Lookup of serializer classes by model class name, as set by
+        ``@ma.serializer(many=True)`` (see
+        :meth:`~flask_unchained.bundles.api.extensions.Marshmallow.serializer`)
         """
 
     # the template folder gets set manually by the OpenAPI bp

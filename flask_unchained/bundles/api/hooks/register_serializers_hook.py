@@ -14,6 +14,10 @@ from ..extensions import api
 
 
 class RegisterSerializersHook(AppFactoryHook):
+    """
+    Registers serializers.
+    """
+
     bundle_module_name = 'serializers'
     name = 'serializers'
     run_after = ['models']

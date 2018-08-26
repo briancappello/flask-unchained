@@ -12,6 +12,12 @@ from ..model_resource import ModelResource
 
 
 class Api:
+    """
+    The `Api` extension::
+
+        from flask_unchained.bundles.api import api
+    """
+
     def __init__(self):
         self.app: FlaskUnchained = None
         self.spec: APISpec = None
@@ -23,11 +29,23 @@ class Api:
         self.spec = APISpec(app, plugins=app.config.get('API_APISPEC_PLUGINS'))
 
     def register_serializer(self, serializer, name=None, **kwargs):
+        """
+        Method to manually register a :class:`Serializer` with APISpec.
+
+        :param serializer:
+        :param name:
+        :param kwargs:
+        """
         name = name or serializer.Meta.model.__name__
         self.spec.definition(name, schema=serializer, **kwargs)
 
     # FIXME need to be able to create 'fake' schemas for the query parameter
     def register_model_resource(self, resource: ModelResource):
+        """
+        Method to manually register a :class:`ModelResource` with APISpec.
+
+        :param resource:
+        """
         model_name = resource.model.__name__
         self.spec.add_tag({'name': model_name, 'description': resource.model.__doc__})
 
@@ -101,11 +119,12 @@ class Api:
         :param str conv_format: Parameter format (optional)
         :param str name: Name of the converter. If not None, this name is used
             to register the converter in the Flask app.
-            Example: ::
+            Example::
+
                 api.register_converter(
                     UUIDConverter, 'string', 'UUID', name='uuid')
                 @blp.route('/pets/{uuid:pet_id}')
-                    ...
+                    # ...
                 api.register_blueprint(blp)
 
         This registers the converter in the Flask app and in the internal
@@ -133,7 +152,8 @@ class Api:
         - a pair of the form ``(type, format)`` to map to
         - a core marshmallow field type (then that type's mapping is used)
 
-        Examples: ::
+        Examples::
+
             # Map to ('string', 'UUID')
             api.register_field(UUIDField, 'string', 'UUID')
             # Map to ('string')

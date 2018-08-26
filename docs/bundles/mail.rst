@@ -28,6 +28,7 @@ Config
 
 .. automodule:: flask_unchained.bundles.mail.config
    :members:
+   :noindex:
 
 Commands
 ^^^^^^^^

@@ -6,4 +6,3 @@ python:
   setup_py_install: true
 
 requirements_file: requirements-dev.txt
-

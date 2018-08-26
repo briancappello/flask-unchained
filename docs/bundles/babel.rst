@@ -13,6 +13,7 @@ Config
 
 .. automodule:: flask_unchained.bundles.babel.config
    :members:
+   :noindex:
 
 Commands
 ^^^^^^^^

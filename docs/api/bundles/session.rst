@@ -4,6 +4,12 @@ Session Bundle
 .. automodule:: flask_unchained.bundles.session
    :members:
 
+Config
+~~~~~~
+
+.. automodule:: flask_unchained.bundles.session.config
+   :members:
+
 Extensions
 ~~~~~~~~~~
 

@@ -1,6 +1,5 @@
 import os
 
-from flask import current_app
 from flask_unchained.utils import get_boolean_env
 
 from .utils import _send_mail
@@ -117,3 +116,11 @@ class TestConfig:
     """
     Do not actually send emails when running tests.
     """
+
+
+__all__ = [
+    'Config',
+    'DevConfig',
+    'ProdConfig',
+    'TestConfig',
+]

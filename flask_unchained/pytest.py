@@ -60,7 +60,10 @@ def app(request):
 def maybe_inject_extensions_and_services(app, request):
     """
     Automatically used test fixture. Allows for using dependency-injected services as
-    if they were test fixtures.
+    if they were test fixtures::
+
+        def test_something(security_service=injectable, user_manager=injectable):
+            # assert important stuff
     """
     item = request._pyfuncitem
     fixture_names = getattr(item, "fixturenames", request.fixturenames)
@@ -157,10 +160,15 @@ def _process_test_client_args(args, kwargs):
 
 class HtmlTestClient(FlaskClient):
     """
-    Like :class:`~flask.testing.FlaskClient` except it supports passing an endpoint
-    as the first argument directly to the HTTP methods. (no need to use url_for)
+    Like :class:`~flask.testing.FlaskClient`, except it supports passing an endpoint
+    as the first argument directly to the HTTP get/post/etc methods (no need to use
+    ``url_for``, unless your URL rule has parameter names that conflict with the
+    keyword arguments of :class:`~werkzeug.test.EnvironBuilder`). It also adds support
+    for following redirects. Example usage::
 
-    Also supports following redirects.
+        def test_something(client: HtmlTestClient):
+            r = client.get('site_controller.index')
+            assert r.status_code == 200
     """
     def open(self, *args, **kwargs):
         args, kwargs = _process_test_client_args(args, kwargs)

@@ -1,13 +1,31 @@
 def macro(name):
-    """Replaces flask_admin.model.template.macro, adding support for using
-    macros imported from another file
+    """Replaces :func:`~flask_admin.model.template.macro`, adding support for using
+    macros imported from another file. For example:
 
-    For Example::
+    .. code:: html+jinja
+
+        {# templates/admin/column_formatters.html #}
+
+        {% macro email(model, column) %}
+          {% set address = model[column] %}
+          <a href="mailto:{{ address }}">{{ address }}</a>
+        {% endmacro %}
+
+    .. code:: python
 
         class FooAdmin(ModelAdmin):
             column_formatters = {
-                'col_name': macro('<macro_import_name_inside_template>.<macro_name>')
+                'col_name': macro('column_formatters.email')
             }
+
+    Also required for this to work, is to add the following to the top of your
+    master admin template:
+
+    .. code:: html+jinja
+
+        {# templates/admin/master.html #}
+
+        {% import 'admin/column_formatters.html' as column_formatters with context %}
     """
     def wrapper(view, context, model, column):
         if '.' in name:

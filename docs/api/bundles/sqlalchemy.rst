@@ -4,6 +4,12 @@ SQLAlchemy Bundle
 .. automodule:: flask_unchained.bundles.sqlalchemy
    :members:
 
+Config
+~~~~~~
+
+.. automodule:: flask_unchained.bundles.sqlalchemy.config
+   :members:
+
 Extensions
 ~~~~~~~~~~
 

@@ -465,7 +465,6 @@ def rule(rule: str,
     :param only_if: A boolean or callable to dynamically determine whether or not to
                     register this route with the app.
     :param rule_options: Other kwargs passed on to :class:`~werkzeug.routing.Rule`.
-    :return:
     """
     yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
                 endpoint=endpoint, is_member=is_member, methods=methods,

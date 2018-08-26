@@ -11,7 +11,7 @@ from ..flask_unchained import FlaskUnchained
 
 class RegisterCommandsHook(AppFactoryHook):
     """
-    Adds commands and command groups from bundles.
+    Registers commands and command groups from bundles.
     """
 
     bundle_module_name = 'commands'

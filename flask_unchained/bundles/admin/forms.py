@@ -6,6 +6,12 @@ from flask_admin.contrib.sqla.form import AdminModelConverter
 
 
 class ReorderableForm(BaseForm):
+    """
+    Like :class:`~flask_admin.form.BaseForm`, except it supports re-ordering
+    fields by setting the :attr:`field_order` class attribute to a list of
+    field names.
+    """
+
     def __init__(self, formdata=None, obj=None, prefix=u'', **kwargs):
         super().__init__(formdata=formdata, obj=obj, prefix=prefix, **kwargs)
         if hasattr(self, 'field_order'):
@@ -14,6 +20,11 @@ class ReorderableForm(BaseForm):
 
 
 class EnumField(Select2Field):
+    """
+    An extension of :class:`~flask_admin.form.fields.Select2Field`, adding support
+    for :class:`~enum.Enum`s.
+    """
+
     def __init__(self, column, **kwargs):
         assert isinstance(column.type, sqlalchemy.sql.sqltypes.Enum)
 

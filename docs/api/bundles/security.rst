@@ -4,6 +4,13 @@ Security Bundle
 .. autoclass:: flask_unchained.bundles.security.SecurityBundle
    :members:
 
+
+Config
+~~~~~~
+
+.. automodule:: flask_unchained.bundles.security.config
+   :members:
+
 Security Extension
 ~~~~~~~~~~~~~~~~~~
 

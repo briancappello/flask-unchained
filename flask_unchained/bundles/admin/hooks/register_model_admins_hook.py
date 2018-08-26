@@ -5,7 +5,11 @@ from flask_unchained import AppFactoryHook
 from ..model_admin import ModelAdmin
 
 
-class RegisterAdminsHook(AppFactoryHook):
+class RegisterModelAdminsHook(AppFactoryHook):
+    """
+    Registers ModelAdmins.
+    """
+
     bundle_module_name = 'admins'
     name = 'admins'
     run_after = ['bundle_template_folders', 'extensions', 'models']

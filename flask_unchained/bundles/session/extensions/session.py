@@ -6,6 +6,12 @@ from ..session_interfaces import SqlAlchemySessionInterface
 
 
 class Session(BaseSession):
+    """
+    The `Session` extension::
+
+        from flask_unchained.bundles.session import session
+    """
+
     def init_app(self, app):
         super().init_app(app)
         app.session_interface.serializer = dill

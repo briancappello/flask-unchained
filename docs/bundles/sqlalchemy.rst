@@ -37,6 +37,7 @@ Config
 
 .. automodule:: flask_unchained.bundles.sqlalchemy.config
    :members:
+   :noindex:
 
 Commands
 ^^^^^^^^

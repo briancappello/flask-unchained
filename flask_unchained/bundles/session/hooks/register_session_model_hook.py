@@ -3,6 +3,11 @@ from flask_unchained import AppFactoryHook
 
 
 class RegisterSessionModelHook(AppFactoryHook):
+    """
+    If using ``SESSION_SQLALCHEMY``, register the ``Session`` model with
+    the SQLAlchemy Bundle.
+    """
+
     bundle_module_name = None
     run_after = ['init_extensions', 'models']
 

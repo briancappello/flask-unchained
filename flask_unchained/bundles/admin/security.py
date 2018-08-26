@@ -10,6 +10,10 @@ from flask_unchained import redirect, url_for
 
 
 class AdminSecurityMixin:
+    """
+    Mixin class for Admin views providing integration with the Security Bundle.
+    """
+
     def is_accessible(self):
         if (user.is_active
                 and user.is_authenticated

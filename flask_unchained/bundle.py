@@ -1,7 +1,7 @@
 import importlib
+import os
 import sys
 
-from os import path
 from typing import *
 
 from .flask_unchained import FlaskUnchained
@@ -23,12 +23,12 @@ class ModuleNameDescriptor:
 class FolderDescriptor:
     def __get__(self, instance, cls):
         module = importlib.import_module(cls.module_name)
-        return path.dirname(module.__file__)
+        return os.path.dirname(module.__file__)
 
 
 class RootFolderDescriptor:
     def __get__(self, instance, cls):
-        return path.dirname(cls.folder)
+        return os.path.dirname(cls.folder)
 
 
 class NameDescriptor:
@@ -41,9 +41,9 @@ class NameDescriptor:
 class StaticFolderDescriptor:
     def __get__(self, instance, cls):
         if not hasattr(instance, '_static_folder'):
-            bundle_dir = path.dirname(sys.modules[instance.module_name].__file__)
-            instance._static_folder = path.join(bundle_dir, 'static')
-            if not path.exists(instance._static_folder):
+            bundle_dir = os.path.dirname(sys.modules[instance.module_name].__file__)
+            instance._static_folder = os.path.join(bundle_dir, 'static')
+            if not os.path.exists(instance._static_folder):
                 instance._static_folder = None
         return instance._static_folder
 
@@ -57,9 +57,9 @@ class StaticUrlPathDescriptor:
 class TemplateFolderDescriptor:
     def __get__(self, instance, cls):
         if not hasattr(cls, '_template_folder'):
-            bundle_dir = path.dirname(sys.modules[cls.module_name].__file__)
-            cls._template_folder = path.join(bundle_dir, 'templates')
-            if not path.exists(cls._template_folder):
+            bundle_dir = os.path.dirname(sys.modules[cls.module_name].__file__)
+            cls._template_folder = os.path.join(bundle_dir, 'templates')
+            if not os.path.exists(cls._template_folder):
                 cls._template_folder = None
         return cls._template_folder
 
@@ -261,9 +261,8 @@ class Bundle(metaclass=BundleMeta):
             top_bundle = subclasses[0]
             subclasses = top_bundle.__subclasses__()
 
-        top_bundle = top_bundle()
         return any([b.name == self.name and b.__class__ != self.__class__
-                    for b in top_bundle.iter_class_hierarchy()])
+                    for b in top_bundle().iter_class_hierarchy()])
 
     def _has_views_module(self):
         views_module_name = getattr(self, 'views_module_name', 'views')

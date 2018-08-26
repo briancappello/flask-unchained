@@ -10,3 +10,11 @@ EXTENSIONS = {
     'api': api,
     'ma': (ma, ['db']),
 }
+
+
+__all__ = [
+    'api',
+    'Api',
+    'ma',
+    'Marshmallow',
+]

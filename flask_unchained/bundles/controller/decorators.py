@@ -6,7 +6,7 @@ def route(rule=None, blueprint=None, defaults=None, endpoint=None,
           is_member=False, methods=None, only_if=None, **rule_options):
     """
     Decorator to set default route rules for a view function. The arguments this
-    function accepts are very similar to Flask's ``app.route`` and ``bp.route``,
+    function accepts are very similar to Flask's :meth:`~flask.Flask.route`,
     however, the ``is_member`` perhaps deserves an example::
 
         class UserResource(ModelResource):
@@ -18,10 +18,12 @@ def route(rule=None, blueprint=None, defaults=None, endpoint=None,
             def set_profile_pic(user):
                 # do stuff
 
+        # registered like so in your ``app_bundle/routes.py``:
         routes = lambda: [
             resource(UserResource)
         ]
 
+        # results in the following routes:
         # UserResource.list             => GET  /users
         # UserResource.get              => GET  /users/<int:id>
         # UserResource.set_profile_pic  => POST /users/<int:id>/set-profile-pic
@@ -58,7 +60,8 @@ def no_route(arg=None):
     """
     Decorator to mark a
     :class:`~flask_unchained.bundles.controller.controller.Controller` or
-    :class:`~flask_unchained.bundles.resource.resource.Resource` method as not a route.
+    :class:`~flask_unchained.bundles.resource.resource.Resource` method as *not*
+    a route.
     """
     def wrapper(fn):
         setattr(fn, NO_ROUTES_ATTR, True)

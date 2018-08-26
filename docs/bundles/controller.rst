@@ -11,6 +11,7 @@ Config
 
 .. automodule:: flask_unchained.bundles.controller.config
    :members:
+   :noindex:
 
 API Documentation
 ^^^^^^^^^^^^^^^^^

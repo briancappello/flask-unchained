@@ -15,6 +15,7 @@ Forms
 
 .. automodule:: flask_unchained.bundles.admin.forms
    :members:
+   :exclude-members: CustomAdminConverter
 
 Hooks
 ~~~~~

@@ -34,6 +34,7 @@ Config
 
 .. automodule:: flask_unchained.bundles.session.config
    :members:
+   :noindex:
 
 API Documentation
 ^^^^^^^^^^^^^^^^^

@@ -5,7 +5,11 @@ from flask_unchained import AppFactoryHook
 from ..model_resource import ModelResource
 
 
-class RegisterResourcesHook(AppFactoryHook):
+class RegisterModelResourcesHook(AppFactoryHook):
+    """
+    Registers ModelResources and configures Serializers on them.
+    """
+
     bundle_module_name = 'views'
     bundle_override_module_name_attr = 'resources_module_name'
     name = 'resources'

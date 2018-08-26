@@ -5,6 +5,12 @@ from flask_unchained import FlaskUnchained, unchained, injectable
 
 
 class Migrate(BaseMigrate):
+    """
+    The `Migrate` extension::
+
+        from flask_unchained.bundles.sqlalchemy import migrate
+    """
+
     @unchained.inject('db')
     def init_app(self, app: FlaskUnchained, db=injectable):
         alembic_config = app.config.get('ALEMBIC', {})

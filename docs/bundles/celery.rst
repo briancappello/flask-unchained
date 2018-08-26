@@ -35,6 +35,7 @@ Config
 
 .. autoclass:: flask_unchained.bundles.celery.config.Config
    :members:
+   :noindex:
 
 Commands
 ^^^^^^^^

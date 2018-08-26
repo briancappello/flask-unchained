@@ -1,4 +1,4 @@
-from flask_mail import _MailMixin
+from flask_mail import _MailMixin, Message
 from flask_unchained import FlaskUnchained
 from flask_unchained.utils import ConfigProperty, ConfigPropertyMeta
 from types import FunctionType
@@ -7,7 +7,9 @@ from typing import *
 
 class Mail(_MailMixin, metaclass=ConfigPropertyMeta):
     """
-    The mail extension.
+    The `Mail` extension::
+
+        from flask_unchained.bundles.mail import mail
     """
 
     server: str = ConfigProperty()
@@ -25,18 +27,20 @@ class Mail(_MailMixin, metaclass=ConfigPropertyMeta):
     send: FunctionType = ConfigProperty('MAIL_SEND_FN')
 
     def send_message(self,
-                     subject: Optional[str] = None,
+                     subject_or_message: Optional[Union[Message, str]] = None,
                      to: Optional[Union[str, List[str]]] = None,
                      **kwargs):
         """
-        Send an email using the configured :attr:`send` function.
+        Send an email using the send function as configured by
+        :attr:`~flask_unchained.bundles.mail.config.Config.MAIL_SEND_FN`.
 
-        :param subject: The message subject.
-        :param to: The message recipient(s)
+        :param subject_or_message: The subject line, or an instance of
+                                   :class:`flask_mail.Message`.
+        :param to: The message recipient(s).
         :param kwargs: Extra values to pass on to :class:`~flask_mail.Message`
         """
         to = to or kwargs.pop('recipients', [])
-        return self.send(subject, to, **kwargs)
+        return self.send(subject_or_message, to, **kwargs)
 
     def init_app(self, app: FlaskUnchained):
         app.extensions['mail'] = self

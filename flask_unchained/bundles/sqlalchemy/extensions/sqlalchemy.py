@@ -15,6 +15,12 @@ from ..validation import (
 
 
 class SQLAlchemy(BaseSQLAlchemy):
+    """
+    The `SQLAlchemy` extension::
+
+        from flask_unchained.bundles.sqlalchemy import db
+    """
+
     def __init__(self, app=None, use_native_unicode=True, session_options=None,
                  metadata=None, query_class=BaseQuery, model_class=BaseModel):
         super().__init__(app, use_native_unicode=use_native_unicode,
@@ -131,7 +137,7 @@ class SQLAlchemy(BaseSQLAlchemy):
 
     def make_declarative_base(self, model, metadata=None) -> BaseModel:
         if not isinstance(model, DefaultMeta):
-            def make_model_class(name, bases, clsdict):
+            def make_model_metaclass(name, bases, clsdict):
                 clsdict['__abstract__'] = True
                 clsdict['__module__'] = model.__module__
                 if hasattr(model, 'Meta'):
@@ -144,7 +150,7 @@ class SQLAlchemy(BaseSQLAlchemy):
                 cls=model,
                 name='Model',
                 metadata=metadata,
-                metaclass=make_model_class,
+                metaclass=make_model_metaclass,
                 constructor=None,  # use the constructor declared on the base class
             )
         return super().make_declarative_base(model, metadata)
