@@ -17,6 +17,7 @@ flask_sqlalchemy
 flask_wtf
 ipython
 itsdangerous
+jinja2
 lxml
 marshmallow
 marshmallow-sqlalchemy
