@@ -1,5 +1,5 @@
-Admin Bundle
-^^^^^^^^^^^^
+Admin Bundle API Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: flask_unchained.bundles.admin
    :members:

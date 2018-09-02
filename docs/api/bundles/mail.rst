@@ -1,5 +1,5 @@
-Mail Bundle
-^^^^^^^^^^^
+Mail Bundle API Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: flask_unchained.bundles.mail.MailBundle
    :members:

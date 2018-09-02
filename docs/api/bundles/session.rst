@@ -1,5 +1,5 @@
-Session Bundle
-^^^^^^^^^^^^^^
+Session Bundle API Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: flask_unchained.bundles.session
    :members:

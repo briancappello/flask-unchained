@@ -1,5 +1,5 @@
-Security Bundle
-^^^^^^^^^^^^^^^
+Security Bundle API Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: flask_unchained.bundles.security.SecurityBundle
    :members:

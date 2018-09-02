@@ -1,5 +1,5 @@
-Celery Bundle
-^^^^^^^^^^^^^
+Celery Bundle API Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: flask_unchained.bundles.celery.CeleryBundle
    :members:

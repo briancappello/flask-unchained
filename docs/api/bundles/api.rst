@@ -1,5 +1,5 @@
-API Bundle
-^^^^^^^^^^
+API Bundle API Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: flask_unchained.bundles.api
    :members:

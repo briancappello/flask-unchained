@@ -1,5 +1,5 @@
-Babel Bundle
-^^^^^^^^^^^^
+Babel Bundle API Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: flask_unchained.bundles.babel.BabelBundle
    :members:

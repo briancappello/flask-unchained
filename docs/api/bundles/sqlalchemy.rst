@@ -1,5 +1,5 @@
-SQLAlchemy Bundle
-^^^^^^^^^^^^^^^^^
+SQLAlchemy Bundle API Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: flask_unchained.bundles.sqlalchemy
    :members:

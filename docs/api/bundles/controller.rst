@@ -1,5 +1,5 @@
-Controller Bundle
-^^^^^^^^^^^^^^^^^
+Controller Bundle API Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: flask_unchained.bundles.controller.ControllerBundle
    :members:
