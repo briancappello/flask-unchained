@@ -10,13 +10,13 @@ First we need to install SQLAlchemy and related dependencies:
 
 .. code:: bash
 
-   $ pip install flask-unchained[sqlalchemy]
+   pip install flask-unchained[sqlalchemy]
 
 We also need to update our tests so that they load the pytest fixtures from the SQLAlchemy Bundle:
 
 .. code:: bash
 
-   $ touch tests/conftest.py
+   touch tests/conftest.py
 
 .. code:: python
 
@@ -47,7 +47,7 @@ If you'd like to change this, it would look like this:
 
 .. code:: python
 
-   # flaskr_unchained/config.py
+   # app/config.py
 
    class Config:
       # ...
@@ -59,7 +59,7 @@ If instead you'd like to use MariaDB/MySQL or PostgreSQL, now would be the time 
 
 .. code:: python
 
-   # flaskr_unchained/config.py
+   # app/config.py
 
    class Config(AppConfig):
        # ...
@@ -88,10 +88,10 @@ Note that you'll probably need to install the relevant driver package, eg:
 .. code:: bash
 
    # for psycopg2
-   $ pip install --no-binary psycopg2
+   pip install --no-binary psycopg2
 
    # for mysql
-   $ pip install mysqlclient
+   pip install mysqlclient
 
 See `the upstream docs on SQLAlchemy dialects <http://docs.sqlalchemy.org/en/latest/dialects/index.html>`_ for details.
 
@@ -104,14 +104,14 @@ The last step is to initialize the database migrations folder:
 
 .. code:: bash
 
-   $ flask db init
+   flask db init
 
 We should commit our changes before continuing:
 
 .. code:: bash
 
-   $ git add .
-   $ git status
-   $ git commit -m 'install sqlalchemy bundle'
+   git add .
+   git status
+   git commit -m 'install sqlalchemy bundle'
 
 Next, in order to demonstrate using migrations, and also as preparation for installing the Security Bundle, next let's continue to setting up :doc:`session` using the Session Bundle.

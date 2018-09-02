@@ -47,7 +47,7 @@ Generally speaking, hooks are responsible for importing and discovering code, an
 
 .. code:: bash
 
-   $ flask unchained hooks
+   flask unchained hooks
    Hook Name                    Default Bundle Module  Bundle Module Override Attr  Description
    ----------------------------------------------------------------------------------------------------------------------------------------------
    run_hooks_hook               hooks                  hooks_module_name            An internal hook to discover and run all the other hooks.

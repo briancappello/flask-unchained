@@ -8,53 +8,53 @@ Create a new directory and enter it:
 
 .. code:: bash
 
-   $ mkdir flaskr-unchained
-   $ cd flaskr-unchained
+   mkdir flaskr-unchained
+   cd flaskr-unchained
 
 The tutorial will assume you’re working from the ``flaskr-unchained`` directory from now on. All commands are assumed to be run from this top-level project directory, and the file names at the top of each code block are also relative to this directory.
 
 Create a new virtualenv and activate it:
 
-**Good: Using the built-in venv**
-
-.. code:: bash
-
-   # create our virtualenv and activate it
-   $ python3 -m venv venv
-   $ . venv/bin/activate
-
-   # install flask-unchained
-   $ pip install flask-unchained[dev]
-
-   # refresh the virtualenv so that pytest will work correctly
-   $ deactivate && . venv/bin/activate
-
-**Better: Using virtualenvwrapper**
-
-.. code:: bash
-
-   # create our virtualenv and activate it
-   $ mkvirtualenv flaskr-unchained
-
-   # install flask-unchained
-   $ pip install flask-unchained[dev]
-
-   # refresh the virtualenv so that pytest will work correctly
-   $ deactivate && workon flaskr-unchained
-
-**Best: Using Pipenv**
+**Using Pipenv**
 
 .. code:: bash
 
    # create our virtualenv and install flask-unchained into it
-   $ pipenv install flask-unchained
-   $ pipenv install --dev flask-unchained[dev]
+   pipenv install flask-unchained
+   pipenv install --dev flask-unchained[dev]
 
    # activate the virtualenv
-   $ pipenv shell
+   pipenv shell
+
+**Using virtualenvwrapper**
+
+.. code:: bash
+
+   # create our virtualenv and activate it
+   mkvirtualenv flaskr-unchained
+
+   # install flask-unchained
+   pip install flask-unchained[dev]
+
+   # refresh the virtualenv so that pytest will work correctly
+   deactivate && workon flaskr-unchained
+
+**Using the built-in venv**
+
+.. code:: bash
+
+   # create our virtualenv and activate it
+   python3 -m venv venv
+   . venv/bin/activate
+
+   # install flask-unchained
+   pip install flask-unchained[dev]
+
+   # refresh the virtualenv so that pytest will work correctly
+   deactivate && . venv/bin/activate
 
 NOTE: There are other ways to create virtualenvs for Python, and if you have a different
-preferred method, that's fine, but you should definitely always use a virtualenv by
+preferred method that's fine, but you should definitely always use a virtualenv by
 some way or another.
 
 Project Layout
@@ -106,10 +106,10 @@ The starting project layout of our hello world app looks like this:
 .. code:: bash
 
    /home/user/dev/flaskr-unchained
-   ├── flaskr_unchained
+   ├── app
    │   ├── templates
    │   │   └── site
-   │   │       └── hello.html
+   │   │       └── index.html
    │   ├── __init__.py
    │   ├── config.py
    │   ├── routes.py
@@ -117,7 +117,7 @@ The starting project layout of our hello world app looks like this:
    ├── static
    ├── templates
    ├── tests
-   │   ├── flaskr_unchained
+   │   ├── app
    │   │   └── test_views.py
    │   └── __init__.py
    └── unchained_config.py
@@ -126,11 +126,10 @@ Create the files and folders:
 
 .. code:: bash
 
-   $ mkdir -p flaskr_unchained/templates/site static templates tests/flaskr_unchained \
-     && touch unchained_config.py flaskr_unchained/__init__.py flaskr_unchained/config.py \
-     && touch flaskr_unchained/views.py flaskr_unchained/routes.py \
-     && touch flaskr_unchained/templates/site/index.html \
-     && touch tests/__init__.py tests/flaskr_unchained/test_views.py
+   mkdir -p app/templates/site static templates tests/app \
+     && touch unchained_config.py app/__init__.py app/config.py \
+     && touch app/views.py app/routes.py app/templates/site/index.html \
+     && touch tests/__init__.py tests/app/test_views.py
 
 Now, let's configure Flask Unchained:
 
@@ -156,27 +155,27 @@ Now, let's configure Flask Unchained:
    STATIC_URL_PATH = '/static' if STATIC_FOLDER else None
 
    BUNDLES = [
-       'flaskr_unchained',  # your app bundle *must* be last
+       'app',  # your app bundle *must* be last
    ]
 
-The purpose of ``unchained_config.py`` is to define which bundles to load and the keyword arguments passed to the :class:`flask_unchained.flask_unchained.FlaskUnchained` constructor (which takes the same arguments as the original :class:`~flask.Flask` constructor). Because we've named our app bundle module ``flaskr_unchained``, we make this the last element of the ``BUNDLES`` list.
+The purpose of ``unchained_config.py`` is to define which bundles to load and the keyword arguments passed to the :class:`~flask_unchained.FlaskUnchained` constructor (which takes the same arguments as the original :class:`~flask.Flask` constructor). Because we've named our app bundle module ``app``, we make this the last element of the ``BUNDLES`` list.
 
-Whenever you create a new app bundle, you must subclass :class:`flask_unchained.bundle.AppBundle` in your app bundle's module root. The :class:`flask_unchained.bundle.AppBundle` base class contains a bit of magic that's necessary for all the sub-modules of your bundle to be discovered by Flask Unchained.
+Whenever you create a new app bundle, you must subclass :class:`~flask_unchained.AppBundle` in your app bundle's module root. The :class:`~flask_unchained.AppBundle` base class contains a bit of magic that's necessary for all the sub-modules of your bundle to be discovered by Flask Unchained.
 
 .. code:: python
 
-   # flaskr_unchained/__init__.py
+   # app/__init__.py
 
    from flask_unchained import AppBundle
 
    class FlaskrUnchained(AppBundle):
        pass
 
-In order to configure your app, Flask Unchained uses environment-specific configuration classes. Hopefully the following code is pretty self-explanatory. (In fact, aside from ``class Config`` subclassing ``AppConfig`` (which is required for the app bundle's base config class), all this is doing is setting the ``SECRET_KEY`` option across all of our environments.)
+In order to configure your app, Flask Unchained uses environment-specific configuration classes:
 
 .. code:: python
 
-   # flaskr_unchained/config.py
+   # app/config.py
 
    import os
 
@@ -204,13 +203,13 @@ In order to configure your app, Flask Unchained uses environment-specific config
 
 How this works is pretty simple. First, we load configuration defaults defined within Flask Unchained itself. At the time of writing, the only defaults it sets are the ``DEBUG`` option (pulled from the ``FLASK_DEBUG`` environment variable), and only when :python:`env == 'test'`, :code:`TESTING = True` and :code:`WTF_CSRF_ENABLED = False`.
 
-Next, we load the config defaults from the bundles defined in your ``BUNDLES`` setting. First the options from the base :class:`Config` class are loaded, and then if an env-specific config class exists, we then load options from it (possibly overwriting settings from the base :class:`Config`). Technically then, in your bundle ``config`` modules, env-specific configs don't even need to subclass the base :class:`Config` class for inheritance to work as expected (but it's probably a good idea to do it anyway, because it makes the resultant behavior more obvious). Also worth noting is that all of the env-specific configs are optional; if they don't exist Flask Unchained will simply skip trying to load them. Your app bundle is the one special case - it's the one bundle here the base :class:`Config` class isn't optional, and because it gets loaded last, it can overwrite settings from *any* of your loaded bundles.
+Next, we load the config defaults from the bundles defined in your ``unchained_config.BUNDLES`` setting. First the options from the ``Config`` class are loaded, and then if an env-specific config class exists, we then load options from it (possibly overwriting settings from ``Config``). Technically then, in your bundle ``config`` modules, env-specific configs don't even need to subclass the ``Config`` class for inheritance to work as expected (but it's probably a good idea to do it anyway, because it makes the resultant behavior more obvious). Also worth noting is that all of the config classes are optional; if they don't exist Flask Unchained will simply skip trying to load them. Your app bundle is the one bundle where the ``Config`` class isn't optional. It's also special in that it gets loaded last and can therefore override all of the default settings as loaded from Flask Unchained and your ``BUNDLES``.
 
 Taking the above into account, the truly minimally required app bundle config is actually the following:
 
 .. code:: python
 
-   # flaskr_unchained/config.py
+   # app/config.py
 
    import os
 
@@ -224,7 +223,7 @@ Now let's define our hello world view:
 
 .. code:: python
 
-   # flaskr_unchained/views.py
+   # app/views.py
 
    from flask_unchained import Controller, route
 
@@ -265,7 +264,7 @@ The template's code itself is about as simple as it gets, with a tiny bit of sty
 
 .. code:: html
 
-   <!-- flaskr_unchained/templates/site/index.html -->
+   <!-- app/templates/site/index.html -->
 
    <!DOCTYPE html>
    <html>
@@ -290,25 +289,25 @@ The template's code itself is about as simple as it gets, with a tiny bit of sty
    </body>
    </html>
 
-Lastly, Flask Unchained uses declarative routing. This means that while view functions are decorated with routing defaults, you must explicitly enable the routes you want:
+Lastly, Flask Unchained uses declarative routing. This means that while view functions can be decorated with routing defaults, you must explicitly enable the routes you want:
 
 .. code:: python
 
-   # flaskr_unchained/routes.py
+   # app/routes.py
 
-   from flask_unchained import (include, prefix, controller, resource, func,
+   from flask_unchained import (controller, resource, func, include, prefix,
                                 get, post, patch, put, rule)
 
    from .views import SiteController
 
 
    routes = lambda: [
-       controller('/', SiteController),
+       controller(SiteController),
    ]
 
 Now start the development server, and you should see your site running at `<http://localhost:5000>`_::
 
-   $ flask run
+   flask run
     * Environment: development
     * Debug mode: on
     * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
@@ -317,7 +316,7 @@ Let's add a quick test before we continue.
 
 .. code:: python
 
-   # tests/flaskr_unchained/test_views.py
+   # tests/app/test_views.py
 
    class TestSiteController:
        def test_index(self, client):
@@ -329,14 +328,14 @@ And now let's make sure it passes:
 
 .. code:: bash
 
-   $ pytest
+   pytest
    ======================== test session starts ========================
    platform linux -- Python 3.6.6, pytest-3.6.4, py-1.5.4, pluggy-0.7.1
    rootdir: /home/user/dev/flaskr-unchained, inifile:
    plugins: flask-0.10.0, Flask-Unchained-0.5.1
    collected 1 item
 
-   tests/flaskr_unchained/test_views.py .                                    [100%]
+   tests/app/test_views.py .                                    [100%]
    ======================== 1 passed in 0.18 seconds ====================
 
 NOTE: If you get any errors, you may need to deactivate and reactivate your virtualenv if you haven't already since installing ``pytest``.
@@ -365,12 +364,12 @@ Initialize the repo and make our first commit:
 
 .. code:: bash
 
-   $ git init
-   $ git add .
+   git init
+   git add .
 
    # review to make sure it's not going to do anything you don't want it to:
-   $ git status
+   git status
 
-   $ git commit -m 'initial hello world commit'
+   git commit -m 'initial hello world commit'
 
 OK, everything works, but it doesn't do anything more than display a static page. Let's make things a bit more interesting by moving on to :doc:`templates_and_static_assets`.

@@ -16,7 +16,7 @@ Install dependencies:
 
 .. code:: bash
 
-   $ pip install flask-unchained[session]
+   pip install flask-unchained[session]
 
 And enable the bundle in your ``unchained_config.py``:
 

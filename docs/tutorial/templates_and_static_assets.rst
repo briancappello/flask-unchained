@@ -5,7 +5,7 @@ Our site looks pretty weak as it stands. Let's add Bootstrap and a landing page 
 
 .. code:: bash
 
-   $ wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js -O static/bootstrap-v4.1.2.min.js \
+   wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js -O static/bootstrap-v4.1.2.min.js \
      && wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css -O static/bootstrap-v4.1.2.min.css \
      && wget https://code.jquery.com/jquery-3.3.1.slim.min.js -O static/jquery-v3.3.1.slim.min.js \
      && wget https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js -O static/popper-v1.14.3.min.js \
@@ -136,11 +136,11 @@ Pretty simple, but this little bit of code makes our template code much more rea
    {% endif %}
    {% endwith %}
 
-And now let's update our ``flaskr_unchained/templates/site/index.html`` template to use our new layout template:
+And now let's update our ``app/templates/site/index.html`` template to use our new layout template:
 
 .. code:: html+jinja
 
-   {# flaskr_unchained/templates/site/index.html #}
+   {# app/templates/site/index.html #}
 
    {% extends 'layout.html' %}
 
@@ -158,14 +158,14 @@ Tests should still pass...
 
 .. code:: bash
 
-   $ pytest
+   pytest
    =================================== test session starts ====================================
    platform linux -- Python 3.6.6, pytest-3.6.4, py-1.5.4, pluggy-0.7.1
    rootdir: /home/user/dev/flaskr-unchained, inifile:
    plugins: flask-0.10.0, Flask-Unchained-0.5.1
    collected 1 item
 
-   tests/flaskr_unchained/test_views.py .                                                [100%]
+   tests/app/test_views.py .                                                [100%]
 
    ================================= 1 passed in 0.10 seconds =================================
 
@@ -173,9 +173,9 @@ This seems like a good place to make a commit:
 
 .. code:: bash
 
-   $ git add .
-   $ git status
-   $ git commit -m 'refactor templates to extend a base layout template'
+   git add .
+   git status
+   git commit -m 'refactor templates to extend a base layout template'
 
 Customizing Styles
 ^^^^^^^^^^^^^^^^^^
@@ -184,7 +184,7 @@ If you take a look at how our new template looks, it's pretty good, but the ``h1
 
 .. code:: bash
 
-   $ mkdir static/vendor && mv static/*.min.* static/vendor && touch static/main.css
+   mkdir static/vendor && mv static/*.min.* static/vendor && touch static/main.css
 
 Let's update our layout template to reference the changed locations of the vendor assets, and our new ``main.css`` stylesheet:
 
@@ -216,9 +216,9 @@ Let's commit our changes:
 
 .. code:: bash
 
-   $ git add .
-   $ git status
-   $ git commit -m 'add a custom stylesheet'
+   git add .
+   git status
+   git commit -m 'add a custom stylesheet'
 
 Adding a Landing Page
 ^^^^^^^^^^^^^^^^^^^^^
@@ -227,7 +227,7 @@ OK, let's refactor our views so we have a landing page and a separate page for t
 
 .. code:: python
 
-   # flaskr_unchained/views.py
+   # app/views.py
 
    from flask_unchained import Controller, route, param_converter
 
@@ -258,7 +258,7 @@ Now that we've added another view/route, our templates need some work again. Let
 
 .. code:: html+jinja
 
-   {# flaskr_unchained/templates/site/hello.html #}
+   {# app/templates/site/hello.html #}
 
    {% extends 'layout.html' %}
 
@@ -274,7 +274,7 @@ Now that we've added another view/route, our templates need some work again. Let
 
 .. code:: html+jinja
 
-   {# flaskr_unchained/templates/site/index.html #}
+   {# app/templates/site/index.html #}
 
    {% extends 'layout.html' %}
 
@@ -298,7 +298,7 @@ We need to update our tests:
 
 .. code:: python
 
-   # tests/flaskr_unchained/test_views.py
+   # tests/app/test_views.py
 
    class TestSiteController:
        def test_index(self, client):
@@ -320,14 +320,14 @@ Let's make sure they pass:
 
 .. code:: bash
 
-   $ pytest
+   pytest
    =================================== test session starts ===================================
    platform linux -- Python 3.6.6, pytest-3.6.4, py-1.5.4, pluggy-0.7.1
    rootdir: /home/user/dev/flaskr-unchained, inifile:
    plugins: flask-0.10.0, Flask-Unchained-0.5.1
    collected 3 items
 
-   tests/flaskr_unchained/test_views.py ...                                             [100%]
+   tests/app/test_views.py ...                                             [100%]
 
    ================================ 3 passed in 0.17 seconds =================================
 
@@ -335,9 +335,9 @@ Cool. You guessed it, time to make a commit!
 
 .. code:: bash
 
-   $ git add .
-   $ git status
-   $ git commit -m 'add landing page'
+   git add .
+   git status
+   git commit -m 'add landing page'
 
 Adding a Form to the Hello View
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -348,7 +348,7 @@ Let's update our hello template:
 
 .. code:: html+jinja
 
-   {# flaskr_unchained/templates/site/hello.html #}
+   {# app/templates/site/hello.html #}
 
    {% extends 'layout.html' %}
 
@@ -380,7 +380,7 @@ And the corresponding view code:
 
 .. code:: python
 
-   # flaskr_unchained/views.py
+   # app/views.py
 
    from flask_unchained import Controller, route, request, param_converter
 
@@ -415,7 +415,7 @@ And let's fix our tests:
 
 .. code:: python
 
-   # tests/flaskr_unchained/test_views.py
+   # tests/app/test_views.py
 
    # add the following method to the TestSiteController class
    def test_hello_with_form_post(self, client):
@@ -431,14 +431,14 @@ Make sure they pass,
 
 .. code:: bash
 
-   $ pytest
+   pytest
    ================================== test session starts ===================================
    platform linux -- Python 3.6.6, pytest-3.7.1, py-1.5.4, pluggy-0.7.1
    rootdir: /home/user/dev/flaskr-unchained, inifile:
    plugins: flask-0.10.0, Flask-Unchained-0.5.1
    collected 4 items
 
-   tests/flaskr_unchained/test_views.py ....                                           [100%]
+   tests/app/test_views.py ....                                           [100%]
 
    ================================ 4 passed in 0.16 seconds ================================
 
@@ -446,9 +446,9 @@ And commit our changes once satisfied:
 
 .. code:: bash
 
-   $ git add .
-   $ git status
-   $ git commit -m 'add a form to the hello view'
+   git add .
+   git status
+   git commit -m 'add a form to the hello view'
 
 Converting to a Flask-WTF Form
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -457,11 +457,11 @@ The above method works, as far as it goes, but both our view code and our templa
 
 .. code:: bash
 
-   $ touch flaskr_unchained/forms.py
+   touch app/forms.py
 
 .. code:: python
 
-   # flaskr_unchained/forms.py
+   # app/forms.py
 
    from flask_unchained.forms import FlaskForm, fields, validators
 
@@ -475,7 +475,7 @@ The updated view code:
 
 .. code:: python
 
-   # flaskr_unchained/views.py
+   # app/views.py
 
    from flask_unchained import Controller, route, request, param_converter
 
@@ -499,7 +499,7 @@ And the updated template:
 
 .. code:: html+jinja
 
-   {# flaskr_unchained/templates/site/hello.html #}
+   {# app/templates/site/hello.html #}
 
    {% extends 'layout.html' %}
 
@@ -522,7 +522,7 @@ What is this mythical ``render_form`` macro? Well, we need to write it ourselves
 
 .. code:: bash
 
-   $ touch templates/_macros.html
+   touch templates/_macros.html
 
 .. code:: html+jinja
 
@@ -593,7 +593,7 @@ As usual, let's update our tests and make sure they pass:
 
 .. code:: python
 
-   # tests/flaskr_unchained/test_views.py
+   # tests/app/test_views.py
 
    from flask_unchained import url_for
 
@@ -637,14 +637,14 @@ One thing to note here, is we've added the ``templates`` fixture to each test to
 
 .. code:: bash
 
-   $ pytest
+   pytest
    ================================== test session starts ===================================
    platform linux -- Python 3.6.6, pytest-3.7.1, py-1.5.4, pluggy-0.7.1
    rootdir: /home/user/dev/flaskr-unchained, inifile:
    plugins: flask-0.10.0, Flask-Unchained-0.5.1
    collected 5 items
 
-   tests/flaskr_unchained/test_views.py .....                                         [100%]
+   tests/app/test_views.py .....                                         [100%]
 
    ================================ 5 passed in 0.19 seconds ================================
 
@@ -652,8 +652,8 @@ Once your tests are passing, it's time to make commit:
 
 .. code:: bash
 
-   $ git add .
-   $ git status
-   $ git commit -m 'refactor hello form to use flask-wtf'
+   git add .
+   git status
+   git commit -m 'refactor hello form to use flask-wtf'
 
 Cool. Let's move on to :doc:`db` in preparation for installing the Security Bundle.

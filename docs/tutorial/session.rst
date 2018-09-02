@@ -8,7 +8,7 @@ Install Dependencies
 
 .. code:: bash
 
-   $ pip install flask-unchained[session]
+   pip install flask-unchained[session]
 
 Enable the Session Bundle:
 
@@ -29,7 +29,7 @@ Let's configure the Session Bundle to use SQLAlchemy:
 
 .. code:: python
 
-   # flaskr_unchained/config.py
+   # app/config.py
 
    class Config(AppConfig):
        # ...
@@ -45,7 +45,7 @@ And now we need to create the table, using a database migration:
 
 .. code:: bash
 
-   $ flask db migrate -m 'create sessions table'
+   flask db migrate -m 'create sessions table'
 
 It's always a good idea to inspect the migration to make sure it's going to do exactly what you expect it to do before running it. It should look something about like this:
 
@@ -95,14 +95,14 @@ Once you're satisfied, run the migration:
 
 .. code:: bash
 
-   $ flask db upgrade
+   flask db upgrade
 
 That's it for setting up server side sessions! Let's make a commit before we continue:
 
 .. code:: bash
 
-   $ git add .
-   $ git status
-   $ git commit -m 'install session bundle'
+   git add .
+   git status
+   git commit -m 'install session bundle'
 
 And proceed to :doc:`security` using the Security Bundle.

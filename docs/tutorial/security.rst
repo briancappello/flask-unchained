@@ -8,7 +8,7 @@ Install Flask Security Bundle
 
 .. code:: bash
 
-   $ pip install flask-security-bundle
+   pip install flask-security-bundle
 
 Let's update our test fixtures configuration file to include the test fixtures provided by Flask Security Bundle:
 
@@ -176,11 +176,11 @@ We're going to leave them as-is for now, but in preparation for later customizat
 
 .. code:: bash
 
-   $ touch flaskr_unchained/models.py
+   touch app/models.py
 
 .. code:: python
 
-   # flaskr_unchained/models.py
+   # app/models.py
 
    from flask_unchained.bundles.security import User as BaseUser, Role as BaseRole, UserRole
 
@@ -196,7 +196,7 @@ Time to generate some migrations:
 
 .. code:: bash
 
-   $ flask db migrate -m 'add security bundle models'
+   flask db migrate -m 'add security bundle models'
 
 And review them to make sure it's going to do what we want:
 
@@ -278,7 +278,7 @@ Looks good.
 
 .. code:: bash
 
-   $ flask db upgrade
+   flask db upgrade
 
 Seeding the Database
 ^^^^^^^^^^^^^^^^^^^^
@@ -289,7 +289,7 @@ First we need to create our fixtures directory and files. The file names must ma
 
 .. code:: bash
 
-   $ mkdir db/fixtures && touch db/fixtures/Role.yaml db/fixtures/User.yaml
+   mkdir db/fixtures && touch db/fixtures/Role.yaml db/fixtures/User.yaml
 
 .. code:: yaml
 
@@ -327,7 +327,7 @@ Running the fixtures should create two users and two roles in our dev db:
 
 .. code:: bash
 
-   $ flask db import-fixtures
+   flask db import-fixtures
    Loading fixtures from `db/fixtures` directory
    Created ROLE_USER: Role(id=1, name='ROLE_USER')
    Created ROLE_ADMIN: Role(id=2, name='ROLE_ADMIN')
@@ -344,9 +344,9 @@ The first thing we need to do is to include the :class:`~flask_unchained.bundles
 
 .. code:: python
 
-   # flaskr_unchained/routes.py
+   # app/routes.py
 
-   from flask_unchained import (include, prefix, controller, resource, func,
+   from flask_unchained import (controller, resource, func, include, prefix,
                                 get, post, patch, put, rule)
 
    from flask_unchained.bundles.security import SecurityController
@@ -363,7 +363,7 @@ By default, Flask Security Bundle only comes with the login and logout endpoints
 
 .. code:: bash
 
-   $ flask urls
+   flask urls
    Method(s)  Rule                            Endpoint                                     View                                                                                           Options
    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
          GET  /static/<path:filename>         static                                       flask.helpers :: send_static_file                                                              strict_slashes
@@ -376,7 +376,7 @@ The security bundle comes with optional support for registration, required email
 
 .. code:: python
 
-   # flaskr_unchained/config.py
+   # app/config.py
 
    class Config:
        # ...
@@ -429,13 +429,13 @@ So, in order to make sure the layout works correctly, we need to wrap the conten
 
 .. code:: bash
 
-   $ mkdir -p flaskr_unchained/templates/security \
-      && touch flaskr_unchained/templates/security/layout.html \
-      && touch flaskr_unchained/templates/security/_macros.html
+   mkdir -p app/templates/security \
+      && touch app/templates/security/layout.html \
+      && touch app/templates/security/_macros.html
 
 .. code:: html+jinja
 
-   {# flaskr_unchained/templates/security/layout.html #}
+   {# app/templates/security/layout.html #}
 
    {% extends 'layout.html' %}
 
@@ -455,7 +455,7 @@ But even after this change, our forms are still using the browser's default form
 
 .. code:: html+jinja
 
-   {# flaskr_unchained/templates/security/_macros.html #}
+   {# app/templates/security/_macros.html #}
 
    {% from '_macros.html' import render_form as _render_form %}
 
@@ -480,7 +480,7 @@ Unlike all of our earlier tests, testing the security bundle views requires that
    from flask_unchained.bundles.security.pytest import *
 
    from datetime import datetime, timezone
-   from flaskr_unchained.models import User, Role, UserRole
+   from app.models import User, Role, UserRole
 
 
    class UserFactory(ModelFactory):
@@ -598,14 +598,14 @@ Running them should pass:
 
 .. code:: bash
 
-   $ pytest --maxfail=1
+   pytest --maxfail=1
    ================================== test session starts ===================================
    platform linux -- Python 3.6.6, pytest-3.7.1, py-1.5.4, pluggy-0.7.1
    rootdir: /home/user/dev/flaskr-unchained, inifile:
    plugins: flask-0.10.0, Flask-Unchained-0.5.1, Flask-Security-Bundle-0.3.0
    collected 11 items
 
-   tests/flaskr_unchained/test_views.py .....                                         [ 45%]
+   tests/app/test_views.py .....                                         [ 45%]
    tests/security/test_security_controller.py ......                                  [100%]
 
    =============================== 11 passed in 0.74 seconds ================================
@@ -616,8 +616,8 @@ Let's commit our changes:
 
 .. code:: bash
 
-   $ git add .
-   $ git status
-   $ git commit -m 'install and configure security bundle'
+   git add .
+   git status
+   git commit -m 'install and configure security bundle'
 
  and move on to the meat of the application: :doc:`building_the_portfolio`.

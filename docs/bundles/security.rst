@@ -10,7 +10,7 @@ The Security Bundle depends on the SQLAlchemy Bundle, as well as a few third-par
 
 .. code:: bash
 
-   $ pip install flask-unchained[security,sqlalchemy]
+   pip install flask-unchained[security,sqlalchemy]
 
 And enable the bundles in your ``unchained_config.py``:
 

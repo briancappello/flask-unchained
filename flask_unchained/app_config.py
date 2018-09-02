@@ -18,7 +18,7 @@ class AppConfig:
     """
     Base class for app-bundle configs. Example usage::
 
-        # project_root/your_app_bundle/config.py
+        # project-root/your_app_bundle/config.py
 
         import os
 
