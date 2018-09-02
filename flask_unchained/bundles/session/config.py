@@ -86,12 +86,12 @@ class Config(_DefaultFlaskConfigForSessions):
     """
     Specifies which type of session interface to use. Built-in session types:
 
-    - null: :class:`~flask_unchained.bundles.session.session_interfaces.NullSessionInterface` (default)
-    - redis: :class:`~flask_unchained.bundles.session.session_interfaces.RedisSessionInterface`
-    - memcached: :class:`~flask_unchained.bundles.session.session_interfaces.MemcachedSessionInterface`
-    - filesystem: :class:`~flask_unchained.bundles.session.session_interfaces.FileSystemSessionInterface`
-    - mongodb: :class:`~flask_unchained.bundles.session.session_interfaces.MongoDBSessionInterface`
-    - sqlalchemy: :class:`~flask_unchained.bundles.session.session_interfaces.SqlAlchemySessionInterface`
+    - ``'null'``: :class:`~flask_unchained.bundles.session.session_interfaces.NullSessionInterface` (default)
+    - ``'redis'``: :class:`~flask_unchained.bundles.session.session_interfaces.RedisSessionInterface`
+    - ``'memcached'``: :class:`~flask_unchained.bundles.session.session_interfaces.MemcachedSessionInterface`
+    - ``'filesystem'``: :class:`~flask_unchained.bundles.session.session_interfaces.FileSystemSessionInterface`
+    - ``'mongodb'``: :class:`~flask_unchained.bundles.session.session_interfaces.MongoDBSessionInterface`
+    - ``'sqlalchemy'``: :class:`~flask_unchained.bundles.session.session_interfaces.SqlAlchemySessionInterface`
 
     Defaults to ``'null'``.
     """
