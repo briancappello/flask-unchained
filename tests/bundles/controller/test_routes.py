@@ -267,46 +267,6 @@ class TestResource:
         assert orig_routes[0].rule == '/'
         assert routes[2].rule == '/one/<int:user_id>/two'
 
-    def test_it_warns_if_overriding_subresource_bp_with_none(self):
-        class UserResource(Resource):
-            blueprint = None
-
-            def list(self):
-                pass
-
-        class RoleResource(Resource):
-            blueprint = bp
-
-            def list(self):
-                pass
-
-        with pytest.warns(None) as warnings:
-            list(resource('/one', UserResource, subresources=[
-                resource('/two', RoleResource)
-            ]))
-            msg = "overriding subresource blueprint 'test' with None"
-            assert msg in str(warnings[0])
-
-    def test_it_warns_if_overriding_subresource_bp_with_another_bp(self):
-        class UserResource(Resource):
-            blueprint = bp
-
-            def list(self):
-                pass
-
-        class RoleResource(Resource):
-            blueprint = bp2
-
-            def list(self):
-                pass
-
-        with pytest.warns(None) as warnings:
-            list(resource('/one', UserResource, subresources=[
-                resource('/two', RoleResource)
-            ]))
-            msg = "overriding subresource blueprint 'test2' with 'test'"
-            assert msg in str(warnings[0])
-
 
 def test_normalize_args():
     def is_bp(maybe_bp, has_rule):

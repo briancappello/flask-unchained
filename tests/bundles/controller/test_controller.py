@@ -50,7 +50,6 @@ class TestControllerAttributes:
         assert DefaultController.template_folder == 'default'
         assert DefaultController.template_extension == '.html'
         assert DefaultController.url_prefix is None
-        assert DefaultController.blueprint is None
         assert DefaultController.decorators is None
 
     def test_custom_template_folder(self):

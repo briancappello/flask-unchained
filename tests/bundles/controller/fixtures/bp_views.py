@@ -27,8 +27,6 @@ def three():
 
 
 class SiteController(Controller):
-    blueprint = bp
-
     @route('/')
     def index(self):
         return self.render('index')
@@ -44,8 +42,6 @@ class SiteController(Controller):
 
 
 class ProductController(Controller):
-    blueprint = bp
-
     @route('/')
     def index(self):
         return self.render('index')
@@ -62,8 +58,6 @@ class ProductController(Controller):
 
 
 class UserResource(Resource):
-    blueprint = bp
-
     def list(self):
         return self.render('list')
 
@@ -87,8 +81,6 @@ class UserResource(Resource):
 
 
 class RoleResource(Resource):
-    blueprint = bp
-
     def list(self):
         return self.render('list')
 
@@ -109,7 +101,6 @@ class RoleResource(Resource):
 
 
 class AnotherResource(Resource):
-    blueprint = bp
     url_prefix = 'another'
 
     def list(self):

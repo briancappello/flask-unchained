@@ -1,16 +1,6 @@
 from flask_unchained.bundles.controller.routes import _reduce_routes
-from flask_unchained.bundles.controller.utils import join
 
 from .fixtures import routes as test_routes
-from .fixtures import bp_routes as bp_test_routes
-
-
-def convert_to_results_with_blueprint(results):
-    return [
-        (endpoint if endpoint.startswith('views.') else 'views.' + endpoint,
-         join('/bp', rule),
-         methods)
-        for endpoint, rule, methods in results]
 
 
 EXPECTED_RESULTS = [
@@ -40,7 +30,6 @@ EXPECTED_RESULTS = [
     ('views.two', '/two', ['GET']),
     ('views.three', '/three', ['GET', 'POST']),
 ]
-EXPECTED_BP_RESULTS = convert_to_results_with_blueprint(EXPECTED_RESULTS)
 
 EXPECTED_DEEP_RESULTS = [
     ('site_controller.index', '/app/site', ['GET']),
@@ -70,7 +59,6 @@ EXPECTED_DEEP_RESULTS = [
     ('views.two', '/app/pre/users/<int:user_id>/roles/<int:role_id>/deep/two', ['GET']),
     ('views.three', '/app/pre/users/<int:user_id>/roles/<int:role_id>/deep/three', ['GET', 'POST']),
 ]
-EXPECTED_DEEP_BP_RESULTS = convert_to_results_with_blueprint(EXPECTED_DEEP_RESULTS)
 
 
 class TestReduceRoutes:
@@ -79,7 +67,7 @@ class TestReduceRoutes:
         for i, expected in enumerate(t for t in EXPECTED_RESULTS
                                      if 'foobar' not in t[0]):
             route = routes[i]
-            assert route.endpoint == expected[0], route.endpoint
+            assert route.endpoint == expected[0], (route.endpoint, expected[0])
             assert route.full_rule == expected[1], route.endpoint
             assert route.methods == expected[2], route.endpoint
 
@@ -94,33 +82,6 @@ class TestReduceRoutes:
     def test_deep_routes(self):
         routes = list(_reduce_routes(test_routes.deep()))
         for i, expected in enumerate(EXPECTED_DEEP_RESULTS):
-            route = routes[i]
-            assert route.endpoint == expected[0], route.endpoint
-            assert route.full_rule == expected[1], route.endpoint
-            assert route.methods == expected[2], route.endpoint
-
-
-class TestReduceRoutesWithBlueprints:
-    def test_explicit_routes(self):
-        routes = list(_reduce_routes(bp_test_routes.explicit_routes()))
-        for i, expected in enumerate(t for t in EXPECTED_BP_RESULTS
-                                     if 'foobar' not in t[0]):
-            route = routes[i]
-            assert route.endpoint == expected[0], route.endpoint
-            assert route.full_rule == expected[1], route.endpoint
-            assert route.methods == expected[2], route.endpoint
-
-    def test_implicit_routes(self):
-        routes = list(_reduce_routes(bp_test_routes.implicit_routes()))
-        for i, expected in enumerate(EXPECTED_BP_RESULTS):
-            route = routes[i]
-            assert route.endpoint == expected[0], route.endpoint
-            assert route.full_rule == expected[1], route.endpoint
-            assert route.methods == expected[2], route.endpoint
-
-    def test_deep_routes(self):
-        routes = list(_reduce_routes(bp_test_routes.deep()))
-        for i, expected in enumerate(EXPECTED_DEEP_BP_RESULTS):
             route = routes[i]
             assert route.endpoint == expected[0], route.endpoint
             assert route.full_rule == expected[1], route.endpoint

@@ -32,9 +32,6 @@ class Controller(metaclass=ControllerMeta):
     The default filename extension to use for templates.
     """
 
-    # FIXME: is this still supported? probably shouldn't be
-    blueprint = None
-
     decorators = None
     """
     A list of decorators to apply to all views in this controller.

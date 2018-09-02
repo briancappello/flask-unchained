@@ -395,15 +395,6 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
 
     for subroute in _reduce_routes(subresources):
         subroute = subroute.copy()
-
-        # can't have a subresource with a different blueprint than its parent
-        bp_name = resource_cls.blueprint and resource_cls.blueprint.name
-        if subroute.bp_name and (not bp_name or bp_name != subroute.bp_name):
-            from warnings import warn
-            warn(f'Warning: overriding subresource blueprint '
-                 f'{subroute.bp_name!r} with {bp_name!r}')
-        subroute.blueprint = resource_cls.blueprint
-
         subroute.rule = resource_cls.subresource_route_rule(subroute)
         yield subroute
 
@@ -546,7 +537,6 @@ def _normalize_controller_routes(rules: Iterable[Route],
                                  ) -> RouteGenerator:
     for route in _reduce_routes(rules):
         route = route.copy()
-        route.blueprint = controller_cls.blueprint
         route._controller_name = controller_cls.__name__
         route._controller = controller_cls
         route.view_func = controller_cls.method_as_view(route.method_name)

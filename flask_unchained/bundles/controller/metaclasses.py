@@ -24,7 +24,7 @@ class ControllerMeta(type):
     - if subclass of a base class, init CONTROLLER_ROUTES_ATTR
         - check if methods were decorated with @route, otherwise
           create a new Route for each method
-        - finish initializing routes (set blueprint, _controller_name)
+        - finish initializing Routes (set blueprint, , _controller_cls, _controller_name)
     """
     def __new__(mcs, name, bases, clsdict):
         set_up_class_dependency_injection(name, clsdict)
@@ -48,7 +48,6 @@ class ControllerMeta(type):
             method_routes = getattr(method, FN_ROUTES_ATTR,
                                     [Route(None, method)])
             for route in method_routes:
-                route.blueprint = deep_getattr(clsdict, bases, 'blueprint')
                 route._controller_name = name
             controller_routes[method_name] = method_routes
 
