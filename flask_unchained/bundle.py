@@ -110,34 +110,38 @@ class Bundle(metaclass=BundleMeta):
     static_folder: Optional[str] = StaticFolderDescriptor()
     """
     Root directory path of the bundle's static assets folder. By default, if there exists
-    a folder named ``static`` in the bundle package, it will be used, otherwise None.
+    a folder named ``static`` in the bundle package, it will be used, otherwise ``None``.
     """
 
     static_url_path: Optional[str] = StaticUrlPathDescriptor()
     """
     Url path where this bundle's static assets will be served from. If static_folder is
-    set, this will default to ``/<bundle.name>/static``, otherwise None.
+    set, this will default to ``/<bundle.name>/static``, otherwise ``None``.
     """
 
     _deferred_functions = []
 
     def before_init_app(self, app: FlaskUnchained):
         """
-        Give bundles an opportunity to modify attributes on the Flask instance
+        Override this method to perform actions on the
+        :class:`~flask_unchained.FlaskUnchained` app instance *before* the
+        ``unchained`` extension has initialized the application.
         """
         pass
 
     def after_init_app(self, app: FlaskUnchained):
         """
-        Give bundles an opportunity to finalize app initialization
+        Override this method to perform actions on the
+        :class:`~flask_unchained.FlaskUnchained` app instance *after* the
+        ``unchained`` extension has initialized the application.
         """
         pass
 
     def before_request(self, fn):
         """
         Like :meth:`~flask.Flask.before_request` but for a bundle.  This function
-        is only executed before each request that is handled by a function of
-        that bundle.
+        is only executed before each request that is handled by a view function
+        of that bundle.
         """
         self._defer(lambda bp: bp.before_request(fn))
 

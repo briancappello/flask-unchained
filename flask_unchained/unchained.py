@@ -23,9 +23,11 @@ ActionTableItem = namedtuple('ActionTableItem', ('column_names', 'converter'))
 
 class Unchained:
     """
-    The Unchained Flask extension. Responsible for loading bundles, keeping references
+    The `Unchained` extension. Responsible for loading bundles, keeping references
     to all of the various discovered bundles and classes, and for doing dependency
-    injection.
+    injection::
+
+        from flask_unchained import unchained
     """
 
     def __init__(self, env: Optional[Union[DEV, PROD, STAGING, TEST]] = None):
@@ -76,10 +78,18 @@ class Unchained:
         self._initialized = True
 
     def get_extension_local_proxy(self, ext_name):
+        """
+        Returns a :class:`~werkzeug.local.LocalProxy` to the extension with
+        `ext_name` as registered with the current app.
+        """
         return LocalProxy(lambda: current_app.unchained.extensions[ext_name])
 
-    def get_service_local_proxy(self, svc_name):
-        return LocalProxy(lambda: current_app.unchained.services[svc_name])
+    def get_service_local_proxy(self, service_name):
+        """
+        Returns a :class:`~werkzeug.local.LocalProxy` to the service with
+        `service_name` as registered with the current app.
+        """
+        return LocalProxy(lambda: current_app.unchained.services[service_name])
 
     def _reset(self):
         """

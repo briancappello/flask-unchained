@@ -62,7 +62,7 @@ class Security(_SecurityConfigProperties):
         self.reset_serializer = None
 
     def init_app(self, app: FlaskUnchained):
-        # NOTE: the order of these `self.get_*` initialization calls is important!
+        # NOTE: the order of these `self.get_*` calls is important!
         self.confirm_serializer = self._get_serializer(app, 'confirm')
         self.hashing_context = self._get_hashing_context(app)
         self.login_manager = self._get_login_manager(

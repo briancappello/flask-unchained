@@ -34,7 +34,7 @@ class AppFactory:
                    ) -> FlaskUnchained:
         """
         Flask Unchained Application Factory. Returns an instance of
-        :class:`FlaskUnchained`.
+        :class:`~flask_unchained.FlaskUnchained`.
 
         Example Usage::
 
@@ -49,7 +49,7 @@ class AppFactory:
                              constructor
         :param _config_overrides: a dictionary of config option overrides; meant for
                                   test fixtures.
-        :return: the :class:`FlaskUnchained` application instance
+        :return: The :class:`~flask_unchained.FlaskUnchained` application instance
         """
         unchained_config = _load_unchained_config(env)
         app_bundle, bundles = _load_bundles(

@@ -1,25 +1,24 @@
 # Flask Unchained
 
-## The better way to build large Flask applications.
+## The better way to build large Flask apps
 
-Flask Unchained is an extension that implements the Application Factory Pattern. It provides a standardized (by convention) way to organize "bundles" of code, such that they become easily distributable, reusable, and customizable across multiple independent Flask Unchained projects (similar to Django's "apps", with an architecture inspired by [Symfony](https://symfony.com/)). The ultimate goal is to provide a fully integrated, optional-batteries-included web application framework built on top of Flask.
+Flask Unchained aims to provide a fully integrated, optional-batteries-included MVC web framework built on top of Flask and its extension ecosystem. It provides a Flask extension that implements the Application Factory Pattern, utilizing a standardized (but configurable) way to organize "bundles" of code, such that they become easily distributable, reusable, and customizable across multiple independent Flask Unchained projects. This architecture is inspired by [Symfony](https://symfony.com/), which is awesome, aside from the fact that it isn't Python ;)
 
 ## Useful Links
 
-* [Read the docs](https://flask-unchained.readthedocs.io/en/latest/)
-* [Fork it on GitHub](https://github.com/briancappello/flask-unchained)
-* [Download from PyPI](https://pypi.org/project/Flask-Unchained/)
+* [Documenation on Read the Docs](https://flask-unchained.readthedocs.io/en/latest/)
+* [Source Code on GitHub](https://github.com/briancappello/flask-unchained)
+* [PyPI](https://pypi.org/project/Flask-Unchained/)
 
 ## Features
 
-* MVC framework built on top of Flask and many of its extensions
 * includes out-of-the-box (mostly optional) integrations with:
-   - [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) (translations, **required**)
-   - [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/) (forms and CSRF protection, **required**)
+   - [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) (translations, required)
+   - [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/) (forms and CSRF protection, required)
    - [Flask-SQLAlchemy](http://flask-sqlalchemy.pocoo.org/latest/) and [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/) (database ORM and migrations, optional)
    - [Flask-Login](http://flask-login.readthedocs.io/) and [Flask-Principal](https://pythonhosted.org/Flask-Principal/) (authentication and authorization, optional)
    - [Flask-Mail](https://pythonhosted.org/flask-mail/) (email sending support, optional)
-   - [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/) (database model serialization, optional)
+   - [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/) (SQLAlchemy model serialization, optional)
    - [Flask-Session](https://pythonhosted.org/Flask-Session/) (server-side sessions, optional)
    - [Flask-Admin](https://flask-admin.readthedocs.io/en/latest/) (admin interface, optional)
    - [Celery](http://docs.celeryproject.org/en/latest/index.html) (distributed task queue, optional)
@@ -171,7 +170,7 @@ Now we can register the controller with our `routes`:
 ```python
 # project-root/app/routes.py
 
-from flask_unchained import (include, prefix, controller, resource, func, 
+from flask_unchained import (controller, resource, func, include, prefix,
                              get, post, patch, put, rule)
 
 from .views import SiteController

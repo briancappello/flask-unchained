@@ -2,7 +2,7 @@
     flask_unchained
     ---------------
 
-    The better way to build large Flask applications
+    The better way to build large Flask apps
 
     :copyright: Copyright © 2018 Brian Cappello
     :license: MIT, see LICENSE for more details
@@ -20,7 +20,7 @@ from .decorators import param_converter
 from .di import BaseService, injectable
 from .flask_unchained import FlaskUnchained
 from .forms import FlaskForm
-from .unchained import unchained
+from .unchained import Unchained, unchained
 from .utils import OptionalClass, OptionalMetaclass, get_boolean_env
 
 from .bundles.babel import gettext, ngettext, lazy_gettext, lazy_ngettext

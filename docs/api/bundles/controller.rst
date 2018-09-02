@@ -13,15 +13,15 @@ Config
 Controller
 ~~~~~~~~~~
 
-.. autoclass:: flask_unchained.bundles.controller.controller.Controller
+.. autoclass:: flask_unchained.Controller
    :members:
    :exclude-members: method_as_view
 
 Decorators
 ~~~~~~~~~~
 
-.. automodule:: flask_unchained.bundles.controller.decorators
-   :members:
+.. autofunction:: flask_unchained.route
+.. autofunction:: flask_unchained.no_route
 
 Hooks
 ~~~~~
@@ -32,7 +32,7 @@ Hooks
 Resource
 ~~~~~~~~
 
-.. autoclass:: flask_unchained.bundles.controller.resource.Resource
+.. autoclass:: flask_unchained.Resource
    :members:
    :exclude-members: method_as_view
 
@@ -45,11 +45,23 @@ Route
 Routes
 ~~~~~~
 
-.. automodule:: flask_unchained.bundles.controller.routes
-   :members:
+.. autofunction:: flask_unchained.controller
+.. autofunction:: flask_unchained.func
+.. autofunction:: flask_unchained.get
+.. autofunction:: flask_unchained.include
+.. autofunction:: flask_unchained.patch
+.. autofunction:: flask_unchained.post
+.. autofunction:: flask_unchained.prefix
+.. autofunction:: flask_unchained.put
+.. autofunction:: flask_unchained.resource
+.. autofunction:: flask_unchained.rule
 
 Utils
 ~~~~~
 
+.. autofunction:: flask_unchained.redirect
+.. autofunction:: flask_unchained.url_for
+
 .. automodule:: flask_unchained.bundles.controller.utils
    :members:
+   :exclude-members: redirect, url_for

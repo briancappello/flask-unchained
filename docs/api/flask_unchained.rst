@@ -4,37 +4,38 @@ Flask Unchained
 AppConfig
 ^^^^^^^^^
 
-.. automodule:: flask_unchained.app_config
+.. autoclass:: flask_unchained.AppConfig
    :members:
 
 AppFactory
 ^^^^^^^^^^
 
-.. automodule:: flask_unchained.app_factory
+.. autoclass:: flask_unchained.AppFactory
    :members:
 
 Bundle
 ^^^^^^
 
-.. autoclass:: flask_unchained.bundle.Bundle
+.. autoclass:: flask_unchained.Bundle
    :members:
+   :exclude-members: has_views, iter_class_hierarchy
 
 FlaskForm
 ^^^^^^^^^
 
-.. autoclass:: flask_unchained.forms.flask_form.FlaskForm
+.. autoclass:: flask_unchained.FlaskForm
    :members:
 
 FlaskUnchained
 ^^^^^^^^^^^^^^
 
-.. autoclass:: flask_unchained.flask_unchained.FlaskUnchained
+.. autoclass:: flask_unchained.FlaskUnchained
    :members:
 
 Unchained
 ^^^^^^^^^
 
-.. autoclass:: flask_unchained.unchained.Unchained
+.. autoclass:: flask_unchained.Unchained
    :members:
 
 .. FIXME the docs for hooks are all messed up
@@ -45,7 +46,7 @@ Hooks
 AppFactoryHook
 ~~~~~~~~~~~~~~
 
-.. autoclass:: flask_unchained.app_factory_hook.AppFactoryHook
+.. autoclass:: flask_unchained.AppFactoryHook
    :members: run_hook, process_objects, collect_from_bundles, collect_from_bundle, key_name, type_check, import_bundle_module, get_module_name, update_shell_context
    :member-order: run_hook, process_objects, collect_from_bundles, collect_from_bundle, key_name, type_check, import_bundle_module, get_module_name, update_shell_context
 

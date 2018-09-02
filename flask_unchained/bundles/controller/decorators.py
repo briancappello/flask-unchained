@@ -61,7 +61,34 @@ def no_route(arg=None):
     Decorator to mark a
     :class:`~flask_unchained.bundles.controller.controller.Controller` or
     :class:`~flask_unchained.bundles.resource.resource.Resource` method as *not*
-    a route.
+    a route. For example::
+
+        class SiteController(Controller):
+            @route('/')
+            def index():
+                return self.render('index')
+
+            def about():
+                return self.render('about', stuff=self.utility_method())
+
+            @no_route
+            def utility_method():
+                return 'stuff'
+
+        # registered like so in ``your_app_bundle/routes.py``
+        routes = lambda: [
+            controller(SiteController),
+        ]
+
+        # results in the following routes
+        SiteController.index            => GET /
+        SiteController.about            => GET /about
+
+        # but without the @no_route decorator, it would have also added this route:
+        SiteController.utility_method   => GET /utility-method
+
+    NOTE: The perhaps more Pythonic way to accomplish is simply to make all non-route
+    methods protected by prefixing them with an underscore, eg ``_utility_method``.
     """
     def wrapper(fn):
         setattr(fn, NO_ROUTES_ATTR, True)
