@@ -121,23 +121,23 @@ class Config(_DefaultFlaskConfigForSessions):
 
     SESSION_REDIS = None
     """
-    A :class:`~redis.Redis` instance.
+    A :class:`redis.Redis` instance.
  
     By default, connect to ``127.0.0.1:6379``.
     """
 
     SESSION_MEMCACHED = None
     """
-    A :class:`~memcache.Client` instance.
+    A :class:`memcached.Client` instance.
  
     By default, connect to ``127.0.0.1:11211``.
     """
 
-    SESSION_FILE_DIR = os.path.join(os.getcwd(), 'flask_session')
+    SESSION_FILE_DIR = os.path.join(os.getcwd(), 'flask_sessions')
     """
-    The directory where session files are stored. 
+    The folder where session files are stored.
 
-    Defaults to using a ``flask_session`` directory under your current working
+    Defaults to using a folder named ``flask_sessions`` in your current working
     directory.
     """
 
@@ -158,7 +158,7 @@ class Config(_DefaultFlaskConfigForSessions):
 
     SESSION_MONGODB = None
     """
-    A :class:`~pymongo.MongoClient` instance.
+    A :class:`pymongo.MongoClient` instance.
 
     By default, connect to ``127.0.0.1:27017``.
     """
