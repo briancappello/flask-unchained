@@ -1,10 +1,10 @@
 # This command is adapted to click from Flask-Script 0.4.0
 import os
 
-from flask_unchained.cli import cli, click
+from flask_unchained.cli import click
 
 
-@cli.command()
+@click.command()
 def clean():
     """Recursively remove *.pyc and *.pyo files."""
     for dirpath, dirnames, filenames in os.walk('.'):

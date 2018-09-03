@@ -8,7 +8,7 @@ import sys
 import tempfile
 import time
 
-from flask_unchained.cli import cli
+from flask_unchained.cli import click
 
 from .shell import _get_shell_banner, _get_shell_ctx
 
@@ -33,7 +33,7 @@ except ImportError:
             return lambda fn: None
 
 
-@cli.command()
+@click.command()
 def qtconsole():
     """
     Starts qtconsole in the app context.

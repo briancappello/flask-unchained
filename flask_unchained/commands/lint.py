@@ -1,10 +1,10 @@
 # This command is adapted to click from Flask-Script 0.4.0
 import os
 
-from flask_unchained.cli import cli, click
+from flask_unchained.cli import click
 
 
-@cli.command()
+@click.command()
 @click.option('-f', '--fix-imports', default=False, is_flag=True,
               help='Fix imports using isort, before linting')
 def lint(fix_imports):

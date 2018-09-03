@@ -1,10 +1,10 @@
-from flask_unchained.cli import cli, click
+from flask_unchained.cli import click
 
 from ..utils import format_docstring
 from .utils import print_table
 
 
-@cli.group('unchained')
+@click.group('unchained')
 def unchained_group():
     """
     Flask Unchained commands.

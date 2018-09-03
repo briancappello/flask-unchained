@@ -2,7 +2,7 @@
 import inspect
 
 from flask_unchained import current_app
-from flask_unchained.cli import cli, click
+from flask_unchained.cli import click
 from typing import *
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 from werkzeug.routing import Rule
@@ -10,7 +10,7 @@ from werkzeug.routing import Rule
 from .utils import print_table
 
 
-@cli.command()
+@click.command()
 @click.argument('url')
 @click.option('--method', default='GET',
               help='Method for url to match (default: GET)')
@@ -36,7 +36,7 @@ def url(url: str, method: str):
                     primary_column_idx=1)
 
 
-@cli.command()
+@click.command()
 @click.option('--order-by', default='priority',
               help='Property to order by: methods, rule, endpoint, view, or '
                    'priority (aka registration order with the app)')
