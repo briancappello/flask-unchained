@@ -2,7 +2,7 @@
 import inspect
 
 from flask_unchained import current_app
-from flask_unchained.cli import click
+from flask_unchained.cli import click, with_appcontext
 from typing import *
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 from werkzeug.routing import Rule
@@ -14,6 +14,7 @@ from .utils import print_table
 @click.argument('url')
 @click.option('--method', default='GET',
               help='Method for url to match (default: GET)')
+@with_appcontext
 def url(url: str, method: str):
     """Show details for a specific URL."""
     try:
@@ -40,6 +41,7 @@ def url(url: str, method: str):
 @click.option('--order-by', default='priority',
               help='Property to order by: methods, rule, endpoint, view, or '
                    'priority (aka registration order with the app)')
+@with_appcontext
 def urls(order_by: Optional[str] = None):
     """List all URLs registered with the app."""
     url_rules: List[Rule] = current_app.url_map._rules

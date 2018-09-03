@@ -11,6 +11,7 @@ import os
 import sys
 import time
 
+from flask.cli import with_appcontext  # alias this here
 from flask_unchained import AppFactory, click
 from flask_unchained.app_factory import _load_unchained_config
 from flask_unchained.constants import DEV, PROD, STAGING, TEST

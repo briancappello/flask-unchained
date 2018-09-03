@@ -1,11 +1,12 @@
 import os
 import sys
 
-from flask_unchained.cli import click
+from flask_unchained.cli import click, with_appcontext
 from flask.globals import _app_ctx_stack
 
 
 @click.command()
+@with_appcontext
 def shell():
     """
     Runs a shell in the app context. If ``IPython`` is installed, it will
