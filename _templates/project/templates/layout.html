@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>{% block title %}{#! {{ app_bundle_module_name }} #}{% endblock %}</title>
+
+    {% block stylesheets %}
+      <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-v4.1.2.min.css') }}">
+      {#! if webpack: {% raw %}{{ style_tag('app') }}{% endraw %} #}
+    {% endblock stylesheets %}
+
+    {% block extra_head %}
+    {% endblock extra_head %}
+  </head>
+
+  <body>
+    {% block body %}
+      <div class="container">
+        {% include '_flashes.html' %}
+        {% block content %}
+        {% endblock content %}
+      </div>
+    {% endblock body %}
+
+    {% block javascripts %}
+      <script src="{{ url_for('static', filename='jquery-v3.3.1.slim.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='popper-v1.14.3.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='bootstrap-v4.1.2.min.js') }}"></script>
+      {#! if webpack: {% raw %}{{ script_tag('app') }}{% endraw %} #}
+    {% endblock javascripts %}
+  </body>
+</html>

@@ -42,13 +42,13 @@ Flask Unchained aims to provide a fully integrated, optional-batteries-included 
 ## Quickstart
 
 ```bash
-$ pip install cookiecutter
-$ cookiecutter gh:briancappello/cookiecutter-flask-unchained
+# create a virtual environment
+pip install flask-unchained
+flask new project <your-project-folder-name>
 
 # (answer the questions and `cd` into the new directory)
-# (create a virtualenv using your tool of choice)
-$ pip install -r requirements-dev.txt
-$ flask run
+pip install -r requirements-dev.txt
+flask run
 ```
 
 ## What does it look like?
@@ -194,7 +194,7 @@ BUNDLES = [
 And run it:
 
 ```bash
-$ flask run
+flask run
  * Environment: development
  * Debug mode: on
  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
