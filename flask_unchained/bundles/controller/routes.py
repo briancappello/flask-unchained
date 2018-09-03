@@ -404,7 +404,7 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
 def _reduce_routes(routes: Iterable[Union[Route, RouteGenerator]],
                    ) -> RouteGenerator:
     if not routes:
-        raise StopIteration
+        return ()
 
     try:
         for route in routes:

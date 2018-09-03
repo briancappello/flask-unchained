@@ -78,7 +78,7 @@ class RegisterRoutesHook(AppFactoryHook):
 
     def collect_from_bundle(self, bundle: Bundle):
         if not bundle.has_views():
-            raise StopIteration
+            return ()
 
         bundle_views_module_name = getattr(bundle, 'views_module_name', 'views')
         views_module_name = f'{bundle.module_name}.{bundle_views_module_name}'
