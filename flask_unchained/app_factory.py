@@ -56,7 +56,7 @@ class AppFactory:
             bundles or getattr(unchained_config, 'BUNDLES', []))
 
         if app_bundle is None and env != TEST:
-            return cls._create_bundle_app(bundles, _config_overrides=_config_overrides)
+            return cls.create_basic_app(bundles, _config_overrides=_config_overrides)
 
         for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
             flask_kwargs.setdefault(k.lower(), getattr(unchained_config, k, None))
@@ -81,11 +81,13 @@ class AppFactory:
         return app
 
     @classmethod
-    def _create_bundle_app(cls, bundles, _config_overrides=None):
+    def create_basic_app(cls, bundles=None, _config_overrides=None):
         """
-        Creates an app for use while developing bundles
+        Creates a "fake" app for use while developing
         """
-        app = FlaskUnchained(bundles[-1].module_name, template_folder=os.path.join(
+        bundles = bundles or []
+        name = bundles[-1].module_name if bundles else 'basic_app'
+        app = FlaskUnchained(name, template_folder=os.path.join(
             os.path.dirname(__file__), 'templates'))
 
         for bundle in bundles:
@@ -101,7 +103,8 @@ class AppFactory:
 
 def _cwd_import(module_name):
     module = importlib.import_module(module_name)
-    if not module.__file__.startswith(os.getcwd()):
+    expected_path = os.path.join(os.getcwd(), module_name.replace('.', os.sep) + '.py')
+    if module.__file__ != expected_path:
         raise ImportError
     return module
 
@@ -126,8 +129,9 @@ def _load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):
         raise e
 
 
-def _load_bundles(bundle_package_names: List[str],
+def _load_bundles(bundle_package_names: Optional[List[str]] = None,
                   ) -> Tuple[Union[None, AppBundle], List[Bundle]]:
+    bundle_package_names = bundle_package_names or []
     for b in REQUIRED_BUNDLES:
         if b not in bundle_package_names:
             bundle_package_names.insert(0, b)
