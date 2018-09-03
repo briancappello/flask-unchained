@@ -2,6 +2,7 @@ import click
 import inspect as _inspect
 
 from click import *
+from click.core import _missing
 from click.formatting import join_options as _join_options
 from click.utils import make_default_short_help as _make_default_short_help
 
@@ -264,6 +265,52 @@ class Argument(click.Argument):
         return ((any_prefix_is_slash and '; ' or ' / ').join(rv), help)
 
 
+class Option(click.Option):
+    def get_default(self, ctx):
+        # If we're a non boolean flag out default is more complex because
+        # we need to look at all flags in the same group to figure out
+        # if we're the the default one in which case we return the flag
+        # value as default.
+        if self.is_flag and not self.is_bool_flag:
+            for param in ctx.command.params:
+                if param.name == self.name and param.default:
+                    return param.flag_value
+            return None
+
+        # Otherwise go with the regular default.
+        if callable(self.default):
+            rv = self.default()
+        else:
+            rv = self.default
+
+        if isinstance(rv, (list, tuple)) and rv[0] is _missing:
+            return rv
+        return self.type_cast_value(ctx, rv)
+
+    def prompt_for_value(self, ctx):
+        """This is an alternative flow that can be activated in the full
+        value processing if a value does not exist.  It will prompt the
+        user until a valid value exists and then returns the processed
+        value as result.
+        """
+        # Calculate the default before prompting anything to be stable.
+        default = self.get_default(ctx)
+        missing_default = isinstance(default, (list, tuple)) and default[0] is _missing
+        default = default if not missing_default else default[1]
+        if not missing_default:
+            return default
+
+        # If this is a prompt for a flag we need to handle this
+        # differently.
+        if self.is_bool_flag:
+            return confirm(self.prompt, default)
+
+        return prompt(self.prompt, default=default,
+                      hide_input=self.hide_input,
+                      confirmation_prompt=self.confirmation_prompt,
+                      value_proc=lambda x: self.process_value(ctx, x))
+
+
 def command(name=None, cls=None, **attrs):
     """
     Commands are the basic building block of command line interfaces in
@@ -350,7 +397,7 @@ def argument(*param_decls, cls=None, **attrs):
     return click.argument(*param_decls, cls=cls or Argument, **attrs)
 
 
-def option(*param_decls, **attrs):
+def option(*param_decls, cls=None, **attrs):
     """
     Options are usually optional values on the command line and
     have some extra features that arguments don't have.
@@ -384,4 +431,4 @@ def option(*param_decls, **attrs):
                                context.
     :param help: the help string.
     """
-    return click.option(*param_decls, **attrs)
+    return click.option(*param_decls, cls=cls or Option, **attrs)
