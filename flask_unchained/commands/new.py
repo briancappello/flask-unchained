@@ -4,6 +4,7 @@ import shutil
 import sys
 
 from flask_unchained.cli import click
+from flask_unchained.click import default, skip_prompting
 from flask_unchained.string_utils import right_replace
 from jinja2 import Environment
 from typing import *
@@ -27,23 +28,6 @@ ELSE_RE = re.compile(r'^else: ?(?P<statement>.+)?$')
 TEMPLATES_ROOT = os.path.abspath(
     os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, '_templates'))
 PROJECT_TEMPLATE = os.path.join(TEMPLATES_ROOT, 'project')
-
-SKIP_PROMPTING = False
-
-
-def _default(value):
-    if SKIP_PROMPTING:
-        return value
-    return click._missing, value
-
-
-def _skip_prompting(ctx, param, value):
-    global SKIP_PROMPTING
-
-    if value:
-        SKIP_PROMPTING = True
-    else:
-        SKIP_PROMPTING = False
 
 
 def _validate_module_name(ctx, param, value):
@@ -160,34 +144,34 @@ def new():
 @click.option('--no-prompt', is_eager=True, is_flag=True, expose_value=False,
               help='Whether or not to skip prompting and just use the defaults.',
               default=False, show_default=True,
-              callback=_skip_prompting)
+              callback=skip_prompting)
 @click.option('--dev/--no-dev', prompt='Development Mode',
               help='Whether or not to install development dependencies.',
-              default=lambda: _default(True), show_default=True)
+              default=lambda: default(True), show_default=True)
 @click.option('--admin/--no-admin', prompt='Admin Bundle',
               help='Whether or not to install the Admin Bundle.',
-              default=lambda: _default(False), show_default=True)
+              default=lambda: default(False), show_default=True)
 @click.option('--api/--no-api', prompt='API Bundle',
               help='Whether or not to install the API Bundle.',
-              default=lambda: _default(False), show_default=True)
+              default=lambda: default(False), show_default=True)
 @click.option('--celery/--no-celery', prompt='Celery Bundle',
               help='Whether or not to install the Celery Bundle.',
-              default=lambda: _default(False), show_default=True)
+              default=lambda: default(False), show_default=True)
 @click.option('--mail/--no-mail', prompt='Mail Bundle',
               help='Whether or not to install the Mail Bundle.',
-              default=lambda: _default(False), show_default=True)
+              default=lambda: default(False), show_default=True)
 @click.option('--security/--no-security', prompt='Security Bundle',
               help='Whether or not to install the Security Bundle.',
-              default=lambda: _default(False), show_default=True)
+              default=lambda: default(False), show_default=True)
 @click.option('--session/--no-session', prompt='Session Bundle',
               help='Whether or not to install the Session Bundle.',
-              default=lambda: _default(False), show_default=True)
+              default=lambda: default(False), show_default=True)
 @click.option('--sqlalchemy/--no-sqlalchemy', prompt='SQLAlchemy Bundle',
               help='Whether or not to install the SQLAlchemy Bundle.',
-              default=lambda: _default(False), show_default=True)
+              default=lambda: default(False), show_default=True)
 @click.option('--webpack/--no-webpack', prompt='Webpack Bundle',
               help='Whether or not to install the Webpack Bundle.',
-              default=lambda: _default(False), show_default=True)
+              default=lambda: default(False), show_default=True)
 def project(dest, app_bundle, force, dev,
             admin, api, celery, mail, security, session, sqlalchemy, webpack):
     """

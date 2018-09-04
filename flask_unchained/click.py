@@ -9,6 +9,27 @@ from click.utils import make_default_short_help as _make_default_short_help
 
 CLI_HELP_STRING_MAX_LEN = 120
 DEFAULT_CONTEXT_SETTINGS = dict(help_option_names=('-h', '--help'))
+SKIP_PROMPTING = False
+
+
+def default(value):
+    if SKIP_PROMPTING:
+        return AutoDefault(value)
+    return value
+
+
+def skip_prompting(ctx, param, value):
+    global SKIP_PROMPTING
+
+    if value:
+        SKIP_PROMPTING = True
+    else:
+        SKIP_PROMPTING = False
+
+
+class AutoDefault:
+    def __init__(self, value):
+        self.value = value
 
 
 def _update_ctx_settings(context_settings):
@@ -287,6 +308,11 @@ class Option(click.Option):
             return rv
         return self.type_cast_value(ctx, rv)
 
+    def type_cast_value(self, ctx, value):
+        if isinstance(value, AutoDefault):
+            return value
+        return super().type_cast_value(ctx, value)
+
     def prompt_for_value(self, ctx):
         """This is an alternative flow that can be activated in the full
         value processing if a value does not exist.  It will prompt the
@@ -295,10 +321,8 @@ class Option(click.Option):
         """
         # Calculate the default before prompting anything to be stable.
         default = self.get_default(ctx)
-        missing_default = isinstance(default, (list, tuple)) and default[0] is _missing
-        default = default if not missing_default else default[1]
-        if not missing_default:
-            return default
+        if isinstance(default, AutoDefault):
+            return self.type_cast_value(ctx, default.value)
 
         # If this is a prompt for a flag we need to handle this
         # differently.
