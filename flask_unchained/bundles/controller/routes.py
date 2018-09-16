@@ -10,7 +10,7 @@ from .attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
 from .controller import Controller
 from .resource import Resource
 from .route import Route
-from .utils import join, method_name_to_url
+from .utils import controller_name, join, get_param_tuples, method_name_to_url
 
 Defaults = Dict[str, Any]
 Endpoints = Union[List[str], Tuple[str], Set[str]]
@@ -395,7 +395,9 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
 
     for subroute in _reduce_routes(subresources):
         subroute = subroute.copy()
-        subroute.rule = resource_cls.subresource_route_rule(subroute)
+        rule = join(resource_cls.url_prefix, resource_cls.member_param,
+                    subroute.rule)
+        subroute.rule = _rename_parent_resource_param_name(resource_cls, rule)
         yield subroute
 
     resource_cls.url_prefix = resource_url_prefix
@@ -540,5 +542,17 @@ def _normalize_controller_routes(rules: Iterable[Route],
         route._controller_name = controller_cls.__name__
         route._controller = controller_cls
         route.view_func = controller_cls.method_as_view(route.method_name)
-        route.rule = controller_cls.route_rule(route)
+        if not route.rule:
+            route.rule = method_name_to_url(route.method_name)
+            if issubclass(controller_cls, Resource) and route.is_member:
+                route.rule = _rename_parent_resource_param_name(
+                    controller_cls, join(controller_cls.member_param, route.rule))
+        route.rule = join(controller_cls.url_prefix, route.rule)
         yield route
+
+
+def _rename_parent_resource_param_name(parent_cls, url_rule):
+    type_, orig_name = get_param_tuples(parent_cls.member_param)[0]
+    orig_param = f'<{type_}:{orig_name}>'
+    renamed_param = f'<{type_}:{controller_name(parent_cls)}_{orig_name}>'
+    return url_rule.replace(orig_param, renamed_param, 1)

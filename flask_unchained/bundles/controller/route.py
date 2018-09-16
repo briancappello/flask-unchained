@@ -17,8 +17,7 @@ class Route:
     details as an attribute on view functions and class view methods.
 
     Most notably, this class's rule and full_rule attributes may not represent
-    the final url rule that gets registered with Flask (especially true for
-    Controller and Resource view methods - use `TheControllerClass.route_rule`).
+    the final url rule that gets registered with Flask.
 
     Further gotchas with `Controller` and `Resource` routes include that their
     view_func must be finalized from the outside using

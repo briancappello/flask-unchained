@@ -1,6 +1,7 @@
 from flask_unchained.bundles.controller import Resource, route
 from flask_unchained.bundles.controller.attr_constants import CONTROLLER_ROUTES_ATTR
 from flask_unchained.bundles.controller.constants import ALL_METHODS
+from flask_unchained.bundles.controller.utils import join
 
 
 class DefaultResource(Resource):
@@ -63,7 +64,7 @@ class TestResource:
         assert delete.methods == ['DELETE']
 
     def test_redirect_to_controller_method(self, app):
-        class UserController(Resource):
+        class UserResource(Resource):
             def create(self):
                 return self.redirect('get', id=1)
 
@@ -71,41 +72,19 @@ class TestResource:
                 pass
 
         with app.test_request_context():
-            for method_name, routes in getattr(UserController,
+            for method_name, routes in getattr(UserResource,
                                                CONTROLLER_ROUTES_ATTR).items():
                 for route in routes:
                     app.add_url_rule(
-                        UserController.route_rule(route),
-                        view_func=UserController.method_as_view(method_name),
+                        join(UserResource.url_prefix, route.full_rule),
+                        view_func=UserResource.method_as_view(method_name),
                         endpoint=route.endpoint)
 
-            controller = UserController()
-            resp = controller.create()
+            resource = UserResource()
+            resp = resource.create()
             assert resp.status_code == 302
             assert resp.location == '/users/1'
 
     def test_it_adds_route_to_extra_view_methods(self):
         routes = getattr(DefaultResource, CONTROLLER_ROUTES_ATTR)
         assert 'extra' in routes
-
-    def test_route_rule(self):
-        class FooResource(Resource):
-            def a(self):
-                pass
-
-            @route(is_member=True)
-            def b(self):
-                pass
-
-        routes = getattr(FooResource, CONTROLLER_ROUTES_ATTR)
-        assert FooResource.route_rule(routes['a'][0]) == '/foos/a'
-        assert FooResource.route_rule(routes['b'][0]) == '/foos/<int:foo_id>/b'
-
-    def test_route_rule_with_resource_methods(self):
-        routes = getattr(DefaultResource, CONTROLLER_ROUTES_ATTR)
-        assert DefaultResource.route_rule(routes['list'][0]) == '/defaults'
-        assert DefaultResource.route_rule(routes['create'][0]) == '/defaults'
-        assert DefaultResource.route_rule(routes['get'][0]) == '/defaults/<int:id>'
-        assert DefaultResource.route_rule(routes['patch'][0]) == '/defaults/<int:id>'
-        assert DefaultResource.route_rule(routes['put'][0]) == '/defaults/<int:id>'
-        assert DefaultResource.route_rule(routes['delete'][0]) == '/defaults/<int:id>'

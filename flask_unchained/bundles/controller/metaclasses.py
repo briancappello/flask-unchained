@@ -8,7 +8,6 @@ from .attr_constants import (
 from .constants import (
     ALL_METHODS, INDEX_METHODS, CREATE, DELETE, GET, LIST, PATCH, PUT)
 from .route import Route
-from .utils import controller_name, join, get_param_tuples, method_name_to_url
 
 
 CONTROLLER_REMOVE_EXTRA_SUFFIXES = ['View']
@@ -54,12 +53,6 @@ class ControllerMeta(type):
         setattr(cls, CONTROLLER_ROUTES_ATTR, controller_routes)
         return cls
 
-    def route_rule(cls, route: Route):
-        rule = route.rule
-        if not rule:
-            rule = method_name_to_url(route.method_name)
-        return join(cls.url_prefix, rule)
-
 
 class ResourceMeta(ControllerMeta):
     """
@@ -94,19 +87,6 @@ class ResourceMeta(ControllerMeta):
 
         return cls
 
-    def route_rule(cls, route: Route):
-        rule = route.rule
-        if not rule:
-            rule = method_name_to_url(route.method_name)
-        if route.is_member:
-            rule = rename_parent_resource_param_name(
-                cls, join(cls.member_param, rule))
-        return join(cls.url_prefix, rule)
-
-    def subresource_route_rule(cls, subresource_route: Route):
-        rule = join(cls.url_prefix, cls.member_param, subresource_route.rule)
-        return rename_parent_resource_param_name(cls, rule)
-
 
 def get_not_views(clsdict, bases):
     not_views = deep_getattr({}, bases, NOT_VIEWS_ATTR, [])
@@ -127,10 +107,3 @@ def is_view_func(method_name, method):
     is_private = method_name.startswith('_')
     has_no_routes = getattr(method, NO_ROUTES_ATTR, False)
     return is_function and not (is_private or has_no_routes)
-
-
-def rename_parent_resource_param_name(parent_cls, url_rule):
-    type_, orig_name = get_param_tuples(parent_cls.member_param)[0]
-    orig_param = f'<{type_}:{orig_name}>'
-    renamed_param = f'<{type_}:{controller_name(parent_cls)}_{orig_name}>'
-    return url_rule.replace(orig_param, renamed_param, 1)
