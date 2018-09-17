@@ -10,7 +10,7 @@ from .attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
 from .controller import Controller
 from .resource import Resource
 from .route import Route
-from .utils import controller_name, join, get_param_tuples, method_name_to_url
+from .utils import join, method_name_to_url, rename_parent_resource_param_name
 
 Defaults = Dict[str, Any]
 Endpoints = Union[List[str], Tuple[str], Set[str]]
@@ -58,12 +58,7 @@ def controller(url_prefix_or_controller_cls: Union[str, Type[Controller]],
     """
     url_prefix, controller_cls = _normalize_args(
         url_prefix_or_controller_cls, controller_cls, _is_controller_cls)
-
-    # FIXME this business of needing to set and then restore the class's
-    # url_prefix is kinda very crap. (also applies in the resource function)
-    controller_url_prefix = controller_cls.url_prefix
-    if url_prefix:
-        controller_cls.url_prefix = url_prefix
+    url_prefix = url_prefix or controller_cls.url_prefix
 
     routes = []
     controller_routes = getattr(controller_cls, CONTROLLER_ROUTES_ATTR)
@@ -77,9 +72,8 @@ def controller(url_prefix_or_controller_cls: Union[str, Type[Controller]],
             else:
                 routes.append(route)
 
-    yield from _normalize_controller_routes(routes, controller_cls)
-
-    controller_cls.url_prefix = controller_url_prefix
+    yield from _normalize_controller_routes(routes, controller_cls,
+                                            url_prefix=url_prefix)
 
 
 def func(rule_or_view_func: Union[str, Callable],
@@ -326,6 +320,7 @@ def put(rule: str,
 def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
              resource_cls: Optional[Type[Resource]] = None,
              *,
+             member_param: Optional[str] = None,
              rules: Optional[Iterable[Union[Route, RouteGenerator]]] = None,
              subresources: Optional[Iterable[RouteGenerator]] = None,
              ) -> RouteGenerator:
@@ -369,19 +364,18 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
 
     :param url_prefix_or_resource_cls: The resource class, or a url prefix for
                                        all of the rules from the resource class
-                                       passed as the second argument
+                                       passed as the second argument.
     :param resource_cls: If a url prefix was given as the first argument, then
-                         the resource class must be passed as the second argument
+                         the resource class must be passed as the second argument.
+    :param member_param: Optionally override the controller's member_param attribute.
     :param rules: An optional list of rules to limit/customize the routes included
-                  from the resource
+                  from the resource.
     :param subresources: An optional list of subresources.
     """
     url_prefix, resource_cls = _normalize_args(
         url_prefix_or_resource_cls, resource_cls, _is_resource_cls)
-
-    resource_url_prefix = resource_cls.url_prefix
-    if url_prefix:
-        resource_cls.url_prefix = url_prefix
+    member_param = member_param or resource_cls.member_param
+    url_prefix = url_prefix or resource_cls.url_prefix
 
     routes = getattr(resource_cls, CONTROLLER_ROUTES_ATTR)
     if rules is not None:
@@ -391,32 +385,18 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
         for route in rules:
             routes[route.method_name] = route
 
-    yield from _normalize_controller_routes(routes.values(), resource_cls)
+    yield from _normalize_controller_routes(routes.values(), resource_cls,
+                                            url_prefix=url_prefix,
+                                            member_param=member_param)
 
     for subroute in _reduce_routes(subresources):
+        subroute._parent_resource_cls = resource_cls
+        subroute._parent_resource_cls._member_param = member_param
         subroute = subroute.copy()
-        rule = join(resource_cls.url_prefix, resource_cls.member_param,
-                    subroute.rule)
-        subroute.rule = _rename_parent_resource_param_name(resource_cls, rule)
+        subroute.rule = rename_parent_resource_param_name(
+            subroute,
+            rule=join(url_prefix, member_param, subroute.rule))
         yield subroute
-
-    resource_cls.url_prefix = resource_url_prefix
-
-
-def _reduce_routes(routes: Iterable[Union[Route, RouteGenerator]],
-                   ) -> RouteGenerator:
-    if not routes:
-        return ()
-
-    try:
-        for route in routes:
-            if isinstance(route, Route):
-                yield route
-            else:
-                yield from _reduce_routes(route)
-    except TypeError as e:
-        print(str(e), routes)
-
 
 def rule(rule: str,
          cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
@@ -536,23 +516,30 @@ def _normalize_args(maybe_str, maybe_none, test):
 
 def _normalize_controller_routes(rules: Iterable[Route],
                                  controller_cls: Type[Controller],
+                                 url_prefix: Optional[str] = None,
+                                 member_param: Optional[str] = None,
                                  ) -> RouteGenerator:
     for route in _reduce_routes(rules):
+        if not route._controller_cls or not route._controller_name:
+            if route._controller_name and (
+                    controller_cls.__name__ != route._controller_name):
+                raise Exception('Something is very wrong... expected Route '
+                                'controller class names to match')
+            route._controller_cls = controller_cls
+            route._controller_name = controller_cls.__name__
         route = route.copy()
-        route._controller_name = controller_cls.__name__
-        route._controller = controller_cls
+        route.rule = route._make_rule(url_prefix, member_param=member_param)
         route.view_func = controller_cls.method_as_view(route.method_name)
-        if not route.rule:
-            route.rule = method_name_to_url(route.method_name)
-            if issubclass(controller_cls, Resource) and route.is_member:
-                route.rule = _rename_parent_resource_param_name(
-                    controller_cls, join(controller_cls.member_param, route.rule))
-        route.rule = join(controller_cls.url_prefix, route.rule)
         yield route
 
 
-def _rename_parent_resource_param_name(parent_cls, url_rule):
-    type_, orig_name = get_param_tuples(parent_cls.member_param)[0]
-    orig_param = f'<{type_}:{orig_name}>'
-    renamed_param = f'<{type_}:{controller_name(parent_cls)}_{orig_name}>'
-    return url_rule.replace(orig_param, renamed_param, 1)
+def _reduce_routes(routes: Iterable[Union[Route, RouteGenerator]],
+                   ) -> RouteGenerator:
+    if not routes:
+        return ()
+
+    for route in routes:
+        if isinstance(route, Route):
+            yield route
+        else:
+            yield from _reduce_routes(route)

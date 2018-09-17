@@ -83,7 +83,6 @@ class RegisterRoutesHook(AppFactoryHook):
         bundle_views_module_name = getattr(bundle, 'views_module_name', 'views')
         views_module_name = f'{bundle.module_name}.{bundle_views_module_name}'
         views_module = importlib.import_module(views_module_name)
-        views_module = importlib.reload(views_module)
 
         for _, obj in inspect.getmembers(views_module, self.type_check):
             if hasattr(obj, FN_ROUTES_ATTR):

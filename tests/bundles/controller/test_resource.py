@@ -75,6 +75,7 @@ class TestResource:
             for method_name, routes in getattr(UserResource,
                                                CONTROLLER_ROUTES_ATTR).items():
                 for route in routes:
+                    route._controller_cls = UserResource
                     app.add_url_rule(
                         join(UserResource.url_prefix, route.full_rule),
                         view_func=UserResource.method_as_view(method_name),

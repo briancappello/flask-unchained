@@ -23,7 +23,7 @@ class ControllerMeta(type):
     - if subclass of a base class, init CONTROLLER_ROUTES_ATTR
         - check if methods were decorated with @route, otherwise
           create a new Route for each method
-        - finish initializing Routes (set blueprint, , _controller_cls, _controller_name)
+        - finish initializing Routes (set blueprint, _controller_name)
     """
     def __new__(mcs, name, bases, clsdict):
         set_up_class_dependency_injection(name, clsdict)
@@ -74,13 +74,13 @@ class ResourceMeta(ControllerMeta):
         for method_name in ALL_METHODS:
             if not clsdict.get(method_name):
                 continue
-
+            route = controller_routes.get(method_name)[0]
+            rule = None
             if method_name in INDEX_METHODS:
                 rule = '/'
             else:
-                rule = deep_getattr(clsdict, bases, 'member_param')
-
-            route = controller_routes.get(method_name)[0]
+                route._is_member_method = True
+                route._member_param = deep_getattr(clsdict, bases, 'member_param')
             route.rule = rule
             controller_routes[method_name] = [route]
         setattr(cls, CONTROLLER_ROUTES_ATTR, controller_routes)

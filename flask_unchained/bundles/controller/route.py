@@ -3,7 +3,7 @@ import inspect
 from flask_unchained.string_utils import snake_case
 from flask_unchained.utils import _missing
 
-from .utils import join, method_name_to_url
+from .utils import join, method_name_to_url, rename_parent_resource_param_name
 
 
 class Route:
@@ -31,6 +31,8 @@ class Route:
         self._blueprint = blueprint
         self._defaults = defaults or {}
         self._endpoint = endpoint
+        # :attr:`is_member` stores whether or not this route should be a member
+        # method of the parent route's resource class
         self._is_member = is_member
         self._methods = methods
         self._only_if = only_if
@@ -38,9 +40,14 @@ class Route:
         self.rule_options = rule_options
         self.view_func = view_func
 
-        # extra private (should only be used by controller metaclasses)
+        # private (should only be used by :func:`_normalize_controller_routes`)
         self._controller_name = None
-        self._controller = None
+        self._controller_cls = None
+        self._parent_resource_cls = None
+        # :attr:`_is_member_method` stores whether or not this route is a
+        # member method of this route's resource class
+        self._is_member_method = False
+        self._member_param = None
 
     def should_register(self, app):
         """
@@ -146,8 +153,8 @@ class Route:
         """
         if not self.view_func:
             return None
-        elif self._controller:
-            rv = inspect.getmodule(self._controller).__name__
+        elif self._controller_cls:
+            rv = inspect.getmodule(self._controller_cls).__name__
             return rv
         return inspect.getmodule(self.view_func).__name__
 
@@ -172,12 +179,12 @@ class Route:
         """
         if self._rule:
             return self._rule
-        elif self._controller_name:
-            return None
-        return method_name_to_url(self.method_name)
+        return self._make_rule(member_param=self._member_param)
 
     @rule.setter
     def rule(self, rule):
+        if rule is not None and not rule.startswith('/'):
+            rule = '/' + rule
         self._rule = rule
 
     @property
@@ -185,9 +192,28 @@ class Route:
         """
         The full url rule for this route, including any blueprint prefix.
         """
-        if not self.rule:
-            raise Exception(f'{self} not fully initialized (missing url rule)')
         return join(self.bp_prefix, self.rule)
+
+    def _make_rule(self, url_prefix=None, member_param=None):
+        if member_param is not None:
+            self._member_param = member_param
+
+        if self._rule:
+            return join(url_prefix, self._rule)
+        elif self._controller_name and not self._controller_cls:
+            raise Exception(
+                f'{self} was not fully initialized (missing controller class)')
+        elif self._controller_cls:
+            rule = method_name_to_url(self.method_name)
+            if (self._is_member or self._is_member_method) and not member_param:
+                raise Exception('member_param argument is required')
+            if self._is_member_method:
+                rule = member_param
+            elif self._is_member:
+                rule = rename_parent_resource_param_name(
+                    self._controller_cls, join(member_param, rule))
+            return join(url_prefix, rule)
+        return method_name_to_url(self.method_name)
 
     def copy(self):
         new = object.__new__(Route)
@@ -209,4 +235,7 @@ class Route:
         return f'{prefix}.{self.method_name}'
 
     def __repr__(self):
-        return f'<Route endpoint={self.endpoint}>'
+        try:
+            return f'Route(endpoint={self.endpoint}, rule={self.rule})'
+        except:
+            return f'Route(endpoint={self.endpoint})'

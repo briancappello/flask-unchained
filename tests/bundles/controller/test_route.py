@@ -19,15 +19,15 @@ class TestRoute:
         assert route.should_register(True) is True
         assert route.should_register(False) is False
 
-    def test_full_rule_requires_rule_with_a_controller(self):
+    def test_class_view_rule_requires_controller_class(self):
         class SomeController(Controller):
             def index(self):
                 pass
 
         route = getattr(SomeController, CONTROLLER_ROUTES_ATTR)['index'][0]
         with pytest.raises(Exception) as e:
-            fail = route.full_rule
-        assert 'not fully initialized' in str(e)
+            fail = route.rule
+        assert 'not fully initialized (missing controller class)' in str(e)
 
     def test_full_name_with_controller(self):
         class SomeController(Controller):
