@@ -25,6 +25,7 @@
 * minor refactor of the declarative routing for `Controller` and `Resource` classes
    - consolidate default route rule generation into the `Route` class
    - make it possible to override the `member_param` of a `Resource` with the `resource` routes function
+* add a `TEMPLATE_FILE_EXTENSION` option to `AppConfig` that controllers will respect by default. Controllers can still set their `template_file_extension` attribute to override the application-wide default.
 
 ## 0.5.1 (2018/07/25)
 

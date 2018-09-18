@@ -91,8 +91,8 @@ class Resource(Controller, metaclass=ResourceMeta):
 
     __abstract__ = True
 
-    url_prefix = UrlPrefixDescriptor()
     member_param = '<int:id>'
+    url_prefix = UrlPrefixDescriptor()
 
     @classmethod
     def method_as_view(cls, method_name, *class_args, **class_kwargs):

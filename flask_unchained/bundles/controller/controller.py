@@ -21,20 +21,21 @@ class Controller(metaclass=ControllerMeta):
 
     __abstract__ = True
 
+    decorators = None
+    """
+    A list of decorators to apply to all views in this controller.
+    """
+
     template_folder = TemplateFolderDescriptor()
     """
     Path to the template folder for this bundle. By default, it will use a ``templates``
     folder in the bundle package, if it exists, otherwise None.
     """
 
-    template_extension = '.html'
+    template_file_extension = None
     """
-    The default filename extension to use for templates.
-    """
-
-    decorators = None
-    """
-    A list of decorators to apply to all views in this controller.
+    The default filename extension to use for templates. Overrides your app config's
+    ``TEMPLATE_FILE_EXTENSION`` setting.
     """
 
     url_prefix = None
@@ -61,7 +62,9 @@ class Controller(metaclass=ControllerMeta):
         :param ctx: Context variables to pass into the template.
         """
         if '.' not in template_name:
-            template_name = f'{template_name}{self.template_extension}'
+            template_file_extension = (self.template_file_extension
+                                       or app.config.get('TEMPLATE_FILE_EXTENSION'))
+            template_name = f'{template_name}{template_file_extension}'
         if self.template_folder and os.sep not in template_name:
             template_name = os.path.join(self.template_folder, template_name)
         return render_template(template_name, **ctx)

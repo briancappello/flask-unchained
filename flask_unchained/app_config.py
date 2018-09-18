@@ -54,7 +54,6 @@ class AppConfig:
 class _ConfigDefaults:
     DEBUG = get_boolean_env('FLASK_DEBUG', False)
 
-
 class _DevConfigDefaults:
     DEBUG = get_boolean_env('FLASK_DEBUG', True)
 
