@@ -1,0 +1,14 @@
+/********************************************************************************
+ * Need to use !important on rules in this file because the RTD stylesheets get *
+ * loaded after this stylesheet                                                 *
+ *******************************************************************************/
+
+/* override table width restrictions (fix line-wrap inside cells) */
+@media screen and (min-width: 767px) {
+   .wy-table-responsive table td {
+      white-space: normal !important;
+   }
+   .wy-table-responsive {
+      overflow: visible !important;
+   }
+}
