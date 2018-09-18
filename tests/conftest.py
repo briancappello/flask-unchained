@@ -12,12 +12,12 @@ from tests.bundles.security._bundles.security.models import User, Role, UserRole
 PRIOR_FLASK_ENV = os.getenv('FLASK_ENV', None)
 
 POSTGRES = '{dialect}://{user}:{password}@{host}:{port}/{db_name}'.format(
-    dialect='postgresql+psycopg2',
-    user='flask_test',
-    password='flask_test',
-    host='127.0.0.1',
-    port=5432,
-    db_name='flask_test')
+    dialect=os.getenv('FLASK_DATABASE_ENGINE', 'postgresql+psycopg2'),
+    user=os.getenv('FLASK_DATABASE_USER', 'flask_test'),
+    password=os.getenv('FLASK_DATABASE_PASSWORD', 'flask_test'),
+    host=os.getenv('FLASK_DATABASE_HOST', '127.0.0.1'),
+    port=os.getenv('FLASK_DATABASE_PORT', 5433),
+    db_name=os.getenv('FLASK_DATABASE_NAME', 'flask_test'))
 
 
 @pytest.fixture()
