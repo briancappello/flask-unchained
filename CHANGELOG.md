@@ -27,6 +27,7 @@
    - make it possible to override the `member_param` of a `Resource` with the `resource` routes function
 * add a `TEMPLATE_FILE_EXTENSION` option to `AppConfig` that controllers will respect by default. Controllers can still set their `template_file_extension` attribute to override the application-wide default.
 * implement missing `delete` routing function
+* preliminary support for customizing the generated unique member param
 
 ## 0.5.1 (2018/07/25)
 

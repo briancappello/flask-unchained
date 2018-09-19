@@ -212,11 +212,14 @@ def redirect(where: Optional[str] = None,
 
 
 def rename_parent_resource_param_name(route, rule: str) -> str:
-    param_to_rename = route._parent_resource_cls._member_param
-    type_, orig_name = get_param_tuples(param_to_rename)[0]
-    orig_param = f'<{type_}:{orig_name}>'
-    renamed_param = f'<{type_}:{controller_name(route._parent_resource_cls)}_{orig_name}>'
-    return rule.replace(orig_param, renamed_param, 1)
+    ctrl_name = controller_name(route._parent_resource_cls)
+    type_, orig_name = get_param_tuples(route._parent_member_param)[0]
+    renamed_param = (route._unique_member_param
+                     or f'<{type_}:{ctrl_name}_{orig_name}>')
+    if renamed_param in rule:
+        type_, orig_name = get_param_tuples(route._unique_member_param)[0]
+        renamed_param = f'<{type_}:{ctrl_name}_{orig_name}>'
+    return rule.replace(route._parent_member_param, renamed_param, 1)
 
 
 def _missing_to_default(arg, default=None):

@@ -347,6 +347,7 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
              resource_cls: Optional[Type[Resource]] = None,
              *,
              member_param: Optional[str] = None,
+             unique_member_param: Optional[str] = None,
              rules: Optional[Iterable[Union[Route, RouteGenerator]]] = None,
              subresources: Optional[Iterable[RouteGenerator]] = None,
              ) -> RouteGenerator:
@@ -401,6 +402,7 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
     url_prefix, resource_cls = _normalize_args(
         url_prefix_or_resource_cls, resource_cls, _is_resource_cls)
     member_param = member_param or resource_cls.member_param
+    unique_member_param = unique_member_param or resource_cls.unique_member_param
     url_prefix = url_prefix or resource_cls.url_prefix
 
     routes = getattr(resource_cls, CONTROLLER_ROUTES_ATTR)
@@ -413,15 +415,18 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
 
     yield from _normalize_controller_routes(routes.values(), resource_cls,
                                             url_prefix=url_prefix,
-                                            member_param=member_param)
+                                            member_param=member_param,
+                                            unique_member_param=unique_member_param)
 
     for subroute in _reduce_routes(subresources):
         subroute._parent_resource_cls = resource_cls
-        subroute._parent_resource_cls._member_param = member_param
+        subroute._parent_member_param = member_param
+        subroute._unique_member_param = unique_member_param
         subroute = subroute.copy()
         subroute.rule = rename_parent_resource_param_name(
             subroute, rule=join(url_prefix, member_param, subroute.rule))
         yield subroute
+
 
 def rule(rule: str,
          cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
@@ -543,6 +548,7 @@ def _normalize_controller_routes(rules: Iterable[Route],
                                  controller_cls: Type[Controller],
                                  url_prefix: Optional[str] = None,
                                  member_param: Optional[str] = None,
+                                 unique_member_param: Optional[str] = None,
                                  ) -> RouteGenerator:
     for route in _reduce_routes(rules):
         if not route._controller_cls or not route._controller_name:
@@ -553,6 +559,8 @@ def _normalize_controller_routes(rules: Iterable[Route],
             route._controller_cls = controller_cls
             route._controller_name = controller_cls.__name__
         route = route.copy()
+        route._member_param = member_param
+        route._unique_member_param = unique_member_param
         route.rule = route._make_rule(url_prefix, member_param=member_param)
         route.view_func = controller_cls.method_as_view(route.method_name)
         yield route

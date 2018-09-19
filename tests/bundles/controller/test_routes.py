@@ -77,6 +77,16 @@ class BarResource(Resource):
         pass
 
 
+class BazResource(Resource):
+    unique_member_param = '<string:baz>'
+
+    def list(self):
+        pass
+
+    def get(self, id):
+        pass
+
+
 class TestController:
     def test_it_works_with_only_a_controller_cls(self):
         routes = list(controller(SiteController))
@@ -274,6 +284,33 @@ class TestResource:
         assert routes[2].rule == '/users/<string:user_slug>/roles'
         assert routes[3].endpoint == 'role_resource.get'
         assert routes[3].rule == '/users/<string:user_slug>/roles/<string:slug>'
+
+    def test_it_renames_with_deeply_customized_unique_member_params(self):
+        routes = list(resource('/baz', BazResource,
+                               subresources=[resource(BarResource)]))
+
+        assert routes[0].endpoint == 'baz_resource.list'
+        assert routes[0].rule == '/baz'
+        assert routes[1].endpoint == 'baz_resource.get'
+        assert routes[1].rule == '/baz/<int:id>'
+        assert routes[2].endpoint == 'bar_resource.list'
+        assert routes[2].rule == '/baz/<string:baz>/bars'
+        assert routes[3].endpoint == 'bar_resource.get'
+        assert routes[3].rule == '/baz/<string:baz>/bars/<int:id>'
+
+    def test_member_param_overrides_unique_member_params(self):
+        routes = list(resource('/baz', BazResource, unique_member_param='<int:pk>',
+                               subresources=[
+                                   resource(BarResource, member_param='<int:pk>')]))
+
+        assert routes[0].endpoint == 'baz_resource.list'
+        assert routes[0].rule == '/baz'
+        assert routes[1].endpoint == 'baz_resource.get'
+        assert routes[1].rule == '/baz/<int:id>'
+        assert routes[2].endpoint == 'bar_resource.list'
+        assert routes[2].rule == '/baz/<int:pk>/bars'
+        assert routes[3].endpoint == 'bar_resource.get'
+        assert routes[3].rule == '/baz/<int:baz_pk>/bars/<int:pk>'
 
     def test_differently_named_deeply_customized_member_params(self):
         routes = list(resource(UserResource,

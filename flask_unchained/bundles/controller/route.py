@@ -31,23 +31,29 @@ class Route:
         self._blueprint = blueprint
         self._defaults = defaults or {}
         self._endpoint = endpoint
-        # :attr:`is_member` stores whether or not this route should be a member
-        # method of the parent route's resource class
-        self._is_member = is_member
         self._methods = methods
         self._only_if = only_if
         self._rule = rule
         self.rule_options = rule_options
         self.view_func = view_func
 
-        # private (should only be used by :func:`_normalize_controller_routes`)
+        # private
         self._controller_name = None
         self._controller_cls = None
-        self._parent_resource_cls = None
-        # :attr:`_is_member_method` stores whether or not this route is a
-        # member method of this route's resource class
-        self._is_member_method = False
         self._member_param = None
+        self._unique_member_param = None
+        self._parent_resource_cls = None
+        self._parent_member_param = None
+
+        self._is_member = is_member
+        """
+        Whether or not this route should be a member method of the parent resource.
+        """
+
+        self._is_member_method = False
+        """
+        Whether or not this route is a member method of this route's resource class.
+        """
 
     def should_register(self, app):
         """
@@ -179,7 +185,8 @@ class Route:
         """
         if self._rule:
             return self._rule
-        return self._make_rule(member_param=self._member_param)
+        return self._make_rule(member_param=self._member_param,
+                               unique_member_param=self._unique_member_param)
 
     @rule.setter
     def rule(self, rule):
@@ -194,9 +201,11 @@ class Route:
         """
         return join(self.bp_prefix, self.rule)
 
-    def _make_rule(self, url_prefix=None, member_param=None):
+    def _make_rule(self, url_prefix=None, member_param=None, unique_member_param=None):
         if member_param is not None:
             self._member_param = member_param
+        if unique_member_param is not None:
+            self._unique_member_param = unique_member_param
 
         if self._rule:
             return join(url_prefix, self._rule)
@@ -210,8 +219,7 @@ class Route:
             if self._is_member_method:
                 rule = member_param
             elif self._is_member:
-                rule = rename_parent_resource_param_name(
-                    self._controller_cls, join(member_param, rule))
+                rule = rename_parent_resource_param_name(self, join(member_param, rule))
             return join(url_prefix, rule)
         return method_name_to_url(self.method_name)
 
