@@ -2,12 +2,12 @@ import inspect
 
 from collections import defaultdict
 from flask_sqlalchemy.model import Model as FlaskSQLAlchemyBaseModel
-from flask_unchained.string_utils import pluralize, title_case
 from flask_unchained import lazy_gettext as _
+from flask_unchained.string_utils import pluralize, title_case
 from sqlalchemy.ext.declarative import declared_attr
 
 from .base_query import BaseQuery
-from .meta import ModelMetaFactory
+from .meta import ModelMetaOptionsFactory
 from .validation import Required, ValidationError, ValidationErrors
 
 
@@ -33,7 +33,7 @@ class BaseModel(FlaskSQLAlchemyBaseModel):
         _testing_ = 'this setting is only available when ' \
                     'os.getenv("FLASK_ENV") == "test"'
 
-    _meta_factory_class = ModelMetaFactory
+    _meta_options_factory_class = ModelMetaOptionsFactory
 
     query: BaseQuery
     q: BaseQuery = QueryAliasDescriptor()

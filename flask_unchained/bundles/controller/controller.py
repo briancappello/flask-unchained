@@ -5,7 +5,7 @@ from flask import (after_this_request, current_app as app, flash, jsonify,
                    render_template, request)
 from http import HTTPStatus
 
-from .metaclasses import ControllerMeta
+from .metaclasses import ControllerMeta, ControllerMetaOptionsFactory
 from .utils import controller_name, redirect
 
 
@@ -18,8 +18,10 @@ class Controller(metaclass=ControllerMeta):
     """
     Base class for class-based views in Flask Unchained.
     """
+    _meta_options_factory_class = ControllerMetaOptionsFactory
 
-    __abstract__ = True
+    class Meta:
+        abstract = True
 
     decorators = None
     """

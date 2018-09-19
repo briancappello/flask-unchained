@@ -1,9 +1,11 @@
 from flask_unchained.di import set_up_class_dependency_injection
-from flask_unchained.utils import deep_getattr
+from flask_unchained.metaclasses import (
+    AbstractMetaOption, McsArgs, MetaOptionsFactory, deep_getattr)
 from types import FunctionType
+from typing import *
 
 from .attr_constants import (
-    ABSTRACT_ATTR, CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR, NO_ROUTES_ATTR,
+    CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR, NO_ROUTES_ATTR,
     NOT_VIEWS_ATTR, REMOVE_SUFFIXES_ATTR)
 from .constants import (
     ALL_METHODS, INDEX_METHODS, CREATE, DELETE, GET, LIST, PATCH, PUT)
@@ -12,6 +14,10 @@ from .route import Route
 
 CONTROLLER_REMOVE_EXTRA_SUFFIXES = ['View']
 RESOURCE_REMOVE_EXTRA_SUFFIXES = ['MethodView']
+
+
+class ControllerMetaOptionsFactory(MetaOptionsFactory):
+    options = [AbstractMetaOption]
 
 
 class ControllerMeta(type):
@@ -27,9 +33,16 @@ class ControllerMeta(type):
     """
     def __new__(mcs, name, bases, clsdict):
         set_up_class_dependency_injection(name, clsdict)
-        cls = super().__new__(mcs, name, bases, clsdict)
+        mcs_args = McsArgs(mcs, name, bases, clsdict)
 
-        if ABSTRACT_ATTR in clsdict:
+        meta_options_factory_class: Type[ControllerMetaOptionsFactory] = deep_getattr(
+            clsdict, bases, '_meta_options_factory_class',
+            ControllerMetaOptionsFactory)
+        meta_options_factory = meta_options_factory_class()
+        meta_options_factory._contribute_to_class(mcs_args)
+
+        cls = super().__new__(*mcs_args)
+        if meta_options_factory.abstract:
             setattr(cls, NOT_VIEWS_ATTR, get_not_views(clsdict, bases))
             setattr(cls, REMOVE_SUFFIXES_ATTR, get_remove_suffixes(
                 name, bases, CONTROLLER_REMOVE_EXTRA_SUFFIXES))
@@ -44,8 +57,8 @@ class ControllerMeta(type):
                 controller_routes.pop(method_name, None)
                 continue
 
-            method_routes = getattr(method, FN_ROUTES_ATTR, [Route(None, method)])
-            controller_routes[method_name] = method_routes
+            controller_routes[method_name] = getattr(method, FN_ROUTES_ATTR,
+                                                     [Route(None, method)])
 
         setattr(cls, CONTROLLER_ROUTES_ATTR, controller_routes)
         return cls
@@ -68,7 +81,7 @@ class ResourceMeta(ControllerMeta):
 
     def __new__(mcs, name, bases, clsdict):
         cls = super().__new__(mcs, name, bases, clsdict)
-        if ABSTRACT_ATTR in clsdict:
+        if clsdict['_meta'].abstract:
             setattr(cls, REMOVE_SUFFIXES_ATTR, get_remove_suffixes(
                 name, bases, RESOURCE_REMOVE_EXTRA_SUFFIXES))
             return cls

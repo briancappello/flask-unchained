@@ -14,11 +14,10 @@ by setting ``Meta.lazy_mapped`` to ``True``::
         # ... (everything else is the same as normal)
 """
 
-from .model_meta_factory import ModelMetaFactory
+from .model_meta_options_factory import ModelMetaOptionsFactory
 from .model_meta_options import (
     MetaOption,
     ColumnMetaOption,
-    AbstractMetaOption,
     RelationshipsMetaOption,
     PolymorphicMetaOption,
     PolymorphicOnColumnMetaOption,
@@ -29,4 +28,3 @@ from .model_meta_options import (
     CreatedAtColumnMetaOption,
     UpdatedAtColumnMetaOption,
 )
-from .types import McsArgs

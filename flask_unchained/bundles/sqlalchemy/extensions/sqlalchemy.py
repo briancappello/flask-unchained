@@ -142,8 +142,9 @@ class SQLAlchemy(BaseSQLAlchemy):
                 clsdict['__module__'] = model.__module__
                 if hasattr(model, 'Meta'):
                     clsdict['Meta'] = model.Meta
-                if hasattr(model, '_meta_factory_class'):
-                    clsdict['_meta_factory_class'] = model._meta_factory_class
+                if hasattr(model, '_meta_options_factory_class'):
+                    clsdict['_meta_options_factory_class'] = \
+                        model._meta_options_factory_class
                 return BaseModelMetaclass(name, bases, clsdict)
 
             model = declarative_base(

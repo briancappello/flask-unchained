@@ -1,7 +1,7 @@
 import inspect
 
 from flask import jsonify, make_response
-from flask_unchained import Resource, route, param_converter
+from flask_unchained import Resource, route, param_converter, unchained, injectable
 from flask_unchained.bundles.controller.attr_constants import (
     ABSTRACT_ATTR, CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR)
 from flask_unchained import (
@@ -11,8 +11,7 @@ from flask_unchained.bundles.controller.metaclasses import ResourceMeta
 from flask_unchained.bundles.controller.route import Route
 from flask_unchained.bundles.controller.utils import get_param_tuples
 from flask_unchained.bundles.sqlalchemy import BaseModel, SessionManager
-from flask_unchained import unchained, injectable
-from flask_unchained.utils import deep_getattr
+from flask_unchained.metaclasses import deep_getattr
 from functools import partial
 from http import HTTPStatus
 try:
@@ -30,7 +29,8 @@ from .utils import unpack
 
 class ModelResourceMeta(ResourceMeta):
     def __new__(mcs, name, bases, clsdict):
-        if ABSTRACT_ATTR in clsdict:
+        if (ABSTRACT_ATTR in clsdict
+                or getattr(clsdict.get('Meta', object), 'abstract', False)):
             return super().__new__(mcs, name, bases, clsdict)
 
         routes = {}
@@ -64,8 +64,8 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
     Base class for model resources. This is intended for building RESTful APIs
     with SQLAlchemy models and Marshmallow serializers.
     """
-
-    __abstract__ = True
+    class Meta:
+        abstract = True
 
     # FIXME all of these class attributes might be nicer as Meta attributes (mostly
     # just for consistency with other places, eg Model and Serializer classes)

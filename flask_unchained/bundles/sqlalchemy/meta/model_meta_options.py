@@ -1,3 +1,4 @@
+from flask_unchained.metaclasses import McsArgs, MetaOption
 from flask_unchained.string_utils import snake_case
 from flask_unchained.utils import _missing
 from sqlalchemy import func as sa_func, types as sa_types
@@ -7,40 +8,6 @@ from sqlalchemy.orm import RelationshipProperty
 from ..sqla.column import Column
 from ..sqla.relationships import foreign_key
 from ..sqla.types import BigInteger, DateTime
-
-from .types import McsArgs
-
-
-class MetaOption:
-    def __init__(self, name, default=None, inherit=False):
-        self.name = name
-        self.default = default
-        self.inherit = inherit
-
-    def get_value(self, meta, base_model_meta, mcs_args: McsArgs):
-        """
-        :param meta: the class Meta (if any) from the user's model (NOTE:
-            this will be a plain object, NOT an instance of ModelMetaOptions)
-        :param base_model_meta: the ModelMetaOptions (if any) from the
-            base class of the user's model
-        :param mcs_args: the McsArgs for the user's model class
-        """
-        value = self.default
-        if self.inherit and base_model_meta is not None:
-            value = getattr(base_model_meta, self.name, value)
-        if meta is not None:
-            value = getattr(meta, self.name, value)
-        return value
-
-    def check_value(self, value, mcs_args: McsArgs):
-        pass
-
-    def contribute_to_class(self, mcs_args: McsArgs, value):
-        pass
-
-    def __repr__(self):
-        return f'<{self.__class__.__name__} name={self.name!r}, ' \
-               f'default={self.default!r}, inherit={self.inherit}>'
 
 
 class ColumnMetaOption(MetaOption):
@@ -66,20 +33,6 @@ class ColumnMetaOption(MetaOption):
 
     def get_column(self, mcs_args: McsArgs):
         raise NotImplementedError
-
-
-class AbstractMetaOption(MetaOption):
-    def __init__(self):
-        super().__init__(name='abstract', default=False, inherit=False)
-
-    def get_value(self, meta, base_model_meta, mcs_args: McsArgs):
-        if '__abstract__' in mcs_args.clsdict:
-            return True
-        return super().get_value(meta, base_model_meta, mcs_args)
-
-    def contribute_to_class(self, mcs_args: McsArgs, is_abstract):
-        if is_abstract:
-            mcs_args.clsdict['__abstract__'] = True
 
 
 class PrimaryKeyColumnMetaOption(ColumnMetaOption):

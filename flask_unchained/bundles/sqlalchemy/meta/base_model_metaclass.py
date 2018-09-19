@@ -1,14 +1,13 @@
 import re
 
 from collections import defaultdict
+from flask_unchained.metaclasses import McsArgs, McsInitArgs, deep_getattr
 from flask_sqlalchemy.model import DefaultMeta, should_set_tablename
 from flask_unchained.string_utils import snake_case
-from flask_unchained.utils import deep_getattr
 from sqlalchemy import Column
 
-from .model_meta_factory import ModelMetaFactory
+from .model_meta_options_factory import ModelMetaOptionsFactory
 from .model_registry import _model_registry
-from .types import McsArgs, McsInitArgs
 
 VALIDATOR_RE = re.compile(r'^validates?_(?P<column>\w+)')
 
@@ -18,9 +17,10 @@ class BaseModelMetaclass(DefaultMeta):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         _model_registry._ensure_correct_base_model(mcs_args)
 
-        ModelMetaFactoryClass = deep_getattr(
-            clsdict, mcs_args.bases, '_meta_factory_class', ModelMetaFactory)
-        model_meta_factory: ModelMetaFactory = ModelMetaFactoryClass()
+        meta_options_factory_class = deep_getattr(
+            clsdict, mcs_args.bases, '_meta_options_factory_class',
+            ModelMetaOptionsFactory)
+        model_meta_factory: ModelMetaOptionsFactory = meta_options_factory_class()
         model_meta_factory._contribute_to_class(mcs_args)
 
         if model_meta_factory.abstract:

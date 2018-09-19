@@ -2,8 +2,8 @@ from flask_unchained.bundles.controller.attr_constants import ABSTRACT_ATTR
 from flask_unchained.bundles.sqlalchemy import db
 from flask_unchained import unchained
 from flask_unchained.di import set_up_class_dependency_injection
+from flask_unchained.metaclasses import deep_getattr
 from flask_unchained.string_utils import camel_case, title_case
-from flask_unchained.utils import deep_getattr
 try:
     from flask_marshmallow.sqla import ModelSchema, SchemaOpts
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError

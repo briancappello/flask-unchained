@@ -1,7 +1,7 @@
 from types import FunctionType
 
+from .metaclasses import deep_getattr
 from .string_utils import snake_case
-from .utils import deep_getattr
 
 
 injectable = 'INJECTABLE_PARAMETER'

@@ -88,7 +88,8 @@ class Resource(Controller, metaclass=ResourceMeta):
     See also :class:`~flask_unchained.bundles.api.model_resource.ModelResource` from
     the API bundle.
     """
-    __abstract__ = True
+    class Meta:
+        abstract = True
 
     member_param = '<int:id>'
     unique_member_param = None

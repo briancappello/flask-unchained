@@ -1,5 +1,6 @@
 from flask_sqlalchemy import Model as BaseModel
-from flask_unchained.bundles.sqlalchemy.meta import McsArgs, MetaOption, ModelMetaFactory
+from flask_unchained.bundles.sqlalchemy.meta import ModelMetaOptionsFactory
+from flask_unchained.metaclasses import McsArgs, MetaOption
 
 
 class ExtendExisting(MetaOption):
@@ -20,15 +21,15 @@ class ExtendExisting(MetaOption):
         mcs_args.clsdict['__table_args__'] = table_args
 
 
-class CustomModelMetaOptions(ModelMetaFactory):
-    def _get_model_meta_options(self):
-        return super()._get_model_meta_options() + [
+class CustomModelMetaOptions(ModelMetaOptionsFactory):
+    def _get_meta_options(self):
+        return super()._get_meta_options() + [
             ExtendExisting(),
         ]
 
 
 class Model(BaseModel):
-    _meta_factory_class = CustomModelMetaOptions
+    _meta_options_factory_class = CustomModelMetaOptions
 
     class Meta:
         _testing_ = 'overriding the default'
