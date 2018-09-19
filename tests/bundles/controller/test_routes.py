@@ -90,8 +90,6 @@ class BazResource(Resource):
 class TestController:
     def test_it_works_with_only_a_controller_cls(self):
         routes = list(controller(SiteController))
-        for route in routes:
-            route._controller_cls = SiteController
         assert len(routes) == 2
         assert routes[0].endpoint == 'site_controller.index'
         assert routes[0].rule == '/'
@@ -100,8 +98,6 @@ class TestController:
 
     def test_it_works_with_a_prefix_and_controller_cls(self):
         routes = list(controller('/prefix', SiteController))
-        for route in routes:
-            route._controller_cls = SiteController
         assert len(routes) == 2
         assert routes[0].endpoint == 'site_controller.index'
         assert routes[0].rule == '/prefix'

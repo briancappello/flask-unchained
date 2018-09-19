@@ -38,7 +38,6 @@ class Route:
         self.view_func = view_func
 
         # private
-        self._controller_name = None
         self._controller_cls = None
         self._member_param = None
         self._unique_member_param = None
@@ -108,8 +107,8 @@ class Route:
         """
         if self._endpoint:
             return self._endpoint
-        elif self._controller_name:
-            endpoint = f'{snake_case(self._controller_name)}.{self.method_name}'
+        elif self._controller_cls:
+            endpoint = f'{snake_case(self._controller_cls.__name__)}.{self.method_name}'
             return endpoint if not self.bp_name else f'{self.bp_name}.{endpoint}'
         elif self.bp_name:
             return f'{self.bp_name}.{self.method_name}'
@@ -209,9 +208,6 @@ class Route:
 
         if self._rule:
             return join(url_prefix, self._rule)
-        elif self._controller_name and not self._controller_cls:
-            raise Exception(
-                f'{self} was not fully initialized (missing controller class)')
         elif self._controller_cls:
             rule = method_name_to_url(self.method_name)
             if (self._is_member or self._is_member_method) and not member_param:
@@ -238,8 +234,8 @@ class Route:
             return None
 
         prefix = self.view_func.__module__
-        if self._controller_name:
-            prefix = f'{prefix}.{self._controller_name}'
+        if self._controller_cls:
+            prefix = f'{prefix}.{self._controller_cls.__name__}'
         return f'{prefix}.{self.method_name}'
 
     def __repr__(self):

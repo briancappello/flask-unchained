@@ -44,7 +44,6 @@ class ModelResourceMeta(ResourceMeta):
             route = getattr(clsdict.get(method_name), FN_ROUTES_ATTR, [None])[0]
             if not route:
                 route = Route(None, deep_getattr(clsdict, bases, method_name))
-                route._controller_name = name
 
             if method_name in INDEX_METHODS:
                 rule = '/'

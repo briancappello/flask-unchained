@@ -34,8 +34,8 @@ class RegisterRoutesHook(AppFactoryHook):
                 self.bundle.endpoints[route.endpoint] = route
 
                 # FIXME this assumes a single endpoint per view function
-                if route._controller_name:
-                    key = f'{route._controller_name}.{route.method_name}'
+                if route._controller_cls:
+                    key = f'{route._controller_cls.__name__}.{route.method_name}'
                     self.bundle.controller_endpoints[key] = route
 
         bundle_names = [(

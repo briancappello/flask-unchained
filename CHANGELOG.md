@@ -28,6 +28,7 @@
 * add a `TEMPLATE_FILE_EXTENSION` option to `AppConfig` that controllers will respect by default. Controllers can still set their `template_file_extension` attribute to override the application-wide default.
 * implement missing `delete` routing function
 * preliminary support for customizing the generated unique member param
+* fix setting of `Route._controller_cls` to automatically always happen
 
 ## 0.5.1 (2018/07/25)
 

@@ -551,13 +551,6 @@ def _normalize_controller_routes(rules: Iterable[Route],
                                  unique_member_param: Optional[str] = None,
                                  ) -> RouteGenerator:
     for route in _reduce_routes(rules):
-        if not route._controller_cls or not route._controller_name:
-            if route._controller_name and (
-                    controller_cls.__name__ != route._controller_name):
-                raise Exception('Something is very wrong... expected Route '
-                                'controller class names to match')
-            route._controller_cls = controller_cls
-            route._controller_name = controller_cls.__name__
         route = route.copy()
         route._member_param = member_param
         route._unique_member_param = unique_member_param
