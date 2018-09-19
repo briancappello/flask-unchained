@@ -296,7 +296,7 @@ Lastly, Flask Unchained uses declarative routing. This means that while view fun
    # app/routes.py
 
    from flask_unchained import (controller, resource, func, include, prefix,
-                                get, post, patch, put, rule)
+                                get, delete, post, patch, put, rule)
 
    from .views import SiteController
 

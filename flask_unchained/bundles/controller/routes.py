@@ -76,6 +76,32 @@ def controller(url_prefix_or_controller_cls: Union[str, Type[Controller]],
                                             url_prefix=url_prefix)
 
 
+def delete(rule: str,
+           cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
+           *,
+           defaults: Optional[Defaults] = _missing,
+           endpoint: Optional[str] = _missing,
+           is_member: Optional[bool] = _missing,
+           only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
+           **rule_options) -> RouteGenerator:
+    """
+    Like :func:`rule`, except specifically for HTTP DELETE requests.
+
+    :param rule: The url rule for this route.
+    :param cls_method_name_or_view_fn: The view function for this route.
+    :param is_member: Whether or not this route is a member function.
+    :param only_if: An optional function to decide at runtime whether or not to register
+                    the route with Flask. It gets passed the configured app as a single
+                    argument, and should return a boolean.
+    :param rule_options: Keyword arguments that ultimately end up getting passed on to
+                         :class:`~werkzeug.routing.Rule`
+    """
+    rule_options.pop('methods', None)
+    yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
+                endpoint=endpoint, is_member=is_member, methods=['DELETE'],
+                only_if=only_if, **rule_options)
+
+
 def func(rule_or_view_func: Union[str, Callable],
          view_func: Optional[Callable] = _missing,
          blueprint: Optional[Blueprint] = _missing,

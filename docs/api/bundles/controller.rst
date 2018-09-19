@@ -46,6 +46,7 @@ Routes
 ~~~~~~
 
 .. autofunction:: flask_unchained.controller
+.. autofunction:: flask_unchained.delete
 .. autofunction:: flask_unchained.func
 .. autofunction:: flask_unchained.get
 .. autofunction:: flask_unchained.include

@@ -347,7 +347,7 @@ The first thing we need to do is to include the :class:`~flask_unchained.bundles
    # app/routes.py
 
    from flask_unchained import (controller, resource, func, include, prefix,
-                                get, post, patch, put, rule)
+                                get, delete, post, patch, put, rule)
 
    from flask_unchained.bundles.security import SecurityController
 

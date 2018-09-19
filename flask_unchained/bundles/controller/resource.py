@@ -83,7 +83,7 @@ class Resource(Controller, metaclass=ResourceMeta):
         UserResource.get            => GET /users/<string:username>
         UserResource.patch          => PATCH /users/<string:username>
         UserResource.put            => PUT /users/<string:username>
-        UserResource.delete         => /users/<string:username>
+        UserResource.delete         => DELETE /users/<string:username>
 
     See also :class:`~flask_unchained.bundles.api.model_resource.ModelResource` from
     the API bundle.

@@ -30,7 +30,7 @@ from .bundles.controller.controller import Controller
 from .bundles.controller.decorators import route, no_route
 from .bundles.controller.resource import Resource
 from .bundles.controller.routes import (
-    controller, func, get, include, patch, post, prefix, put, resource, rule)
+    controller, delete, func, get, include, patch, post, prefix, put, resource, rule)
 from .bundles.controller.utils import redirect, url_for
 
 

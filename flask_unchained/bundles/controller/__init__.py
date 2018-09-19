@@ -9,7 +9,7 @@ from .decorators import no_route, route
 from .resource import Resource
 from .route import Route
 from .routes import (
-    controller, func, get, include, patch, post, prefix, put, resource, rule)
+    controller, delete, func, get, include, patch, post, prefix, put, resource, rule)
 from .utils import redirect, url_for
 
 
