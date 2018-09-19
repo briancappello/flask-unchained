@@ -261,20 +261,19 @@ class TestResource:
         assert routes[1].rule == '/users/<string:slug>'
 
     def test_it_renames_with_deeply_customized_member_params(self):
-        member_param = '<string:slug>'
         routes = list(resource(UserResource,
-                               member_param=member_param,
+                               member_param='<string:slug>',
                                subresources=[resource(RoleResource,
-                                                      member_param=member_param)]))
+                                                      member_param='<string:slug>')]))
 
         assert routes[0].endpoint == 'user_resource.list'
-        assert routes[0].rule == f'/users'
+        assert routes[0].rule == '/users'
         assert routes[1].endpoint == 'user_resource.get'
-        assert routes[1].rule == f'/users/{member_param}'
+        assert routes[1].rule == '/users/<string:slug>'
         assert routes[2].endpoint == 'role_resource.list'
-        assert routes[2].rule == f'/users/<string:user_slug>/roles'
+        assert routes[2].rule == '/users/<string:user_slug>/roles'
         assert routes[3].endpoint == 'role_resource.get'
-        assert routes[3].rule == f'/users/<string:user_slug>/roles/{member_param}'
+        assert routes[3].rule == '/users/<string:user_slug>/roles/<string:slug>'
 
     def test_differently_named_deeply_customized_member_params(self):
         routes = list(resource(UserResource,
@@ -283,13 +282,13 @@ class TestResource:
                                                       member_param='<string:slug2>')]))
 
         assert routes[0].endpoint == 'user_resource.list'
-        assert routes[0].rule == f'/users'
+        assert routes[0].rule == '/users'
         assert routes[1].endpoint == 'user_resource.get'
-        assert routes[1].rule == f'/users/<string:slug>'
+        assert routes[1].rule == '/users/<string:slug>'
         assert routes[2].endpoint == 'role_resource.list'
-        assert routes[2].rule == f'/users/<string:user_slug>/roles'
+        assert routes[2].rule == '/users/<string:user_slug>/roles'
         assert routes[3].endpoint == 'role_resource.get'
-        assert routes[3].rule == f'/users/<string:user_slug>/roles/<string:slug2>'
+        assert routes[3].rule == '/users/<string:user_slug>/roles/<string:slug2>'
 
     def test_similarly_named_deeply_customized_member_params(self):
         routes = list(resource(
@@ -302,21 +301,22 @@ class TestResource:
             ]))
 
         assert routes[0].endpoint == 'user_resource.list'
-        assert routes[0].rule == f'/users'
+        assert routes[0].rule == '/users'
         assert routes[1].endpoint == 'user_resource.get'
-        assert routes[1].rule == f'/users/<string:slug>'
+        assert routes[1].rule == routes[0].rule + '/<string:slug>'
         assert routes[2].endpoint == 'role_resource.list'
-        assert routes[2].rule == f'/users/<string:user_slug>/roles'
+        assert routes[2].rule == '/users/<string:user_slug>/roles'
         assert routes[3].endpoint == 'role_resource.get'
-        assert routes[3].rule == f'/users/<string:user_slug>/roles/<int:id>'
+        assert routes[3].rule == routes[2].rule + '/<int:id>'
         assert routes[4].endpoint == 'foo_resource.list'
-        assert routes[4].rule == f'/users/<string:user_slug>/roles/<int:role_id>/foos'
+        assert routes[4].rule == '/users/<string:user_slug>/roles/<int:role_id>/foos'
         assert routes[5].endpoint == 'foo_resource.get'
-        assert routes[5].rule == f'/users/<string:user_slug>/roles/<int:role_id>/foos/<string:slug>'
+        assert routes[5].rule == routes[4].rule + '/<string:slug>'
         assert routes[6].endpoint == 'bar_resource.list'
-        assert routes[6].rule == f'/users/<string:user_slug>/roles/<int:role_id>/foos/<string:foo_slug>/bars'
+        assert routes[6].rule == \
+           '/users/<string:user_slug>/roles/<int:role_id>/foos/<string:foo_slug>/bars'
         assert routes[7].endpoint == 'bar_resource.get'
-        assert routes[7].rule == f'/users/<string:user_slug>/roles/<int:role_id>/foos/<string:foo_slug>/bars/<int:id>'
+        assert routes[7].rule == routes[6].rule + '/<int:id>'
 
     def test_it_requires_a_controller(self):
         with pytest.raises(ValueError):

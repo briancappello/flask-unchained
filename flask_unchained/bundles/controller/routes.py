@@ -420,8 +420,7 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
         subroute._parent_resource_cls._member_param = member_param
         subroute = subroute.copy()
         subroute.rule = rename_parent_resource_param_name(
-            subroute,
-            rule=join(url_prefix, member_param, subroute.rule))
+            subroute, rule=join(url_prefix, member_param, subroute.rule))
         yield subroute
 
 def rule(rule: str,
