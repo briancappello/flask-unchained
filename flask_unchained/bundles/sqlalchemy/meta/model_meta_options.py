@@ -1,4 +1,4 @@
-from flask_unchained.metaclasses import McsArgs, MetaOption
+from py_meta_utils import McsArgs, MetaOption
 from flask_unchained.string_utils import snake_case
 from flask_unchained.utils import _missing
 from sqlalchemy import func as sa_func, types as sa_types

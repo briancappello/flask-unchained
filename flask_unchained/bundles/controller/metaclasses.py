@@ -1,5 +1,5 @@
 from flask_unchained.di import set_up_class_dependency_injection
-from flask_unchained.metaclasses import (
+from py_meta_utils import (
     AbstractMetaOption, McsArgs, MetaOptionsFactory, deep_getattr)
 from types import FunctionType
 from typing import *

@@ -11,13 +11,13 @@ from flask_unchained.bundles.controller.metaclasses import ResourceMeta
 from flask_unchained.bundles.controller.route import Route
 from flask_unchained.bundles.controller.utils import get_param_tuples
 from flask_unchained.bundles.sqlalchemy import BaseModel, SessionManager
-from flask_unchained.metaclasses import deep_getattr
 from functools import partial
 from http import HTTPStatus
 try:
     from marshmallow import MarshalResult
 except ImportError:
-    from flask_unchained import OptionalClass as MarshalResult
+    from py_meta_utils import OptionalClass as MarshalResult
+from py_meta_utils import deep_getattr
 from types import FunctionType
 from typing import *
 from werkzeug.wrappers import Response

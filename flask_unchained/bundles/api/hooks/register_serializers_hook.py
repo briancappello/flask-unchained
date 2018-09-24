@@ -7,7 +7,7 @@ from flask_unchained.string_utils import title_case
 try:
     from marshmallow import class_registry
 except ImportError:
-    from flask_unchained import OptionalClass as class_registry
+    from py_meta_utils import OptionalClass as class_registry
 
 from ..model_serializer import ModelSerializer
 from ..extensions import api

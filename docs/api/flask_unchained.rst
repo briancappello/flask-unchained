@@ -141,15 +141,6 @@ Metaclass Utilities
 
 .. autofunction:: flask_unchained.utils.deep_getattr
 
-Subclassing Optional Dependencies
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: flask_unchained.utils.OptionalMetaclass
-   :members:
-
-.. autoclass:: flask_unchained.utils.OptionalClass
-   :members:
-
 Attribute-access Dictionaries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

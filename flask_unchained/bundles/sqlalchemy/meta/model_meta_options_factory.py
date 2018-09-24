@@ -1,6 +1,6 @@
 import os
 from flask_unchained.constants import TEST
-from flask_unchained.metaclasses import (
+from py_meta_utils import (
     AbstractMetaOption, MetaOption, MetaOptionsFactory, deep_getattr)
 from typing import *
 

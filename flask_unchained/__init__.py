@@ -21,7 +21,7 @@ from .di import BaseService, injectable
 from .flask_unchained import FlaskUnchained
 from .forms import FlaskForm
 from .unchained import Unchained, unchained
-from .utils import OptionalClass, OptionalMetaclass, get_boolean_env
+from .utils import get_boolean_env
 
 from .bundles.babel import gettext, ngettext, lazy_gettext, lazy_ngettext
 from .bundles.controller.constants import (ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,

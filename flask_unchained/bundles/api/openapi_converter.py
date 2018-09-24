@@ -4,16 +4,16 @@ try:
         LazyDict, OrderedLazyDict,
     )
 except ImportError:
-    from flask_unchained import OptionalClass as BaseOpenAPIConverter
-    from flask_unchained import OptionalClass as LazyDict
-    from flask_unchained import OptionalClass as OrderedLazyDict
+    from py_meta_utils import OptionalClass as BaseOpenAPIConverter
+    from py_meta_utils import OptionalClass as LazyDict
+    from py_meta_utils import OptionalClass as OrderedLazyDict
 
 try:
     from marshmallow.compat import iteritems
     from marshmallow.utils import is_collection
 except ImportError:
-    from flask_unchained import OptionalClass as iteritems
-    from flask_unchained import OptionalClass as is_collection
+    from py_meta_utils import OptionalClass as iteritems
+    from py_meta_utils import OptionalClass as is_collection
 
 class OpenAPIConverter(BaseOpenAPIConverter):
     def fields2jsonschema(self, fields, schema=None, use_refs=True, dump=True, name=None):

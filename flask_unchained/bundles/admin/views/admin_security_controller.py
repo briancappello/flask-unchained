@@ -1,7 +1,7 @@
 try:
     from flask_unchained.bundles.security import SecurityController
 except ImportError:
-    from flask_unchained import OptionalClass as SecurityController
+    from py_meta_utils import OptionalClass as SecurityController
 
 
 class AdminSecurityController(SecurityController):

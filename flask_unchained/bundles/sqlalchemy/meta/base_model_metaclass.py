@@ -1,9 +1,9 @@
 import re
 
 from collections import defaultdict
-from flask_unchained.metaclasses import McsArgs, McsInitArgs, deep_getattr
 from flask_sqlalchemy.model import DefaultMeta, should_set_tablename
 from flask_unchained.string_utils import snake_case
+from py_meta_utils import McsArgs, McsInitArgs, deep_getattr
 from sqlalchemy import Column
 
 from .model_meta_options_factory import ModelMetaOptionsFactory

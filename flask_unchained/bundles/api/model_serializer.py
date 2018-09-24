@@ -2,8 +2,8 @@ from flask_unchained.bundles.controller.attr_constants import ABSTRACT_ATTR
 from flask_unchained.bundles.sqlalchemy import db
 from flask_unchained import unchained
 from flask_unchained.di import set_up_class_dependency_injection
-from flask_unchained.metaclasses import deep_getattr
 from flask_unchained.string_utils import camel_case, title_case
+from py_meta_utils import deep_getattr
 try:
     from flask_marshmallow.sqla import ModelSchema, SchemaOpts
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
@@ -12,12 +12,12 @@ try:
         ModelConverter as BaseModelConverter, _should_exclude_field)
     from marshmallow_sqlalchemy.schema import ModelSchemaMeta
 except ImportError:
-    from flask_unchained import OptionalClass as ModelSchema
-    from flask_unchained import OptionalClass as SchemaOpts
-    from flask_unchained import OptionalClass as MarshmallowValidationError
-    from flask_unchained import OptionalClass as BaseUnmarshaller
-    from flask_unchained import OptionalClass as BaseModelConverter
-    from flask_unchained.utils import OptionalMetaclass as ModelSchemaMeta
+    from py_meta_utils import OptionalClass as ModelSchema
+    from py_meta_utils import OptionalClass as SchemaOpts
+    from py_meta_utils import OptionalClass as MarshmallowValidationError
+    from py_meta_utils import OptionalClass as BaseUnmarshaller
+    from py_meta_utils import OptionalClass as BaseModelConverter
+    from py_meta_utils import OptionalMetaclass as ModelSchemaMeta
 
 READ_ONLY_FIELDS = {'slug', 'created_at', 'updated_at'}
 

@@ -69,54 +69,6 @@ class ConfigPropertyMeta(type):
                 descriptor.key = f'{config_prefix}_{property_name}'.upper()
 
 
-class OptionalMetaclass(type):
-    """
-    Use this as a generic base metaclass if you need to subclass a metaclass from
-    an optional package.
-    """
-
-    __optional_class = None
-
-    def __new__(mcs, name, bases, clsdict):
-        if mcs.__optional_class is None:
-            mcs.__optional_class = super().__new__(mcs, name, bases, clsdict)
-        return mcs.__optional_class
-
-    def __getattr__(self, item):
-        return self.__optional_class
-
-    def __setattr__(self, key, value):
-        pass
-
-    def __call__(self, *args, **kwargs):
-        return self.__optional_class
-
-    def __getitem__(self, item):
-        return self.__optional_class
-
-    def __setitem__(self, key, value):
-        pass
-
-
-class OptionalClass(metaclass=OptionalMetaclass):
-    """
-    Use this as a generic base class if you have classes that depend on an
-    optional package. For example, if you want to define a serializer but not
-    depend on flask_api_bundle, you should do something like this::
-
-        try:
-            from flask_api_bundle import ma
-        except ImportError:
-            from flask_unchained import OptionalClass as ma
-
-        class MySerializer(ma.ModelSerializer):
-            class Meta:
-                model = 'MyModel'
-    """
-    def __init__(self, *args, **kwargs):
-        pass
-
-
 def format_docstring(docstring):
     """
     Strips whitespace from docstrings (both on the ends, and in the middle, replacing

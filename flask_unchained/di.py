@@ -1,6 +1,6 @@
+from py_meta_utils import deep_getattr
 from types import FunctionType
 
-from .metaclasses import deep_getattr
 from .string_utils import snake_case
 
 

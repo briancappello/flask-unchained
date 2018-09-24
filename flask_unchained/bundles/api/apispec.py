@@ -3,9 +3,9 @@ try:
     from apispec.ext.flask import FlaskPlugin
     from apispec.ext.marshmallow import MarshmallowPlugin as BaseMarshmallowPlugin
 except ImportError:
-    from flask_unchained import OptionalClass as apispec
-    from flask_unchained import OptionalClass as FlaskPlugin
-    from flask_unchained import OptionalClass as BaseMarshmallowPlugin
+    from py_meta_utils import OptionalClass as apispec
+    from py_meta_utils import OptionalClass as FlaskPlugin
+    from py_meta_utils import OptionalClass as BaseMarshmallowPlugin
 import json
 import os
 

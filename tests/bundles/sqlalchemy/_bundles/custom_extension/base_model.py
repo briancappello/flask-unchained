@@ -1,6 +1,6 @@
 from flask_sqlalchemy import Model as BaseModel
 from flask_unchained.bundles.sqlalchemy.meta import ModelMetaOptionsFactory
-from flask_unchained.metaclasses import McsArgs, MetaOption
+from py_meta_utils import McsArgs, MetaOption
 
 
 class ExtendExisting(MetaOption):

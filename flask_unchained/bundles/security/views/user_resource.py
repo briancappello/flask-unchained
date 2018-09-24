@@ -1,7 +1,7 @@
 try:
     from flask_unchained.bundles.api import ModelResource
 except ImportError:
-    from flask_unchained import OptionalClass as ModelResource
+    from py_meta_utils import OptionalClass as ModelResource
 
 from flask_unchained import CREATE, GET, PATCH, injectable
 
