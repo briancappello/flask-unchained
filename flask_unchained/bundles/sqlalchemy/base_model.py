@@ -1,13 +1,13 @@
 import inspect
 
 from collections import defaultdict
-from flask_sqlalchemy.model import Model as FlaskSQLAlchemyBaseModel
 from flask_unchained import lazy_gettext as _
 from flask_unchained.string_utils import pluralize, title_case
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy_unchained import BaseModel as _BaseModel
 
 from .base_query import BaseQuery
-from .meta import ModelMetaOptionsFactory
+from .meta.model_meta_options_factory import ModelMetaOptionsFactory
 from .validation import Required, ValidationError, ValidationErrors
 
 
@@ -16,50 +16,20 @@ class QueryAliasDescriptor:
         return cls.query
 
 
-class BaseModel(FlaskSQLAlchemyBaseModel):
+class BaseModel(_BaseModel):
     """
     Base model class
     """
-    __abstract__ = True
     __validators__ = defaultdict(list)
-
-    class Meta:
-        pk = 'id'
-        created_at = 'created_at'
-        updated_at = 'updated_at'
-        polymorphic = False
-
-        # this is strictly for testing meta class stuffs
-        _testing_ = 'this setting is only available when ' \
-                    'os.getenv("FLASK_ENV") == "test"'
 
     _meta_options_factory_class = ModelMetaOptionsFactory
 
     query: BaseQuery
     q: BaseQuery = QueryAliasDescriptor()
 
-    __repr_props__ = ()
-    """Set to customize automatic string representation.
-
-    For example::
-
-        class User(database.Model):
-            __repr_props__ = ('id', 'email')
-
-            email = Column(String)
-
-        user = User(id=1, email='foo@bar.com')
-        print(user)  # prints User(id=1 email="foo@bar.com")
-    """
-
     def __init__(self, **kwargs):
         super().__init__()
         self.update(**kwargs)
-
-    def __repr__(self):
-        properties = [f'{prop}={getattr(self, prop)!r}'
-                      for prop in self.__repr_props__ if hasattr(self, prop)]
-        return f"{self.__class__.__name__}({', '.join(properties)})"
 
     @declared_attr
     def __plural__(self):
@@ -139,28 +109,3 @@ class BaseModel(FlaskSQLAlchemyBaseModel):
                 e.column = key
                 raise e
         super().__setattr__(key, value)
-
-    def __eq__(self, other):
-        """
-        Checks the equality of two `User` objects using `get_id`.
-        """
-        if not issubclass(other.__class__, BaseModel):
-            return False
-
-        if not self.Meta.pk or not other.Meta.pk:
-            return super().__eq__(other)
-
-        if isinstance(other, self.__class__):
-            return getattr(self, self.Meta.pk) == getattr(other, other.Meta.pk)
-
-        return False
-
-    def __ne__(self, other):
-        """
-        Checks the inequality of two `UserMixin` objects using `get_id`.
-        """
-        return not self.__eq__(other)
-
-    # Python 3 implicitly sets __hash__ to None if we override __eq__
-    # Therefore, we set it back to its default implementation
-    __hash__ = object.__hash__

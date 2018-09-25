@@ -1,15 +1,14 @@
-from flask_sqlalchemy import DefaultMeta, SQLAlchemy as BaseSQLAlchemy
+from flask_sqlalchemy import SQLAlchemy as BaseSQLAlchemy
 from sqlalchemy import event
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.naming import (ConventionDict, _get_convention,
                                    conv as converted_name)
+from sqlalchemy_unchained import declarative_base
 
 from .. import sqla
 from ..base_model import BaseModel
 from ..base_query import BaseQuery
-from ..meta.base_model_metaclass import BaseModelMetaclass
-from ..meta.model_registry import _model_registry
+from ..meta import BaseModelMetaclass, ModelRegistry
 from ..validation import (
     BaseValidator, Required, ValidationError, ValidationErrors, validates)
 
@@ -28,8 +27,7 @@ class SQLAlchemy(BaseSQLAlchemy):
                          metadata=metadata,
                          query_class=query_class,
                          model_class=model_class)
-
-        _model_registry.register_base_model_class(self.Model)
+        ModelRegistry().register_base_model_class(self.Model)
 
         self.Column = sqla.Column
         self.BigInteger = sqla.BigInteger
@@ -136,22 +134,6 @@ class SQLAlchemy(BaseSQLAlchemy):
             fmt % ConventionDict(const, table, self.metadata.naming_convention))
 
     def make_declarative_base(self, model, metadata=None) -> BaseModel:
-        if not isinstance(model, DefaultMeta):
-            def make_model_metaclass(name, bases, clsdict):
-                clsdict['__abstract__'] = True
-                clsdict['__module__'] = model.__module__
-                if hasattr(model, 'Meta'):
-                    clsdict['Meta'] = model.Meta
-                if hasattr(model, '_meta_options_factory_class'):
-                    clsdict['_meta_options_factory_class'] = \
-                        model._meta_options_factory_class
-                return BaseModelMetaclass(name, bases, clsdict)
-
-            model = declarative_base(
-                cls=model,
-                name='Model',
-                metadata=metadata,
-                metaclass=make_model_metaclass,
-                constructor=None,  # use the constructor declared on the base class
-            )
-        return super().make_declarative_base(model, metadata)
+        return declarative_base(lambda: self.session(), model=model,
+                                metaclass=BaseModelMetaclass, metadata=metadata,
+                                query_class=self.Query)

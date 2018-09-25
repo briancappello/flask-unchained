@@ -1,7 +1,7 @@
 import pytest
 
 from flask_unchained.bundles.sqlalchemy import ModelManager
-from flask_unchained.bundles.sqlalchemy.meta.model_registry import _model_registry
+from flask_unchained.bundles.sqlalchemy.meta.model_registry import ModelRegistry
 from sqlalchemy.sql.expression import case, label, literal
 from tests.conftest import POSTGRES
 
@@ -45,7 +45,7 @@ def setup(db):
             )
             return db.select([_union])
 
-    _model_registry.finalize_mappings()
+    ModelRegistry().finalize_mappings()
     db.create_all()
 
     class NodeManager(ModelManager):

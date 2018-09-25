@@ -25,4 +25,5 @@ networkx>=2.1
 passlib
 py-meta-utils
 pyqt5
+sqlalchemy-unchained
 qtconsole

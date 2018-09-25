@@ -21,5 +21,5 @@ class SQLAlchemyBundle(Bundle):
         """
 
     def after_init_app(self, app):
-        from .meta.model_registry import _model_registry
-        _model_registry.finalize_mappings()
+        from .meta.model_registry import ModelRegistry
+        ModelRegistry().finalize_mappings()

@@ -13,18 +13,6 @@ by setting ``Meta.lazy_mapped`` to ``True``::
 
         # ... (everything else is the same as normal)
 """
-
+from .base_model_metaclass import BaseModelMetaclass
 from .model_meta_options_factory import ModelMetaOptionsFactory
-from .model_meta_options import (
-    MetaOption,
-    ColumnMetaOption,
-    RelationshipsMetaOption,
-    PolymorphicMetaOption,
-    PolymorphicOnColumnMetaOption,
-    PolymorphicIdentityMetaOption,
-    PolymorphicBaseTablenameMetaOption,
-    PolymorphicJoinedPkColumnMetaOption,
-    PrimaryKeyColumnMetaOption,
-    CreatedAtColumnMetaOption,
-    UpdatedAtColumnMetaOption,
-)
+from .model_registry import ModelRegistry

@@ -33,6 +33,7 @@ class User(db.Model):
     """
     class Meta:
         lazy_mapped = True
+        repr = ('id', 'email', 'active')
 
     email = db.Column(db.String(64), unique=True, index=True, info=dict(
         required=_('flask_unchained.bundles.security:email_required'),
@@ -46,8 +47,6 @@ class User(db.Model):
                                  cascade='all, delete-orphan')
     roles = db.association_proxy('user_roles', 'role',
                                  creator=lambda role: UserRole(role=role))
-
-    __repr_props__ = ('id', 'email', 'active')
 
     @db.hybrid_property
     def password(self):

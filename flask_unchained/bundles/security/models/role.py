@@ -11,6 +11,7 @@ class Role(db.Model):
     """
     class Meta:
         lazy_mapped = True
+        repr = ('id', 'name')
 
     name = db.Column(db.String(64), unique=True, index=True)
 
@@ -18,8 +19,6 @@ class Role(db.Model):
                                  cascade='all, delete-orphan')
     users = db.association_proxy('role_users', 'user',
                                  creator=lambda user: UserRole(user=user))
-
-    __repr_props__ = ('id', 'name')
 
     def __hash__(self):
         return hash(self.name)

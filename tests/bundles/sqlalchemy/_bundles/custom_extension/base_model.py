@@ -1,4 +1,4 @@
-from flask_sqlalchemy import Model as BaseModel
+from flask_unchained.bundles.sqlalchemy.base_model import BaseModel
 from flask_unchained.bundles.sqlalchemy.meta import ModelMetaOptionsFactory
 from py_meta_utils import McsArgs, MetaOption
 

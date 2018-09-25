@@ -1,7 +1,7 @@
 import pytest
 
 from flask_unchained.bundles.sqlalchemy import ModelManager, SQLAlchemy
-from flask_unchained.bundles.sqlalchemy.meta.model_registry import _model_registry
+from flask_unchained.bundles.sqlalchemy.meta.model_registry import ModelRegistry
 from flask_unchained import unchained
 from sqlalchemy.orm.exc import MultipleResultsFound
 
@@ -16,7 +16,7 @@ def setup(db: SQLAlchemy):
     class FooManager(ModelManager):
         model = Foo
 
-    _model_registry.finalize_mappings()
+    ModelRegistry().finalize_mappings()
     db.create_all()
 
     return Foo, FooManager()

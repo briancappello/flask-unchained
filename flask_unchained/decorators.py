@@ -8,7 +8,7 @@ from flask import abort, request
 from flask_unchained.string_utils import snake_case
 
 try:
-    from flask_sqlalchemy.model import Model
+    from sqlalchemy_unchained import BaseModel as Model
 except ImportError:
     Model = None
 

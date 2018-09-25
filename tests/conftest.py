@@ -9,8 +9,6 @@ from flask_unchained import AppFactory, TEST, unchained
 from tests.bundles.security._bundles.security.models import User, Role, UserRole
 
 
-PRIOR_FLASK_ENV = os.getenv('FLASK_ENV', None)
-
 POSTGRES = '{dialect}://{user}:{password}@{host}:{port}/{db_name}'.format(
     dialect=os.getenv('FLASK_DATABASE_ENGINE', 'postgresql+psycopg2'),
     user=os.getenv('FLASK_DATABASE_USER', 'flask_test'),

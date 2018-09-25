@@ -1,12 +1,12 @@
 import inspect
 import sys
 
-from flask_sqlalchemy import Model
 from flask_unchained import AppFactoryHook, FlaskUnchained
 from flask_unchained.constants import TEST
+from sqlalchemy_unchained import BaseModel as Model
 from typing import *
 
-from ..meta.model_registry import _model_registry
+from ..meta.model_registry import ModelRegistry
 
 
 class RegisterModelsHook(AppFactoryHook):
@@ -25,7 +25,7 @@ class RegisterModelsHook(AppFactoryHook):
         # register themselves with the model registry, and the model registry
         # has final say over which models should end up getting mapped with
         # SQLAlchemy
-        self.bundle.models = _model_registry.finalize_mappings()
+        self.bundle.models = ModelRegistry().finalize_mappings()
 
     def type_check(self, obj: Any) -> bool:
         if not inspect.isclass(obj) or not issubclass(obj, Model):

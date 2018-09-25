@@ -3,7 +3,7 @@ import os
 import pytest
 import sys
 
-from flask_unchained.bundles.sqlalchemy.meta.model_registry import _model_registry
+from flask_unchained.bundles.sqlalchemy.meta.model_registry import ModelRegistry
 from flask_unchained import AppFactory, TEST, unchained
 from sqlalchemy import MetaData
 from sqlalchemy.orm import clear_mappers
@@ -11,13 +11,14 @@ from sqlalchemy.orm import clear_mappers
 PRIOR_FLASK_ENV = os.getenv('FLASK_ENV', None)
 
 
-# reset the Flask-SQLAlchemy extension and the _model_registry to clean slate,
+# reset the Flask-SQLAlchemy extension and the ModelRegistry to a clean slate,
 # support loading the extension from different test bundles.
 # NOTE: luckily none of these hacks are required in end users' test suites that
 # make use of flask_unchained.bundles.sqlalchemy
 @pytest.fixture(autouse=True)
 def db_ext(bundles):
     os.environ['FLASK_ENV'] = TEST
+    os.environ['SQLA_TESTING'] = 'True'
 
     sqla_bundle = 'flask_unchained.bundles.sqlalchemy'
     db_bundles = [sqla_bundle, 'tests.bundles.sqlalchemy._bundles.custom_extension']
@@ -26,7 +27,7 @@ def db_ext(bundles):
     except (IndexError, TypeError):
         bundle_under_test = sqla_bundle
 
-    _model_registry._reset()
+    ModelRegistry()._reset()
     clear_mappers()
     unchained._reset()
 
@@ -89,6 +90,7 @@ def app(bundles, db_ext, request):
         os.environ['FLASK_ENV'] = PRIOR_FLASK_ENV
     else:
         del os.environ['FLASK_ENV']
+    del os.environ['SQLA_TESTING']
 
 
 @pytest.fixture(autouse=True)

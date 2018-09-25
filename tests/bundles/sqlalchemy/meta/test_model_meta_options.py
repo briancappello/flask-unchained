@@ -1,6 +1,6 @@
 import pytest
 
-from flask_unchained.bundles.sqlalchemy.meta.model_registry import _model_registry
+from flask_unchained.bundles.sqlalchemy.meta.model_registry import ModelRegistry
 from tests.conftest import POSTGRES
 
 
@@ -8,7 +8,7 @@ class TestModelMetaOptions:
     def test_defaults(self, db):
         meta = db.Model._meta
         assert meta._testing_ == 'this setting is only available when ' \
-                                 'os.getenv("FLASK_ENV") == "test"'
+                                 'os.getenv("SQLA_TESTING") == "True"'
 
         assert meta.abstract is True
         assert meta.lazy_mapped is False
@@ -71,7 +71,7 @@ class TestModelMetaOptions:
         class Classic(db.Model):
             __abstract__ = True
 
-        _model_registry.finalize_mappings()
+        ModelRegistry().finalize_mappings()
         assert Classic._meta.abstract is True
         assert Classic._meta._mcs_args.clsdict['__abstract__'] is True
 
@@ -79,7 +79,7 @@ class TestModelMetaOptions:
             class Meta:
                 abstract = True
 
-        _model_registry.finalize_mappings()
+        ModelRegistry().finalize_mappings()
         assert MyMeta._meta.abstract is True
         assert MyMeta._meta._mcs_args.clsdict['__abstract__'] is True
 
@@ -226,7 +226,7 @@ class TestModelMetaOptions:
             def selectable(cls):
                 return db.select([Auto.id])
 
-        _model_registry.finalize_mappings()
+        ModelRegistry().finalize_mappings()
 
         assert AutoMV._meta.table == 'auto_mv'
         assert AutoMV.__table__.fullname == 'auto_mv'
@@ -241,7 +241,7 @@ class TestModelMetaOptions:
             def selectable(cls):
                 return db.select([Manual.id])
 
-        _model_registry.finalize_mappings()
+        ModelRegistry().finalize_mappings()
 
         assert ManualMV._meta.table == 'manual_materialized_view'
         assert ManualMV.__table__.fullname == 'manual_materialized_view'
