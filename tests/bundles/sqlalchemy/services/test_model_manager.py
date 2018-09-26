@@ -1,7 +1,7 @@
 import pytest
 
 from flask_unchained.bundles.sqlalchemy import ModelManager, SQLAlchemy
-from flask_unchained.bundles.sqlalchemy.meta.model_registry import ModelRegistry
+from flask_unchained.bundles.sqlalchemy.model_registry import ModelRegistry
 from flask_unchained import unchained
 from sqlalchemy.orm.exc import MultipleResultsFound
 

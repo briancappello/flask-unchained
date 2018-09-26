@@ -1,6 +1,6 @@
 import pytest
 
-from flask_unchained.bundles.sqlalchemy.meta.model_registry import ModelRegistry
+from flask_unchained.bundles.sqlalchemy.model_registry import ModelRegistry
 from tests.conftest import POSTGRES
 
 
@@ -13,6 +13,7 @@ class TestModelMetaOptions:
         assert meta.abstract is True
         assert meta.lazy_mapped is False
         assert meta.relationships is None
+        assert meta.validation is True
 
         assert meta._base_tablename is None
         assert meta.polymorphic is False
@@ -66,131 +67,6 @@ class TestModelMetaOptions:
         assert meta.pk == 'pk'
         assert meta.created_at == 'created'
         assert meta.updated_at == 'extends'
-
-    def test_abstract(self, db):
-        class Classic(db.Model):
-            __abstract__ = True
-
-        ModelRegistry().finalize_mappings()
-        assert Classic._meta.abstract is True
-        assert Classic._meta._mcs_args.clsdict['__abstract__'] is True
-
-        class MyMeta(db.Model):
-            class Meta:
-                abstract = True
-
-        ModelRegistry().finalize_mappings()
-        assert MyMeta._meta.abstract is True
-        assert MyMeta._meta._mcs_args.clsdict['__abstract__'] is True
-
-    def test_primary_key(self, db):
-        class NotLazy(db.Model):
-            class Meta:
-                abstract = True
-                lazy_mapped = False
-
-        class DoesntOverwrite(NotLazy):
-            id = 'not a column'
-            a_pk_is_still_required = db.Column(db.Integer, primary_key=True)
-
-        assert DoesntOverwrite.id == 'not a column'
-
-        class Manual(NotLazy):
-            class Meta:
-                pk = None
-            pk = db.Column(db.Integer, primary_key=True)
-
-        assert not hasattr(Manual, 'id')
-
-        class Auto(NotLazy):
-            pass
-
-        assert Auto.id.primary_key is True
-
-        class Renamed(NotLazy):
-            class Meta:
-                pk = 'pk'
-
-        assert not hasattr(Renamed, 'id')
-        assert Renamed.pk.primary_key is True
-
-    def test_polymorphic_auto_base_tablename(self, db):
-        class Base(db.Model):
-            class Meta:
-                lazy_mapped = False
-                polymorphic = True
-
-        class YellowSubmarine(Base):
-            pass
-
-        class GlassOnion(YellowSubmarine):
-            pass
-
-        assert Base._meta._base_tablename is None
-        assert YellowSubmarine._meta._base_tablename == 'base'
-        assert GlassOnion._meta._base_tablename == 'yellow_submarine'
-
-    def test_polymorphic_manual_base_tablename(self, db):
-        class Base(db.Model):
-            class Meta:
-                lazy_mapped = False
-                polymorphic = True
-                table = 'bases'
-
-        class YellowSubmarine(Base):
-            class Meta:
-                table = 'yellow_subs'
-
-        class GlassOnion(YellowSubmarine):
-            pass
-
-        assert Base._meta._base_tablename is None
-        assert YellowSubmarine._meta._base_tablename == 'bases'
-        assert GlassOnion._meta._base_tablename == 'yellow_subs'
-
-    def test_polymorphic_manual_declared_attr_tablename(self, db):
-        class Base(db.Model):
-            class Meta:
-                lazy_mapped = False
-                polymorphic = True
-
-            @db.declared_attr
-            def __tablename__(cls):
-                return cls.__name__.lower() + 's'
-
-        class YellowSubmarine(Base):
-            id = db.foreign_key(Base.__tablename__, primary_key=True)
-
-        class GlassOnion(YellowSubmarine):
-            id = db.foreign_key(YellowSubmarine.__tablename__, primary_key=True)
-
-        assert Base._meta._base_tablename is None
-        assert Base.__tablename__ == 'bases'
-        assert YellowSubmarine._meta._base_tablename is None
-        assert YellowSubmarine.__tablename__ == 'yellowsubmarines'
-        assert GlassOnion._meta._base_tablename is None
-
-    def test_polymorphic_declared_attr_tablename(self, db):
-        class Base(db.Model):
-            class Meta:
-                lazy_mapped = False
-                polymorphic = True
-
-            @db.declared_attr
-            def __tablename__(cls):
-                return cls.__name__.lower() + 's'
-
-        class YellowSubmarine(Base):
-            pass
-
-        class GlassOnion(YellowSubmarine):
-            pass
-
-        assert Base._meta._base_tablename is None
-        assert Base.__tablename__ == 'bases'
-        assert YellowSubmarine._meta._base_tablename is None
-        assert YellowSubmarine.__tablename__ == 'yellowsubmarines'
-        assert GlassOnion._meta._base_tablename is None
 
     @pytest.mark.options(SQLALCHEMY_DATABASE_URI=POSTGRES)
     def test_tablename(self, db):

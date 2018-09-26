@@ -1,8 +1,8 @@
 from flask_unchained import unchained
+from flask_sqlalchemy_unchained import BaseQuery
 from typing import *
 
 from ..base_model import BaseModel as Model
-from ..base_query import BaseQuery
 from .session_manager import SessionManager
 
 

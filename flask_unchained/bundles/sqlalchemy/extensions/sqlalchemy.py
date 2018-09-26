@@ -1,16 +1,15 @@
-from flask_sqlalchemy import SQLAlchemy as BaseSQLAlchemy
+from flask_sqlalchemy_unchained import SQLAlchemy as BaseSQLAlchemy, BaseQuery
 from sqlalchemy import event
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.naming import (ConventionDict, _get_convention,
                                    conv as converted_name)
-from sqlalchemy_unchained import declarative_base
+from sqlalchemy_unchained import (
+    DeclarativeMeta, BaseValidator, Required, ValidationError, ValidationErrors,
+    validates)
 
 from .. import sqla
 from ..base_model import BaseModel
-from ..base_query import BaseQuery
-from ..meta import BaseModelMetaclass, ModelRegistry
-from ..validation import (
-    BaseValidator, Required, ValidationError, ValidationErrors, validates)
+from ..model_registry import ModelRegistry  # required so the correct one gets used
 
 
 class SQLAlchemy(BaseSQLAlchemy):
@@ -27,17 +26,10 @@ class SQLAlchemy(BaseSQLAlchemy):
                          metadata=metadata,
                          query_class=query_class,
                          model_class=model_class)
-        ModelRegistry().register_base_model_class(self.Model)
-
         self.Column = sqla.Column
         self.BigInteger = sqla.BigInteger
         self.DateTime = sqla.DateTime
-
-        self.association_proxy = sqla.association_proxy
-        self.declared_attr = sqla.declared_attr
         self.foreign_key = sqla.foreign_key
-        self.hybrid_method = sqla.hybrid_method
-        self.hybrid_property = sqla.hybrid_property
 
         self.validates = validates
         self.BaseValidator = BaseValidator
@@ -52,7 +44,7 @@ class SQLAlchemy(BaseSQLAlchemy):
         self.refresh_materialized_view = sqla.refresh_materialized_view
         self.refresh_all_materialized_views = sqla.refresh_all_materialized_views
 
-        class MaterializedViewMetaclass(BaseModelMetaclass):
+        class MaterializedViewMetaclass(DeclarativeMeta):
             def _pre_mcs_init(cls):
                 cls.__table__ = sqla.create_materialized_view(cls._meta.table,
                                                               cls.selectable())
@@ -132,8 +124,3 @@ class SQLAlchemy(BaseSQLAlchemy):
 
         const.name = converted_name(
             fmt % ConventionDict(const, table, self.metadata.naming_convention))
-
-    def make_declarative_base(self, model, metadata=None) -> BaseModel:
-        return declarative_base(lambda: self.session(), model=model,
-                                metaclass=BaseModelMetaclass, metadata=metadata,
-                                query_class=self.Query)

@@ -6,7 +6,7 @@ from flask_unchained.constants import TEST
 from sqlalchemy_unchained import BaseModel as Model
 from typing import *
 
-from ..meta.model_registry import ModelRegistry
+from flask_unchained.bundles.sqlalchemy.model_registry import ModelRegistry
 
 
 class RegisterModelsHook(AppFactoryHook):

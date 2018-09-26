@@ -1,7 +1,7 @@
 import pytest
 
 from flask_unchained.bundles.sqlalchemy import ModelManager
-from flask_unchained.bundles.sqlalchemy.meta.model_registry import ModelRegistry
+from flask_unchained.bundles.sqlalchemy.model_registry import ModelRegistry
 from sqlalchemy.sql.expression import case, label, literal
 from tests.conftest import POSTGRES
 

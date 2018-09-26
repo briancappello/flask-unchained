@@ -1,6 +1,6 @@
 import inspect
 
-from flask_sqlalchemy.model import Model
+from flask_sqlalchemy_unchained import BaseModel as Model
 from flask_unchained.string_utils import snake_case
 from sqlalchemy.schema import ForeignKey
 from typing import *

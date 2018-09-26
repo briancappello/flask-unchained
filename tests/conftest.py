@@ -3,6 +3,7 @@ import os
 
 from datetime import datetime, timezone
 from flask_unchained.bundles.security.pytest import *
+from flask_unchained.bundles.sqlalchemy.model_registry import ModelRegistry
 from flask_unchained.bundles.sqlalchemy.pytest import ModelFactory
 from flask_unchained import AppFactory, TEST, unchained
 
@@ -25,6 +26,7 @@ def bundles(request):
     except AttributeError:
         from ._unchained_config import BUNDLES
         return BUNDLES
+
 
 @pytest.fixture(autouse=True)
 def app(request, bundles):

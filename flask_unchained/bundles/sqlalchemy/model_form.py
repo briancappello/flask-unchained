@@ -1,6 +1,5 @@
 from flask_unchained import FlaskForm, unchained
-
-from .validation import ValidationError, ValidationErrors
+from sqlalchemy_unchained.validation import ValidationError, ValidationErrors
 
 
 class ModelForm(FlaskForm):

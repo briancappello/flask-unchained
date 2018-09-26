@@ -1,13 +1,12 @@
+from flask_sqlalchemy_unchained import BaseQuery
 from flask_unchained import Bundle
 
 from .alembic import MaterializedViewMigration
 from .base_model import BaseModel
-from .base_query import BaseQuery
 from .extensions import Migrate, SQLAlchemy, db, migrate
 from .model_form import ModelForm
+from .model_registry import ModelRegistry
 from .services import ModelManager, SessionManager
-from .validation import (
-    BaseValidator, Required, ValidationError, ValidationErrors, validates)
 
 
 class SQLAlchemyBundle(Bundle):
@@ -21,5 +20,4 @@ class SQLAlchemyBundle(Bundle):
         """
 
     def after_init_app(self, app):
-        from .meta.model_registry import ModelRegistry
         ModelRegistry().finalize_mappings()

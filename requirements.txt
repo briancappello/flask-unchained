@@ -13,7 +13,7 @@ flask-marshmallow
 flask_migrate
 flask-principal
 flask-session
-flask_sqlalchemy
+flask-sqlalchemy-unchained
 flask_wtf
 ipython
 itsdangerous
@@ -24,6 +24,6 @@ marshmallow-sqlalchemy
 networkx>=2.1
 passlib
 py-meta-utils
+py-yaml-fixtures
 pyqt5
-sqlalchemy-unchained
 qtconsole

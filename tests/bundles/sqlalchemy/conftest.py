@@ -3,7 +3,7 @@ import os
 import pytest
 import sys
 
-from flask_unchained.bundles.sqlalchemy.meta.model_registry import ModelRegistry
+from flask_unchained.bundles.sqlalchemy.model_registry import ModelRegistry
 from flask_unchained import AppFactory, TEST, unchained
 from sqlalchemy import MetaData
 from sqlalchemy.orm import clear_mappers

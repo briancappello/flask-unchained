@@ -1,5 +1,5 @@
 from flask_unchained.bundles.sqlalchemy.base_model import BaseModel
-from flask_unchained.bundles.sqlalchemy.meta import ModelMetaOptionsFactory
+from flask_unchained.bundles.sqlalchemy.model_meta_options import ModelMetaOptionsFactory
 from py_meta_utils import McsArgs, MetaOption
 
 

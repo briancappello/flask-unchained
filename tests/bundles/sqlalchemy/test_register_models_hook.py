@@ -1,6 +1,6 @@
 import pytest
 
-from flask_sqlalchemy import Model
+from flask_sqlalchemy_unchained import BaseModel as Model
 from flask_unchained import unchained
 from flask_unchained.bundles.sqlalchemy import SQLAlchemyBundle
 from flask_unchained.bundles.sqlalchemy.hooks import RegisterModelsHook

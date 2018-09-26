@@ -29,6 +29,7 @@
 * implement missing `delete` routing function
 * preliminary support for customizing the generated unique member param
 * fix setting of `Route._controller_cls` to automatically always happen
+* refactor the SQLAlchemy Bundle to split most of it out into its own package, so that it can be used on its own (without Flask).
 
 ## 0.5.1 (2018/07/25)
 
