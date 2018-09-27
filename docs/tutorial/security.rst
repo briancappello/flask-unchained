@@ -8,7 +8,7 @@ Install Flask Security Bundle
 
 .. code:: bash
 
-   pip install flask-security-bundle
+   pip install flask-unchained[security]
 
 Let's update our test fixtures configuration file to include the test fixtures provided by Flask Security Bundle:
 
@@ -40,7 +40,7 @@ Let's start with configuring our database models, because the views will be brok
 
 .. code:: python
 
-   # flask_unchained.bundles.security/models/user.py
+   # flask_unchained/bundles/security/models/user.py
 
    from flask_unchained.bundles.sqlalchemy import db
    from flask_unchained import unchained, injectable, lazy_gettext as _
@@ -117,7 +117,7 @@ Let's start with configuring our database models, because the views will be brok
 
 .. code:: python
 
-   # flask_unchained.bundles.security/models/role.py
+   # flask_unchained/bundles/security/models/role.py
 
    from flask_unchained.bundles.sqlalchemy import db
    from flask_unchained.bundles.security.models.user_role import UserRole
@@ -145,7 +145,7 @@ Let's start with configuring our database models, because the views will be brok
 
 .. code:: python
 
-   # flask_unchained.bundles.security/models/user_role.py
+   # flask_unchained/bundles/security/models/user_role.py
 
    from flask_unchained.bundles.sqlalchemy import db
 
@@ -411,21 +411,9 @@ Let's add these routes to our navbar:
      </ul>
    </div>
 
-Cool. You should now be able to login with the credentials you created in the ``User.yaml`` fixture. If you take a look at the login and/or register views, however, you'll notice that things aren't rendering "the bootstrap way." Luckily all the default templates in the security bundle extend the ``security/layout.html``, so we can override just this template to fix integrating the layout of all security views into our site.
+Cool. You should now be able to login with the credentials you created in the ``User.yaml`` fixture. If you take a look at the login and/or register views, however, you'll notice that things aren't rendering "the bootstrap way." Luckily all the default templates in the security bundle extend the ``security/layout.html`` template, so we can override just this template to fix integrating the layout of all security views into our site.
 
-We're going to completely override the layout template, but the relevant block looks like this (all of the security views render into ``block content``):
-
-.. code:: html+jinja
-
-   {% block body %}
-     <div class="container">
-       {% include '_flashes.html' %}
-       {% block content %}
-       {% endblock content %}
-     </div>
-   {% endblock body %}
-
-So, in order to make sure the layout works correctly, we need to wrap the content block with a row and a column. Therefore, our version looks like this:
+We're going to completely override the layout template. In order to make sure the layout works correctly, we need to wrap the content block with a row and a column. Therefore, our version looks like this:
 
 .. code:: bash
 
@@ -469,6 +457,10 @@ Testing the Security Views
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Unlike all of our earlier tests, testing the security bundle views requires that we have valid users in the database. Perhaps the most powerful way to accomplish this is by using `Factory Boy <https://factoryboy.readthedocs.io/en/latest/>`_, which Flask Unchained comes integrated with out of the box. If you aren't familiar with Factory Boy, I recommend you read more about how it works in the official docs. The short version is, it makes it incredibly easy to dynamically create and customize models on-the-fly.
+
+.. code:: bash
+
+   pip install factory_boy
 
 .. code:: python
 
@@ -535,7 +527,9 @@ And our tests look like this:
 
 .. code:: python
 
-   # tests/security/test_security_controller.py
+   # tests/app/test_security_controller.py
+
+   import pytest
 
    from flask_unchained.bundles.security import AnonymousUser, current_user
    from flask_unchained import url_for

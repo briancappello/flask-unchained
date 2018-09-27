@@ -41,7 +41,7 @@ Next, enable the SQLAlchemy Bundle so we can begin using it:
 Configuration
 ^^^^^^^^^^^^^
 
-By default, the SQLAlchemy Bundle is configured to use an SQLite database. For the sake of simplicity, we'll leave the defaults as-is. The SQLite file will be store at ``db/<env>.sqlite``.
+By default, the SQLAlchemy Bundle is configured to use an SQLite database. For the sake of simplicity, we'll leave the defaults as-is. The SQLite file will be stored at ``db/<env>.sqlite``.
 
 If you'd like to change this, it would look like this:
 

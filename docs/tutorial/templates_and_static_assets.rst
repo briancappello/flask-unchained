@@ -190,6 +190,8 @@ Let's update our layout template to reference the changed locations of the vendo
 
 .. code:: html+jinja
 
+   {# templates/layout.html #}
+
    {% block stylesheets %}
      <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-v4.1.2.min.css') }}">
      <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
@@ -245,7 +247,7 @@ OK, let's refactor our views so we have a landing page and a separate page for t
 
 The ``param_converter`` converts arguments passed in via the query string to arguments that get passed to the decorated view function. It can make sure you get the right type via a callable, or as we'll cover later, it can even convert unique identifiers from the URL directly into database models. But that's getting ahead of ourselves.
 
-Now that we've added another view/route, our templates need some work again. Let's update the navbar, move our existing ``index.html`` template to ``hello.html`` (adding support for the ``name`` template context variable), and lastly add a new ``index.html`` template for the landing page.
+Now that we've added another view/route, our templates need some work again. Let's update the navbar, move our existing ``index.html`` template to ``index.html`` (adding support for the ``name`` template context variable), and lastly add a new ``index.html`` template for the landing page.
 
 .. code:: html+jinja
 
@@ -417,15 +419,34 @@ And let's fix our tests:
 
    # tests/app/test_views.py
 
-   # add the following method to the TestSiteController class
-   def test_hello_with_form_post(self, client):
-       r = client.post('site_controller.hello', data=dict(name='User'))
-       assert r.status_code == 302
-       assert r.path == url_for('site_controller.hello')
+   from flask_unchained import url_for  # add this import statement
 
-       r = client.follow_redirects(r)
-       assert r.status_code == 200
-       assert r.html.count('Hello User from Flaskr Unchained!') == 2
+
+   class TestSiteController:
+       def test_index(self, client):
+           r = client.get('site_controller.index')
+           assert r.status_code == 200
+           assert r.html.count('Welcome to Flaskr Unchained!') == 1
+
+       def test_hello(self, client):
+           r = client.get('site_controller.hello')
+           assert r.status_code == 200
+           assert r.html.count('Hello World from Flaskr Unchained!') == 2
+
+       def test_hello_with_name_parameter(self, client):
+           r = client.get('site_controller.hello', name='User')
+           assert r.status_code == 200
+           assert r.html.count('Hello User from Flaskr Unchained!') == 2
+
+       # add this method
+       def test_hello_with_form_post(self, client):
+           r = client.post('site_controller.hello', data=dict(name='User'))
+           assert r.status_code == 302
+           assert r.path == url_for('site_controller.hello')
+
+           r = client.follow_redirects(r)
+           assert r.status_code == 200
+           assert r.html.count('Hello User from Flaskr Unchained!') == 2
 
 Make sure they pass,
 
@@ -496,6 +517,10 @@ The updated view code:
            return self.render('hello', hello_form=form, name=name or 'World')
 
 And the updated template:
+
+.. code:: bash
+
+   touch app/templates/site/hello.html
 
 .. code:: html+jinja
 
