@@ -30,14 +30,14 @@ class Controller(metaclass=ControllerMeta):
 
     template_folder = TemplateFolderDescriptor()
     """
-    Path to the template folder for this bundle. By default, it will use a ``templates``
-    folder in the bundle package, if it exists, otherwise None.
+    The name of the folder containing the templates for this controller's views.
     """
 
     template_file_extension = None
     """
-    The default filename extension to use for templates. Overrides your app config's
-    ``TEMPLATE_FILE_EXTENSION`` setting.
+    The filename extension to use for templates for this controller's views.
+    Defaults to your app config's ``TEMPLATE_FILE_EXTENSION`` setting, and
+    overrides it if set.
     """
 
     url_prefix = None

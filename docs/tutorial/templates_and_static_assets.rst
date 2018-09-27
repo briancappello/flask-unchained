@@ -11,7 +11,7 @@ Our site looks pretty weak as it stands. Let's add Bootstrap and a landing page 
      && wget https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js -O static/popper-v1.14.3.min.js \
      && touch templates/layout.html templates/_navbar.html templates/_flashes.html
 
-We're placing these assets in the project root ``static`` and ``templates`` folders. If you'll recall, we configured these directories in our ``unchained_config.py`` file earlier. (Note that if just created either of these directories, then you may need to restart te flask development server for these new assets to be picked up by it.)
+We're placing these assets in the project root ``static`` and ``templates`` folders. If you'll recall, we configured these directories in our ``unchained_config.py`` file earlier. (Note that if just created either of these directories, then you may need to restart the flask development server for these new assets to be picked up by it.)
 
 Layout Template
 ^^^^^^^^^^^^^^^
@@ -184,7 +184,9 @@ If you take a look at how our new template looks, it's pretty good, but the ``h1
 
 .. code:: bash
 
-   mkdir static/vendor && mv static/*.min.* static/vendor && touch static/main.css
+   mkdir static/vendor \
+      && mv static/*.min.* static/vendor \
+      && touch static/main.css
 
 Let's update our layout template to reference the changed locations of the vendor assets, and our new ``main.css`` stylesheet:
 
@@ -247,7 +249,7 @@ OK, let's refactor our views so we have a landing page and a separate page for t
 
 The ``param_converter`` converts arguments passed in via the query string to arguments that get passed to the decorated view function. It can make sure you get the right type via a callable, or as we'll cover later, it can even convert unique identifiers from the URL directly into database models. But that's getting ahead of ourselves.
 
-Now that we've added another view/route, our templates need some work again. Let's update the navbar, move our existing ``index.html`` template to ``index.html`` (adding support for the ``name`` template context variable), and lastly add a new ``index.html`` template for the landing page.
+Now that we've added another view/route, our templates need some work again. Let's update the navbar, move our existing ``index.html`` template to ``hello.html`` (adding support for the ``name`` template context variable), and lastly add a new ``index.html`` template for the landing page.
 
 .. code:: html+jinja
 

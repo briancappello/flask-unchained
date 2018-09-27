@@ -35,7 +35,7 @@ Config
 Be sure to set ``SESSION_TYPE``, and depending upon what you set it to, any other required options for that type:
 
 ================  ================================================================================
-SESSION_TYPE      Options
+SESSION_TYPE      Required Options
 ================  ================================================================================
 ``'null'``        (none)
 ``'redis'``       * :attr:`flask_unchained.bundles.session.config.Config.SESSION_REDIS`

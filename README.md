@@ -204,7 +204,7 @@ Now you should be able to browse to [http://localhost:5000](http://localhost:500
 
 ## Contributing
 
-Contributions are more than welcome! This is a big project with a lot of different kinds of things that need doing. If you've got an idea, open an issue or a PR and let's chat.
+Contributions are more than welcome! This is a big project with a lot of different things that need doing. If you've got an idea, open an issue or a PR and let's chat.
 
 ## License
 
