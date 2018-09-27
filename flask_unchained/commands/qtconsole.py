@@ -23,9 +23,9 @@ try:
 
 # don't register the command if IPython and/or qtconsole aren't installed
 except ImportError:
-    from flask_unchained.utils import OptionalClass as IPKernelApp
-    from flask_unchained.utils import OptionalClass as QtWidgets
-    from flask_unchained.utils import OptionalClass as RichJupyterWidget
+    from py_meta_utils import OptionalClass as IPKernelApp
+    from py_meta_utils import OptionalClass as QtWidgets
+    from py_meta_utils import OptionalClass as RichJupyterWidget
 
     class cli:
         @staticmethod

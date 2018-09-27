@@ -24,7 +24,7 @@ setup(
         'flask>=0.12.2',
         'flask_babelex>=0.9.3',
         'flask-wtf>=0.13.1',
-        'py-meta-utils>=0.0.1',
+        'py-meta-utils>=0.1.1',
         'networkx>=2.1',
     ],
     extras_require={
