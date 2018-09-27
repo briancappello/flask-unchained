@@ -65,8 +65,6 @@ setup(
         ],
         'security': [
             'bcrypt>=3.1.3',
-            'blinker>=1.4',
-            'flask>=0.12.2',
             'flask-login>=0.3.0',
             'flask-principal>=0.3.3',
             'itsdangerous>=0.21',
