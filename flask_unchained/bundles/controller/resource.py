@@ -7,7 +7,7 @@ from .utils import controller_name
 
 class UrlPrefixDescriptor:
     def __get__(self, instance, cls):
-        return '/' + pluralize(controller_name(cls))
+        return '/' + pluralize(controller_name(cls).replace('_', '-'))
 
 
 class Resource(Controller, metaclass=ResourceMeta):
