@@ -9,7 +9,7 @@ from .metaclasses import ControllerMeta, ControllerMetaOptionsFactory
 from .utils import controller_name, redirect
 
 
-class TemplateFolderDescriptor:
+class TemplateFolderNameDescriptor:
     def __get__(self, instance, cls):
         return controller_name(cls)
 
@@ -28,7 +28,7 @@ class Controller(metaclass=ControllerMeta):
     A list of decorators to apply to all views in this controller.
     """
 
-    template_folder = TemplateFolderDescriptor()
+    template_folder_name = TemplateFolderNameDescriptor()
     """
     The name of the folder containing the templates for this controller's views.
     """
@@ -67,8 +67,8 @@ class Controller(metaclass=ControllerMeta):
             template_file_extension = (self.template_file_extension
                                        or app.config.get('TEMPLATE_FILE_EXTENSION'))
             template_name = f'{template_name}{template_file_extension}'
-        if self.template_folder and os.sep not in template_name:
-            template_name = os.path.join(self.template_folder, template_name)
+        if self.template_folder_name and os.sep not in template_name:
+            template_name = os.path.join(self.template_folder_name, template_name)
         return render_template(template_name, **ctx)
 
     def redirect(self, where=None, default=None, override=None, **url_kwargs):

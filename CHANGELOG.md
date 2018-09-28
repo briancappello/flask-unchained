@@ -31,6 +31,7 @@
 * fix setting of `Route._controller_cls` to automatically always happen
 * refactor the SQLAlchemy Bundle to split most of it out into its own package, so that it can be used on its own (without Flask).
 * fix the resource url prefix descriptor to convert to kebab-case instead of snake-case
+* rename `Controller.template_folder` to `Controller.template_folder_name`
 
 ## 0.5.1 (2018/07/25)
 
