@@ -233,7 +233,7 @@ Now let's define our hello world view:
        def index(self):
            return self.render('index')
 
-Flask Unchained prefers class-based views for a number of reasons. As you can see a hint of above, :class:`Controller` includes some convenience methods for rendering templates, redirecting, flashing messages, and returning JSON responses. Subclassing :class:`Controller` is also necessary for the bit of magic that allows views in bundles to extend and override each other, which we'll see specific examples of later on in this tutorial.
+Flask Unchained prefers class-based views for a number of reasons. As you can see a hint of above, :class:`~flask_unchained.Controller` includes some convenience methods for rendering templates, redirecting, flashing messages, and returning JSON responses. Subclassing :class:`~flask_unchained.Controller` is also necessary for the bit of magic that allows views in bundles to extend and override each other, which we'll see specific examples of later on in this tutorial.
 
 What about blueprints? Blueprints are a bit tricky, because they actually serve at least eight separate (if sometimes related) purposes:
 
@@ -246,13 +246,59 @@ What about blueprints? Blueprints are a bit tricky, because they actually serve 
 7. Allowing to register error handlers that run only for views in the blueprint (with a few caveats)
 8. Defining template folders to load from (and via the order blueprints get registered with the app, the priority of template folders to search for templates in)
 
-This works fine for stock Flask apps, but it wreaks havoc on the bit of magic Flask Unchained adds on top of views and templates. Flask Unchained does still use Blueprints internally, however, as an end-user you should never need to deal with them explicitly. Requirements ``1``, ``2``, and ``3`` are served by methods on the :class:`flask_unchained.unchained.Unchained`` extension instance. Likewise, requirements ``5``, ``6``, and ``7`` are fulfilled by classmethods on the :class:`Bundle` class.
+This works fine for stock Flask apps, but it wreaks havoc on the bit of magic Flask Unchained adds on top of views and templates. Flask Unchained does still use Blueprints internally, however, as an end-user you should never need to deal with them explicitly. Requirements ``1``, ``2``, and ``3`` are served by equivalently-named methods on the :class:`~flask_unchained.unchained.Unchained` extension instance:
+
+.. list-table::
+   :header-rows: 1
+
+   * - :class:`~flask_unchained.Unchained` extension method name
+     - Description
+   * - :meth:`~flask_unchained.Unchained.before_request`
+     - Registers a function to run before each request.
+   * - :meth:`~flask_unchained.Unchained.before_first_request`
+     - Registers a function to be run before the first request to this instance of the application.
+   * - :meth:`~flask_unchained.Unchained.after_request`
+     - Register a function to be run after each request.
+   * - :meth:`~flask_unchained.Unchained.teardown_request`
+     - Register a function to be run at the end of each request, regardless of whether there was an exception or not.  These functions are executed when the request context is popped, even if not an actual request was performed.
+   * - :meth:`~flask_unchained.Unchained.teardown_appcontext`
+     - Registers a function to be called when the application context ends.  These functions are typically also called when the request context is popped.
+   * - :meth:`~flask_unchained.Unchained.context_processor`
+     - Registers a template context processor function.
+   * - :meth:`~flask_unchained.Unchained.url_value_preprocessor`
+     - Register a URL value preprocessor function for all view functions in the application. These functions will be called before the :meth:`before_request` functions.
+   * - :meth:`~flask_unchained.Unchained.url_defaults`
+     - Callback function for URL defaults for all view functions of the application.  It's called with the endpoint and values and should update the values passed in place.
+   * - :meth:`~flask_unchained.Unchained.errorhandler`
+     - Register a function to handle errors by code or exception class.
+
+Likewise, requirements ``5``, ``6``, and ``7`` are fulfilled by equivalently-named classmethods on the :class:`Bundle` class:
+
+.. list-table::
+   :header-rows: 1
+
+   * - :class:`~flask_unchained.Bundle` classmethod name
+     - Description
+   * - :meth:`~flask_unchained.Bundle.before_request`
+     - Like :meth:`~flask.Flask.before_request` but for a bundle. This function is only executed before each request that is handled by a view function of that bundle.
+   * - :meth:`~flask_unchained.Bundle.after_request`
+     - Like :meth:`~flask.Flask.after_request` but for a bundle. This function is only executed after each request that is handled by a function of that bundle.
+   * - :meth:`~flask_unchained.Bundle.teardown_request`
+     - Like :meth:`~flask.Blueprint.teardown_request` but for a bundle. This function is only executed when tearing down requests handled by a function of that bundle.  Teardown request functions are executed when the request context is popped, even when no actual request was performed.
+   * - :meth:`~flask_unchained.Bundle.context_processor`
+     - Like :meth:`~flask.Blueprint.context_processor` but for a bundle. This function is only executed for requests handled by a bundle.
+   * - :meth:`~flask_unchained.Bundle.url_value_preprocessor`
+     - Registers a function as URL value preprocessor for this bundle. It's called before the view functions are called and can modify the url values provided.
+   * - :meth:`~flask_unchained.Bundle.url_defaults`
+     - Callback function for URL defaults for this bundle. It's called with the endpoint and values and should update the values passed in place.
+   * - :meth:`~flask_unchained.Bundle.errorhandler`
+     - Registers an error handler that becomes active for this bundle only.  Please be aware that routing does not happen local to a bundle so an error handler for 404 usually is not handled by a bundle unless it is caused inside a view function.  Another special case is the 500 internal server error which is always looked up from the application. Otherwise works as the :meth:`~flask.Blueprint.errorhandler` decorator.
 
 For the ``4th`` requirement, Flask Unchained automatically creates a :class:`~flask.Blueprint` for each bundle hierarchy, and assigns all of the discovered views that are registered with the app in a bundle hierarchy to it. This necessarily must happen dynamically, which using a stock Flask :class:`~flask.Blueprint` does not allow for. (For backwards compatibility, Flask Unchained does still technically support regular function-based views using blueprints from stock Flask, however it's strongly recommended to **not** use them.)
 
 And last but not least, for the ``8th`` requirement, this again is handled automatically (internally, we create empty blueprints for each bundle in a hierarchy that only points to the bundle's template folder, registering them in the correct order with the app).
 
-Let's get back to finishing our hello view. We need to add a template for it to render. :meth:`flask_unchained.bundles.controller.controller.Controller.render` knows that when you pass a template name of ``index``, it should look for ``site/index.html`` in the ``templates`` folder.
+Let's get back to finishing our hello view. We need to add a template for it to render. :meth:`flask_unchained.Controller.render` knows that when you pass a template name of ``index``, it should look for ``site/index.html`` in the ``templates`` folder.
 
 The ``site`` prefix is determined from the controller's class name:
 
