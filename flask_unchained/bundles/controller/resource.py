@@ -22,7 +22,7 @@ class Resource(Controller, metaclass=ResourceMeta):
 
        * - HTTP Method
          - Resource class method name
-         - Rule
+         - URL Rule
        * - GET
          - list
          - /
@@ -44,31 +44,42 @@ class Resource(Controller, metaclass=ResourceMeta):
 
     So, for example::
 
+        from flask_unchained import Resource, injectable, param_converter
+        from flask_unchained.bundles.security import User, UserManager
+
+
         class UserResource(Resource):
             member_param: '<string:username>'
+
+            def __init__(self, user_manager: UserManager = injectable):
+                super().__init__()
+                self.user_manager = user_manager
 
             def list():
                 return self.jsonify(dict(users=User.query.all()))
 
             def create():
-                # create user
+                user = self.user_manager.create(**data, commit=True)
                 return self.jsonify(dict(user=user), code=201)
 
-            def get(username):
-                # get user
+            @param_converter(username=User)
+            def get(user):
+                return self.jsonify(dict( user=user)
+
+            @param_converter(username=User)
+            def patch(user):
+                user = self.user_manager.update(user, **data, commit=True)
                 return self.jsonify(dict(user=user))
 
-            def patch(username):
-                # update user
+            @param_converter(username=User)
+            def put(user):
+                user = self.user_manager.update(user, **data, commit=True)
                 return self.jsonify(dict(user=user))
 
-            def put(username):
-                # update user
-                return self.jsonify(dict(user=user))
-
-            def delete(username):
-                # delete user
-                return make_response('', code=204)
+            @param_converter(username=User)
+            def delete(user):
+                self.user_manager.delete(user, commit=True)
+                return self.make_response('', code=204)
 
     Registered like so::
 
@@ -78,12 +89,12 @@ class Resource(Controller, metaclass=ResourceMeta):
 
     Would register the following routes::
 
-        UserResource.list           => GET /users
-        UserResource.create         => POST /users
-        UserResource.get            => GET /users/<string:username>
-        UserResource.patch          => PATCH /users/<string:username>
-        UserResource.put            => PUT /users/<string:username>
-        UserResource.delete         => DELETE /users/<string:username>
+        GET     /users                      UserResource.list
+        POST    /users                      UserResource.create
+        GET     /users/<string:username>    UserResource.get
+        PATCH   /users/<string:username>    UserResource.patch
+        PUT     /users/<string:username>    UserResource.put
+        DELETE  /users/<string:username>    UserResource.delete
 
     See also :class:`~flask_unchained.bundles.api.model_resource.ModelResource` from
     the API bundle.
@@ -92,8 +103,22 @@ class Resource(Controller, metaclass=ResourceMeta):
         abstract = True
 
     member_param = '<int:id>'
+    """
+    The URL parameter to use for member methods (get, patch, put, and delete).
+    """
+
     unique_member_param = None
+    """
+    The URL parameter to use for member methods (get, patch, put, and delete)
+    when there is a conflict with a subresource's member_param.
+    """
+
     url_prefix = UrlPrefixDescriptor()
+    """
+    The URL prefix to use for this Resource. Defaults to the pluralized,
+    kebab-cased controller name (eg UserController => '/users',
+                                    FooBarController => '/foo-bars')
+    """
 
     @classmethod
     def method_as_view(cls, method_name, *class_args, **class_kwargs):
