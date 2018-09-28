@@ -1,8 +1,47 @@
 from flask_unchained.string_utils import pluralize
+from py_meta_utils import deep_getattr
 
-from .controller import Controller
-from .metaclasses import ResourceMeta
+from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
+from .constants import ALL_METHODS, INDEX_METHODS
+from .constants import CREATE, DELETE, GET, LIST, PATCH, PUT
+from .controller import Controller, ControllerMeta, _get_remove_suffixes
 from .utils import controller_name
+
+
+RESOURCE_REMOVE_EXTRA_SUFFIXES = ['MethodView']
+
+
+class ResourceMeta(ControllerMeta):
+    """
+    Metaclass for Resource class
+    """
+    resource_methods = {LIST: ['GET'], CREATE: ['POST'],
+                        GET: ['GET'], PATCH: ['PATCH'],
+                        PUT: ['PUT'], DELETE: ['DELETE']}
+
+    def __new__(mcs, name, bases, clsdict):
+        cls = super().__new__(mcs, name, bases, clsdict)
+        if clsdict['_meta'].abstract:
+            setattr(cls, REMOVE_SUFFIXES_ATTR, _get_remove_suffixes(
+                name, bases, RESOURCE_REMOVE_EXTRA_SUFFIXES))
+            return cls
+
+        controller_routes = getattr(cls, CONTROLLER_ROUTES_ATTR)
+        for method_name in ALL_METHODS:
+            if not clsdict.get(method_name):
+                continue
+            route = controller_routes.get(method_name)[0]
+            rule = None
+            if method_name in INDEX_METHODS:
+                rule = '/'
+            else:
+                route._is_member_method = True
+                route._member_param = deep_getattr(clsdict, bases, 'member_param')
+            route.rule = rule
+            controller_routes[method_name] = [route]
+        setattr(cls, CONTROLLER_ROUTES_ATTR, controller_routes)
+
+        return cls
 
 
 class UrlPrefixDescriptor:
