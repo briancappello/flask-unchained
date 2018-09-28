@@ -6,7 +6,7 @@ Flask Unchained aims to provide a fully integrated, optional-batteries-included 
 
 ## Useful Links
 
-* [Documenation on Read the Docs](https://flask-unchained.readthedocs.io/en/latest/)
+* [Documentation on Read the Docs](https://flask-unchained.readthedocs.io/en/latest/)
 * [Source Code on GitHub](https://github.com/briancappello/flask-unchained)
 * [PyPI](https://pypi.org/project/Flask-Unchained/)
 
@@ -53,7 +53,7 @@ flask run
 
 ## What does it look like?
 
-A minimal Hello World application structure looks like this:
+Unlike stock Flask, Flask Unchained apps cannot be written in a single file. Instead, we've defined a (configurable) folder convention that must be followed for Flask Unchained to be able to correctly discover all of your code. A minimal Hello World application structure looks like this:
 
 ```
 /home/user/dev/project-root
@@ -68,7 +68,7 @@ A minimal Hello World application structure looks like this:
 └── unchained_config.py
 ```
 
-A larger application structure might look like this:
+And a larger application structure might look like this:
 
 ```
 /home/user/dev/project-root
