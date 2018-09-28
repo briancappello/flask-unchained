@@ -2,7 +2,7 @@ import functools
 import os
 
 from flask import (after_this_request, current_app as app, flash, jsonify,
-                   render_template, request)
+                   make_response, render_template, request)
 from http import HTTPStatus
 
 from .metaclasses import ControllerMeta, ControllerMetaOptionsFactory
@@ -129,6 +129,9 @@ class Controller(metaclass=ControllerMeta):
                    response, which it should also return
         """
         after_this_request(fn)
+
+    def make_response(self, *args):
+        return make_response(*args)
 
     ################################################
     # the remaining methods are internal/protected #
