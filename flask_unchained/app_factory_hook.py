@@ -13,11 +13,6 @@ from .unchained import Unchained
 from .utils import safe_import_module
 
 
-class ActionCategoryDescriptor:
-    def __get__(self, instance, cls):
-        return cls.name
-
-
 class BundleOverrideModuleNameAttrDescriptor:
     def __get__(self, instance, cls):
         if cls.bundle_module_name:
