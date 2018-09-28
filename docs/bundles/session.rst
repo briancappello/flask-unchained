@@ -1,13 +1,7 @@
 Session Bundle
 --------------
 
-Integrates `Flask Session <https://pythonhosted.org/Flask-Session/>`_ with Flask Unchained.
-
-Dependencies
-^^^^^^^^^^^^
-
-* Flask Session
-* Dill
+Integrates `Flask Session <https://pythonhosted.org/Flask-Session/>`_ with Flask Unchained. This bundle is only a thin wrapper around the Flask Session extension, and usage in Flask Unchained is exactly the same as for stock Flask.
 
 Installation
 ^^^^^^^^^^^^
