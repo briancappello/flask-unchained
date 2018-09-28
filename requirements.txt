@@ -26,4 +26,6 @@ passlib
 py-meta-utils
 py-yaml-fixtures
 pyqt5
+speaklater
 qtconsole
+werkzeug
