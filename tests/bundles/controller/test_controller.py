@@ -57,7 +57,7 @@ class TestControllerAttributes:
             template_folder_name = 'defaults'
 
         assert FooController.url_prefix is None
-        assert FooController.template_folder == 'defaults'
+        assert FooController.template_folder_name == 'defaults'
         assert FooController.template_file_extension is None
 
     def test_custom_template_extension(self):
