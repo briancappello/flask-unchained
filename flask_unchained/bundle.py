@@ -139,7 +139,7 @@ class Bundle(metaclass=BundleMeta):
 
     def before_request(self, fn):
         """
-        Like :meth:`~flask.Flask.before_request` but for a bundle.  This function
+        Like :meth:`~flask.Blueprint.before_request` but for a bundle. This function
         is only executed before each request that is handled by a view function
         of that bundle.
         """
@@ -147,7 +147,7 @@ class Bundle(metaclass=BundleMeta):
 
     def after_request(self, fn):
         """
-        Like :meth:`~flask.Flask.after_request` but for a bundle.  This function
+        Like :meth:`~flask.Blueprint.after_request` but for a bundle. This function
         is only executed after each request that is handled by a function of
         that bundle.
         """
@@ -155,7 +155,7 @@ class Bundle(metaclass=BundleMeta):
 
     def teardown_request(self, fn):
         """
-        Like :meth:`~flask.Flask.teardown_request` but for a bundle.  This
+        Like :meth:`~flask.Blueprint.teardown_request` but for a bundle. This
         function is only executed when tearing down requests handled by a
         function of that bundle.  Teardown request functions are executed
         when the request context is popped, even when no actual request was
@@ -165,7 +165,7 @@ class Bundle(metaclass=BundleMeta):
 
     def context_processor(self, fn):
         """
-        Like :meth:`~flask.Flask.context_processor` but for a bundle.  This
+        Like :meth:`~flask.Blueprint.context_processor` but for a bundle. This
         function is only executed for requests handled by a bundle.
         """
         self._defer(lambda bp: bp.context_processor(fn))
@@ -173,7 +173,7 @@ class Bundle(metaclass=BundleMeta):
 
     def url_defaults(self, fn):
         """
-        Callback function for URL defaults for this bundle.  It's called
+        Callback function for URL defaults for this bundle. It's called
         with the endpoint and values and should update the values passed
         in place.
         """
@@ -183,7 +183,7 @@ class Bundle(metaclass=BundleMeta):
     def url_value_preprocessor(self, fn):
         """
         Registers a function as URL value preprocessor for this
-        bundle.  It's called before the view functions are called and
+        bundle. It's called before the view functions are called and
         can modify the url values provided.
         """
         self._defer(lambda bp: bp.url_value_preprocessor(fn))
@@ -198,8 +198,7 @@ class Bundle(metaclass=BundleMeta):
         special case is the 500 internal server error which is always looked
         up from the application.
 
-        Otherwise works as the :meth:`~flask.Flask.errorhandler` decorator
-        of the :class:`~flask.Flask` object.
+        Otherwise works as the :meth:`~flask.Blueprint.errorhandler` decorator.
         """
         def decorator(fn):
             self._defer(lambda bp: bp.register_error_handler(code_or_exception, fn))

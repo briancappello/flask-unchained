@@ -28,7 +28,7 @@ class AppFactoryHook:
     """
     Base class for hooks. It has one entry point, :meth:`run_hook`, which can be
     overridden to completely customize the behavior of the subclass. The default
-    behavior is to look for objects in ``bundle_module_name`` passing the result
+    behavior is to look for objects in ``bundle_module_name`` which pass the result
     of :meth:`type_check`. These objects are collected from all bundles into a
     dictionary with keys the result of :meth:`key_name`, starting from the base-
     most bundle, allowing bundle subclasses to override objects with the same name

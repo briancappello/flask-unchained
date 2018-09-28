@@ -179,15 +179,14 @@ class Config(_DefaultFlaskConfigForSessions):
 
     SESSION_SQLALCHEMY = db
     """
-    A :class:`~flask_unchained.bundles.sqlalchemy.SQLAlchemy` instance whose
-    database connection URI is configured using ``SQLALCHEMY_DATABASE_URI``.
+    A :class:`~flask_unchained.bundles.sqlalchemy.SQLAlchemy` extension instance.
     """
 
     SESSION_SQLALCHEMY_TABLE = 'flask_sessions'
     """
     The name of the SQL table you want to use.
 
-    Defaults to ``'flask_sessions'``.
+    Defaults to ``flask_sessions``.
     """
 
     SESSION_SQLALCHEMY_MODEL = None

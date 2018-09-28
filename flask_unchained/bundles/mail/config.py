@@ -50,7 +50,8 @@ class Config:
     MAIL_SEND_FN = _send_mail
     """
     The function to use for sending emails. Defaults to
-    :func:`~flask_unchained.bundles.mail.utils._send_mail`.
+    :func:`~flask_unchained.bundles.mail.utils._send_mail`, and any customized
+    send function must implement the same function signature.
     """
 
     MAIL_DEBUG = 0

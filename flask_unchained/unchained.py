@@ -47,7 +47,7 @@ class Unchained:
                  env: Optional[Union[DEV, PROD, STAGING, TEST]] = None,
 
                  # FIXME: properly type hint this once on 3.7+, on 3.6 we get
-                 # FIXME: circular import errors
+                 # circular import errors
                  bundles: Optional[List] = None,
                  _config_overrides: Optional[Dict[str, Any]] = None,
                  ) -> None:
