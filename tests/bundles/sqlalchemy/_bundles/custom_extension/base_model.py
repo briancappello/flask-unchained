@@ -8,7 +8,7 @@ class ExtendExisting(MetaOption):
         super().__init__(name='extend_existing', default=True, inherit=False)
 
     def check_value(self, value, mcs_args: McsArgs):
-        msg = f'{self.name} Meta option on {mcs_args.model_repr} ' \
+        msg = f'{self.name} Meta option on {mcs_args.repr} ' \
               f'must be True or False'
         assert isinstance(value, bool), msg
 

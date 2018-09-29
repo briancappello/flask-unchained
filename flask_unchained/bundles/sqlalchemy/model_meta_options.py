@@ -10,14 +10,14 @@ class RelationshipsMetaOption(MetaOption):
 
     def get_value(self, meta, base_model_meta, mcs_args: McsArgs):
         """overridden to merge with inherited value"""
-        if mcs_args.model_meta.abstract:
+        if mcs_args.meta.abstract:
             return None
         value = getattr(base_model_meta, self.name, {}) or {}
         value.update(getattr(meta, self.name, {}))
         return value
 
     def contribute_to_class(self, mcs_args: McsArgs, relationships):
-        if mcs_args.model_meta.abstract:
+        if mcs_args.meta.abstract:
             return
 
         discovered_relationships = {}
@@ -26,10 +26,10 @@ class RelationshipsMetaOption(MetaOption):
             for k, v in d.items():
                 if isinstance(v, RelationshipProperty):
                     discovered_relationships[v.argument] = k
-                    if v.backref and mcs_args.model_meta.lazy_mapped:
+                    if v.backref and mcs_args.meta.lazy_mapped:
                         raise Exception(
                             f'Discovered a lazy-mapped backref `{k}` on '
-                            f'`{mcs_args.model_repr}`. Currently this '
+                            f'`{mcs_args.repr}`. Currently this '
                             'is unsupported; please use `db.relationship` with '
                             'the `back_populates` kwarg on both sides instead.')
 
@@ -69,7 +69,7 @@ class ModelMetaOptionsFactory(BaseMetaOptionsFactory):
 
     @property
     def _model_repr(self):
-        return self._mcs_args.model_repr
+        return self._mcs_args.repr
 
     def __repr__(self):
         return '<{cls} model={model!r} model_meta_options={attrs!r}>'.format(
