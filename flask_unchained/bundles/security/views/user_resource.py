@@ -6,6 +6,7 @@ except ImportError:
 from flask_unchained import CREATE, GET, PATCH, injectable
 
 from ..decorators import anonymous_user_required, auth_required_same_user
+from ..models import User
 from ..services import SecurityService
 
 
@@ -13,14 +14,14 @@ class UserResource(ModelResource):
     """
     RESTful API resource for the :class:`User` model.
     """
-    model = 'User'
-
-    include_methods = {CREATE, GET, PATCH}
-    method_decorators = {
-        CREATE: [anonymous_user_required],
-        GET: [auth_required_same_user],
-        PATCH: [auth_required_same_user],
-    }
+    class Meta:
+        model = User
+        include_methods = {CREATE, GET, PATCH}
+        method_decorators = {
+            CREATE: [anonymous_user_required],
+            GET: [auth_required_same_user],
+            PATCH: [auth_required_same_user],
+        }
 
     def __init__(self, security_service: SecurityService = injectable):
         super().__init__()

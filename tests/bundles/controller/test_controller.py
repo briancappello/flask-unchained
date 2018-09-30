@@ -47,30 +47,33 @@ third.__module__ = 'something.else.third'
 
 class TestControllerAttributes:
     def test_auto_attributes(self):
-        assert DefaultController.template_folder_name == 'default'
-        assert DefaultController.template_file_extension is None
-        assert DefaultController.url_prefix is None
-        assert DefaultController.decorators is None
+        assert DefaultController._meta.template_folder_name == 'default'
+        assert DefaultController._meta.template_file_extension is None
+        assert DefaultController._meta.url_prefix is None
+        assert DefaultController._meta.decorators is None
 
     def test_custom_template_folder(self):
         class FooController(Controller):
-            template_folder_name = 'defaults'
+            class Meta:
+                template_folder_name = 'defaults'
 
-        assert FooController.url_prefix is None
-        assert FooController.template_folder_name == 'defaults'
-        assert FooController.template_file_extension is None
+        assert FooController._meta.url_prefix is None
+        assert FooController._meta.template_folder_name == 'defaults'
+        assert FooController._meta.template_file_extension is None
 
     def test_custom_template_extension(self):
         class FooController(Controller):
-            template_file_extension = '.html.j2'
+            class Meta:
+                template_file_extension = '.html.j2'
 
-        assert FooController.template_file_extension == '.html.j2'
+        assert FooController._meta.template_file_extension == '.html.j2'
 
     def test_custom_url_prefix(self):
         class FooController(Controller):
-            url_prefix = 'foobar'
+            class Meta:
+                url_prefix = 'foobar'
 
-        assert FooController.url_prefix == 'foobar'
+        assert FooController._meta.url_prefix == 'foobar'
 
     def test_apply_decorators(self):
         controller = DefaultController()
@@ -105,14 +108,16 @@ class TestControllerAttributes:
 
     def test_get_decorators(self):
         class FooController(Controller):
-            decorators = (first, second)
+            class Meta:
+                decorators = (first, second)
 
         controller = FooController()
         assert controller.get_decorators(None) == (first, second)
 
     def test_dispatch_request(self):
         class FooController(Controller):
-            decorators = (first, second)
+            class Meta:
+                decorators = (first, second)
 
             @third
             def my_method(self, *args):
@@ -127,7 +132,8 @@ class TestControllerAttributes:
 
     def test_method_as_view(self):
         class FooController(Controller):
-            decorators = (first, second)
+            class Meta:
+                decorators = (first, second)
 
             @third
             def my_method(self, *args):
@@ -151,8 +157,9 @@ class TestControllerAttributes:
 
     def test_render_with_custom_controller_template_attrs(self, templates):
         class FooController(Controller):
-            template_folder_name = 'foobar'
-            template_file_extension = '.html.j2'
+            class Meta:
+                template_folder_name = 'foobar'
+                template_file_extension = '.html.j2'
 
         controller = FooController()
         resp = controller.render('index', some_ctx_var='hi')
@@ -163,7 +170,8 @@ class TestControllerAttributes:
 
     def test_render_with_full_filename(self, templates):
         class FooController(Controller):
-            template_folder_name = 'foobar'
+            class Meta:
+                template_folder_name = 'foobar'
 
         controller = FooController()
         resp = controller.render('index.html.j2', some_ctx_var='hi')

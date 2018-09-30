@@ -46,8 +46,9 @@ class Api:
 
         :param resource:
         """
-        model_name = resource.model.__name__
-        self.spec.add_tag({'name': model_name, 'description': resource.model.__doc__})
+        model_name = resource._meta.model.__name__
+        self.spec.add_tag({'name': model_name,
+                           'description': resource._meta.model.__doc__})
 
         for method in resource.methods():
             docs = {}
@@ -58,10 +59,10 @@ class Api:
                     parameters=[
                         {'in': __location_map__['json'],
                          'required': True,
-                         'schema': resource.serializer_create},
+                         'schema': resource._meta.serializer_create},
                     ],
                     responses={'201': dict(description=getattr(resource, CREATE).__doc__,
-                                           schema=resource.serializer_create)})
+                                           schema=resource._meta.serializer_create)})
             elif method == DELETE:
                 docs[http_method] = dict(
                     parameters=[],
@@ -70,31 +71,31 @@ class Api:
                 docs[http_method] = dict(
                     parameters=[],
                     responses={'200': dict(description=getattr(resource, GET).__doc__,
-                                           schema=resource.serializer)})
+                                           schema=resource._meta.serializer)})
             elif method == LIST:
                 http_method = 'get'
                 docs[http_method] = dict(
                     parameters=[],
                     responses={'200': dict(description=getattr(resource, LIST).__doc__,
-                                           schema=resource.serializer_many)})
+                                           schema=resource._meta.serializer_many)})
             elif method == PATCH:
                 docs[http_method] = dict(
                     parameters=[
                         {'in': __location_map__['json'],
                          'required': False,
-                         'schema': resource.serializer},
+                         'schema': resource._meta.serializer},
                     ],
                     responses={'200': dict(description=getattr(resource, PATCH).__doc__,
-                                           schema=resource.serializer)})
+                                           schema=resource._meta.serializer)})
             elif method == PUT:
                 docs[http_method] = dict(
                     parameters=[
                         {'in': __location_map__['json'],
                          'required': True,
-                         'schema': resource.serializer},
+                         'schema': resource._meta.serializer},
                     ],
                     responses={'200': dict(description=getattr(resource, PUT).__doc__,
-                                           schema=resource.serializer)})
+                                           schema=resource._meta.serializer)})
 
             docs[http_method]['tags'] = [model_name]
             key = f'{resource.__name__}.{method}'

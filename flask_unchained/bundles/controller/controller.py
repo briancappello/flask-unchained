@@ -4,7 +4,8 @@ import os
 from flask import (after_this_request, current_app as app, flash, jsonify,
                    make_response, render_template, request)
 from flask_unchained.di import set_up_class_dependency_injection
-from py_meta_utils import AbstractMetaOption, McsArgs, MetaOptionsFactory, deep_getattr
+from py_meta_utils import (AbstractMetaOption, McsArgs, MetaOption,
+                           MetaOptionsFactory, deep_getattr, _missing)
 from http import HTTPStatus
 from types import FunctionType
 from typing import *
@@ -46,14 +47,18 @@ class ControllerMeta(type):
 
     Sets up automatic dependency injection and routes:
     - if base class, remember utility methods (NOT_VIEWS_ATTR)
-    - if subclass of a base class, init CONTROLLER_ROUTES_ATTR
-        - check if methods were decorated with @route, otherwise
-          create a new Route for each method
-        - finish initializing Routes
+    - if subclass of a base class, init CONTROLLER_ROUTES_ATTR by
+      checking if methods were decorated with @route, otherwise
+      create a new Route for each method that needs one
     """
     def __new__(mcs, name, bases, clsdict):
         set_up_class_dependency_injection(name, clsdict)
         mcs_args = McsArgs(mcs, name, bases, clsdict)
+        if clsdict.get('__abstract__',
+                       getattr(clsdict.get('Meta'), 'abstract', False)):
+            mcs_args.clsdict[REMOVE_SUFFIXES_ATTR] = _get_remove_suffixes(
+                    name, bases, CONTROLLER_REMOVE_EXTRA_SUFFIXES)
+            mcs_args.clsdict[NOT_VIEWS_ATTR] = _get_not_views(clsdict, bases)
 
         meta_options_factory_class: Type[ControllerMetaOptionsFactory] = deep_getattr(
             clsdict, bases, '_meta_options_factory_class',
@@ -62,10 +67,7 @@ class ControllerMeta(type):
         meta_options_factory._contribute_to_class(mcs_args)
 
         cls = super().__new__(*mcs_args)
-        if meta_options_factory.abstract:
-            setattr(cls, NOT_VIEWS_ATTR, _get_not_views(clsdict, bases))
-            setattr(cls, REMOVE_SUFFIXES_ATTR, _get_remove_suffixes(
-                name, bases, CONTROLLER_REMOVE_EXTRA_SUFFIXES))
+        if mcs_args.meta.abstract:
             return cls
 
         controller_routes = getattr(cls, CONTROLLER_ROUTES_ATTR, {}).copy()
@@ -90,13 +92,83 @@ class ControllerMeta(type):
                 route._controller_cls = cls
 
 
+class DecoratorsMetaOption(MetaOption):
+    """
+    A list of decorators to apply to all views in this controller.
+    """
+
+    def __init__(self):
+        super().__init__('decorators', default=None, inherit=True)
+
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert all(callable(x) for x in value), \
+            f'The {self.name} meta option must be a list of callables.'
+
+
+class TemplateFolderNameMetaOption(MetaOption):
+    """
+    The name of the folder containing the templates for this controller's views.
+    """
+    def __init__(self):
+        super().__init__('template_folder_name', default=_missing, inherit=False)
+
+    def get_value(self, meta, base_classes_meta, mcs_args: McsArgs):
+        value = super().get_value(meta, base_classes_meta, mcs_args)
+        if value is not _missing:
+            return value
+
+        return controller_name(mcs_args.name, deep_getattr(mcs_args.clsdict,
+                                                           mcs_args.bases,
+                                                           REMOVE_SUFFIXES_ATTR))
+
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert isinstance(value, str) and os.sep not in value, \
+            f'The {self.name} meta option must be a string and not a full path'
+
+
+class TemplateFileExtensionMetaOption(MetaOption):
+    """
+    The filename extension to use for templates for this controller's views.
+    Defaults to your app config's ``TEMPLATE_FILE_EXTENSION`` setting, and
+    overrides it if set.
+    """
+    def __init__(self):
+        super().__init__('template_file_extension', default=None, inherit=False)
+
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert isinstance(value, str), \
+            f'The {self.name} meta option must be a string'
+
+
+class UrlPrefixMetaOption(MetaOption):
+    def __init__(self):
+        super().__init__('url_prefix', default=None, inherit=False)
+
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert isinstance(value, str), \
+            f'The {self.name} meta option must be a string'
+
+
 class ControllerMetaOptionsFactory(MetaOptionsFactory):
-    options = [AbstractMetaOption]
-
-
-class TemplateFolderNameDescriptor:
-    def __get__(self, instance, cls):
-        return controller_name(cls)
+    options = [
+        AbstractMetaOption,
+        DecoratorsMetaOption,
+        TemplateFolderNameMetaOption,
+        TemplateFileExtensionMetaOption,
+        UrlPrefixMetaOption,
+    ]
 
 
 class Controller(metaclass=ControllerMeta):
@@ -107,28 +179,6 @@ class Controller(metaclass=ControllerMeta):
 
     class Meta:
         abstract = True
-
-    decorators = None
-    """
-    A list of decorators to apply to all views in this controller.
-    """
-
-    template_folder_name = TemplateFolderNameDescriptor()
-    """
-    The name of the folder containing the templates for this controller's views.
-    """
-
-    template_file_extension = None
-    """
-    The filename extension to use for templates for this controller's views.
-    Defaults to your app config's ``TEMPLATE_FILE_EXTENSION`` setting, and
-    overrides it if set.
-    """
-
-    url_prefix = None
-    """
-    A URL prefix to apply to all views in this controller.
-    """
 
     def flash(self, msg, category=None):
         """
@@ -149,11 +199,12 @@ class Controller(metaclass=ControllerMeta):
         :param ctx: Context variables to pass into the template.
         """
         if '.' not in template_name:
-            template_file_extension = (self.template_file_extension
+            template_file_extension = (self._meta.template_file_extension
                                        or app.config.get('TEMPLATE_FILE_EXTENSION'))
             template_name = f'{template_name}{template_file_extension}'
-        if self.template_folder_name and os.sep not in template_name:
-            template_name = os.path.join(self.template_folder_name, template_name)
+        if self._meta.template_folder_name and os.sep not in template_name:
+            template_name = os.path.join(self._meta.template_folder_name,
+                                         template_name)
         return render_template(template_name, **ctx)
 
     def redirect(self, where=None, default=None, override=None, **url_kwargs):
@@ -254,7 +305,7 @@ class Controller(metaclass=ControllerMeta):
         return method(*view_args, **view_kwargs)
 
     def get_decorators(self, method_name):
-        return self.decorators or []
+        return self._meta.decorators or []
 
     def apply_decorators(self, view_func, decorators):
         if not decorators:

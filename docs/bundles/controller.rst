@@ -157,7 +157,16 @@ On any Controller subclass that doesn't specify itself as abstract, all methods 
 Overriding Controllers
 """"""""""""""""""""""
 
-Controllers can be extended or overridden by creating an equivalently named subclass higher up in the bundle hierarchy. As an example, the security bundle includes :class:`~flask_unchained.bundles.security.SecurityController`. To extend it, you would simply subclass it like any other class in Python and change what you need to.
+Controllers can be extended or overridden by creating an equivalently named subclass higher up in the bundle hierarchy. (In other words, either in a bundle that extends another bundle, or in your app bundle.) As an example, the security bundle includes :class:`~flask_unchained.bundles.security.SecurityController`. To extend it, you would simply subclass it like any other class in Python and change what you need to:
+
+.. code:: python
+
+   # your_app_or_security_bundle/views.py
+
+   from flask_unchained.bundles.security import SecurityController as BaseSecurityController
+
+   class SecurityController(BaseSecurityController):
+       pass
 
 Resource
 """"""""
@@ -199,7 +208,8 @@ So, for example::
 
 
         class UserResource(Resource):
-            member_param: '<string:username>'
+            class Meta:
+                member_param: '<string:username>'
 
             def __init__(self, user_manager: UserManager = injectable):
                 super().__init__()
@@ -246,16 +256,18 @@ Would register the following routes::
    PUT     /users/<string:username>    UserResource.put
    DELETE  /users/<string:username>    UserResource.delete
 
-Because :class:`~flask_unchained.Resource` is already a subclass of :class:`~flask_unchained.Controller`, overriding resources works the same way.
+Because :class:`~flask_unchained.Resource` is already a subclass of :class:`~flask_unchained.Controller`, overriding resources works the same way as for controllers.
 
 Templating
 """"""""""
 
+Flask Unchained uses the Jinja templating language, just like stock Flask.
+
 By default bundles are configured to use a `templates` subfolder. This is configurable by setting :attr:`flask_unchained.Bundle.template_folder` to a custom path.
 
-Controllers each have their own template folder within the ``Bundle.template_folder`` folder. It defaults to :python:`snake_case(right_replace(ControllerClass.__name__, 'Controller', ''))` and is configurable by setting :attr:`flask_unchained.Controller.template_folder_name`.
+Controllers each have their own template folder within ``Bundle.template_folder``. It defaults to :python:`snake_case(right_replace(ControllerClass.__name__, 'Controller', ''))` and is configurable by setting :attr:`flask_unchained.Controller.Meta.template_folder_name`.
 
-The default file extension used for templates is configured by setting ``TEMPLATE_FILE_EXTENSION``. It defaults to `.html`, and is also configurable on a per-controller basis by setting :attr:`flask_unchained.Controller.template_file_extension`.
+The default file extension used for templates is configured by setting ``TEMPLATE_FILE_EXTENSION``. It defaults to `.html`, and is also configurable on a per-controller basis by setting :attr:`flask_unchained.Controller.Meta.template_file_extension`.
 
 Taking the above into account, given the following controller:
 
@@ -280,9 +292,22 @@ Then the corresponding folder structure would look like this:
 Overriding Templates
 """"""""""""""""""""
 
-Templates can be overridden by placing an equivalently named template higher up in the bundle hierarchy. (In other words, either in a bundle that extends another bundle, or in your app bundle.)
+Templates can be overridden by placing an equivalently named template higher up in the bundle hierarchy.
 
-So for example, the security bundle includes default templates for all of its views. They are located at ``security/login.html``, ``security/logout.html``, ``security/register.html``, and so on. Thus, to extend or override them, you would make a ``security`` folder in your app bundle's ``templates`` folder and put your customized ``login.html`` template in it. Flask Unchained will do the rest to make sure it uses the one you wanted. If you encounter problems, you can set the ``EXPLAIN_TEMPLATE_LOADING`` config option to ``True`` to help debug what's going on.
+So for example, the security bundle includes default templates for all of its views. They are located at ``security/login.html``, ``security/logout.html``, ``security/register.html``, and so on. Thus, to extend or override them, you would make a ``security`` folder in your app bundle's or your security bundle's ``templates`` folder and put your customized ``login.html`` template in it. Flask Unchained will do the rest to make sure it uses the one you wanted. It's also worth noting that can even extend the template you're overriding, using the standard Jinja syntax (this doesn't work in stock Flask apps):
+
+.. code:: html+jinja
+
+   {# your_app_or_security_bundle/templates/security/login.html #}
+
+   {% extends 'security/login.html' %}
+
+   {% block content %}
+      <h1>Login</h1>
+      {{ render_form(login_user_form, endpoint='security_controller.login') }}
+   {% endblock %}
+
+If you encounter problems, you can set the ``EXPLAIN_TEMPLATE_LOADING`` config option to ``True`` to help debug what's going on.
 
 Dependency Injection
 """"""""""""""""""""

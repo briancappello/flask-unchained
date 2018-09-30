@@ -16,7 +16,7 @@ PARAM_NAME_RE = re.compile(r'<(\w+:)?(?P<param_name>\w+)>')
 LAST_PARAM_NAME_RE = re.compile(r'<(\w+:)?(?P<param_name>\w+)>$')
 
 
-def controller_name(cls) -> str:
+def controller_name(cls, _remove_suffixes=None) -> str:
     """
     Returns the snake-cased name for a controller/resource class. Automatically
     strips ``Controller``, ``View``, and ``MethodView`` suffixes, eg::
@@ -25,8 +25,10 @@ def controller_name(cls) -> str:
         FooBarBazView -> foo_bar_baz
         UsersMethodView -> users
     """
-    name = cls.__name__
-    for suffix in getattr(cls, REMOVE_SUFFIXES_ATTR):
+    name = cls if isinstance(cls, str) else cls.__name__
+    remove_suffixes = (getattr(cls, REMOVE_SUFFIXES_ATTR)
+                       if not isinstance(cls, str) else _remove_suffixes)
+    for suffix in remove_suffixes:
         if name.endswith(suffix):
             name = right_replace(name, suffix, '')
             break

@@ -58,7 +58,7 @@ def controller(url_prefix_or_controller_cls: Union[str, Type[Controller]],
     """
     url_prefix, controller_cls = _normalize_args(
         url_prefix_or_controller_cls, controller_cls, _is_controller_cls)
-    url_prefix = url_prefix or controller_cls.url_prefix
+    url_prefix = url_prefix or controller_cls._meta.url_prefix
 
     routes = []
     controller_routes = getattr(controller_cls, CONTROLLER_ROUTES_ATTR)
@@ -401,9 +401,9 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
     """
     url_prefix, resource_cls = _normalize_args(
         url_prefix_or_resource_cls, resource_cls, _is_resource_cls)
-    member_param = member_param or resource_cls.member_param
-    unique_member_param = unique_member_param or resource_cls.unique_member_param
-    url_prefix = url_prefix or resource_cls.url_prefix
+    member_param = member_param or resource_cls._meta.member_param
+    unique_member_param = unique_member_param or resource_cls._meta.unique_member_param
+    url_prefix = url_prefix or resource_cls._meta.url_prefix
 
     routes = getattr(resource_cls, CONTROLLER_ROUTES_ATTR)
     if rules is not None:

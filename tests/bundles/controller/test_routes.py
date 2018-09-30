@@ -78,7 +78,8 @@ class BarResource(Resource):
 
 
 class BazResource(Resource):
-    unique_member_param = '<string:baz>'
+    class Meta:
+        unique_member_param = '<string:baz>'
 
     def list(self):
         pass

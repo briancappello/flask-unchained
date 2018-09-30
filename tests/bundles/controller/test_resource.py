@@ -29,16 +29,17 @@ class DefaultResource(Resource):
 
 class TestResource:
     def test_default_attributes(self):
-        assert DefaultResource.url_prefix == '/defaults'
-        assert DefaultResource.member_param == '<int:id>'
+        assert DefaultResource._meta.url_prefix == '/defaults'
+        assert DefaultResource._meta.member_param == '<int:id>'
 
     def test_custom_attributes(self):
         class FooResource(Resource):
-            url_prefix = '/foobars'
-            member_param = '<string:slug>'
+            class Meta:
+                url_prefix = '/foobars'
+                member_param = '<string:slug>'
 
-        assert FooResource.url_prefix == '/foobars'
-        assert FooResource.member_param == '<string:slug>'
+        assert FooResource._meta.url_prefix == '/foobars'
+        assert FooResource._meta.member_param == '<string:slug>'
 
     def test_method_as_view_assigns_correct_http_methods(self):
         for method_name in ALL_METHODS:
@@ -76,7 +77,7 @@ class TestResource:
                                                CONTROLLER_ROUTES_ATTR).items():
                 for route in routes:
                     app.add_url_rule(
-                        join(UserResource.url_prefix, route.full_rule),
+                        join(UserResource._meta.url_prefix, route.full_rule),
                         view_func=UserResource.method_as_view(method_name),
                         endpoint=route.endpoint)
 

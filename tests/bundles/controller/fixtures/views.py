@@ -37,7 +37,8 @@ class SiteController(Controller):
 
 
 class ProductController(Controller):
-    url_prefix = '/products'
+    class Meta:
+        url_prefix = '/products'
 
     @route('/')
     def index(self):
@@ -108,7 +109,8 @@ class RoleResource(Resource):
 
 
 class AnotherResource(Resource):
-    url_prefix = 'another'
+    class Meta:
+        url_prefix = 'another'
 
     def list(self):
         return self.render('list')

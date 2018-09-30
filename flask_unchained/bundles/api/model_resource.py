@@ -7,20 +7,21 @@ from flask_unchained.bundles.controller.attr_constants import (
 from flask_unchained import (
     ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,
     CREATE, DELETE, GET, LIST, PATCH, PUT)
-from flask_unchained.bundles.controller.metaclasses import ResourceMeta
+from flask_unchained.bundles.controller.resource import (
+    ResourceMeta, ResourceMetaOptionsFactory)
 from flask_unchained.bundles.controller.route import Route
 from flask_unchained.bundles.controller.utils import get_param_tuples
 from flask_unchained.bundles.sqlalchemy import BaseModel, SessionManager
 from functools import partial
 from http import HTTPStatus
+from py_meta_utils import McsArgs, MetaOption, deep_getattr, _missing
+from sqlalchemy_unchained import BaseModel
+from werkzeug.wrappers import Response
+
 try:
     from marshmallow import MarshalResult
 except ImportError:
     from py_meta_utils import OptionalClass as MarshalResult
-from py_meta_utils import deep_getattr
-from types import FunctionType
-from typing import *
-from werkzeug.wrappers import Response
 
 from .decorators import list_loader, patch_loader, put_loader, post_loader
 from .model_serializer import ModelSerializer
@@ -33,9 +34,10 @@ class ModelResourceMeta(ResourceMeta):
                 or getattr(clsdict.get('Meta', object), 'abstract', False)):
             return super().__new__(mcs, name, bases, clsdict)
 
+        cls = super().__new__(mcs, name, bases, clsdict)
         routes = {}
-        include_methods = set(deep_getattr(clsdict, bases, 'include_methods'))
-        exclude_methods = set(deep_getattr(clsdict, bases, 'exclude_methods'))
+        include_methods = set(cls._meta.include_methods)
+        exclude_methods = set(cls._meta.exclude_methods)
         for method_name in ALL_METHODS:
             if (method_name in exclude_methods
                     or method_name not in include_methods):
@@ -48,63 +50,118 @@ class ModelResourceMeta(ResourceMeta):
             if method_name in INDEX_METHODS:
                 rule = '/'
             else:
-                rule = deep_getattr(clsdict, bases, 'member_param')
+                rule = cls._meta.member_param
             route.rule = rule
             routes[method_name] = [route]
 
-        cls = super().__new__(mcs, name, bases, clsdict)
-        if cls.model is None:
-            raise AttributeError(f'{name} is missing the model attribute')
         setattr(cls, CONTROLLER_ROUTES_ATTR, routes)
         return cls
 
 
-class ModelResource(Resource, metaclass=ModelResourceMeta):
-    """
-    Base class for model resources. This is intended for building RESTful APIs
-    with SQLAlchemy models and Marshmallow serializers.
-    """
-    class Meta:
-        abstract = True
-
-    # FIXME all of these class attributes might be nicer as Meta attributes (mostly
-    # just for consistency with other places, eg Model and Serializer classes)
-
-    model: Type[BaseModel] = None
+class ModelMetaOption(MetaOption):
     """
     The model class this model resource is for.
     """
+    def __init__(self):
+        super().__init__('model', default=None, inherit=True)
 
-    serializer: ModelSerializer = None
+    def check_value(self, value, mcs_args: McsArgs):
+        if mcs_args.meta.abstract:
+            return
+
+        assert inspect.isclass(value) and issubclass(value, BaseModel), \
+            f'{mcs_args.name} is missing the model Meta attribute'
+
+
+class SerializerMetaOption(MetaOption):
     """
     The serializer class to use. If left unspecified, it will be looked up by
     model name and automatically assigned.
     """
+    def __init__(self):
+        super().__init__('serializer', default=None, inherit=True)
 
-    serializer_create: ModelSerializer = None
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert isinstance(value, ModelSerializer), \
+            f'The {self.name} meta option must be an instance of ModelSerializer'
+
+
+class SerializerCreateMetaOption(MetaOption):
     """
     The serializer class to use for creating models. If left unspecified, it
     will be looked up by model name and automatically assigned.
     """
+    def __init__(self):
+        super().__init__('serializer_create', default=None, inherit=True)
 
-    serializer_many: ModelSerializer = None
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert isinstance(value, ModelSerializer), \
+            f'The {self.name} meta option must be an instance of ModelSerializer'
+
+
+class SerializerManyMetaOption(MetaOption):
     """
     The serializer class to use for listing models. If left unspecified, it
     will be looked up by model name and automatically assigned.
     """
+    def __init__(self):
+        super().__init__('serializer_many', default=None, inherit=True)
 
-    include_methods: Union[List[str], Set[str], Tuple[str]] = ALL_METHODS
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert isinstance(value, ModelSerializer), \
+            f'The {self.name} meta option must be an instance of ModelSerializer'
+
+
+class IncludeMethodsMetaOption(MetaOption):
     """
     A list of methods to automatically include. Defaults to
     ``('list', 'create', 'get', 'patch', 'put', 'delete')``.
     """
+    def __init__(self):
+        super().__init__('include_methods', default=_missing, inherit=True)
 
-    exclude_methods: Union[List[str], Set[str], Tuple[str]] = set()
+    def get_value(self, meta, base_classes_meta, mcs_args: McsArgs):
+        value = super().get_value(meta, base_classes_meta, mcs_args)
+        if value is not _missing:
+            return value
+
+        return ALL_METHODS
+
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert all(x in ALL_METHODS for x in value), \
+            f'Invalid values for the {self.name} meta option. The valid values ' \
+            f'are ' + ', '.join(ALL_METHODS)
+
+
+class ExcludeMethodsMetaOption(MetaOption):
     """
     A list of methods to exclude. Defaults to ``()``.
     """
+    def __init__(self):
+        super().__init__('exclude_methods', default=(), inherit=True)
 
-    include_decorators: Union[List[str], Set[str], Tuple[str]] = ALL_METHODS
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert all(x in ALL_METHODS for x in value), \
+            f'Invalid values for the {self.name} meta option. The valid values ' \
+            f'are ' + ', '.join(ALL_METHODS)
+
+
+class IncludeDecoratorsMetaOption(MetaOption):
     """
     A list of methods for which to automatically apply the default decorators.
     Defaults to ``('list', 'create', 'get', 'patch', 'put', 'delete')``.
@@ -130,36 +187,105 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
         * - delete
           - :func:`~flask_unchained.decorators.param_converter`
     """
+    def __init__(self):
+        super().__init__('include_decorators', default=_missing, inherit=True)
 
-    exclude_decorators: Union[List[str], Set[str], Tuple[str]] = set()
+    def get_value(self, meta, base_classes_meta, mcs_args: McsArgs):
+        value = super().get_value(meta, base_classes_meta, mcs_args)
+        if value is not _missing:
+            return value
+
+        return ALL_METHODS
+
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert all(x in ALL_METHODS for x in value), \
+            f'Invalid values for the {self.name} meta option. The valid values ' \
+            f'are ' + ', '.join(ALL_METHODS)
+
+
+class ExcludeDecoratorsMetaOption(MetaOption):
     """
     A list of methods for which to *not* apply the default decorators, as
     outlined in :attr:`include_decorators`. Defaults to ``()``.
     """
+    def __init__(self):
+        super().__init__('exclude_decorators', default=(), inherit=True)
 
-    method_decorators: Union[
-        Union[List[FunctionType], Tuple[FunctionType]],
-        Dict[str, Union[List[FunctionType], Tuple[FunctionType]]],
-    ] = {}
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert all(x in ALL_METHODS for x in value), \
+            f'Invalid values for the {self.name} meta option. The valid values ' \
+            f'are ' + ', '.join(ALL_METHODS)
+
+
+class MethodDecoratorsMetaOption(MetaOption):
     """
     This can either be a list of decorators to apply to *all* methods, or a
     dictionary of method names to a list of decorators to apply for each method.
     In both cases, decorators specified here are run *before* the default
     decorators.
     """
+    def __init__(self):
+        super().__init__('method_decorators', default=(), inherit=True)
+
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        if isinstance(value, (list, tuple)):
+            assert all(callable(x) for x in value), \
+                f'The {self.name} meta option requires a list or tuple of callables'
+        else:
+            for method_name, decorators in value.items():
+                assert deep_getattr(mcs_args.clsdict, mcs_args.bases, method_name), \
+                    f'The {method_name} was not found on {mcs_args.name}'
+                assert all(callable(x) for x in decorators), \
+                    f'Invalid decorator detected in the {self.name} meta option for ' \
+                    f'the {method_name} key'
+
+
+class ResourceMetaOptionsFactory(ResourceMetaOptionsFactory):
+    options = ResourceMetaOptionsFactory.options + [
+        ModelMetaOption,
+        SerializerMetaOption,
+        SerializerCreateMetaOption,
+        SerializerManyMetaOption,
+        IncludeMethodsMetaOption,
+        ExcludeMethodsMetaOption,
+        IncludeDecoratorsMetaOption,
+        ExcludeDecoratorsMetaOption,
+        MethodDecoratorsMetaOption,
+    ]
+
+
+class ModelResource(Resource, metaclass=ModelResourceMeta):
+    """
+    Base class for model resources. This is intended for building RESTful APIs
+    with SQLAlchemy models and Marshmallow serializers.
+    """
+    _meta_options_factory_class = ResourceMetaOptionsFactory
+
+    class Meta:
+        abstract = True
 
     def __init__(self, session_manager: SessionManager = injectable):
         self.session_manager = session_manager
         try:
-            self.model = unchained.sqlalchemy_bundle.models[self.model.__name__]
+            self._meta.model = \
+                unchained.sqlalchemy_bundle.models[self._meta.model.__name__]
         except KeyError:
             pass
 
     @classmethod
     def methods(cls):
         for method in ALL_METHODS:
-            if (method in cls.exclude_methods
-                    or method not in cls.include_methods):
+            if (method in cls._meta.exclude_methods
+                    or method not in cls._meta.include_methods):
                 continue
             yield method
 
@@ -265,10 +391,10 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
 
         if isinstance(rv, MarshalResult):
             rv = rv.errors and rv.errors or rv.data
-        elif isinstance(rv, list) and rv and isinstance(rv[0], self.model):
-            rv = self.serializer_many.dump(rv).data
-        elif isinstance(rv, self.model):
-            rv = self.serializer.dump(rv).data
+        elif isinstance(rv, list) and rv and isinstance(rv[0], self._meta.model):
+            rv = self._meta.serializer_many.dump(rv).data
+        elif isinstance(rv, self._meta.model):
+            rv = self._meta.serializer.dump(rv).data
 
         return self.make_response(rv, code, headers)
 
@@ -288,19 +414,19 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
         if method_name not in ALL_METHODS:
             return decorators
 
-        if isinstance(self.method_decorators, dict):
-            decorators += list(self.method_decorators.get(method_name, []))
-        elif isinstance(self.method_decorators, (list, tuple)):
-            decorators += list(self.method_decorators)
+        if isinstance(self._meta.method_decorators, dict):
+            decorators += list(self._meta.method_decorators.get(method_name, []))
+        elif isinstance(self._meta.method_decorators, (list, tuple)):
+            decorators += list(self._meta.method_decorators)
 
-        if (method_name in self.exclude_decorators
-                or method_name not in self.include_decorators):
+        if (method_name in self._meta.exclude_decorators
+                or method_name not in self._meta.include_decorators):
             return decorators
 
         if method_name == LIST:
-            decorators.append(partial(list_loader, model=self.model))
+            decorators.append(partial(list_loader, model=self._meta.model))
         elif method_name in MEMBER_METHODS:
-            param_name = get_param_tuples(self.member_param)[0][1]
+            param_name = get_param_tuples(self._meta.member_param)[0][1]
             kw_name = 'instance'  # needed by the patch/put loaders
             # for get/delete, allow subclasses to rename view fn args
             # (the patch/put loaders call view functions with positional args,
@@ -309,15 +435,15 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
                 sig = inspect.signature(getattr(self, method_name))
                 kw_name = list(sig.parameters.keys())[0]
             decorators.append(partial(
-                param_converter, **{param_name: {kw_name: self.model}}))
+                param_converter, **{param_name: {kw_name: self._meta.model}}))
 
         if method_name == CREATE:
             decorators.append(partial(post_loader,
-                                      serializer=self.serializer_create))
+                                      serializer=self._meta.serializer_create))
         elif method_name == PATCH:
             decorators.append(partial(patch_loader,
-                                      serializer=self.serializer))
+                                      serializer=self._meta.serializer))
         elif method_name == PUT:
             decorators.append(partial(put_loader,
-                                      serializer=self.serializer))
+                                      serializer=self._meta.serializer))
         return decorators
