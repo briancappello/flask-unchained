@@ -70,6 +70,9 @@ class ModelManager(SessionManager):
         self.save(instance, commit=commit)
         return instance
 
+    def all(self) -> List[model]:
+        return self.q.all()
+
     def get(self, id) -> Union[None, model]:
         """
         Return an instance based on the given primary key identifier,
@@ -142,8 +145,5 @@ class ModelManager(SessionManager):
     def get_by(self, **kwargs) -> Union[None, model]:
         return self.q.get_by(**kwargs)
 
-    def find_all(self) -> List[model]:
-        return self.q.all()
-
-    def find_by(self, **kwargs) -> List[model]:
+    def filter_by(self, **kwargs) -> List[model]:
         return self.q.filter_by(**kwargs).all()

@@ -23,7 +23,7 @@ def list_users():
     """
     List users.
     """
-    users = user_manager.find_all()
+    users = user_manager.all()
     if users:
         print_table(
             ['ID', 'Email', 'Active', 'Confirmed At'],

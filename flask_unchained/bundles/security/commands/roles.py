@@ -20,7 +20,7 @@ def list_roles():
     """
     List roles.
     """
-    roles = role_manager.find_all()
+    roles = role_manager.all()
     if roles:
         print_table(['ID', 'Name'], [(role.id, role.name) for role in roles])
     else:

@@ -119,7 +119,7 @@ class TestModelManager:
         foo_manager.commit()
 
         all_ = [foo1, foo2, foo3]
-        assert foo_manager.find_all() == all_
+        assert foo_manager.all() == all_
 
     def test_find_by(self, db: SQLAlchemy):
         Foo, foo_manager = setup(db)
@@ -130,4 +130,4 @@ class TestModelManager:
         foo_manager.commit()
 
         ones = [foo1, foo_1]
-        assert foo_manager.find_by(name='one') == ones
+        assert foo_manager.filter_by(name='one') == ones
