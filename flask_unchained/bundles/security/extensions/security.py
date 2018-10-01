@@ -22,7 +22,6 @@ class _SecurityConfigProperties(metaclass=ConfigPropertyMeta):
     login_without_confirmation: bool = ConfigProperty()
     recoverable: bool = ConfigProperty()
     registerable: bool = ConfigProperty()
-    trackable: bool = ConfigProperty()
 
     token_authentication_header: str = ConfigProperty()
     token_authentication_key: str = ConfigProperty()
