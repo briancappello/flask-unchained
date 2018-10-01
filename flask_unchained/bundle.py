@@ -104,7 +104,8 @@ class Bundle(metaclass=BundleMeta):
     template_folder: Optional[str] = TemplateFolderDescriptor()
     """
     Root directory path of the bundle's template folder. By default, if there exists
-    a folder named ``templates`` in the bundle package, it will be used, otherwise None.
+    a folder named ``templates`` in the bundle package, it will be used, otherwise
+    ``None``.
     """
 
     static_folder: Optional[str] = StaticFolderDescriptor()

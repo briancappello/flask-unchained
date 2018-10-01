@@ -138,7 +138,9 @@ class IPythonKernelApp(IPKernelApp):
         """
         _ctrl_c_lines = [
             'NOTE: Ctrl-C does not work to exit from the command line.',
-            'To exit, just close the window, type "exit" or "quit" at the qtconsole prompt, or use Ctrl-\\ in UNIX-like environments (at the command prompt).']
+            'To exit, just close the window, type "exit" or "quit" at the '
+            'qtconsole prompt, or use Ctrl-\\ in UNIX-like environments '
+            '(at the command prompt).']
 
         for line in _ctrl_c_lines:
             io.rprint(line)
