@@ -1,3 +1,4 @@
+alembic
 apispec
 bcrypt
 beautifulsoup4
@@ -27,5 +28,6 @@ py-meta-utils
 py-yaml-fixtures
 pyqt5
 speaklater
+sqlalchemy
 qtconsole
 werkzeug

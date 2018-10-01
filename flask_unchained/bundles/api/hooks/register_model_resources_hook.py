@@ -17,10 +17,10 @@ class RegisterModelResourcesHook(AppFactoryHook):
 
     def process_objects(self, app, objects):
         for name, resource_cls in objects.items():
-            if isinstance(resource_cls._meta.model, str):
-                resource_cls._meta.model = (self.unchained.sqlalchemy_bundle
-                                                .models[resource_cls._meta.model])
-            model_name = resource_cls._meta.model.__name__
+            if isinstance(resource_cls.Meta.model, str):
+                resource_cls.Meta.model = (self.unchained.sqlalchemy_bundle
+                                                .models[resource_cls.Meta.model])
+            model_name = resource_cls.Meta.model.__name__
 
             self.attach_serializers_to_resource_cls(model_name, resource_cls)
             self.bundle.resources_by_model[model_name] = resource_cls
@@ -31,16 +31,16 @@ class RegisterModelResourcesHook(AppFactoryHook):
         except KeyError:
             raise KeyError(f'No serializer found for the {model_name} model')
 
-        if resource_cls._meta.serializer is None:
-            resource_cls._meta.serializer = serializer_cls()
-        if resource_cls._meta.serializer_many is None:
-            resource_cls._meta.serializer_many = self.bundle.many_by_model.get(
+        if resource_cls.Meta.serializer is None:
+            resource_cls.Meta.serializer = serializer_cls()
+        if resource_cls.Meta.serializer_many is None:
+            resource_cls.Meta.serializer_many = self.bundle.many_by_model.get(
                 model_name, serializer_cls)(many=True)
-        if resource_cls._meta.serializer_create is None:
+        if resource_cls.Meta.serializer_create is None:
             serializer = self.bundle.create_by_model.get(
                 model_name, serializer_cls)()
             serializer.context['is_create'] = True
-            resource_cls._meta.serializer_create = serializer
+            resource_cls.Meta.serializer_create = serializer
 
     def type_check(self, obj):
         if not inspect.isclass(obj):

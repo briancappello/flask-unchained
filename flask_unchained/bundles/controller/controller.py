@@ -5,7 +5,8 @@ from flask import (after_this_request, current_app as app, flash, jsonify,
                    make_response, render_template, request)
 from flask_unchained.di import set_up_class_dependency_injection
 from py_meta_utils import (AbstractMetaOption, McsArgs, MetaOption,
-                           MetaOptionsFactory, deep_getattr, _missing)
+                           MetaOptionsFactory, deep_getattr, _missing,
+                           apply_factory_meta_options)
 from http import HTTPStatus
 from types import FunctionType
 from typing import *
@@ -52,22 +53,19 @@ class ControllerMeta(type):
       create a new Route for each method that needs one
     """
     def __new__(mcs, name, bases, clsdict):
-        set_up_class_dependency_injection(name, clsdict)
         mcs_args = McsArgs(mcs, name, bases, clsdict)
+        set_up_class_dependency_injection(mcs_args)
         if clsdict.get('__abstract__',
                        getattr(clsdict.get('Meta'), 'abstract', False)):
             mcs_args.clsdict[REMOVE_SUFFIXES_ATTR] = _get_remove_suffixes(
                     name, bases, CONTROLLER_REMOVE_EXTRA_SUFFIXES)
             mcs_args.clsdict[NOT_VIEWS_ATTR] = _get_not_views(clsdict, bases)
 
-        meta_options_factory_class: Type[ControllerMetaOptionsFactory] = deep_getattr(
-            clsdict, bases, '_meta_options_factory_class',
-            ControllerMetaOptionsFactory)
-        meta_options_factory = meta_options_factory_class()
-        meta_options_factory._contribute_to_class(mcs_args)
+        apply_factory_meta_options(
+            mcs_args, default_factory_class=ControllerMetaOptionsFactory)
 
         cls = super().__new__(*mcs_args)
-        if mcs_args.meta.abstract:
+        if mcs_args.Meta.abstract:
             return cls
 
         controller_routes = getattr(cls, CONTROLLER_ROUTES_ATTR, {}).copy()
@@ -199,11 +197,11 @@ class Controller(metaclass=ControllerMeta):
         :param ctx: Context variables to pass into the template.
         """
         if '.' not in template_name:
-            template_file_extension = (self._meta.template_file_extension
+            template_file_extension = (self.Meta.template_file_extension
                                        or app.config.get('TEMPLATE_FILE_EXTENSION'))
             template_name = f'{template_name}{template_file_extension}'
-        if self._meta.template_folder_name and os.sep not in template_name:
-            template_name = os.path.join(self._meta.template_folder_name,
+        if self.Meta.template_folder_name and os.sep not in template_name:
+            template_name = os.path.join(self.Meta.template_folder_name,
                                          template_name)
         return render_template(template_name, **ctx)
 
@@ -305,7 +303,7 @@ class Controller(metaclass=ControllerMeta):
         return method(*view_args, **view_kwargs)
 
     def get_decorators(self, method_name):
-        return self._meta.decorators or []
+        return self.Meta.decorators or []
 
     def apply_decorators(self, view_func, decorators):
         if not decorators:

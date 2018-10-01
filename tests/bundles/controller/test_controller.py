@@ -47,33 +47,33 @@ third.__module__ = 'something.else.third'
 
 class TestControllerAttributes:
     def test_auto_attributes(self):
-        assert DefaultController._meta.template_folder_name == 'default'
-        assert DefaultController._meta.template_file_extension is None
-        assert DefaultController._meta.url_prefix is None
-        assert DefaultController._meta.decorators is None
+        assert DefaultController.Meta.template_folder_name == 'default'
+        assert DefaultController.Meta.template_file_extension is None
+        assert DefaultController.Meta.url_prefix is None
+        assert DefaultController.Meta.decorators is None
 
     def test_custom_template_folder(self):
         class FooController(Controller):
             class Meta:
                 template_folder_name = 'defaults'
 
-        assert FooController._meta.url_prefix is None
-        assert FooController._meta.template_folder_name == 'defaults'
-        assert FooController._meta.template_file_extension is None
+        assert FooController.Meta.url_prefix is None
+        assert FooController.Meta.template_folder_name == 'defaults'
+        assert FooController.Meta.template_file_extension is None
 
     def test_custom_template_extension(self):
         class FooController(Controller):
             class Meta:
                 template_file_extension = '.html.j2'
 
-        assert FooController._meta.template_file_extension == '.html.j2'
+        assert FooController.Meta.template_file_extension == '.html.j2'
 
     def test_custom_url_prefix(self):
         class FooController(Controller):
             class Meta:
                 url_prefix = 'foobar'
 
-        assert FooController._meta.url_prefix == 'foobar'
+        assert FooController.Meta.url_prefix == 'foobar'
 
     def test_apply_decorators(self):
         controller = DefaultController()

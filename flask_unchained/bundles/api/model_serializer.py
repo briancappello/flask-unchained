@@ -3,7 +3,7 @@ from flask_unchained.bundles.sqlalchemy import db
 from flask_unchained import unchained
 from flask_unchained.di import set_up_class_dependency_injection
 from flask_unchained.string_utils import camel_case, title_case
-from py_meta_utils import deep_getattr
+from py_meta_utils import McsArgs, deep_getattr
 try:
     from flask_marshmallow.sqla import ModelSchema, SchemaOpts
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
@@ -98,7 +98,8 @@ class ModelSerializerOpts(SchemaOpts):
 
 class ModelSerializerMeta(ModelSchemaMeta):
     def __new__(mcs, name, bases, clsdict):
-        set_up_class_dependency_injection(name, clsdict)
+        mcs_args = McsArgs(mcs, name, bases, clsdict)
+        set_up_class_dependency_injection(mcs_args)
         if ABSTRACT_ATTR in clsdict:
             return super().__new__(mcs, name, bases, clsdict)
 

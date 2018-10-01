@@ -1,4 +1,4 @@
-from py_meta_utils import deep_getattr
+from py_meta_utils import McsArgs, deep_getattr
 from types import FunctionType
 
 from .string_utils import snake_case
@@ -38,22 +38,23 @@ def ensure_service_name(service, name=None):
     return name
 
 
-def set_up_class_dependency_injection(class_name, clsdict):
-    if '__init__' in clsdict:
+def set_up_class_dependency_injection(mcs_args: McsArgs):
+    if '__init__' in mcs_args.clsdict:
         from .unchained import unchained
-        init = unchained.inject()(clsdict['__init__'])
-        clsdict['__init__'] = init
-        clsdict['__signature__'] = init.__signature__
+        init = unchained.inject()(mcs_args.clsdict['__init__'])
+        mcs_args.clsdict['__init__'] = init
+        mcs_args.clsdict['__signature__'] = init.__signature__
 
-    for attr, fn in clsdict.items():
+    for attr, fn in mcs_args.clsdict.items():
         if isinstance(fn, FunctionType) and hasattr(fn, '__signature__'):
-            fn.__di_name__ = (class_name if fn.__name__ == '__init__'
-                              else f'{class_name}.{fn.__name__}')
+            fn.__di_name__ = (mcs_args.name if fn.__name__ == '__init__'
+                              else f'{mcs_args.name}.{fn.__name__}')
 
 
 class ServiceMeta(type):
     def __new__(mcs, name, bases, clsdict):
-        set_up_class_dependency_injection(name, clsdict)
+        mcs_args = McsArgs(mcs, name, bases, clsdict)
+        set_up_class_dependency_injection(mcs_args)
 
         # extended concrete services should not inherit their super's di name
         if deep_getattr({}, bases, '__di_name__', None):

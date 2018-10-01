@@ -36,8 +36,8 @@ class ModelResourceMeta(ResourceMeta):
 
         cls = super().__new__(mcs, name, bases, clsdict)
         routes = {}
-        include_methods = set(cls._meta.include_methods)
-        exclude_methods = set(cls._meta.exclude_methods)
+        include_methods = set(cls.Meta.include_methods)
+        exclude_methods = set(cls.Meta.exclude_methods)
         for method_name in ALL_METHODS:
             if (method_name in exclude_methods
                     or method_name not in include_methods):
@@ -50,7 +50,7 @@ class ModelResourceMeta(ResourceMeta):
             if method_name in INDEX_METHODS:
                 rule = '/'
             else:
-                rule = cls._meta.member_param
+                rule = cls.Meta.member_param
             route.rule = rule
             routes[method_name] = [route]
 
@@ -66,7 +66,7 @@ class ModelMetaOption(MetaOption):
         super().__init__('model', default=None, inherit=True)
 
     def check_value(self, value, mcs_args: McsArgs):
-        if mcs_args.meta.abstract:
+        if mcs_args.Meta.abstract:
             return
 
         assert inspect.isclass(value) and issubclass(value, BaseModel), \
@@ -276,16 +276,16 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
     def __init__(self, session_manager: SessionManager = injectable):
         self.session_manager = session_manager
         try:
-            self._meta.model = \
-                unchained.sqlalchemy_bundle.models[self._meta.model.__name__]
+            self.Meta.model = \
+                unchained.sqlalchemy_bundle.models[self.Meta.model.__name__]
         except KeyError:
             pass
 
     @classmethod
     def methods(cls):
         for method in ALL_METHODS:
-            if (method in cls._meta.exclude_methods
-                    or method not in cls._meta.include_methods):
+            if (method in cls.Meta.exclude_methods
+                    or method not in cls.Meta.include_methods):
                 continue
             yield method
 
@@ -391,10 +391,10 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
 
         if isinstance(rv, MarshalResult):
             rv = rv.errors and rv.errors or rv.data
-        elif isinstance(rv, list) and rv and isinstance(rv[0], self._meta.model):
-            rv = self._meta.serializer_many.dump(rv).data
-        elif isinstance(rv, self._meta.model):
-            rv = self._meta.serializer.dump(rv).data
+        elif isinstance(rv, list) and rv and isinstance(rv[0], self.Meta.model):
+            rv = self.Meta.serializer_many.dump(rv).data
+        elif isinstance(rv, self.Meta.model):
+            rv = self.Meta.serializer.dump(rv).data
 
         return self.make_response(rv, code, headers)
 
@@ -414,19 +414,19 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
         if method_name not in ALL_METHODS:
             return decorators
 
-        if isinstance(self._meta.method_decorators, dict):
-            decorators += list(self._meta.method_decorators.get(method_name, []))
-        elif isinstance(self._meta.method_decorators, (list, tuple)):
-            decorators += list(self._meta.method_decorators)
+        if isinstance(self.Meta.method_decorators, dict):
+            decorators += list(self.Meta.method_decorators.get(method_name, []))
+        elif isinstance(self.Meta.method_decorators, (list, tuple)):
+            decorators += list(self.Meta.method_decorators)
 
-        if (method_name in self._meta.exclude_decorators
-                or method_name not in self._meta.include_decorators):
+        if (method_name in self.Meta.exclude_decorators
+                or method_name not in self.Meta.include_decorators):
             return decorators
 
         if method_name == LIST:
-            decorators.append(partial(list_loader, model=self._meta.model))
+            decorators.append(partial(list_loader, model=self.Meta.model))
         elif method_name in MEMBER_METHODS:
-            param_name = get_param_tuples(self._meta.member_param)[0][1]
+            param_name = get_param_tuples(self.Meta.member_param)[0][1]
             kw_name = 'instance'  # needed by the patch/put loaders
             # for get/delete, allow subclasses to rename view fn args
             # (the patch/put loaders call view functions with positional args,
@@ -435,15 +435,15 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
                 sig = inspect.signature(getattr(self, method_name))
                 kw_name = list(sig.parameters.keys())[0]
             decorators.append(partial(
-                param_converter, **{param_name: {kw_name: self._meta.model}}))
+                param_converter, **{param_name: {kw_name: self.Meta.model}}))
 
         if method_name == CREATE:
             decorators.append(partial(post_loader,
-                                      serializer=self._meta.serializer_create))
+                                      serializer=self.Meta.serializer_create))
         elif method_name == PATCH:
             decorators.append(partial(patch_loader,
-                                      serializer=self._meta.serializer))
+                                      serializer=self.Meta.serializer))
         elif method_name == PUT:
             decorators.append(partial(put_loader,
-                                      serializer=self._meta.serializer))
+                                      serializer=self.Meta.serializer))
         return decorators

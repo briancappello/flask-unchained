@@ -6,7 +6,7 @@ from tests.conftest import POSTGRES
 
 class TestModelMetaOptions:
     def test_defaults(self, db):
-        meta = db.Model._meta
+        meta = db.Model.Meta
         assert meta._testing_ == 'this setting is only available when ' \
                                  'os.getenv("SQLA_TESTING") == "True"'
 
@@ -33,7 +33,7 @@ class TestModelMetaOptions:
                 updated_at = 'updated'
                 _testing_ = 'over'
 
-        meta = Over._meta
+        meta = Over.Meta
         assert meta._testing_ == 'over'
         assert meta.abstract is False
         assert meta.lazy_mapped is False
@@ -53,7 +53,7 @@ class TestModelMetaOptions:
                 lazy_mapped = True
                 updated_at = 'extends'
 
-        meta = ExtendsOver._meta
+        meta = ExtendsOver.Meta
         assert meta._testing_ == 'over'
         assert meta.abstract is False
         assert meta.lazy_mapped is True
@@ -78,8 +78,8 @@ class TestModelMetaOptions:
         class Auto(NotLazy):
             pass
 
-        assert Auto._meta.table is None
-        assert '__tablename__' not in Auto._meta._mcs_args.clsdict
+        assert Auto.Meta.table is None
+        assert '__tablename__' not in Auto.Meta._mcs_args.clsdict
         assert Auto.__tablename__ == 'auto'
 
         class DeclaredAttr(NotLazy):
@@ -87,14 +87,14 @@ class TestModelMetaOptions:
             def __tablename__(cls):
                 return cls.__name__.lower()
 
-        assert DeclaredAttr._meta.table is None
+        assert DeclaredAttr.Meta.table is None
         assert DeclaredAttr.__tablename__ == 'declaredattr'
 
         class Manual(NotLazy):
             __tablename__ = 'manuals'
 
-        assert Manual._meta.table == 'manuals'
-        assert Manual._meta._mcs_args.clsdict['__tablename__'] == 'manuals'
+        assert Manual.Meta.table == 'manuals'
+        assert Manual.Meta._mcs_args.clsdict['__tablename__'] == 'manuals'
         assert Manual.__tablename__ == 'manuals'
 
         class AutoMV(db.MaterializedView):
@@ -104,9 +104,9 @@ class TestModelMetaOptions:
 
         ModelRegistry().finalize_mappings()
 
-        assert AutoMV._meta.table == 'auto_mv'
+        assert AutoMV.Meta.table == 'auto_mv'
         assert AutoMV.__table__.fullname == 'auto_mv'
-        assert AutoMV._meta._mcs_args.clsdict['__tablename__'] == 'auto_mv'
+        assert AutoMV.Meta._mcs_args.clsdict['__tablename__'] == 'auto_mv'
         assert AutoMV.__tablename__ == 'auto_mv'
 
         class ManualMV(db.MaterializedView):
@@ -119,8 +119,8 @@ class TestModelMetaOptions:
 
         ModelRegistry().finalize_mappings()
 
-        assert ManualMV._meta.table == 'manual_materialized_view'
+        assert ManualMV.Meta.table == 'manual_materialized_view'
         assert ManualMV.__table__.fullname == 'manual_materialized_view'
-        assert ManualMV._meta._mcs_args.clsdict['__tablename__'] == \
+        assert ManualMV.Meta._mcs_args.clsdict['__tablename__'] == \
                'manual_materialized_view'
         assert ManualMV.__tablename__ == 'manual_materialized_view'

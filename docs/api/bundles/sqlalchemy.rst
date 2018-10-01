@@ -22,12 +22,6 @@ Hooks
 .. automodule:: flask_unchained.bundles.sqlalchemy.hooks
    :members:
 
-Metaclasses
-~~~~~~~~~~~
-
-.. automodule:: flask_unchained.bundles.sqlalchemy.meta
-   :members:
-
 Services
 ~~~~~~~~
 

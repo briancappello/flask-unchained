@@ -34,6 +34,7 @@
 * rename `Controller.template_folder` to `Controller.template_folder_name`
 * add `Controller.make_response` as an alias for `flask.make_response`
 * convert attributes on `Controller`, `Resource`, and `ModelResource` to be `class Meta` options
+* rename `_meta` to `Meta` per py-meta-utils v0.3
 
 ## 0.5.1 (2018/07/25)
 

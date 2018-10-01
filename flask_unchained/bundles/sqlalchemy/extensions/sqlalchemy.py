@@ -46,18 +46,18 @@ class SQLAlchemy(BaseSQLAlchemy):
 
         class MaterializedViewMetaclass(DeclarativeMeta):
             def _pre_mcs_init(cls):
-                cls.__table__ = sqla.create_materialized_view(cls._meta.table,
+                cls.__table__ = sqla.create_materialized_view(cls.Meta.table,
                                                               cls.selectable())
 
             def _post_mcs_init(cls):
                 # create a unique index for the primary key(s) of __table__
-                cls._meta._refresh_concurrently = False
+                cls.Meta._refresh_concurrently = False
                 for pk in cls.__table__.primary_key.columns:
                     pk_idx = self.Index(pk.name,
                                         getattr(cls, pk.name),
                                         unique=True)
                     self._set_constraint_name(pk_idx, cls.__table__)
-                    cls._meta._refresh_concurrently = True
+                    cls.Meta._refresh_concurrently = True
 
                 # apply naming conventions to user-supplied indexes (if any)
                 constraints = cls.constraints()
@@ -65,7 +65,7 @@ class SQLAlchemy(BaseSQLAlchemy):
                     self._set_constraint_name(idx, cls.__table__)
 
                 # automatically refresh the view when its parent table changes
-                mv_for = cls._meta.mv_for
+                mv_for = cls.Meta.mv_for
                 parents = (mv_for if isinstance(mv_for, (list, tuple))
                            else [mv_for])
                 for Parent in parents:
@@ -105,7 +105,7 @@ class SQLAlchemy(BaseSQLAlchemy):
             @classmethod
             def refresh(cls, concurrently=None):
                 concurrently = (concurrently if concurrently is not None
-                                else cls._meta._refresh_concurrently)
+                                else cls.Meta._refresh_concurrently)
                 sqla.refresh_materialized_view(cls.__tablename__, concurrently)
 
         self.MaterializedView = MaterializedView

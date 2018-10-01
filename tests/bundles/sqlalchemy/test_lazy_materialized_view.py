@@ -59,7 +59,7 @@ class TestIt:
     def test_it(self, db):
         Node, NodeMV, node_manager = setup(db)
 
-        assert NodeMV._meta.table == 'node_mv'
+        assert NodeMV.Meta.table == 'node_mv'
         assert NodeMV.__tablename__ == 'node_mv'
 
         index = node_manager.create(slug='index')

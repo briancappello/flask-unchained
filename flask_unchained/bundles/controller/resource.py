@@ -23,7 +23,7 @@ class ResourceMeta(ControllerMeta):
 
     def __new__(mcs, name, bases, clsdict):
         cls = super().__new__(mcs, name, bases, clsdict)
-        if clsdict['_meta'].abstract:
+        if clsdict['Meta'].abstract:
             setattr(cls, REMOVE_SUFFIXES_ATTR, _get_remove_suffixes(
                 name, bases, RESOURCE_REMOVE_EXTRA_SUFFIXES))
             return cls
@@ -38,7 +38,7 @@ class ResourceMeta(ControllerMeta):
                 rule = '/'
             else:
                 route._is_member_method = True
-                route._member_param = cls._meta.member_param
+                route._member_param = cls.Meta.member_param
             route.rule = rule
             controller_routes[method_name] = [route]
         setattr(cls, CONTROLLER_ROUTES_ATTR, controller_routes)
@@ -81,7 +81,7 @@ class MemberParamMetaOption(MetaOption):
         return '<int:id>'
 
     def check_value(self, value, mcs_args: McsArgs):
-        if mcs_args.meta.abstract:
+        if mcs_args.Meta.abstract:
             return
 
         assert isinstance(value, str) and len(get_param_tuples(value)) == 1, \
@@ -94,7 +94,7 @@ class UniqueMemberParamMetaOption(MetaOption):
         super().__init__('unique_member_param', default=None, inherit=False)
 
     def check_value(self, value, mcs_args: McsArgs):
-        if mcs_args.meta.abstract or not value:
+        if mcs_args.Meta.abstract or not value:
             return
 
         assert isinstance(value, str) and len(get_param_tuples(value)) == 1, \

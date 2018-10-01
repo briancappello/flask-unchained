@@ -44,8 +44,8 @@
     <td>
       {% if view.can_create %}
         {% set create_url = url_for(view.endpoint ~ '.create_view', url=return_url) %}
-        <a href="{{ create_url }}" title="{{ 'Create New ' ~ view._meta.model.__label__ }}">
-          <i class="glyphicon glyphicon-plus"></i> Create {{ view._meta.model.__label__ }}
+        <a href="{{ create_url }}" title="{{ 'Create New ' ~ view.Meta.model.__label__ }}">
+          <i class="glyphicon glyphicon-plus"></i> Create {{ view.Meta.model.__label__ }}
         </a>
       {% endif %}
     </td>

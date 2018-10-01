@@ -23,7 +23,7 @@ class ModelRegistry(BaseModelRegistry):
     def register(self, mcs_init_args: McsInitArgs):
         super().register(mcs_init_args)
 
-        relationships = mcs_init_args.cls._meta.relationships
+        relationships = mcs_init_args.cls.Meta.relationships
         if relationships:
             self._relationships[mcs_init_args.name] = relationships
 

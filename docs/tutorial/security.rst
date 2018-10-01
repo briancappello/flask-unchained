@@ -58,6 +58,7 @@ Let's start with configuring our database models, because the views will be brok
        """
        class Meta:
            lazy_mapped = True
+           repr = ('id', 'email', 'active')
 
        email = db.Column(db.String(64), unique=True, index=True, info=dict(
            required=_('flask_unchained.bundles.security:email_required'),
@@ -71,8 +72,6 @@ Let's start with configuring our database models, because the views will be brok
                                     cascade='all, delete-orphan')
        roles = db.association_proxy('user_roles', 'role',
                                     creator=lambda role: UserRole(role=role))
-
-       __repr_props__ = ('id', 'email', 'active')
 
        @db.hybrid_property
        def password(self):
@@ -122,6 +121,7 @@ Let's start with configuring our database models, because the views will be brok
    from flask_unchained.bundles.sqlalchemy import db
    from flask_unchained.bundles.security.models.user_role import UserRole
 
+
    class Role(db.Model):
        """
        Base :class`Role` model. Includes an :attr:`name` column and a many-to-many
@@ -130,6 +130,7 @@ Let's start with configuring our database models, because the views will be brok
        """
        class Meta:
            lazy_mapped = True
+           repr = ('id', 'name')
 
        name = db.Column(db.String(64), unique=True, index=True)
 
@@ -137,8 +138,6 @@ Let's start with configuring our database models, because the views will be brok
                                     cascade='all, delete-orphan')
        users = db.association_proxy('role_users', 'user',
                                     creator=lambda user: UserRole(user=user))
-
-       __repr_props__ = ('id', 'name')
 
        def __hash__(self):
            return hash(self.name)
@@ -149,6 +148,7 @@ Let's start with configuring our database models, because the views will be brok
 
    from flask_unchained.bundles.sqlalchemy import db
 
+
    class UserRole(db.Model):
        """
        Join table between the :class:`User` and :class:`Role` models.
@@ -156,14 +156,13 @@ Let's start with configuring our database models, because the views will be brok
        class Meta:
            lazy_mapped = True
            pk = None
+           repr = ('user_id', 'role_id')
 
        user_id = db.foreign_key('User', primary_key=True)
        user = db.relationship('User', back_populates='user_roles')
 
        role_id = db.foreign_key('Role', primary_key=True)
        role = db.relationship('Role', back_populates='role_users')
-
-       __repr_props__ = ('user_id', 'role_id')
 
        def __init__(self, user=None, role=None, **kwargs):
            super().__init__(**kwargs)

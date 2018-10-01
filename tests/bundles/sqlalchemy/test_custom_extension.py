@@ -33,11 +33,11 @@ class TestCustomExtension:
         assert issubclass(TwoBasic, CustomModel)
 
     def test_base_model_meta_options_are_correct(self, db):
-        assert db.Model._meta.extend_existing is True
-        assert db.Model._meta.pk == 'pk'
-        assert db.Model._meta._testing_ == 'overriding the default'
+        assert db.Model.Meta.extend_existing is True
+        assert db.Model.Meta.pk == 'pk'
+        assert db.Model.Meta._testing_ == 'overriding the default'
 
-        assert db.MaterializedView._meta.pk is None
-        assert db.MaterializedView._meta.created_at is None
-        assert db.MaterializedView._meta.updated_at is None
-        assert db.Model._meta._testing_ == 'overriding the default'
+        assert db.MaterializedView.Meta.pk is None
+        assert db.MaterializedView.Meta.created_at is None
+        assert db.MaterializedView.Meta.updated_at is None
+        assert db.Model.Meta._testing_ == 'overriding the default'

@@ -30,7 +30,7 @@ class RegisterModelsHook(AppFactoryHook):
     def type_check(self, obj: Any) -> bool:
         if not inspect.isclass(obj) or not issubclass(obj, Model):
             return False
-        return hasattr(obj, '_meta') and not obj._meta.abstract
+        return hasattr(obj, 'Meta') and not obj.Meta.abstract
 
     def update_shell_context(self, ctx: dict):
         ctx.update(self.bundle.models)
