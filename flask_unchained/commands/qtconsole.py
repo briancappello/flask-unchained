@@ -1,5 +1,5 @@
 """
-Launch the QtConsole GUI with the Flask app context embedded
+Launch the QtConsole GUI with the Flask app context embedded *EXPERIMENTAL*
 """
 import errno
 import multiprocessing
@@ -37,9 +37,9 @@ except ImportError:
 @with_appcontext
 def qtconsole():
     """
-    Starts qtconsole in the app context.
+    Starts qtconsole in the app context. *EXPERIMENTAL*
 
-    Only available if ``PyQt5`` and ``qtconsole`` are installed.
+    Only available if ``Ipython``, ``PyQt5`` and ``qtconsole`` are installed.
     """
     connection_file = os.path.join(tempfile.gettempdir(),
                                    f'connection-{os.getpid()}.json')
