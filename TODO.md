@@ -13,6 +13,7 @@ api bundle
 security bundle
 ---------------
 * implement support for JWT tokens (and maybe PASETO tokens too?)
+* implement support for OAuth 2.0
 
 
 logging
@@ -44,6 +45,7 @@ lower priority
 
 bucket list
 -----------
+* websockets support
 * out-of-the-box support for production deployment
    - docker
    - AWS
