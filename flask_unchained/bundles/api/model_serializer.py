@@ -151,7 +151,8 @@ class ModelSerializer(ModelSchema, metaclass=ModelSerializerMeta):
     :class:`flask_marshmallow.sqla.ModelSchema`: it will automatically create
     fields from the attached database Model, the only difference being that it
     will automatically dump to (and load from) the camel-cased variants of the
-    field names.
+    field names. The other main difference is that serializers have dependency
+    injection set up automatically on their constructors.
 
     For example::
 

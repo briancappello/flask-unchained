@@ -75,7 +75,7 @@ class ModelMetaOption(MetaOption):
 
 class SerializerMetaOption(MetaOption):
     """
-    The serializer class to use. If left unspecified, it will be looked up by
+    The serializer instance to use. If left unspecified, it will be looked up by
     model name and automatically assigned.
     """
     def __init__(self):
@@ -91,7 +91,7 @@ class SerializerMetaOption(MetaOption):
 
 class SerializerCreateMetaOption(MetaOption):
     """
-    The serializer class to use for creating models. If left unspecified, it
+    The serializer instance to use for creating models. If left unspecified, it
     will be looked up by model name and automatically assigned.
     """
     def __init__(self):
@@ -107,7 +107,7 @@ class SerializerCreateMetaOption(MetaOption):
 
 class SerializerManyMetaOption(MetaOption):
     """
-    The serializer class to use for listing models. If left unspecified, it
+    The serializer instance to use for listing models. If left unspecified, it
     will be looked up by model name and automatically assigned.
     """
     def __init__(self):
@@ -123,7 +123,7 @@ class SerializerManyMetaOption(MetaOption):
 
 class IncludeMethodsMetaOption(MetaOption):
     """
-    A list of methods to automatically include. Defaults to
+    A list of resource methods to automatically include. Defaults to
     ``('list', 'create', 'get', 'patch', 'put', 'delete')``.
     """
     def __init__(self):
@@ -147,7 +147,7 @@ class IncludeMethodsMetaOption(MetaOption):
 
 class ExcludeMethodsMetaOption(MetaOption):
     """
-    A list of methods to exclude. Defaults to ``()``.
+    A list of resource methods to exclude. Defaults to ``()``.
     """
     def __init__(self):
         super().__init__('exclude_methods', default=(), inherit=True)
@@ -163,7 +163,7 @@ class ExcludeMethodsMetaOption(MetaOption):
 
 class IncludeDecoratorsMetaOption(MetaOption):
     """
-    A list of methods for which to automatically apply the default decorators.
+    A list of resource methods for which to automatically apply the default decorators.
     Defaults to ``('list', 'create', 'get', 'patch', 'put', 'delete')``.
 
     .. list-table::
@@ -208,7 +208,7 @@ class IncludeDecoratorsMetaOption(MetaOption):
 
 class ExcludeDecoratorsMetaOption(MetaOption):
     """
-    A list of methods for which to *not* apply the default decorators, as
+    A list of resource methods for which to *not* apply the default decorators, as
     outlined in :attr:`include_decorators`. Defaults to ``()``.
     """
     def __init__(self):
