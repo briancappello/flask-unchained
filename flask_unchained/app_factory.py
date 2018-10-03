@@ -30,8 +30,7 @@ class AppFactory:
                    env: Union[DEV, PROD, STAGING, TEST],
                    bundles: Optional[List[str]] = None,
                    _config_overrides: Optional[Dict[str, Any]] = None,
-                   **flask_kwargs,
-                   ) -> FlaskUnchained:
+                   **flask_kwargs) -> FlaskUnchained:
         """
         Flask Unchained Application Factory. Returns an instance of
         :class:`~flask_unchained.FlaskUnchained`.

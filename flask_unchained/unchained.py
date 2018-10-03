@@ -73,8 +73,7 @@ class Unchained:
         # must import the RunHooksHook here to prevent a circular dependency
         from .hooks.run_hooks_hook import RunHooksHook
         run_hooks_hook = RunHooksHook(self)
-        run_hooks_hook.run_hook(app, bundles or [],
-                                _config_overrides=_config_overrides)
+        run_hooks_hook.run_hook(app, bundles or [], _config_overrides=_config_overrides)
         self._initialized = True
 
     def get_extension_local_proxy(self, ext_name):

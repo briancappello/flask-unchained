@@ -55,11 +55,10 @@ class UrlPrefixMetaOption(MetaOption):
         if value is not _missing:
             return value
 
-        prefix = controller_name(mcs_args.name,
-                                 deep_getattr(mcs_args.clsdict,
-                                              mcs_args.bases,
-                                              REMOVE_SUFFIXES_ATTR))
-        return '/' + pluralize(prefix.replace('_', '-'))
+        ctrl_name = controller_name(mcs_args.name, deep_getattr(mcs_args.clsdict,
+                                                                mcs_args.bases,
+                                                                REMOVE_SUFFIXES_ATTR))
+        return '/' + pluralize(ctrl_name.replace('_', '-'))
 
     def check_value(self, value, mcs_args: McsArgs):
         if not value:

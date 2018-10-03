@@ -26,8 +26,7 @@ def controller_name(cls, _remove_suffixes=None) -> str:
         UsersMethodView -> users
     """
     name = cls if isinstance(cls, str) else cls.__name__
-    remove_suffixes = (getattr(cls, REMOVE_SUFFIXES_ATTR)
-                       if not isinstance(cls, str) else _remove_suffixes)
+    remove_suffixes = _remove_suffixes or getattr(cls, REMOVE_SUFFIXES_ATTR)
     for suffix in remove_suffixes:
         if name.endswith(suffix):
             name = right_replace(name, suffix, '')
