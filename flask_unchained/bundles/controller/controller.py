@@ -108,7 +108,10 @@ class DecoratorsMetaOption(MetaOption):
 
 class TemplateFolderNameMetaOption(MetaOption):
     """
-    The name of the folder containing the templates for this controller's views.
+    The name of the folder containing the templates for this controller's views. Defaults
+    to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping
+    after the first one is found (if any). It then gets pluralized and converted to
+    snake-case.
     """
     def __init__(self):
         super().__init__('template_folder_name', default=_missing, inherit=False)
@@ -148,6 +151,11 @@ class TemplateFileExtensionMetaOption(MetaOption):
 
 
 class UrlPrefixMetaOption(MetaOption):
+    """
+    The url prefix to use for all routes from this controller. Defaults to the class name,
+    with the suffixes ``Controller`` or ``View`` stripped, stopping after the first found
+    (if any). The resulting value is :python:`f'/{snake_case(pluralize(value))}'`.
+    """
     def __init__(self):
         super().__init__('url_prefix', default=None, inherit=False)
 
@@ -178,7 +186,7 @@ class Controller(metaclass=ControllerMeta):
     class Meta:
         abstract = True
 
-    def flash(self, msg, category=None):
+    def flash(self, msg: str, category: Optional[str] = None):
         """
         Convenience method for flashing messages.
 
@@ -188,7 +196,7 @@ class Controller(metaclass=ControllerMeta):
         if not request.is_json and app.config.get('FLASH_MESSAGES'):
             flash(msg, category)
 
-    def render(self, template_name, **ctx):
+    def render(self, template_name: str, **ctx):
         """
         Convenience method for rendering a template.
 
@@ -205,7 +213,11 @@ class Controller(metaclass=ControllerMeta):
                                          template_name)
         return render_template(template_name, **ctx)
 
-    def redirect(self, where=None, default=None, override=None, **url_kwargs):
+    def redirect(self,
+                 where: Optional[str] = None,
+                 default: Optional[str] = None,
+                 override: Optional[str] = None,
+                 **url_kwargs):
         """
         Convenience method for returning redirect responses.
 
@@ -234,7 +246,11 @@ class Controller(metaclass=ControllerMeta):
         """
         return redirect(where, default, override, _cls=self, **url_kwargs)
 
-    def jsonify(self, data, code=HTTPStatus.OK, headers=None):
+    def jsonify(self,
+                data: Any,
+                code: Union[int, Tuple[int, str, str]] = HTTPStatus.OK,
+                headers: Optional[Dict[str, str]] = None,
+                ):
         """
         Convenience method to return json responses.
 
@@ -244,7 +260,12 @@ class Controller(metaclass=ControllerMeta):
         """
         return jsonify(data), code, headers or {}
 
-    def errors(self, errors, code=HTTPStatus.BAD_REQUEST, key='errors', headers=None):
+    def errors(self,
+               errors: List[str],
+               code: Union[int, Tuple[int, str, str]] = HTTPStatus.BAD_REQUEST,
+               key: str = 'errors',
+               headers: Optional[Dict[str, str]] = None,
+               ):
         """
         Convenience method to return errors as json.
 

@@ -47,6 +47,12 @@ class ResourceMeta(ControllerMeta):
 
 
 class UrlPrefixMetaOption(MetaOption):
+    """
+    The url prefix to use for all routes from this resource. Defaults to the class name,
+    with the suffixes ``Resource``, ``MethodView``, ``Controller``, or ``View`` stripped,
+    stopping after the first one found (if any). The resulting value is
+    :python:`f'/{snake_case(pluralize(value))}'`.
+    """
     def __init__(self):
         super().__init__('url_prefix', default=_missing, inherit=False)
 
@@ -69,6 +75,10 @@ class UrlPrefixMetaOption(MetaOption):
 
 
 class MemberParamMetaOption(MetaOption):
+    """
+    The url parameter rule to use for the special member methods (``get``, ``patch``,
+    ``put``, and ``delete``) of this resource. Defaults to ``<int:id>``.
+    """
     def __init__(self):
         super().__init__('member_param', default=_missing, inherit=True)
 
@@ -89,6 +99,12 @@ class MemberParamMetaOption(MetaOption):
 
 
 class UniqueMemberParamMetaOption(MetaOption):
+    """
+    The url parameter rule to use for the special member methods (``get``, ``patch``,
+    ``put``, and ``delete``) of this resource when
+    :attr:`~flask_unchained.Resource.Meta.member_param` conflicts with a subresource's
+    ``member_param``.
+    """
     def __init__(self):
         super().__init__('unique_member_param', default=None, inherit=False)
 
