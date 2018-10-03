@@ -129,7 +129,7 @@ Here is a summary of the functions imported at the top of your ``routes.py``:
 Class-Based Views
 ~~~~~~~~~~~~~~~~~
 
-The controller bundle includes two base classes that all of your views should extend. They are :class:`~flask_unchained.Controller` and :class:`~flask_unchained.Resource`:
+The controller bundle includes two base classes that all of your views should extend. The first is :class:`~flask_unchained.Controller`, which is implemented very similarly to :class:`~flask.views.View`, however they're not compatible. The second is :class:`~flask_unchained.Resource`, which extends :class:`~flask_unchained.Controller`, and whose implementation draws a lot of inspiration from `Flask-RSETful <https://flask-restful.readthedocs.io/en/latest/>`_ (specifically, the `Resource <https://github.com/flask-restful/flask-restful/blob/f9790d2be816b66b3cb879783de34e7fbe8b7ec9/flask_restful/__init__.py#L543>`_ and `Api <https://github.com/flask-restful/flask-restful/blob/f9790d2be816b66b3cb879783de34e7fbe8b7ec9/flask_restful/__init__.py#L38>`_ classes).
 
 Controller
 """"""""""
@@ -139,6 +139,10 @@ Unless you're building an API, chances are :class:`~flask_unchained.Controller` 
 On any Controller subclass that doesn't specify itself as abstract, all methods not designated as protected by prefixing them with an ``_`` are automatically assigned default routing rules. In the example below, ``foo_baz`` has a route decorator, but ``foo`` and ``foo_bar`` do not. The undecorated views will be assigned default route rules of ``/foo`` and ``/foo-bar`` respectively (the default is to convert the method name to kebab-case).
 
 .. code:: python
+
+   # your_bundle/views.py
+
+   from flask_unchained import Controller, route
 
    class MyController(Controller):
       def foo():
@@ -154,8 +158,48 @@ On any Controller subclass that doesn't specify itself as abstract, all methods 
       def _protected_function():
          return 'stuff'
 
+Controller Meta Options
+#######################
+
+Controllers have a few meta options that you can use to customize their behavior:
+
+.. code:: python
+
+   # your_bundle/views.py
+
+   from flask_unchained import Controller, route
+
+   class SiteController(Controller):
+       class Meta:
+           abstract: bool = False                         # default is False
+           decorators: List[callable] = ()                # default is an empty tuple
+           template_folder_name: str = 'sites'            # see explanation below
+           template_file_extension: Optional[str] = None  # default is None
+           url_prefix = Optional[str] = None              # default is None
+
+.. list-table::
+   :header-rows: 1
+   * - meta option name
+     - description
+     - default value
+   * - abstract
+     - Whether or not this controller should be abstract. Abstract controller classes do not get any routes assigned to their view methods (if any exist).
+     - False
+   * - decorators
+     - A list of decorators to apply to all views in this controller.
+     - ()
+   * - template_folder_name
+     - The name of the folder containing the templates for this controller's views.
+     - Defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). It then gets pluralized and converted to snake-case.
+   * - template_file_extension
+     - The filename extension to use for templates for this controller's views.
+     - Defaults to your app config's ``TEMPLATE_FILE_EXTENSION`` setting, and overrides it if set.
+   * - url_prefix
+     - The url prefix to use for all routes from this controller.
+     - Defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). The resulting value is :python:`f'/{snake_case(pluralize(value))}'`.
+
 Overriding Controllers
-""""""""""""""""""""""
+######################
 
 Controllers can be extended or overridden by creating an equivalently named subclass higher up in the bundle hierarchy. (In other words, either in a bundle that extends another bundle, or in your app bundle.) As an example, the security bundle includes :class:`~flask_unchained.bundles.security.SecurityController`. To extend it, you would simply subclass it like any other class in Python and change what you need to:
 
@@ -255,6 +299,41 @@ Would register the following routes::
    PATCH   /users/<string:username>    UserResource.patch
    PUT     /users/<string:username>    UserResource.put
    DELETE  /users/<string:username>    UserResource.delete
+
+Resource Meta Options
+#####################
+
+Resources have a few extra meta options on top of those that Controller includes:
+
+.. code:: python
+
+   # your_bundle/views.py
+
+   from flask_unchained import Controller, route
+
+   class UserResource(Resource):
+       class Meta:
+           abstract: bool = False                         # default is False
+           decorators: List[callable] = ()                # default is an empty tuple
+           template_folder_name: str = 'sites'            # see explanation below
+           template_file_extension: Optional[str] = None  # default is None
+           url_prefix = Optional[str] = None              # default is None
+
+.. list-table::
+   :header-rows: 1
+   * - meta option name
+     - description
+     - default value
+   * - member_param
+     - The url parameter rule to use for the special member functions (``get``, ``patch``,
+    ``put``, and ``delete``) of this resource.
+     - ``<int:id>``
+   * - unique_member_param
+     - The url parameter rule to use for the special member methods (``get``, ``patch``, ``put``, and ``delete``) of this resource when :attr:`~flask_unchained.Resource.Meta.member_param` conflicts with a subresource's ``member_param``.
+     - ``f'<{member_param_type}:{controller_name(cls)}_{member_param_name}>'
+
+Overriding Resources
+####################
 
 Because :class:`~flask_unchained.Resource` is already a subclass of :class:`~flask_unchained.Controller`, overriding resources works the same way as for controllers.
 
