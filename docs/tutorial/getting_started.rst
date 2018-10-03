@@ -272,26 +272,26 @@ This works fine for stock Flask apps, but it wreaks havoc on the bit of magic Fl
    * - :meth:`~flask_unchained.Unchained.errorhandler`
      - Register a function to handle errors by code or exception class.
 
-Likewise, requirements ``5``, ``6``, and ``7`` are fulfilled by equivalently-named classmethods on the :class:`Bundle` class:
+Likewise, requirements ``5``, ``6``, and ``7`` are fulfilled by equivalently-named methods that also must be accessed via the ``unchained`` extension instance. The difference here is that you must specify which bundle you want the functions to run for:
 
 .. list-table::
    :header-rows: 1
 
-   * - :class:`~flask_unchained.Bundle` classmethod name
+   * - Method Name
      - Description
-   * - :meth:`~flask_unchained.Bundle.before_request`
+   * - ``unchained.bundle_name.before_request``
      - Like :meth:`~flask.Flask.before_request` but for a bundle. This function is only executed before each request that is handled by a view function of that bundle.
-   * - :meth:`~flask_unchained.Bundle.after_request`
+   * - ``unchained.bundle_name.after_request``
      - Like :meth:`~flask.Flask.after_request` but for a bundle. This function is only executed after each request that is handled by a function of that bundle.
-   * - :meth:`~flask_unchained.Bundle.teardown_request`
+   * - ``unchained.bundle_name.teardown_request``
      - Like :meth:`~flask.Blueprint.teardown_request` but for a bundle. This function is only executed when tearing down requests handled by a function of that bundle.  Teardown request functions are executed when the request context is popped, even when no actual request was performed.
-   * - :meth:`~flask_unchained.Bundle.context_processor`
+   * - ``unchained.bundle_name.context_processor``
      - Like :meth:`~flask.Blueprint.context_processor` but for a bundle. This function is only executed for requests handled by a bundle.
-   * - :meth:`~flask_unchained.Bundle.url_value_preprocessor`
+   * - ``unchained.bundle_name.url_value_preprocessor``
      - Registers a function as URL value preprocessor for this bundle. It's called before the view functions are called and can modify the url values provided.
-   * - :meth:`~flask_unchained.Bundle.url_defaults`
+   * - ``unchained.bundle_name.url_defaults``
      - Callback function for URL defaults for this bundle. It's called with the endpoint and values and should update the values passed in place.
-   * - :meth:`~flask_unchained.Bundle.errorhandler`
+   * - ``unchained.bundle_name.errorhandler``
      - Registers an error handler that becomes active for this bundle only.  Please be aware that routing does not happen local to a bundle so an error handler for 404 usually is not handled by a bundle unless it is caused inside a view function.  Another special case is the 500 internal server error which is always looked up from the application. Otherwise works as the :meth:`~flask.Blueprint.errorhandler` decorator.
 
 For the ``4th`` requirement, Flask Unchained automatically creates a :class:`~flask.Blueprint` for each bundle hierarchy, and assigns all of the discovered views that are registered with the app in a bundle hierarchy to it. This necessarily must happen dynamically, which using a stock Flask :class:`~flask.Blueprint` does not allow for. (For backwards compatibility, Flask Unchained does still technically support regular function-based views using blueprints from stock Flask, however it's strongly recommended to **not** use them.)

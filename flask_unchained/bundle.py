@@ -142,74 +142,6 @@ class Bundle(metaclass=BundleMeta):
         """
         pass
 
-    def before_request(self, fn):
-        """
-        Like :meth:`~flask.Blueprint.before_request` but for a bundle. This function
-        is only executed before each request that is handled by a view function
-        of that bundle.
-        """
-        self._defer(lambda bp: bp.before_request(fn))
-
-    def after_request(self, fn):
-        """
-        Like :meth:`~flask.Blueprint.after_request` but for a bundle. This function
-        is only executed after each request that is handled by a function of
-        that bundle.
-        """
-        self._defer(lambda bp: bp.after_request(fn))
-
-    def teardown_request(self, fn):
-        """
-        Like :meth:`~flask.Blueprint.teardown_request` but for a bundle. This
-        function is only executed when tearing down requests handled by a
-        function of that bundle.  Teardown request functions are executed
-        when the request context is popped, even when no actual request was
-        performed.
-        """
-        self._defer(lambda bp: bp.teardown_request(fn))
-
-    def context_processor(self, fn):
-        """
-        Like :meth:`~flask.Blueprint.context_processor` but for a bundle. This
-        function is only executed for requests handled by a bundle.
-        """
-        self._defer(lambda bp: bp.context_processor(fn))
-        return fn
-
-    def url_defaults(self, fn):
-        """
-        Callback function for URL defaults for this bundle. It's called
-        with the endpoint and values and should update the values passed
-        in place.
-        """
-        self._defer(lambda bp: bp.url_defaults(fn))
-        return fn
-
-    def url_value_preprocessor(self, fn):
-        """
-        Registers a function as URL value preprocessor for this
-        bundle. It's called before the view functions are called and
-        can modify the url values provided.
-        """
-        self._defer(lambda bp: bp.url_value_preprocessor(fn))
-        return fn
-
-    def errorhandler(self, code_or_exception):
-        """
-        Registers an error handler that becomes active for this bundle
-        only.  Please be aware that routing does not happen local to a
-        bundle so an error handler for 404 usually is not handled by
-        a bundle unless it is caused inside a view function.  Another
-        special case is the 500 internal server error which is always looked
-        up from the application.
-
-        Otherwise works as the :meth:`~flask.Blueprint.errorhandler` decorator.
-        """
-        def decorator(fn):
-            self._defer(lambda bp: bp.register_error_handler(code_or_exception, fn))
-            return fn
-        return decorator
-
     def iter_class_hierarchy(self, include_self=True, reverse=True):
         """
         Iterate over the bundle classes in the hierarchy. Yields base-most
@@ -275,9 +207,6 @@ class Bundle(metaclass=BundleMeta):
     def _has_views_module(self):
         views_module_name = getattr(self, 'views_module_name', 'views')
         return bool(safe_import_module(f'{self.module_name}.{views_module_name}'))
-
-    def _defer(self, fn):
-        self._deferred_functions.append(fn)
 
 
 class AppBundle(Bundle):

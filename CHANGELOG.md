@@ -37,6 +37,7 @@
 * rename `_meta` to `Meta` per py-meta-utils v0.3
 * rename `ModelManager.find_all` to `ModelManager.all` and `ModelManager.find_by` to `ModelManager.filter_by` for consistency with the `Query` api
 * move instantiation of the `CSRFProtect` extension from the security bundle into the controller bundle, where it belongs, so that it always gets used
+* improve registration of request cycle functions meant to run only for a specific bundle blueprint
 
 ## 0.5.1 (2018/07/25)
 
