@@ -35,7 +35,7 @@ Next, enable the SQLAlchemy Bundle so we can begin using it:
    BUNDLES = [
        # ...
        'flask_unchained.bundles.sqlalchemy',
-       'flaskr',
+       'app',
    ]
 
 Configuration

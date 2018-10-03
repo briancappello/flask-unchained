@@ -1,7 +1,7 @@
 Authentication and Authorization
 --------------------------------
 
-Flask Unchained currently has one officially supported bundle for securing your app. It's a heavily modified fork of the `Flask Security <https://pythonhosted.org/Flask-Security/>`_ project, and includes support for session and token authentication. Adding support for JWT and OAuth authentication are both on the roadmap, but are currently not yet implemented.
+Flask Unchained currently has one officially supported bundle for securing your app. It's a heavily refactored fork of the `Flask Security <https://pythonhosted.org/Flask-Security/>`_ project, and includes support for session and token authentication. (All of the core security logic remains unchanged.) Adding support for JWT token authentication and OAuth 2.0 authorization are both on the roadmap, but are currently not yet implemented.
 
 Install Flask Security Bundle
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -30,7 +30,7 @@ Now we can enable the bundle by updating ``unchained_config.py``:
    BUNDLES = [
        # ...
        'flask_unchained.bundles.security',
-       'flaskr',
+       'app',
    ]
 
 Database Models and Migrations
@@ -366,8 +366,8 @@ By default, Flask Security Bundle only comes with the login and logout endpoints
    Method(s)  Rule                            Endpoint                                     View                                                                                           Options
    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
          GET  /static/<path:filename>         static                                       flask.helpers :: send_static_file                                                              strict_slashes
-         GET  /                               site_controller.index                        flaskr.views :: SiteController.index                                                           strict_slashes
-         GET  /hello                          site_controller.hello                        flaskr.views :: SiteController.hello                                                           strict_slashes
+         GET  /                               site_controller.index                        app.views :: SiteController.index                                                              strict_slashes
+         GET  /hello                          site_controller.hello                        app.views :: SiteController.hello                                                              strict_slashes
    GET, POST  /login                          security_controller.login                    flask_unchained.bundles.security.views.security_controller :: SecurityController.login                    strict_slashes
          GET  /logout                         security_controller.logout                   flask_unchained.bundles.security.views.security_controller :: SecurityController.logout                   strict_slashes
 

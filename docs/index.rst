@@ -24,8 +24,8 @@ Flask Unchained
    :caption: Table of Contents:
 
    introduction
-   how_it_works
    tutorial/index
+   how_it_works
    bundles/index
    commands
    testing

@@ -36,7 +36,7 @@ NOTE: This software is currently in Alpha. At this point I feel pretty confident
    - Services and Extensions
    - Click groups and commands
    - SQLAlchemy database models
-   - Marshmallow serializers
+   - Marshmallow serializers (aka schemas)
    - Flask-Admin admin classes
    - Celery tasks
 * much simplified customization of third-party code

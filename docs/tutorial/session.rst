@@ -19,7 +19,7 @@ Enable the Session Bundle:
    BUNDLES = [
        # ...
        'flask_unchained.bundles.session',
-       'flaskr',
+       'app',
    ]
 
 Configuration
