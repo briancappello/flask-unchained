@@ -267,6 +267,19 @@ class TestResource:
         assert routes[1].endpoint == 'user_resource.get'
         assert routes[1].rule == '/users/<string:slug>'
 
+    def test_it_works_with_automatic_unique_member_params(self):
+        routes = list(resource('/foo', FooResource, subresources=[
+            resource(BarResource),
+        ]))
+        assert routes[0].endpoint == 'foo_resource.list'
+        assert routes[0].rule == '/foo'
+        assert routes[1].endpoint == 'foo_resource.get'
+        assert routes[1].rule == '/foo/<int:id>'
+        assert routes[2].endpoint == 'bar_resource.list'
+        assert routes[2].rule == '/foo/<int:foo_id>/bars'
+        assert routes[3].endpoint == 'bar_resource.get'
+        assert routes[3].rule == '/foo/<int:foo_id>/bars/<int:id>'
+
     def test_it_renames_with_deeply_customized_member_params(self):
         routes = list(resource(UserResource,
                                member_param='<string:slug>',

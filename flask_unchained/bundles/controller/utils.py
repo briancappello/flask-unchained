@@ -218,7 +218,7 @@ def rename_parent_resource_param_name(route, rule: str) -> str:
     renamed_param = (route._unique_member_param
                      or f'<{type_}:{ctrl_name}_{orig_name}>')
     if renamed_param in rule:
-        type_, orig_name = get_param_tuples(route._unique_member_param)[0]
+        type_, orig_name = get_param_tuples(route.unique_member_param)[0]
         renamed_param = f'<{type_}:{ctrl_name}_{orig_name}>'
     return rule.replace(route._parent_member_param, renamed_param, 1)
 

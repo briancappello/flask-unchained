@@ -93,7 +93,7 @@ class UniqueMemberParamMetaOption(MetaOption):
         super().__init__('unique_member_param', default=None, inherit=False)
 
     def check_value(self, value, mcs_args: McsArgs):
-        if mcs_args.Meta.abstract or not value:
+        if mcs_args.Meta.abstract or value is None:
             return
 
         assert isinstance(value, str) and len(get_param_tuples(value)) == 1, \

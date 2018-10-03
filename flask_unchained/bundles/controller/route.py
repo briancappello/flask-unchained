@@ -3,7 +3,8 @@ import inspect
 from flask_unchained.string_utils import snake_case
 from flask_unchained.utils import _missing
 
-from .utils import join, method_name_to_url, rename_parent_resource_param_name
+from .utils import (join, method_name_to_url, rename_parent_resource_param_name,
+                    controller_name, get_param_tuples)
 
 
 class Route:
@@ -218,6 +219,15 @@ class Route:
                 rule = rename_parent_resource_param_name(self, join(member_param, rule))
             return join(url_prefix, rule)
         return method_name_to_url(self.method_name)
+
+    @property
+    def unique_member_param(self):
+        if self._unique_member_param:
+            return self._unique_member_param
+
+        ctrl_name = controller_name(self._controller_cls)
+        type_, name = get_param_tuples(self._member_param)[0]
+        return f'<{type_}:{ctrl_name}_{name}>'
 
     def copy(self):
         new = object.__new__(Route)
