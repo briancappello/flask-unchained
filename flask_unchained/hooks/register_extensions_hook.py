@@ -64,13 +64,23 @@ class RegisterExtensionsHook(AppFactoryHook):
                 dag.add_edge(ext.name, dep_name)
 
         try:
-            return [dag.nodes[ext_name]['extension_tuple']
-                    for ext_name in reversed(list(nx.topological_sort(dag)))]
+            extension_order = reversed(list(nx.topological_sort(dag)))
         except nx.NetworkXUnfeasible:
             msg = 'Circular dependency detected between extensions'
             problem_graph = ', '.join([f'{a} -> {b}'
                                        for a, b in nx.find_cycle(dag)])
             raise Exception(f'{msg}: {problem_graph}')
+
+        rv = []
+        for ext_name in extension_order:
+            try:
+                rv.append(dag.nodes[ext_name]['extension_tuple'])
+            except KeyError as e:
+                if 'extension_tuple' not in str(e):
+                    raise e
+                raise Exception(
+                    f'Could not locate an extension with the name {ext_name!r}')
+        return rv
 
     def type_check(self, obj: Any) -> bool:
         return not inspect.isclass(obj) and hasattr(obj, 'init_app')
