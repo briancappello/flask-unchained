@@ -88,7 +88,9 @@ class Bundle(metaclass=BundleMeta):
 
     name: str = NameDescriptor()
     """
-    Name of the bundle. Defaults to the snake cased class name.
+    Name of the bundle. Defaults to the snake cased class name, unless it's your app
+    bundle, in which case :python:`snake_case(right_replace(cls.__name__, 'Bundle', ''))`
+    gets used instead.
     """
 
     folder: str = FolderDescriptor()
@@ -104,20 +106,22 @@ class Bundle(metaclass=BundleMeta):
     template_folder: Optional[str] = TemplateFolderDescriptor()
     """
     Root directory path of the bundle's template folder. By default, if there exists
-    a folder named ``templates`` in the bundle package, it will be used, otherwise
-    ``None``.
+    a folder named ``templates`` in the bundle package
+    :attr:`~flask_unchained.Bundle.folder`, it will be used, otherwise ``None``.
     """
 
     static_folder: Optional[str] = StaticFolderDescriptor()
     """
     Root directory path of the bundle's static assets folder. By default, if there exists
-    a folder named ``static`` in the bundle package, it will be used, otherwise ``None``.
+    a folder named ``static`` in the bundle package
+    :attr:`~flask_unchained.Bundle.folder`, it will be used, otherwise ``None``.
     """
 
     static_url_path: Optional[str] = StaticUrlPathDescriptor()
     """
-    Url path where this bundle's static assets will be served from. If static_folder is
-    set, this will default to ``/<bundle.name>/static``, otherwise ``None``.
+    Url path where this bundle's static assets will be served from. If
+    :attr:`~flask_unchained.Bundle.static_folder` is set, this will default to
+    ``/<bundle.name>/static``, otherwise ``None``.
     """
 
     _deferred_functions = []
