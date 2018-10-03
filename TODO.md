@@ -41,6 +41,8 @@ lower priority
 * webpack support could use some improvement
    - maybe default configs for common setups?
    - hot reloading would be nice
+* admin bundle could also use some improvement
+   - honestly i haven't spent much time looking too deeply into flask-admin, and am kind of leaning towards researching SPA-based admin interfaces
 
 
 bucket list
