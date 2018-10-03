@@ -4,7 +4,6 @@ import jinja2
 import markupsafe
 import networkx as nx
 
-from collections import namedtuple
 from flask import Flask, current_app
 from typing import *
 from werkzeug.local import LocalProxy
@@ -15,10 +14,6 @@ from .exceptions import ServiceUsageError
 from .utils import AttrDict
 
 
-CategoryActionLog = namedtuple('CategoryActionLog',
-                               ('category', 'column_names', 'items'))
-ActionLogItem = namedtuple('ActionLogItem', ('data', 'timestamp'))
-ActionTableItem = namedtuple('ActionTableItem', ('column_names', 'converter'))
 
 
 class Unchained:
