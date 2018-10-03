@@ -321,6 +321,7 @@ Resources have a few extra meta options on top of those that Controller includes
 
 .. list-table::
    :header-rows: 1
+
    * - meta option name
      - description
      - default value

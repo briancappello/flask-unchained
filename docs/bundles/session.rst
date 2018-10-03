@@ -21,6 +21,7 @@ And enable the bundle in your ``unchained_config.py``:
    BUNDLES = [
        # ...
        'flask_unchained.bundles.session',
+       'app',
    ]
 
 Config

@@ -21,6 +21,7 @@ And enable the bundle in your ``unchained_config.py``:
    BUNDLES = [
        # ...
        'flask_unchained.bundles.mail',
+       'app',
    ]
 
 NOTE: If you have enabled the :doc:`celery`, and want to send emails asynchronously using Celery, then you must list the celery bundle *after* the mail bundle in ``BUNDLES``.

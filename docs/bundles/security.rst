@@ -22,6 +22,7 @@ And enable the bundles in your ``unchained_config.py``:
        # ...
        'flask_unchained.bundles.sqlalchemy',
        'flask_unchained.bundles.security',
+       'app',
    ]
 
 Config
