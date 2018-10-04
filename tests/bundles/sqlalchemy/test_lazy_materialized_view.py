@@ -8,6 +8,9 @@ from tests.conftest import POSTGRES
 
 def setup(db):
     class Node(db.Model):
+        class Meta:
+            repr = ('id', 'name', 'path')
+
         slug = db.Column(db.String, index=True, unique=True)
 
         parent_id = db.foreign_key('Node', nullable=True)
@@ -19,8 +22,6 @@ def setup(db):
                              primaryjoin='Node.id == NodeMV.id', viewonly=True)
         depth = db.association_proxy('mv', 'depth')
         path = db.association_proxy('mv', 'path')
-
-        __repr_props__ = ('id', 'name', 'path')
 
     class NodeMV(db.MaterializedView):
         class Meta:

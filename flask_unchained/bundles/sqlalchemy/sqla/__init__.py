@@ -8,7 +8,7 @@ from .events import attach_events, on, slugify
 from .materialized_view import (create_materialized_view,
                                 refresh_materialized_view,
                                 refresh_all_materialized_views)
-from .relationships import foreign_key
+from .foreign_key import foreign_key
 from .types import BigInteger, DateTime
 
 

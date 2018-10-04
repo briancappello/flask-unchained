@@ -1,5 +1,5 @@
 from flask_unchained.bundles.sqlalchemy import db
-from flask_unchained.bundles.sqlalchemy.sqla.relationships import foreign_key
+from flask_unchained.bundles.sqlalchemy.sqla.foreign_key import foreign_key
 
 
 def test_it_works_with_a_class():
