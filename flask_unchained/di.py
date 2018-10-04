@@ -1,4 +1,5 @@
-from py_meta_utils import McsArgs, deep_getattr
+from py_meta_utils import (AbstractMetaOption, McsArgs, MetaOptionsFactory,
+                           apply_factory_meta_options, deep_getattr)
 from types import FunctionType
 
 from .string_utils import snake_case
@@ -51,10 +52,16 @@ def set_up_class_dependency_injection(mcs_args: McsArgs):
                               else f'{mcs_args.name}.{fn.__name__}')
 
 
+class ServiceMetaOptionsFactory(MetaOptionsFactory):
+    options = [AbstractMetaOption]
+
+
 class ServiceMeta(type):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         set_up_class_dependency_injection(mcs_args)
+        apply_factory_meta_options(
+            mcs_args, default_factory_class=ServiceMetaOptionsFactory)
 
         # extended concrete services should not inherit their super's di name
         if deep_getattr({}, bases, '__di_name__', None):
@@ -76,5 +83,5 @@ class BaseService(metaclass=ServiceMeta):
     injection on the constructor of the subclass, and allows for your service to
     be automatically detected and used.
     """
-
-    __abstract__ = True
+    class Meta:
+        abstract = True
