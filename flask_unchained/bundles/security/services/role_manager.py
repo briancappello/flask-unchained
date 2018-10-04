@@ -7,4 +7,5 @@ class RoleManager(ModelManager):
     """
     :class:`ModelManager` for the :class:`Role` model.
     """
-    model = Role
+    class Meta:
+        model = Role

@@ -14,7 +14,8 @@ def setup(db: SQLAlchemy):
     unchained.sqlalchemy_bundle.models['Foo'] = Foo
 
     class FooManager(ModelManager):
-        model = Foo
+        class Meta:
+            model = Foo
 
     ModelRegistry().finalize_mappings()
     db.create_all()

@@ -1,31 +1,32 @@
 from flask_unchained import unchained
+from flask_unchained.di import ServiceMetaOptionsFactory
 from flask_sqlalchemy_unchained import BaseQuery
 from typing import *
 
 from ..base_model import BaseModel as Model
+from ..meta_options import ModelMetaOption
 from .session_manager import SessionManager
+
+
+class ModelManagerMetaOptionsFactory(ServiceMetaOptionsFactory):
+    options = ServiceMetaOptionsFactory.options + [ModelMetaOption]
 
 
 class ModelManager(SessionManager):
     """
     Base class for model managers.
     """
-    __abstract__ = True
+    _meta_options_factory_class = ModelManagerMetaOptionsFactory
 
-    # FIXME: Is there a way to get these type hints to understand that they're
-    # FIXME: returning a specific subclass of db.Model as set by this attr?
-    model: Union[str, Type[Model]] = Model
-    """
-    The model class a manager is for. In bundles this should be the model's class
-    name as a string, however in user app bundles it's safe to make it the model
-    class itself.
-    """
+    class Meta:
+        abstract = True
+        model = None
 
     def __init__(self):
         super().__init__()
         try:
-            self.model = unchained.sqlalchemy_bundle.models[self.model.__name__]
-        except KeyError:
+            self.Meta.model = unchained.sqlalchemy_bundle.models[self.Meta.model.__name__]
+        except (AttributeError, KeyError):
             pass
 
     @property
@@ -33,16 +34,16 @@ class ModelManager(SessionManager):
         """
         Alias for :meth:`query`.
         """
-        return self.model.query
+        return self.Meta.model.query
 
     @property
     def query(self) -> BaseQuery:
         """
         Returns the query class for this manager's model
         """
-        return self.model.query
+        return self.Meta.model.query
 
-    def create(self, commit=False, **kwargs) -> model:
+    def create(self, commit=False, **kwargs) -> Model:
         """
         Creates an instance of the model, adding it to the database session,
         and optionally commits the session.
@@ -51,11 +52,11 @@ class ModelManager(SessionManager):
         :param kwargs: The data to initialize the model with.
         :return: The model instance.
         """
-        instance = self.model(**kwargs)
+        instance = self.Meta.model(**kwargs)
         self.save(instance, commit=commit)
         return instance
 
-    def update(self, instance, commit=False, **kwargs) -> model:
+    def update(self, instance, commit=False, **kwargs) -> Model:
         """
         Updates a model instance, adding it to the database session,
         and optionally commits the session.
@@ -70,10 +71,10 @@ class ModelManager(SessionManager):
         self.save(instance, commit=commit)
         return instance
 
-    def all(self) -> List[model]:
+    def all(self) -> List[Model]:
         return self.q.all()
 
-    def get(self, id) -> Union[None, model]:
+    def get(self, id) -> Union[None, Model]:
         """
         Return an instance based on the given primary key identifier,
         or ``None`` if not found.
@@ -132,7 +133,7 @@ class ModelManager(SessionManager):
         """
         return self.q.get(id)
 
-    def get_or_create(self, commit=False, **kwargs) -> Tuple[model, bool]:
+    def get_or_create(self, commit=False, **kwargs) -> Tuple[Model, bool]:
         """
         :return: returns a tuple of the instance and a boolean flag specifying
                  whether or not the instance was created
@@ -142,8 +143,8 @@ class ModelManager(SessionManager):
             return self.create(commit=commit, **kwargs), True
         return instance, False
 
-    def get_by(self, **kwargs) -> Union[None, model]:
+    def get_by(self, **kwargs) -> Union[None, Model]:
         return self.q.get_by(**kwargs)
 
-    def filter_by(self, **kwargs) -> List[model]:
+    def filter_by(self, **kwargs) -> List[Model]:
         return self.q.filter_by(**kwargs).all()

@@ -1,7 +1,25 @@
+import inspect
+
 from py_meta_utils import McsArgs, MetaOption
 from sqlalchemy.orm import RelationshipProperty
 from sqlalchemy_unchained import ModelMetaOptionsFactory as BaseMetaOptionsFactory
 from typing import *
+
+
+class ModelMetaOption(MetaOption):
+    """
+    The model class this model resource is for.
+    """
+    def __init__(self):
+        super().__init__('model', default=None, inherit=True)
+
+    def check_value(self, value, mcs_args: McsArgs):
+        if mcs_args.Meta.abstract:
+            return
+
+        from .base_model import BaseModel
+        assert inspect.isclass(value) and issubclass(value, BaseModel), \
+            f'{mcs_args.name} is missing the model Meta attribute'
 
 
 class RelationshipsMetaOption(MetaOption):

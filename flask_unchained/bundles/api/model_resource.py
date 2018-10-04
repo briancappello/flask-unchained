@@ -11,11 +11,11 @@ from flask_unchained.bundles.controller.resource import (
     ResourceMeta, ResourceMetaOptionsFactory)
 from flask_unchained.bundles.controller.route import Route
 from flask_unchained.bundles.controller.utils import get_param_tuples
-from flask_unchained.bundles.sqlalchemy import BaseModel, SessionManager
+from flask_unchained.bundles.sqlalchemy import SessionManager
+from flask_unchained.bundles.sqlalchemy.meta_options import ModelMetaOption
 from functools import partial
 from http import HTTPStatus
 from py_meta_utils import McsArgs, MetaOption, deep_getattr, _missing
-from sqlalchemy_unchained import BaseModel
 from werkzeug.wrappers import Response
 
 try:
@@ -56,21 +56,6 @@ class ModelResourceMeta(ResourceMeta):
 
         setattr(cls, CONTROLLER_ROUTES_ATTR, routes)
         return cls
-
-
-class ModelMetaOption(MetaOption):
-    """
-    The model class this model resource is for.
-    """
-    def __init__(self):
-        super().__init__('model', default=None, inherit=True)
-
-    def check_value(self, value, mcs_args: McsArgs):
-        if mcs_args.Meta.abstract:
-            return
-
-        assert inspect.isclass(value) and issubclass(value, BaseModel), \
-            f'{mcs_args.name} is missing the model Meta attribute'
 
 
 class SerializerMetaOption(MetaOption):

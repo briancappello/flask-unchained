@@ -39,6 +39,7 @@
 * move instantiation of the `CSRFProtect` extension from the security bundle into the controller bundle, where it belongs, so that it always gets used
 * improve registration of request cycle functions meant to run only for a specific bundle blueprint
 * update `BaseService` to use a MetaOptionsFactory
+* make the `ModelManager.model` class attribute a meta option
 
 ## 0.5.1 (2018/07/25)
 

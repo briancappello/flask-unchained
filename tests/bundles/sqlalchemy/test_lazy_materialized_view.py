@@ -50,7 +50,8 @@ def setup(db):
     db.create_all()
 
     class NodeManager(ModelManager):
-        model = Node
+        class Meta:
+            model = Node
 
     return Node, NodeMV, NodeManager()
 
