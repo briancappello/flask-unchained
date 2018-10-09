@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.6.0 (unreleased)
+## 0.6.0 (2018/10/09)
 
 * export `get_boolean_env` from core `flask_unchained` package
 * export `param_converter` from core `flask_unchained` package

@@ -8,7 +8,7 @@
     :license: MIT, see LICENSE for more details
 """
 
-__version__ = '0.5.1'
+__version__ = '0.6.0'
 
 
 from .app_factory import AppFactory
