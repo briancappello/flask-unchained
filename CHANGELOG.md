@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.6.2 (unreleased)
+## 0.6.2 (2018/10/09)
 
 * move the `_templates` folder to `flask_unchained/_code_templates` so that it works when the package gets installed via pip
 
