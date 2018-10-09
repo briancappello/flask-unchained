@@ -66,8 +66,7 @@ class ModelManager(SessionManager):
         :param kwargs: The data to update on the model.
         :return: The model instance.
         """
-        for attr, value in kwargs.items():
-            setattr(instance, attr, value)
+        instance.update(**kwargs)
         self.save(instance, commit=commit)
         return instance
 
