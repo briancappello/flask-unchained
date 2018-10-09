@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.6.1 (2018/10/09)
+
+* ship `_templates` folder with the distribution
+
 ## 0.6.0 (2018/10/09)
 
 * export `get_boolean_env` from core `flask_unchained` package
