@@ -20,12 +20,12 @@ db_ext: SQLAlchemy = unchained.get_extension_local_proxy('db')
 
 
 @db.command('drop')
-@click.option('--drop', is_flag=True, expose_value=True,
+@click.option('--force', is_flag=True, expose_value=True,
               prompt='Drop DB tables?')
 @with_appcontext
-def drop_command(drop):
+def drop_command(force):
     """Drop database tables."""
-    if not drop:
+    if not force:
         exit('Cancelled.')
 
     click.echo('Dropping DB tables.')
@@ -40,12 +40,12 @@ def drop_all():
 
 
 @db.command('reset')
-@click.option('--reset', is_flag=True, expose_value=True,
+@click.option('--force', is_flag=True, expose_value=True,
               prompt='Drop DB tables and run migrations?')
 @with_appcontext
-def reset_command(reset):
+def reset_command(force):
     """Drop database tables and run migrations."""
-    if not reset:
+    if not force:
         exit('Cancelled.')
 
     click.echo('Dropping DB tables.')

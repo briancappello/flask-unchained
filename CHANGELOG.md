@@ -40,6 +40,8 @@
 * improve registration of request cycle functions meant to run only for a specific bundle blueprint
 * update `BaseService` to use a MetaOptionsFactory
 * make the `ModelManager.model` class attribute a meta option
+* rename the `flask db drop --drop` option to `flask db drop --force` to skip prompting
+* rename the `flask db reset --reset` option to `flask db reset --force` to skip prompting
 
 ## 0.5.1 (2018/07/25)
 
