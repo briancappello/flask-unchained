@@ -4,4 +4,4 @@ recursive-include flask_unchained *.py
 recursive-include flask_unchained *.html
 recursive-include flask_unchained *.mo
 recursive-include flask_unchained *.cfg
-recursive-include _templates *
+recursive-include flask_unchained/_code_templates *

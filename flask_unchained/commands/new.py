@@ -26,7 +26,7 @@ ELIF_RE = re.compile(r'^elif (?P<condition>.+): ?(?P<statement>.+)?$')
 ELSE_RE = re.compile(r'^else: ?(?P<statement>.+)?$')
 
 TEMPLATES_ROOT = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, '_templates'))
+    os.path.join(os.path.dirname(__file__), os.pardir, '_code_templates'))
 PROJECT_TEMPLATE = os.path.join(TEMPLATES_ROOT, 'project')
 
 
