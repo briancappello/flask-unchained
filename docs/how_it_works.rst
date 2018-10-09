@@ -196,6 +196,15 @@ Services and Dependency Injection
 
 Flask Unchained supports dependency injection of services and extensions (by default). Here a "service" means any subclass of :class:`~flask_unchained.BaseService` that lives in a bundle's ``services`` module (or that gets imported there). You can however manually register anything as a "service", even plain values if you really wanted to, using :meth:`flask_unchained.Unchained.register_service`. It's worth noting that services can request other services be injected into them, and as long as there are no circular dependencies, it will work. The names of services must be unique across your app, and by default are named as the snake-cased class name, so if there any conflicting class names then you will need to use :meth:`flask_unchained.Unchained.service` to customize the name the service gets registered under.
 
+Creating Extensible Bundles
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Part of the benefit of having a standardized structure for bundles is that other people (should) know where in your code to look for things, and therefore as a general recommendation it is strongly recommended not to deviate from the conventions established by Flask Unchained. There are a few guidelines worth following to make your fellow developers lives' easier:
+
+- Try not to use too-generic names for things (if you can, it is best to "namespace" config options, service names, and controller class names)
+- Always use class-based views
+- Use babel translations for user-facing strings
+
 App Bundle Special Behaviors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

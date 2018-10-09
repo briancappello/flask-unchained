@@ -23,9 +23,8 @@ logging
 
 documentation
 -------------
-* conventions, how bundles work and how unchained boots up end user apps
-* document usage of all the bundles
-* document creating extendable bundles, how to integrate stock Flask extensions
+* document usage of admin, babel, and webpack bundles
+* document creating extendable bundles
 * finish tutorial
 
 
