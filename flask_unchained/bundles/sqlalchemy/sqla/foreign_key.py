@@ -3,10 +3,10 @@ import inspect
 from flask_sqlalchemy_unchained import BaseModel as Model
 from flask_unchained.string_utils import snake_case
 from sqlalchemy.schema import ForeignKey
-from sqlalchemy_unchained import ModelRegistry
 from typing import *
 
 from .column import Column
+from ..model_registry import UnchainedModelRegistry
 from .types import BigInteger
 
 
@@ -50,7 +50,7 @@ def foreign_key(model_or_table_name_or_column_name: Union[str, Type[Model]],
     :param bool primary_key: Whether or not this Column is a primary key
     :param dict kwargs: any other kwargs to pass the Column constructor
     """
-    fk_col = fk_col or ModelRegistry().default_primary_key_column
+    fk_col = fk_col or UnchainedModelRegistry().default_primary_key_column
     column_name = model_or_table_name_or_column_name
     if model_or_table_name is None:
         column_name = None

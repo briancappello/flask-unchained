@@ -2,11 +2,11 @@ import warnings
 
 from py_meta_utils import McsInitArgs
 from sqlalchemy.exc import SAWarning
-from sqlalchemy_unchained import ModelRegistry as BaseModelRegistry
+from sqlalchemy_unchained import _ModelRegistry
 from typing import *
 
 
-class ModelRegistry(BaseModelRegistry):
+class UnchainedModelRegistry(_ModelRegistry):
     enable_lazy_mapping = True
 
     def __init__(self):

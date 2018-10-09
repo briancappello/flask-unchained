@@ -9,7 +9,7 @@ from sqlalchemy_unchained import (
 
 from .. import sqla
 from ..base_model import BaseModel
-from ..model_registry import ModelRegistry  # required so the correct one gets used
+from ..model_registry import UnchainedModelRegistry  # required so the correct one gets used
 
 
 class SQLAlchemy(BaseSQLAlchemy):

@@ -5,7 +5,7 @@ from .alembic import MaterializedViewMigration
 from .base_model import BaseModel
 from .extensions import Migrate, SQLAlchemy, db, migrate
 from .model_form import ModelForm
-from .model_registry import ModelRegistry
+from .model_registry import UnchainedModelRegistry
 from .services import ModelManager, SessionManager
 
 
@@ -20,4 +20,4 @@ class SQLAlchemyBundle(Bundle):
         """
 
     def after_init_app(self, app):
-        ModelRegistry().finalize_mappings()
+        UnchainedModelRegistry().finalize_mappings()

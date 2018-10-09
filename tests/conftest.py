@@ -3,7 +3,7 @@ import os
 
 from datetime import datetime, timezone
 from flask_unchained.bundles.security.pytest import *
-from flask_unchained.bundles.sqlalchemy.model_registry import ModelRegistry
+from flask_unchained.bundles.sqlalchemy.model_registry import UnchainedModelRegistry
 from flask_unchained.bundles.sqlalchemy.pytest import ModelFactory
 from flask_unchained import AppFactory, TEST, unchained
 

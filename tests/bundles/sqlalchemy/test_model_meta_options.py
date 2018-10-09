@@ -1,6 +1,6 @@
 import pytest
 
-from flask_unchained.bundles.sqlalchemy.model_registry import ModelRegistry
+from flask_unchained.bundles.sqlalchemy.model_registry import UnchainedModelRegistry
 from tests.conftest import POSTGRES
 
 
@@ -102,7 +102,7 @@ class TestModelMetaOptions:
             def selectable(cls):
                 return db.select([Auto.id])
 
-        ModelRegistry().finalize_mappings()
+        UnchainedModelRegistry().finalize_mappings()
 
         assert AutoMV.Meta.table == 'auto_mv'
         assert AutoMV.__table__.fullname == 'auto_mv'
@@ -117,7 +117,7 @@ class TestModelMetaOptions:
             def selectable(cls):
                 return db.select([Manual.id])
 
-        ModelRegistry().finalize_mappings()
+        UnchainedModelRegistry().finalize_mappings()
 
         assert ManualMV.Meta.table == 'manual_materialized_view'
         assert ManualMV.__table__.fullname == 'manual_materialized_view'

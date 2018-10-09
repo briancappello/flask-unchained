@@ -1,7 +1,7 @@
 SQLAlchemy Bundle
 -----------------
 
-Integrates `Flask SQLAlchemy <http://flask-sqlalchemy.pocoo.org/2.3/>`_ and `Flask Migrate <https://flask-migrate.readthedocs.io/en/latest/>`_ with Flask Unchained.
+Integrates `Flask SQLAlchemy Unchained <https://pypi.org/project/flask-sqlalchemy-unchained/>`_ and `Flask Migrate <https://flask-migrate.readthedocs.io/en/latest/>`_ with Flask Unchained.
 
 Dependencies
 ^^^^^^^^^^^^
