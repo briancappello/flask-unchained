@@ -10,6 +10,7 @@ setup(
     version='0.5.1',
     description='The better way to build large Flask apps',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/briancappello/flask-unchained',
     author='Brian Cappello',
     license='MIT',
