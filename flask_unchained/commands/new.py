@@ -253,7 +253,12 @@ def _render_file_tree(root_dir: str, ctx: Optional[Dict[str, Any]] = None):
     for dirpath, dirnames, filenames in os.walk(root_dir):
         for filename in filenames:
             path = os.path.join(dirpath, filename)
-            if 'static/vendor' in path:
+            if ('__pycache__' in path
+                    or path.endswith('.pyc')
+                    or path.endswith('.pyo')):
+                # absolutely no idea how this happens but whenever Flask Unchained
+                # gets installed via pip, this cache crap happens
+                os.remove(path)
                 continue
 
             root_token = Token()
