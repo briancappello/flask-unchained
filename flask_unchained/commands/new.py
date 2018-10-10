@@ -263,8 +263,8 @@ def _render_file_tree(root_dir: str, ctx: Optional[Dict[str, Any]] = None):
                     root_token, _ = _process_tokens(lines, root_token,
                                                     is_jinja=path.endswith('.html'))
             except UnicodeDecodeError as e:
-                e.msg = f'{path}: {e.msg}'
-                raise e
+                raise Exception(f'UnicodeDecodeError: {path} ({str(e)})')
+
             with open(path, 'w') as f:
                 f.write(root_token.render(ctx))
 

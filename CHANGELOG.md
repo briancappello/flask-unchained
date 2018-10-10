@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.6.4 (2018/10/09)
+
+* still fighting (there must be a better way...)
+
 ## 0.6.3 (2018/10/09)
 
 * fighting with PyPI
