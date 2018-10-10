@@ -1,3 +1,5 @@
 include CHANGELOG.md LICENSE README.md tox.ini
 include flask_mail.py unchained_config.py
 graft flask_unchained
+global-exclude __pycache__
+global-exclude *.py[co]

@@ -26,7 +26,7 @@ author = 'Brian Cappello'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = 'v0.6.4'
+release = 'v0.6.5'
 
 
 # -- General configuration ---------------------------------------------------

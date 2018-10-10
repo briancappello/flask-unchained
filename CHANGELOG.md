@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.6.5 (2018/10/09)
+
+* this will be the one, i tell ya
+
 ## 0.6.4 (2018/10/09)
 
 * still fighting (there must be a better way...)
