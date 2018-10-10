@@ -7,7 +7,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='Flask Unchained',
-    version='0.6.2',
+    version='0.6.3',
     description='The better way to build large Flask apps',
     long_description=long_description,
     long_description_content_type='text/markdown',

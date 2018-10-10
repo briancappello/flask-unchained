@@ -7,7 +7,7 @@
     <title>{% block title %}{#! {{ app_bundle_module_name }} #}{% endblock %}</title>
 
     {% block stylesheets %}
-      <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-v4.1.2.min.css') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-v4.1.2.min.css') }}">
       {#! if webpack: {% raw %}{{ style_tag('app') }}{% endraw %} #}
     {% endblock stylesheets %}
 
@@ -25,9 +25,9 @@
     {% endblock body %}
 
     {% block javascripts %}
-      <script src="{{ url_for('static', filename='jquery-v3.3.1.slim.min.js') }}"></script>
-      <script src="{{ url_for('static', filename='popper-v1.14.3.min.js') }}"></script>
-      <script src="{{ url_for('static', filename='bootstrap-v4.1.2.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='vendor/jquery-v3.3.1.slim.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='vendor/popper-v1.14.3.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='vendor/bootstrap-v4.1.2.min.js') }}"></script>
       {#! if webpack: {% raw %}{{ script_tag('app') }}{% endraw %} #}
     {% endblock javascripts %}
   </body>

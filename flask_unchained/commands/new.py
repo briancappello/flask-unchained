@@ -252,12 +252,19 @@ def _render_file_tree(root_dir: str, ctx: Optional[Dict[str, Any]] = None):
 
     for dirpath, dirnames, filenames in os.walk(root_dir):
         for filename in filenames:
-            root_token = Token()
             path = os.path.join(dirpath, filename)
-            with open(path) as f:
-                lines = f.read().split('\n')
-                root_token, _ = _process_tokens(lines, root_token,
-                                                is_jinja=path.endswith('.html'))
+            if 'static/vendor' in path:
+                continue
+
+            root_token = Token()
+            try:
+                with open(path) as f:
+                    lines = f.read().split('\n')
+                    root_token, _ = _process_tokens(lines, root_token,
+                                                    is_jinja=path.endswith('.html'))
+            except UnicodeDecodeError as e:
+                e.msg = f'{path}: {e.msg}'
+                raise e
             with open(path, 'w') as f:
                 f.write(root_token.render(ctx))
 
