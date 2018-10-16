@@ -4,8 +4,6 @@
 
 Flask Unchained aims to provide a fully integrated, optional-batteries-included MVC web framework built on top of Flask and its extension ecosystem. It provides a Flask extension that implements the Application Factory Pattern, utilizing a standardized (but configurable) way to organize "bundles" of code, such that they become easily distributable, reusable, and customizable across multiple independent Flask Unchained projects. The focus is on developer productivity and enjoyment, and the architecture is inspired by [Symfony](https://symfony.com/), which is awesome, aside from the fact that it isn't Python ;)
 
-**WARNING: This software is currently in Alpha.** At this point I feel pretty confident that the core API is pretty solid and shouldn't see too many breaking changes going forward, if at all. But that said, this code hasn't seen widespread production use yet, and it very well may eat your data or servers or worse. You've been warned.
-
 ## Useful Links
 
 * [Documentation on Read the Docs](https://flask-unchained.readthedocs.io/en/latest/)
@@ -14,6 +12,7 @@ Flask Unchained aims to provide a fully integrated, optional-batteries-included 
 
 ## Features
 
+* Python 3.6+
 * includes out-of-the-box (mostly optional) integrations with:
    - [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) (translations, required)
    - [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/) (forms and CSRF protection, required)
