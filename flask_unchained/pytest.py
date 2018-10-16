@@ -46,9 +46,12 @@ def app(request):
     a valid app context.
     """
     unchained._reset()
-    options = request.keywords.get('options', None)
-    if options is not None:
-        options = {k.upper(): v for k, v in options.kwargs.items()}
+
+    options = {}
+    for mark in request.node.iter_markers('options'):
+        kwargs = getattr(mark, 'kwargs', {})
+        options.update({k.upper(): v for k, v in kwargs.items()})
+
     app = AppFactory.create_app(TEST, _config_overrides=options)
     ctx = app.app_context()
     ctx.push()

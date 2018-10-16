@@ -45,11 +45,11 @@ setup(
         'dev': [
             'coverage',
             'factory_boy',
-            'IPython',
+            'IPython>=7.0.1',
             'm2r',
             'mock',
-            'pytest',
-            'pytest-flask',
+            'pytest>=3.6.3',
+            'pytest-flask>=0.13.0',
             'tox',
         ],
         'docs': [

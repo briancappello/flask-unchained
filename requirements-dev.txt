@@ -6,7 +6,7 @@ m2r
 mock
 psycopg2
 pytest>=3.6.3
-pytest-flask>=0.10.0
+pytest-flask>=0.13.0
 sphinx
 sphinx-autobuild
 sphinx-click

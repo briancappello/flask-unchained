@@ -16,7 +16,7 @@ flask-principal
 flask-session
 flask-sqlalchemy-unchained
 flask_wtf
-ipython
+ipython>=7.0.1
 itsdangerous
 jinja2
 lxml

@@ -122,47 +122,47 @@
 #
 # @pytest.fixture()
 # def basic(request):
-#     kwargs = getattr(request.keywords.get('basic'), 'kwargs', {})
+#     kwargs = getattr(request.node.get_closest_marker('basic'), 'kwargs', {})
 #     return BasicFactory(**kwargs)
 #
 #
 # @pytest.fixture()
 # def timestamped(request):
-#     kwargs = getattr(request.keywords.get('timestamped'), 'kwargs', {})
+#     kwargs = getattr(request.node.get_closest_marker('timestamped'), 'kwargs', {})
 #     return TimestampedFactory(**kwargs)
 #
 #
 # @pytest.fixture()
 # def keyed_and_timestamped(request):
-#     kwargs = getattr(request.keywords.get('keyed_and_timestamped'), 'kwargs', {})
+#     kwargs = getattr(request.node.get_closest_marker('keyed_and_timestamped'), 'kwargs', {})
 #     return KeyedAndTimestampedFactory(**kwargs)
 #
 #
 # @pytest.fixture()
 # def exchange(request):
-#     kwargs = getattr(request.keywords.get('exchange'), 'kwargs', {})
+#     kwargs = getattr(request.node.get_closest_marker('exchange'), 'kwargs', {})
 #     return ExchangeFactory(**kwargs)
 #
 #
 # @pytest.fixture()
 # def market(request):
-#     kwargs = getattr(request.keywords.get('market'), 'kwargs', {})
+#     kwargs = getattr(request.node.get_closest_marker('market'), 'kwargs', {})
 #     return MarketFactory(**kwargs)
 #
 #
 # @pytest.fixture()
 # def data_vendor(request):
-#     kwargs = getattr(request.keywords.get('data_vendor'), 'kwargs', {})
+#     kwargs = getattr(request.node.get_closest_marker('data_vendor'), 'kwargs', {})
 #     return DataVendorFactory(**kwargs)
 #
 #
 # @pytest.fixture()
 # def asset(request):
-#     kwargs = getattr(request.keywords.get('asset'), 'kwargs', {})
+#     kwargs = getattr(request.node.get_closest_marker('asset'), 'kwargs', {})
 #     return AssetWithDataVendorFactory(**kwargs)
 #
 #
 # @pytest.fixture()
 # def equity(request):
-#     kwargs = getattr(request.keywords.get('equity'), 'kwargs', {})
+#     kwargs = getattr(request.node.get_closest_marker('equity'), 'kwargs', {})
 #     return EquityWithDataVendorFactory(**kwargs)

@@ -505,13 +505,13 @@ Unlike all of our earlier tests, testing the security bundle views requires that
 
    @pytest.fixture()
    def user(request):
-       kwargs = getattr(request.keywords.get('user'), 'kwargs', {})
+       kwargs = getattr(request.node.get_closest_marker('user'), 'kwargs', {})
        return UserWithRoleFactory(**kwargs)
 
 
    @pytest.fixture()
    def role(request):
-       kwargs = getattr(request.keywords.get('role'), 'kwargs', {})
+       kwargs = getattr(request.node.get_closest_marker('role'), 'kwargs', {})
        return RoleFactory(**kwargs)
 
 The :class:`ModelFactory` subclasses define the default values, and the ``user`` and ``role`` fixtures at the bottom make it possible to customize the values by marking the test, for example:

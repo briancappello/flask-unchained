@@ -77,9 +77,11 @@ def app(bundles, db_ext, request):
             and 'flask_unchained.bundles.sqlalchemy' not in bundles):
         bundles.insert(0, 'flask_unchained.bundles.sqlalchemy')
 
-    options = request.keywords.get('options', None)
-    if options is not None:
-        options = {k.upper(): v for k, v in options.kwargs.items()}
+    options = {}
+    for mark in request.node.iter_markers('options'):
+        kwargs = getattr(mark, 'kwargs', {})
+        options.update({k.upper(): v for k, v in kwargs.items()})
+
     app = AppFactory.create_app(TEST, bundles=bundles, _config_overrides=options)
     ctx = app.app_context()
     ctx.push()

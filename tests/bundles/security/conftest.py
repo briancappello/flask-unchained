@@ -20,9 +20,12 @@ def app(request, bundles):
     a valid app context.
     """
     unchained._reset()
-    options = request.keywords.get('options', None)
-    if options is not None:
-        options = {k.upper(): v for k, v in options.kwargs.items()}
+
+    options = {}
+    for mark in request.node.iter_markers('options'):
+        kwargs = getattr(mark, 'kwargs', {})
+        options.update({k.upper(): v for k, v in kwargs.items()})
+
     app = AppFactory.create_app(TEST, bundles=bundles + [
         'flask_unchained.bundles.api',
         'flask_unchained.bundles.mail',
@@ -85,13 +88,13 @@ class UserWithTwoRolesFactory(UserFactory):
 
 @pytest.fixture()
 def user(request):
-    kwargs = getattr(request.keywords.get('user'), 'kwargs', {})
+    kwargs = getattr(request.node.get_closest_marker('user'), 'kwargs', {})
     return UserWithTwoRolesFactory(**kwargs)
 
 
 @pytest.fixture()
 def users(request):
-    users_request = request.keywords.get('users')
+    users_request = request.node.get_closest_marker('users')
     if not users_request:
         return
 
@@ -103,13 +106,13 @@ def users(request):
 
 @pytest.fixture()
 def role(request):
-    kwargs = getattr(request.keywords.get('role'), 'kwargs', {})
+    kwargs = getattr(request.node.get_closest_marker('role'), 'kwargs', {})
     return RoleFactory(**kwargs)
 
 
 @pytest.fixture()
 def roles(request):
-    roles_request = request.keywords.get('roles')
+    roles_request = request.node.get_closest_marker('roles')
     if not roles_request:
         return
 
@@ -121,7 +124,7 @@ def roles(request):
 
 @pytest.fixture()
 def admin(request):
-    kwargs = getattr(request.keywords.get('admin'), 'kwargs', {})
+    kwargs = getattr(request.node.get_closest_marker('admin'), 'kwargs', {})
     kwargs = dict(**kwargs, username='admin', email='admin@example.com',
                   _user_role__role__name='ROLE_ADMIN')
     kwargs.setdefault('user_role__role__name', 'ROLE_USER')

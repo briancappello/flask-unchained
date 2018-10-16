@@ -14,7 +14,7 @@ def user(request):
             model = OneUser
         name = 'user'
 
-    kwargs = getattr(request.keywords.get('user'), 'kwargs', {})
+    kwargs = getattr(request.node.get_closest_marker('user'), 'kwargs', {})
     return UserFactory(**kwargs)
 
 
@@ -27,7 +27,7 @@ def role(request):
             model = OneRole
         name = 'ROLE_USER'
 
-    kwargs = getattr(request.keywords.get('role'), 'kwargs', {})
+    kwargs = getattr(request.node.get_closest_marker('role'), 'kwargs', {})
     return RoleFactory(**kwargs)
 
 
