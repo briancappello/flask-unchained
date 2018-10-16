@@ -1,4 +1,3 @@
-ABSTRACT_ATTR = '__abstract__'
 CONTROLLER_ROUTES_ATTR = '__fcb_controller_routes__'
 FN_ROUTES_ATTR = '__fcb_fn_routes__'
 NO_ROUTES_ATTR = '__fcb_no_routes__'

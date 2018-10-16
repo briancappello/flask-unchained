@@ -1,30 +1,16 @@
 # CHANGELOG
 
+## 0.7.0 (unreleased)
+
+* require py-meta-utils 0.6.1 and sqlalchemy-unchained 0.5.0
+
 ## 0.6.6 (2018/10/09)
 
-* OK, brute force approach it is (please work)
+* ship `_templates` folder with the distribution so the `flask new <tempate>` command works when Flask unchained gets installed via `pip`
 
-## 0.6.5 (2018/10/09)
+## 0.6.0 - 0.6.5 (2018/10/09)
 
-* this will be the one, i tell ya
-
-## 0.6.4 (2018/10/09)
-
-* still fighting (there must be a better way...)
-
-## 0.6.3 (2018/10/09)
-
-* fighting with PyPI
-
-## 0.6.2 (2018/10/09)
-
-* move the `_templates` folder to `flask_unchained/_code_templates` so that it works when the package gets installed via pip
-
-## 0.6.1 (2018/10/09)
-
-* ship `_templates` folder with the distribution
-
-## 0.6.0 (2018/10/09)
+* **IMPORTANT**: these releases are broken, use `0.6.6`
 
 * export `get_boolean_env` from core `flask_unchained` package
 * export `param_converter` from core `flask_unchained` package

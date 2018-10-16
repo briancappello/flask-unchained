@@ -6,7 +6,7 @@ from flask import (after_this_request, current_app as app, flash, jsonify,
 from flask_unchained.di import set_up_class_dependency_injection
 from py_meta_utils import (AbstractMetaOption, McsArgs, MetaOption,
                            MetaOptionsFactory, deep_getattr, _missing,
-                           apply_factory_meta_options)
+                           process_factory_meta_options)
 from http import HTTPStatus
 from types import FunctionType
 from typing import *
@@ -61,7 +61,7 @@ class ControllerMeta(type):
                     name, bases, CONTROLLER_REMOVE_EXTRA_SUFFIXES)
             mcs_args.clsdict[NOT_VIEWS_ATTR] = _get_not_views(clsdict, bases)
 
-        apply_factory_meta_options(
+        process_factory_meta_options(
             mcs_args, default_factory_class=ControllerMetaOptionsFactory)
 
         cls = super().__new__(*mcs_args)
@@ -121,9 +121,7 @@ class TemplateFolderNameMetaOption(MetaOption):
         if value is not _missing:
             return value
 
-        return controller_name(mcs_args.name, deep_getattr(mcs_args.clsdict,
-                                                           mcs_args.bases,
-                                                           REMOVE_SUFFIXES_ATTR))
+        return controller_name(mcs_args.name, mcs_args.getattr(REMOVE_SUFFIXES_ATTR))
 
     def check_value(self, value, mcs_args: McsArgs):
         if not value:
@@ -168,7 +166,7 @@ class UrlPrefixMetaOption(MetaOption):
 
 
 class ControllerMetaOptionsFactory(MetaOptionsFactory):
-    options = [
+    _options = [
         AbstractMetaOption,
         DecoratorsMetaOption,
         TemplateFolderNameMetaOption,

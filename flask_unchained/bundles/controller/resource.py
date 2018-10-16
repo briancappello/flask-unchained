@@ -1,5 +1,5 @@
 from flask_unchained.string_utils import pluralize
-from py_meta_utils import McsArgs, MetaOption, deep_getattr, _missing
+from py_meta_utils import McsArgs, MetaOption, _missing
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
 from .constants import ALL_METHODS, INDEX_METHODS
@@ -23,7 +23,7 @@ class ResourceMeta(ControllerMeta):
 
     def __new__(mcs, name, bases, clsdict):
         cls = super().__new__(mcs, name, bases, clsdict)
-        if clsdict['Meta'].abstract:
+        if cls.Meta.abstract:
             setattr(cls, REMOVE_SUFFIXES_ATTR, _get_remove_suffixes(
                 name, bases, RESOURCE_REMOVE_EXTRA_SUFFIXES))
             return cls
@@ -61,9 +61,7 @@ class UrlPrefixMetaOption(MetaOption):
         if value is not _missing:
             return value
 
-        ctrl_name = controller_name(mcs_args.name, deep_getattr(mcs_args.clsdict,
-                                                                mcs_args.bases,
-                                                                REMOVE_SUFFIXES_ATTR))
+        ctrl_name = controller_name(mcs_args.name, mcs_args.getattr(REMOVE_SUFFIXES_ATTR))
         return '/' + pluralize(ctrl_name.replace('_', '-'))
 
     def check_value(self, value, mcs_args: McsArgs):
@@ -90,7 +88,7 @@ class MemberParamMetaOption(MetaOption):
         return '<int:id>'
 
     def check_value(self, value, mcs_args: McsArgs):
-        if mcs_args.Meta.abstract:
+        if mcs_args.is_abstract:
             return
 
         assert isinstance(value, str) and len(get_param_tuples(value)) == 1, \
@@ -109,7 +107,7 @@ class UniqueMemberParamMetaOption(MetaOption):
         super().__init__('unique_member_param', default=None, inherit=False)
 
     def check_value(self, value, mcs_args: McsArgs):
-        if mcs_args.Meta.abstract or value is None:
+        if mcs_args.is_abstract or value is None:
             return
 
         assert isinstance(value, str) and len(get_param_tuples(value)) == 1, \
@@ -118,8 +116,8 @@ class UniqueMemberParamMetaOption(MetaOption):
 
 
 class ResourceMetaOptionsFactory(ControllerMetaOptionsFactory):
-    options = [option for option in ControllerMetaOptionsFactory.options
-               if not issubclass(option, ControllerUrlPrefixMetaOption)] + [
+    _options = [option for option in ControllerMetaOptionsFactory._options
+                if not issubclass(option, ControllerUrlPrefixMetaOption)] + [
         UrlPrefixMetaOption,
         MemberParamMetaOption,
         UniqueMemberParamMetaOption,

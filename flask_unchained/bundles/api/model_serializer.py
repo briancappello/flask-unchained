@@ -1,9 +1,8 @@
-from flask_unchained.bundles.controller.attr_constants import ABSTRACT_ATTR
 from flask_unchained.bundles.sqlalchemy import db
 from flask_unchained import unchained
 from flask_unchained.di import set_up_class_dependency_injection
 from flask_unchained.string_utils import camel_case, title_case
-from py_meta_utils import McsArgs, deep_getattr
+from py_meta_utils import McsArgs
 try:
     from flask_marshmallow.sqla import ModelSchema, SchemaOpts
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
@@ -100,10 +99,10 @@ class ModelSerializerMeta(ModelSchemaMeta):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         set_up_class_dependency_injection(mcs_args)
-        if ABSTRACT_ATTR in clsdict:
-            return super().__new__(mcs, name, bases, clsdict)
+        if mcs_args.is_abstract:
+            return super().__new__(*mcs_args)
 
-        meta = deep_getattr(clsdict, bases, 'Meta', None)
+        meta = mcs_args.getattr('Meta', None)
         model_missing = False
         try:
             if meta.model is None:
@@ -112,20 +111,19 @@ class ModelSerializerMeta(ModelSchemaMeta):
             model_missing = True
 
         if model_missing:
-            raise AttributeError(f'{name} is missing the class '
-                                 f'Meta model attribute')
-        else:
-            try:
-                meta.model = unchained.sqlalchemy_bundle.models[meta.model.__name__]
-            except AttributeError:
-                # this happens when attempting to generate documentation and the
-                # sqlalchemy bundle hasn't been loaded
-                pass
-            except KeyError:
-                pass
+            raise AttributeError(f'{name} is missing the ``class Meta`` model attribute')
+
+        try:
+            meta.model = unchained.sqlalchemy_bundle.models[meta.model.__name__]
+        except AttributeError:
+            # this happens when attempting to generate documentation and the
+            # sqlalchemy bundle hasn't been loaded
+            pass
+        except KeyError:
+            pass
 
         clsdict['Meta'] = meta
-        return super().__new__(mcs, name, bases, clsdict)
+        return super().__new__(*mcs_args)
 
     def __init__(cls, name, bases, clsdict):
         cls._resolve_processors()

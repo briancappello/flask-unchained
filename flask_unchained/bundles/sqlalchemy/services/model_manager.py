@@ -9,7 +9,7 @@ from .session_manager import SessionManager
 
 
 class ModelManagerMetaOptionsFactory(ServiceMetaOptionsFactory):
-    options = ServiceMetaOptionsFactory.options + [ModelMetaOption]
+    _options = ServiceMetaOptionsFactory._options + [ModelMetaOption]
 
 
 class ModelManager(SessionManager):

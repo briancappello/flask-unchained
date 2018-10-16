@@ -3,7 +3,7 @@ import inspect
 from flask import jsonify, make_response
 from flask_unchained import Resource, route, param_converter, unchained, injectable
 from flask_unchained.bundles.controller.attr_constants import (
-    ABSTRACT_ATTR, CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR)
+    CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR)
 from flask_unchained import (
     ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,
     CREATE, DELETE, GET, LIST, PATCH, PUT)
@@ -15,7 +15,7 @@ from flask_unchained.bundles.sqlalchemy import SessionManager
 from flask_unchained.bundles.sqlalchemy.meta_options import ModelMetaOption
 from functools import partial
 from http import HTTPStatus
-from py_meta_utils import McsArgs, MetaOption, deep_getattr, _missing
+from py_meta_utils import McsArgs, MetaOption, _missing
 from werkzeug.wrappers import Response
 
 try:
@@ -30,11 +30,11 @@ from .utils import unpack
 
 class ModelResourceMeta(ResourceMeta):
     def __new__(mcs, name, bases, clsdict):
-        if (ABSTRACT_ATTR in clsdict
-                or getattr(clsdict.get('Meta', object), 'abstract', False)):
-            return super().__new__(mcs, name, bases, clsdict)
+        mcs_args = McsArgs(mcs, name, bases, clsdict)
+        if mcs_args.is_abstract:
+            return super().__new__(*mcs_args)
 
-        cls = super().__new__(mcs, name, bases, clsdict)
+        cls = super().__new__(*mcs_args)
         routes = {}
         include_methods = set(cls.Meta.include_methods)
         exclude_methods = set(cls.Meta.exclude_methods)
@@ -45,7 +45,7 @@ class ModelResourceMeta(ResourceMeta):
 
             route = getattr(clsdict.get(method_name), FN_ROUTES_ATTR, [None])[0]
             if not route:
-                route = Route(None, deep_getattr(clsdict, bases, method_name))
+                route = Route(None, mcs_args.getattr(method_name))
 
             if method_name in INDEX_METHODS:
                 rule = '/'
@@ -227,7 +227,7 @@ class MethodDecoratorsMetaOption(MetaOption):
                 f'The {self.name} meta option requires a list or tuple of callables'
         else:
             for method_name, decorators in value.items():
-                assert deep_getattr(mcs_args.clsdict, mcs_args.bases, method_name), \
+                assert mcs_args.getattr(method_name), \
                     f'The {method_name} was not found on {mcs_args.name}'
                 assert all(callable(x) for x in decorators), \
                     f'Invalid decorator detected in the {self.name} meta option for ' \
@@ -235,7 +235,7 @@ class MethodDecoratorsMetaOption(MetaOption):
 
 
 class ResourceMetaOptionsFactory(ResourceMetaOptionsFactory):
-    options = ResourceMetaOptionsFactory.options + [
+    _options = ResourceMetaOptionsFactory._options + [
         ModelMetaOption,
         SerializerMetaOption,
         SerializerCreateMetaOption,

@@ -2,7 +2,7 @@ import inspect
 
 from py_meta_utils import McsArgs, MetaOption
 from sqlalchemy.orm import RelationshipProperty
-from sqlalchemy_unchained import ModelMetaOptionsFactory as BaseMetaOptionsFactory
+from sqlalchemy_unchained import ModelMetaOptionsFactory as BaseModelMetaOptionsFactory
 from typing import *
 
 
@@ -47,7 +47,7 @@ class RelationshipsMetaOption(MetaOption):
                     if v.backref and mcs_args.Meta.lazy_mapped:
                         raise NotImplementedError(
                             f'Discovered a lazy-mapped backref `{k}` on '
-                            f'`{mcs_args.repr}`. Currently this '
+                            f'`{mcs_args.qualname}`. Currently this '
                             'is unsupported; please use `db.relationship` with '
                             'the `back_populates` kwarg on both sides instead.')
 
@@ -66,14 +66,7 @@ class MaterializedViewForMetaOption(MetaOption):
         return super().get_value(meta, base_model_meta, mcs_args) or []
 
 
-class ModelMetaOptionsFactory(BaseMetaOptionsFactory):
+class ModelMetaOptionsFactory(BaseModelMetaOptionsFactory):
     def _get_meta_options(self) -> List[MetaOption]:
-        """"
-        Define fields allowed in the Meta class on end-user models, and the
-        behavior of each.
-
-        Custom ModelMetaOptions classes should override this method to customize
-        the options supported on class Meta of end-user models.
-        """
         return super()._get_meta_options() + [RelationshipsMetaOption(),
                                               MaterializedViewForMetaOption()]
