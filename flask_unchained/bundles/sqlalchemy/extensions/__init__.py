@@ -1,10 +1,10 @@
 from sqlalchemy import MetaData
 
 from .migrate import Migrate
-from .sqlalchemy import SQLAlchemy
+from .sqlalchemy import SQLAlchemyUnchained
 
 
-db = SQLAlchemy(metadata=MetaData(naming_convention={
+db = SQLAlchemyUnchained(metadata=MetaData(naming_convention={
     'ix': 'ix_%(column_0_label)s',
     'uq': 'uq_%(table_name)s_%(column_0_name)s',
     'ck': 'ck_%(table_name)s_%(constraint_name)s',
@@ -23,7 +23,7 @@ EXTENSIONS = {
 
 __all__ = [
     'db',
-    'SQLAlchemy',
+    'SQLAlchemyUnchained',
     'migrate',
     'Migrate',
 ]

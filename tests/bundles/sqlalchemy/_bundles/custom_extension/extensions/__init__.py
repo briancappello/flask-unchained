@@ -1,7 +1,7 @@
 from sqlalchemy import MetaData
 
 from ..base_model import Model
-from .sqlalchemy import SQLAlchemy
+from .sqlalchemy import SQLAlchemyUnchained
 
 
 # normally these would go directly in the constructor; this is for testing
@@ -14,7 +14,7 @@ kwargs = dict(model_class=Model, metadata=MetaData(naming_convention={
 }))
 
 
-db = SQLAlchemy(**kwargs)
+db = SQLAlchemyUnchained(**kwargs)
 
 
 EXTENSIONS = {

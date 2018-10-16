@@ -58,7 +58,7 @@ def db_ext(bundles):
         }),
     ))
 
-    db = db_extensions_module.SQLAlchemy(**kwargs)
+    db = db_extensions_module.SQLAlchemyUnchained(**kwargs)
     unchained.extensions.db = db
 
     for module in [db_module, db_extensions_module]:

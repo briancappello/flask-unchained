@@ -3,7 +3,7 @@ from flask_unchained import Bundle
 
 from .alembic import MaterializedViewMigration
 from .base_model import BaseModel
-from .extensions import Migrate, SQLAlchemy, db, migrate
+from .extensions import Migrate, SQLAlchemyUnchained, db, migrate
 from .model_form import ModelForm
 from .model_registry import UnchainedModelRegistry
 from .services import ModelManager, SessionManager

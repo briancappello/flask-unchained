@@ -4,7 +4,7 @@ from flask_unchained import unchained
 from werkzeug.local import LocalProxy
 
 from tests.bundles.sqlalchemy._bundles.custom_extension.extensions import (
-    SQLAlchemy as CustomSQLAlchemy,
+    SQLAlchemyUnchained as CustomSQLAlchemy,
     Model as CustomModel)
 
 

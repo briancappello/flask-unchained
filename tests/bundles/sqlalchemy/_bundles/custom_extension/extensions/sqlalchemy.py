@@ -1,5 +1,5 @@
-from flask_unchained.bundles.sqlalchemy.extensions import SQLAlchemy as BaseSQLAlchemy
+from flask_unchained.bundles.sqlalchemy.extensions import SQLAlchemyUnchained as Base
 
 
-class SQLAlchemy(BaseSQLAlchemy):
+class SQLAlchemyUnchained(Base):
     pass

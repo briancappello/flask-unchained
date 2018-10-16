@@ -14,9 +14,9 @@ except ImportError:
     # disable the import-fixtures command if py_yaml_fixtures isn't installed
     maybe_fixtures_command = lambda *a, **kw: lambda fn: None
 
-from .extensions import SQLAlchemy, migrate
+from .extensions import SQLAlchemyUnchained, migrate
 
-db_ext: SQLAlchemy = unchained.get_extension_local_proxy('db')
+db_ext: SQLAlchemyUnchained = unchained.get_extension_local_proxy('db')
 
 
 @db.command('drop')

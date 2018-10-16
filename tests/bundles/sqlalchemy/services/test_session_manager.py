@@ -1,7 +1,7 @@
-from flask_unchained.bundles.sqlalchemy import SessionManager, SQLAlchemy
+from flask_unchained.bundles.sqlalchemy import SessionManager, SQLAlchemyUnchained
 
 
-def setup(db: SQLAlchemy):
+def setup(db: SQLAlchemyUnchained):
     session_manager = SessionManager(db)
 
     class Foo(db.Model):
@@ -15,7 +15,7 @@ def setup(db: SQLAlchemy):
 
 
 class TestSessionManager:
-    def test_save(self, db: SQLAlchemy):
+    def test_save(self, db: SQLAlchemyUnchained):
         Foo, session_manager = setup(db)
 
         foo = Foo(name='foo')
@@ -30,7 +30,7 @@ class TestSessionManager:
         session_manager.save(foo, commit=True)
         assert Foo.q.get_by(name='foo') == foo
 
-    def test_save_all(self, db: SQLAlchemy):
+    def test_save_all(self, db: SQLAlchemyUnchained):
         Foo, session_manager = setup(db)
 
         foo1 = Foo(name='one')
@@ -48,7 +48,7 @@ class TestSessionManager:
         for foo in all_:
             assert Foo.q.get_by(name=foo.name) == foo
 
-    def test_delete(self, db: SQLAlchemy):
+    def test_delete(self, db: SQLAlchemyUnchained):
         Foo, session_manager = setup(db)
 
         foo1 = Foo(name='one')

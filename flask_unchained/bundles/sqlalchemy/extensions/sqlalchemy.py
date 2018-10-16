@@ -11,7 +11,7 @@ from ..base_model import BaseModel
 from ..model_registry import UnchainedModelRegistry  # required so the correct one gets used
 
 
-class SQLAlchemy(BaseSQLAlchemy):
+class SQLAlchemyUnchained(BaseSQLAlchemy):
     """
     The `SQLAlchemy` extension::
 

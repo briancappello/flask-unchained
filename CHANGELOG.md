@@ -3,6 +3,7 @@
 ## 0.7.0 (unreleased)
 
 * require py-meta-utils 0.6.1 and sqlalchemy-unchained 0.5.0
+* rename `SQLAlchemy` extension class to `SQLAlchemyUnchained`
 
 ## 0.6.6 (2018/10/09)
 

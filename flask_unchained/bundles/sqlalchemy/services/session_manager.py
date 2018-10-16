@@ -3,14 +3,14 @@ from flask_unchained import BaseService, injectable
 from typing import *
 
 from ..base_model import BaseModel as Model
-from ..extensions import SQLAlchemy
+from ..extensions import SQLAlchemyUnchained
 
 
 class SessionManager(BaseService):
     """
     The session manager.
     """
-    def __init__(self, db: SQLAlchemy = injectable):
+    def __init__(self, db: SQLAlchemyUnchained = injectable):
         self.db = db
 
     def save(self, instance: Model, commit: bool = False):
