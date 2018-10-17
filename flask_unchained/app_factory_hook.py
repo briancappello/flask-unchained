@@ -42,8 +42,8 @@ class AppFactoryHook:
     """
 
     name: str = HookNameDescriptor()
-    run_before: Union[List[str], Tuple[str, ...]] = []
-    run_after: Union[List[str], Tuple[str, ...]] = []
+    run_before: Union[List[str], Tuple[str, ...]] = ()
+    run_after: Union[List[str], Tuple[str, ...]] = ()
 
     bundle_module_name: str = None
     bundle_override_module_name_attr: str = \
