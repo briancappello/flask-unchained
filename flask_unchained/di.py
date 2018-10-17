@@ -46,10 +46,10 @@ def set_up_class_dependency_injection(mcs_args: McsArgs):
         mcs_args.clsdict['__init__'] = init
         mcs_args.clsdict['__signature__'] = init.__signature__
 
-    for attr, fn in mcs_args.clsdict.items():
-        if isinstance(fn, FunctionType) and hasattr(fn, '__signature__'):
-            fn.__di_name__ = (mcs_args.name if fn.__name__ == '__init__'
-                              else f'{mcs_args.name}.{fn.__name__}')
+    for attr, value in mcs_args.clsdict.items():
+        if isinstance(value, FunctionType) and hasattr(value, '__signature__'):
+            value.__di_name__ = (mcs_args.name if value.__name__ == '__init__'
+                                 else f'{mcs_args.name}.{value.__name__}')
 
 
 class ServiceMetaOptionsFactory(MetaOptionsFactory):
