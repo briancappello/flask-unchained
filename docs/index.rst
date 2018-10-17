@@ -23,7 +23,7 @@ Flask Unchained
    :maxdepth: 3
    :caption: Table of Contents:
 
-   introduction
+   readme
    tutorial/index
    how_it_works
    bundles/index
