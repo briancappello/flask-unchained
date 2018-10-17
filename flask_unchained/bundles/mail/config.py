@@ -1,11 +1,12 @@
 import os
 
+from flask_unchained import BundleConfig
 from flask_unchained.utils import get_boolean_env
 
 from .utils import _send_mail
 
 
-class Config:
+class Config(BundleConfig):
     """
     Default configuration options for the mail bundle.
     """
@@ -76,7 +77,7 @@ class Config:
     """
 
 
-class DevConfig:
+class DevConfig(Config):
     """
     Development-specific config options for the mail bundle.
     """
@@ -92,7 +93,7 @@ class DevConfig:
     """
 
 
-class ProdConfig:
+class ProdConfig(Config):
     """
     Production-specific config options for the mail bundle.
     """
@@ -108,7 +109,7 @@ class ProdConfig:
     """
 
 
-class TestConfig:
+class TestConfig(Config):
     """
     Test-specific config options for the mail bundle.
     """

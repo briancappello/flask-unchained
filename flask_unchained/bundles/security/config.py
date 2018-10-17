@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
-from flask import abort, current_app
+from flask import abort
+from flask_unchained import BundleConfig
 from http import HTTPStatus
-from werkzeug.local import LocalProxy
 
 from .forms import (
     LoginForm,
@@ -14,18 +14,7 @@ from .forms import (
 from .models import AnonymousUser
 
 
-def _should_send_mail(config_option, default=None):
-    def get_value():
-        if 'mail_bundle' not in current_app.unchained.bundles:
-            return False
-        value = current_app.config.get(config_option, default)
-        if isinstance(value, LocalProxy):
-            return default
-        return value
-    return LocalProxy(lambda: get_value())
-
-
-class Config:
+class Config(BundleConfig):
     """
     Default configuration settings for the Security Bundle.
     """
@@ -160,8 +149,8 @@ class Config:
     registration form.
     """
 
-    SECURITY_SEND_REGISTER_EMAIL = _should_send_mail(
-        'SECURITY_SEND_REGISTER_EMAIL', True)
+    SECURITY_SEND_REGISTER_EMAIL = \
+        'mail_bundle' in BundleConfig.current_app.unchained.bundles
     """
     Whether or not send a welcome email after a user completes the
     registration form.
@@ -219,8 +208,8 @@ class Config:
     Endpoint or url to redirect to after the user changes their password.
     """
 
-    SECURITY_SEND_PASSWORD_CHANGED_EMAIL = _should_send_mail(
-        'SECURITY_SEND_PASSWORD_CHANGED_EMAIL', True)
+    SECURITY_SEND_PASSWORD_CHANGED_EMAIL = \
+        'mail_bundle' in BundleConfig.current_app.unchained.bundles
     """
     Whether or not to send the user an email when their password has been changed.
     Defaults to True, and it's strongly recommended to leave this option enabled.
@@ -272,15 +261,15 @@ class Config:
     view. Defaults to None, meaning no redirect. Useful for single page apps.
     """
 
-    SECURITY_SEND_PASSWORD_RESET_NOTICE_EMAIL = _should_send_mail(
-        'SECURITY_SEND_PASSWORD_RESET_NOTICE_EMAIL', True)
+    SECURITY_SEND_PASSWORD_RESET_NOTICE_EMAIL = \
+        'mail_bundle' in BundleConfig.current_app.unchained.bundles
     """
     Whether or not to send the user an email when their password has been reset.
     Defaults to True, and it's strongly recommended to leave this option enabled.
     """
 
 
-class TestConfig:
+class TestConfig(Config):
     """
     Default test settings for the Security Bundle.
     """

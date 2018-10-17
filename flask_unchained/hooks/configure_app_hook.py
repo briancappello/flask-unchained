@@ -1,7 +1,7 @@
 from flask import Config
 from typing import *
 
-from ..app_config import AppConfig
+from ..app_config import AppConfig, BundleConfig
 from ..app_factory_hook import AppFactoryHook
 from ..bundle import Bundle, AppBundle
 from ..constants import DEV, PROD, STAGING, TEST
@@ -46,6 +46,7 @@ class ConfigureAppHook(AppFactoryHook):
         one of ``DevConfig``, ``ProdConfig``, ``StagingConfig``, or ``TestConfig``.
         """
         self.apply_default_config(app)
+        BundleConfig._set_current_app(app)
         for bundle_ in bundles:
             for bundle in bundle_.iter_class_hierarchy():
                 bundle_config = self.get_config(bundle, app.env)

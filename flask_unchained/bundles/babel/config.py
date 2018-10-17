@@ -1,8 +1,9 @@
 from flask_babelex import Domain
+from flask_unchained import BundleConfig
 from werkzeug import ImmutableDict
 
 
-class Config:
+class Config(BundleConfig):
     """
     Default configuration options for the Babel Bundle.
     """

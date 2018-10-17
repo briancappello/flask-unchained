@@ -1,7 +1,9 @@
+from flask_unchained import BundleConfig
+
 from .alembic.migrations import render_migration_item
 
 
-class Config:
+class Config(BundleConfig):
     """
     The default configuration options for the SQLAlchemy Bundle.
     """
@@ -96,5 +98,5 @@ class Config:
     }
 
 
-class TestConfig:
+class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite://'  # :memory:

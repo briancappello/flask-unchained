@@ -1,4 +1,7 @@
-class Config:
+from flask_unchained import BundleConfig
+
+
+class Config(BundleConfig):
     """
     Default configuration options for the controller bundle.
     """

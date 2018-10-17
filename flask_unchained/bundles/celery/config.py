@@ -1,9 +1,11 @@
 import os
 
+from flask_unchained import BundleConfig
+
 from .tasks import async_mail_task, _send_mail_async
 
 
-class Config:
+class Config(BundleConfig):
     """
     Default configuration options for the Celery Bundle.
     """

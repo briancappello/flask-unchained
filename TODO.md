@@ -1,6 +1,5 @@
 config files
 ------------
-* need a good way for bundle configs to get access to the current app config during initialization (probably somehow need to LocalProxy to it... challenge is app ctx)
 * probably would be nice to have some kind of command to view the current config
     - maybe filter by bundle
 

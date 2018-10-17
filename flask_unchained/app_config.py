@@ -4,17 +4,28 @@ import sys
 from .utils import get_boolean_env
 
 
-class AppRootDescriptor:
+class _CurrentAppMetaclass(type):
+    current_app = None
+
+    def _set_current_app(cls, app):
+        cls.current_app = app
+
+
+class BundleConfig(metaclass=_CurrentAppMetaclass):
+    pass
+
+
+class _AppRootDescriptor:
     def __get__(self, instance, cls):
         return os.path.dirname(sys.modules[cls.__module__].__file__)
 
 
-class ProjectRootDescriptor:
+class _ProjectRootDescriptor:
     def __get__(self, instance, cls):
         return os.path.abspath(os.path.join(cls.APP_ROOT, os.pardir))
 
 
-class AppConfig:
+class AppConfig(BundleConfig):
     """
     Base class for app-bundle configs. Example usage::
 
@@ -40,12 +51,12 @@ class AppConfig:
             pass
     """
 
-    APP_ROOT: str = AppRootDescriptor()
+    APP_ROOT: str = _AppRootDescriptor()
     """
     Root path of the app bundle. Determined automatically.
     """
 
-    PROJECT_ROOT: str = ProjectRootDescriptor()
+    PROJECT_ROOT: str = _ProjectRootDescriptor()
     """
     Root path of the project. Determined automatically.
     """
@@ -53,6 +64,7 @@ class AppConfig:
 
 class _ConfigDefaults:
     DEBUG = get_boolean_env('FLASK_DEBUG', False)
+
 
 class _DevConfigDefaults:
     DEBUG = get_boolean_env('FLASK_DEBUG', True)

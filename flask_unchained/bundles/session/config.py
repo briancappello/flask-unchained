@@ -1,6 +1,7 @@
 import os
 
 from datetime import timedelta
+from flask_unchained import BundleConfig
 
 try:
     from flask_unchained.bundles.sqlalchemy import db
@@ -8,7 +9,7 @@ except ImportError:
     db = None
 
 
-class _DefaultFlaskConfigForSessions:
+class _DefaultFlaskConfigForSessions(BundleConfig):
     SESSION_COOKIE_NAME = 'session'
     """
     The name of the session cookie.

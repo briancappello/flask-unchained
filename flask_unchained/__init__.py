@@ -13,7 +13,7 @@ __version__ = '0.6.6'
 
 from .app_factory import AppFactory
 from .app_factory_hook import AppFactoryHook
-from .app_config import AppConfig
+from .app_config import AppConfig, BundleConfig
 from .bundle import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
 from .decorators import param_converter

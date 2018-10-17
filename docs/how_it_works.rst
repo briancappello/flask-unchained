@@ -173,7 +173,9 @@ Flask Unchained is only designed to work with class-based configs, and it will l
 
 .. code:: python
 
-   class Config:
+   from flask_unchained import BundleConfig
+
+   class Config(BundleConfig):
        OPTION_ONE = 'value'
        OPTION_TWO = 'value'
 
@@ -183,7 +185,7 @@ Flask Unchained is only designed to work with class-based configs, and it will l
    class ProdConfig(Config):
        pass
 
-   class StagingConfig(Config):
+   class StagingConfig(ProdConfig):
        pass
 
    class TestConfig(Config):

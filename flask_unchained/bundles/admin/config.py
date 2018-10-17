@@ -1,7 +1,9 @@
+from flask_unchained import BundleConfig
+
 from .views import AdminDashboardView
 
 
-class Config:
+class Config(BundleConfig):
     """
     Config class for the Admin bundle. Defines which configuration values
     this bundle supports, and their default values.
