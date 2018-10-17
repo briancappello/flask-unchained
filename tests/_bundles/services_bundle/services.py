@@ -33,3 +33,16 @@ class FunkyService(BaseService):
                        two_service: TwoService = injectable):
         """implicit funky"""
         return one_service, two_service
+
+
+class ClassAttrService(BaseService):
+    one_service: OneService = injectable
+    two_service: TwoService = injectable
+
+
+class ClassAttrServiceWithInit(BaseService):
+    one_service: OneService = injectable
+    two_service: TwoService = injectable
+
+    def __init__(self, funky_service: FunkyService = injectable):
+        self.funky_service = funky_service

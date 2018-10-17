@@ -29,7 +29,6 @@ documentation
 
 dependency injection
 --------------------
-* would be way less typing to allow setting services-to-be-injected as class attributes instead of as arguments to the constructor
 * should services be lazily instantiated on an as-needed basis?
 
 
@@ -37,6 +36,7 @@ tests
 -----
 * add more tests for the di subsystem, eg register services hook needs tests
 * register commands hook
+* add tests for remaining bundle descriptors
 
 
 lower priority

@@ -1,5 +1,6 @@
 import functools
 import inspect
+import itertools
 import jinja2
 import markupsafe
 import networkx as nx
@@ -234,9 +235,9 @@ class Unchained:
             cls = None
             if inspect.isclass(fn):
                 cls = fn
-                fn = fn.__init__
+                fn = cls.__init__
 
-            # check if the fn has already been wrapped with injected
+            # check if the fn has already been wrapped with inject
             if hasattr(fn, '__signature__'):
                 if cls and not hasattr(cls, '__signature__'):
                     # this happens when both the class and its __init__ method
@@ -270,7 +271,7 @@ class Unchained:
                         fn_kwargs[param_name] = self.services[param_name]
 
                 # check to make sure we we're not missing anything required
-                bound_args = sig.bind(*fn_args, **fn_kwargs)
+                bound_args = sig.bind_partial(*fn_args, **fn_kwargs)
                 bound_args.apply_defaults()
                 for k, v in bound_args.arguments.items():
                     if v == injectable:
@@ -306,7 +307,9 @@ class Unchained:
                 continue
 
             dag.add_node(name)
-            for param_name in inspect.signature(service).parameters:
+            for param_name in itertools.chain.from_iterable([
+                    service.__signature__.parameters,
+                    service.__inject_cls_attrs__]):
                 if (param_name in self.services
                         or param_name in self.extensions
                         or param_name in self._services_registry):
@@ -326,7 +329,8 @@ class Unchained:
 
             service = self._services_registry[name]
             params = {n: self.extensions.get(n, self.services.get(n))
-                      for n in dag.successors(name)}
+                      for n in dag.successors(name)
+                      if n not in service.__inject_cls_attrs__}
 
             if not inspect.isclass(service):
                 self.services[name] = functools.partial(service, **params)

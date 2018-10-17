@@ -6,6 +6,7 @@
 * require flask-sqlalchemy-unchained 0.4.0
 * rename `SQLAlchemy` extension class to `SQLAlchemyUnchained`
 * add a way for bundle configs to get access to the current app-under-construction
+* support specifying parameters to inject into services as class attributes
 
 ## 0.6.6 (2018/10/09)
 

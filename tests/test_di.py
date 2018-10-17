@@ -107,3 +107,20 @@ class TestInject:
             unchained.services.pop('funky_service')
             WhyBoth()
         assert 'WhyBoth was initialized without the funky_service' in str(e)
+
+    @pytest.mark.bundles(['tests._bundles.services_bundle'])
+    def test_injected_class_attrs(self):
+        from tests._bundles.services_bundle.services import OneService, TwoService
+        assert isinstance(unchained.services.class_attr_service.one_service, OneService)
+        assert isinstance(unchained.services.class_attr_service.two_service, TwoService)
+
+    @pytest.mark.bundles(['tests._bundles.services_bundle'])
+    def test_injected_class_attrs_with_init(self):
+        from tests._bundles.services_bundle.services import (
+            OneService, TwoService, FunkyService)
+        assert isinstance(unchained.services.class_attr_service_with_init.one_service,
+                          OneService)
+        assert isinstance(unchained.services.class_attr_service_with_init.two_service,
+                          TwoService)
+        assert isinstance(unchained.services.class_attr_service_with_init.funky_service,
+                          FunkyService)
