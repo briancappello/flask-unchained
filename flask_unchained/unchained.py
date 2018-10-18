@@ -308,8 +308,9 @@ class Unchained:
 
             dag.add_node(name)
             for param_name in itertools.chain.from_iterable([
-                    service.__signature__.parameters,
-                    service.__inject_cls_attrs__]):
+                inspect.signature(service).parameters,
+                service.__inject_cls_attrs__,
+            ]):
                 if (param_name in self.services
                         or param_name in self.extensions
                         or param_name in self._services_registry):

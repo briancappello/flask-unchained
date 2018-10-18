@@ -42,21 +42,24 @@ def ensure_service_name(service, name=None):
     return name
 
 
-def _inject_class_attrs(to_inject, fn=None):
+def _inject_cls_attrs(_wrapped_fn=None, _call_super=False):
     def __init__(self, *args, **kwargs):
         from .unchained import unchained
-        for param in to_inject:
+        for param in self.__inject_cls_attrs__:
             try:
                 value = unchained.extensions.get(param, unchained.services[param])
             except KeyError:
                 raise Exception(f'No service found with the name {param} '
                                 f'(required by {self.__class__.__name__})')
             setattr(self, param, value)
-        if fn is not None:
-            return fn(self, *args, **kwargs)
 
-    if fn is not None:
-        return functools.wraps(fn)(__init__)
+        if _call_super:
+            super(self.__class__, self).__init__(*args, **kwargs)
+        elif _wrapped_fn:
+            _wrapped_fn(self, *args, **kwargs)
+
+    if _wrapped_fn:
+        return functools.wraps(_wrapped_fn)(__init__)
     return __init__
 
 
@@ -64,17 +67,17 @@ def set_up_class_dependency_injection(mcs_args: McsArgs):
     cls_attrs_to_inject = [k for k, v in mcs_args.clsdict.items() if v == injectable]
     mcs_args.clsdict['__inject_cls_attrs__'] = cls_attrs_to_inject
 
-    if '__init__' not in mcs_args.clsdict:
-        init = _inject_class_attrs(cls_attrs_to_inject)
+    if '__init__' not in mcs_args.clsdict and cls_attrs_to_inject:
+        init = _inject_cls_attrs(_call_super=True)
         init.__di_name__ = mcs_args.name
         init.__signature__ = inspect.signature(object)
         mcs_args.clsdict['__init__'] = init
         mcs_args.clsdict['__signature__'] = init.__signature__
-    else:
+    elif '__init__' in mcs_args.clsdict:
         from .unchained import unchained
         init = unchained.inject()(mcs_args.clsdict['__init__'])
         init.__di_name__ = mcs_args.name
-        mcs_args.clsdict['__init__'] = _inject_class_attrs(cls_attrs_to_inject, init)
+        mcs_args.clsdict['__init__'] = _inject_cls_attrs(_wrapped_fn=init)
         mcs_args.clsdict['__signature__'] = init.__signature__
 
     for attr, value in mcs_args.clsdict.items():
