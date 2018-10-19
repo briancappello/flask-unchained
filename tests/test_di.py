@@ -115,6 +115,26 @@ class TestInject:
         assert isinstance(unchained.services.class_attr_service.two_service, TwoService)
 
     @pytest.mark.bundles(['tests._bundles.services_bundle'])
+    def test_injected_class_attrs_on_extended_service(self):
+        from tests._bundles.services_bundle.services import (
+            OneService, TwoService, FunkyService)
+        assert isinstance(unchained.services.extended_class_attr_service.one_service,
+                          OneService)
+        assert isinstance(unchained.services.extended_class_attr_service.two_service,
+                          TwoService)
+        assert isinstance(unchained.services.extended_class_attr_service.funky_service,
+                          FunkyService)
+
+    @pytest.mark.bundles(['tests._bundles.services_ext_bundle'])
+    def test_injected_class_attrs_on_extended_service_with_same_name_as_base(self):
+        from tests._bundles.services_ext_bundle.services import (
+            OneService, TwoService, FunkyService)
+        assert isinstance(unchained.services.class_attr_service.one_service, OneService)
+        assert isinstance(unchained.services.class_attr_service.two_service, TwoService)
+        assert isinstance(unchained.services.class_attr_service.funky_service,
+                          FunkyService)
+
+    @pytest.mark.bundles(['tests._bundles.services_bundle'])
     def test_injected_class_attrs_with_init(self):
         from tests._bundles.services_bundle.services import (
             OneService, TwoService, FunkyService)
@@ -123,4 +143,19 @@ class TestInject:
         assert isinstance(unchained.services.class_attr_service_with_init.two_service,
                           TwoService)
         assert isinstance(unchained.services.class_attr_service_with_init.funky_service,
+                          FunkyService)
+
+    @pytest.mark.bundles(['tests._bundles.services_bundle'])
+    def test_injected_class_attrs_extended_and_with_init(self):
+        from tests._bundles.services_bundle.services import (
+            OneService, TwoService, ThreeService, FourService, FunkyService)
+        assert isinstance(unchained.services.extended_class_attr_with_init.one_service,
+                          OneService)
+        assert isinstance(unchained.services.extended_class_attr_with_init.two_service,
+                          TwoService)
+        assert isinstance(unchained.services.extended_class_attr_with_init.three_service,
+                          ThreeService)
+        assert isinstance(unchained.services.extended_class_attr_with_init.four_service,
+                          FourService)
+        assert isinstance(unchained.services.extended_class_attr_with_init.funky_service,
                           FunkyService)

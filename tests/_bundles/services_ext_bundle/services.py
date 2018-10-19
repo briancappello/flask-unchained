@@ -1,6 +1,6 @@
 from flask_unchained import BaseService, injectable, unchained
 from tests._bundles.services_bundle.services import (
-    TwoService, FunkyService as BaseFunky)
+    TwoService, FunkyService as BaseFunky, ClassAttrService as BaseAttrs)
 
 
 class OneService(BaseService):
@@ -54,3 +54,7 @@ unchained.register_service('manual', manual)
 @manual.foobar()
 def foobaz():
     return 'foobaz!'
+
+
+class ClassAttrService(BaseAttrs):
+    funky_service: FunkyService = injectable

@@ -4,7 +4,9 @@ import inspect
 from py_meta_utils import (AbstractMetaOption, McsArgs, MetaOptionsFactory,
                            process_factory_meta_options, deep_getattr)
 from types import FunctionType
+from typing import *
 
+from .constants import _INJECT_CLS_ATTRS
 from .string_utils import snake_case
 
 
@@ -42,7 +44,7 @@ def ensure_service_name(service, name=None):
     return name
 
 
-def _inject_cls_attrs(_wrapped_fn=None, _call_super=False):
+def _inject_cls_attrs(_wrapped_fn=None, _call_super_for_cls: Optional[str] = None):
     def __init__(self, *args, **kwargs):
         from .unchained import unchained
         for param in self.__inject_cls_attrs__:
@@ -53,8 +55,11 @@ def _inject_cls_attrs(_wrapped_fn=None, _call_super=False):
                                 f'(required by {self.__class__.__name__})')
             setattr(self, param, value)
 
-        if _call_super:
-            super(self.__class__, self).__init__(*args, **kwargs)
+        if _call_super_for_cls:
+            module, name = _call_super_for_cls.split(':')
+            this_cls = [c for c in self.__class__.__mro__
+                        if c.__module__ == module and c.__name__ == name][0]
+            super(this_cls, self).__init__(*args, **kwargs)
         elif _wrapped_fn:
             _wrapped_fn(self, *args, **kwargs)
 
@@ -65,10 +70,12 @@ def _inject_cls_attrs(_wrapped_fn=None, _call_super=False):
 
 def set_up_class_dependency_injection(mcs_args: McsArgs):
     cls_attrs_to_inject = [k for k, v in mcs_args.clsdict.items() if v == injectable]
-    mcs_args.clsdict['__inject_cls_attrs__'] = cls_attrs_to_inject
+    mcs_args.clsdict[_INJECT_CLS_ATTRS] = \
+        cls_attrs_to_inject + mcs_args.getattr(_INJECT_CLS_ATTRS, [])
 
     if '__init__' not in mcs_args.clsdict and cls_attrs_to_inject:
-        init = _inject_cls_attrs(_call_super=True)
+        init = _inject_cls_attrs(
+            _call_super_for_cls=f'{mcs_args.module}:{mcs_args.name}')
         init.__di_name__ = mcs_args.name
         init.__signature__ = inspect.signature(object)
         mcs_args.clsdict['__init__'] = init

@@ -9,7 +9,7 @@ from flask import Flask, current_app
 from typing import *
 from werkzeug.local import LocalProxy
 
-from .constants import DEV, PROD, STAGING, TEST
+from .constants import DEV, PROD, STAGING, TEST, _INJECT_CLS_ATTRS
 from .di import ensure_service_name, injectable
 from .exceptions import ServiceUsageError
 from .utils import AttrDict
@@ -309,7 +309,7 @@ class Unchained:
             dag.add_node(name)
             for param_name in itertools.chain.from_iterable([
                 inspect.signature(service).parameters,
-                service.__inject_cls_attrs__,
+                getattr(service, _INJECT_CLS_ATTRS)
             ]):
                 if (param_name in self.services
                         or param_name in self.extensions
@@ -331,7 +331,7 @@ class Unchained:
             service = self._services_registry[name]
             params = {n: self.extensions.get(n, self.services.get(n))
                       for n in dag.successors(name)
-                      if n not in service.__inject_cls_attrs__}
+                      if n not in getattr(service, _INJECT_CLS_ATTRS)}
 
             if not inspect.isclass(service):
                 self.services[name] = functools.partial(service, **params)

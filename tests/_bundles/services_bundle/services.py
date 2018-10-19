@@ -15,6 +15,14 @@ class TwoService(BaseService):
         self.one_service = one_service
 
 
+class ThreeService(BaseService):
+    pass
+
+
+class FourService(BaseService):
+    pass
+
+
 class FunkyService(BaseService):
     """funky_service"""
     @unchained.inject()
@@ -40,9 +48,21 @@ class ClassAttrService(BaseService):
     two_service: TwoService = injectable
 
 
+class ExtendedClassAttrService(ClassAttrService):
+    funky_service: FunkyService = injectable
+
+
 class ClassAttrServiceWithInit(BaseService):
     one_service: OneService = injectable
     two_service: TwoService = injectable
 
     def __init__(self, funky_service: FunkyService = injectable):
         self.funky_service = funky_service
+
+
+class ExtendedClassAttrWithInit(ClassAttrServiceWithInit):
+    three_service: ThreeService = injectable
+
+    def __init__(self, four_service: FourService = injectable):
+        super().__init__()
+        self.four_service: FourService = four_service
