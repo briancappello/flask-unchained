@@ -298,13 +298,21 @@ For the ``4th`` requirement, Flask Unchained automatically creates a :class:`~fl
 
 And last but not least, for the ``8th`` requirement, this again is handled automatically (internally, we create empty blueprints for each bundle in a hierarchy that only points to the bundle's template folder, registering them in the correct order with the app).
 
-Let's get back to finishing our hello view. We need to add a template for it to render. :meth:`flask_unchained.Controller.render` knows that when you pass a template name of ``index``, it should look for ``site/index.html`` in the ``templates`` folder.
+Let's get back to finishing our hello view. We need to add a template for it to render. :meth:`flask_unchained.Controller.render` knows that when you pass a template name of ``index``, it should look for ``site/index.html`` in the bundle's ``templates`` folder.
 
 The ``site`` prefix is determined from the controller's class name:
 
 .. code:: python
 
    snake_case(right_replace(SiteController.__name__, 'Controller', ''))
+
+You can also set it manually to customize the folder the controller will look for its templates in, like so:
+
+.. code:: python
+
+   class SiteController(Controller):
+       class Meta:
+           template_folder_name = 'site'
 
 The template's code itself is about as simple as it gets, with a tiny bit of styling thrown in:
 

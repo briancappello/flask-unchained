@@ -103,7 +103,7 @@ And also the included ``templates/_navbar.html`` and ``templates/_flashes.html``
      </div>
    </nav>
 
-The ``nav_link`` macro perhaps deserves some explanation. This is a small utility function that renders a navigation item in the bootstrap navbar. We do this to make our code more DRY, because every navigation link needs to contains logic to determine whether or not it is the currently active view. The ``{% if endpoint is active %}`` bit is special - Flask Unchained actually adds the ``active`` template test to make this easier. Its definition looks like this:
+The ``nav_link`` macro perhaps deserves some explanation. This is a small utility function that renders a navigation item in the bootstrap navbar. We do this to make our code more DRY, because every navigation link needs to contain logic to determine whether or not it is the currently active view. The ``{% if endpoint is active %}`` bit is special - Flask Unchained actually adds the ``active`` template test to make this easier. Its definition looks like this:
 
 .. code:: python
 
@@ -290,7 +290,7 @@ Now that we've added another view/route, our templates need some work again. Let
            <div class="row">
              <div class="col">
                <h1 class="display-3">Welcome to Flaskr Unchained!</h1>
-               <p>(Definitely the most awesome blog on the planet.)</p>
+               <p>(Definitely the most awesome portfolio manager on the planet.)</p>
              </div>
            </div>
          </div>
@@ -519,10 +519,6 @@ The updated view code:
            return self.render('hello', hello_form=form, name=name or 'World')
 
 And the updated template:
-
-.. code:: bash
-
-   touch app/templates/site/hello.html
 
 .. code:: html+jinja
 

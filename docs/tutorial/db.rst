@@ -114,4 +114,4 @@ We should commit our changes before continuing:
    git status
    git commit -m 'install sqlalchemy bundle'
 
-Next, in order to demonstrate using migrations, and also as preparation for installing the Security Bundle, next let's continue to setting up :doc:`session` using the Session Bundle.
+Next, in order to demonstrate using migrations, and also as preparation for installing the Security Bundle, let's continue to setting up :doc:`session` using the Session Bundle.

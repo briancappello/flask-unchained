@@ -90,8 +90,8 @@ And a larger application structure might look like this:
 │   ├── images
 │   ├── scripts
 │   └── styles
-├── bundles             # third-party bundle extensions/overrides
-│   └── security        # a customized/extended Flask Security Bundle
+├── bundles             # bundle extensions/overrides
+│   └── security        # a customized/extended Security Bundle
 │       ├── models
 │       ├── serializers
 │       ├── services
