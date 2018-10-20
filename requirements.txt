@@ -14,7 +14,7 @@ flask-marshmallow
 flask_migrate
 flask-principal
 flask-session
-flask-sqlalchemy-unchained>=0.4.0
+flask-sqlalchemy-unchained>=0.4.1
 flask_wtf
 ipython>=7.0.1
 itsdangerous

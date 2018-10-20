@@ -3,7 +3,7 @@
 ## 0.7.0 (unreleased)
 
 * require py-meta-utils 0.6.1 and sqlalchemy-unchained 0.5.0
-* require flask-sqlalchemy-unchained 0.4.0
+* require flask-sqlalchemy-unchained 0.4.1
 * rename `SQLAlchemy` extension class to `SQLAlchemyUnchained`
 * add a way for bundle configs to get access to the current app-under-construction
 * support specifying parameters to inject into services as class attributes
