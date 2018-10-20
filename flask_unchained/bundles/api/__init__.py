@@ -5,7 +5,7 @@ from speaklater import _LazyString
 
 from .extensions import Api, Marshmallow, api, ma
 from .model_resource import ModelResource
-from .model_serializer import ModelSerializer
+from .model_serializer import ModelSerializer, Unmarshaller
 
 
 class ApiBundle(Bundle):
@@ -41,6 +41,13 @@ class ApiBundle(Bundle):
 
     # the template folder gets set manually by the OpenAPI bp
     template_folder = None
+
+    def before_init_app(self, app: FlaskUnchained):
+        try:
+            from marshmallow import marshalling
+        except ImportError:
+            return
+        setattr(marshalling, 'Unmarshaller', Unmarshaller)
 
     def after_init_app(self, app: FlaskUnchained):
         """
