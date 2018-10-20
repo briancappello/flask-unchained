@@ -7,6 +7,7 @@
 * rename `SQLAlchemy` extension class to `SQLAlchemyUnchained`
 * add a way for bundle configs to get access to the current app-under-construction
 * support specifying parameters to inject into services as class attributes
+* fix setting of `Route._controller_cls` when controllers extend another concrete controller with routes
 
 ## 0.6.6 (2018/10/09)
 
