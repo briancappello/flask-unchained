@@ -34,7 +34,6 @@ dependency injection
 
 tests
 -----
-* add more tests for the di subsystem, eg register services hook needs tests
 * register commands hook
 * add tests for remaining bundle descriptors
 
