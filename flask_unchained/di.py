@@ -70,8 +70,13 @@ def _inject_cls_attrs(_wrapped_fn=None, _call_super_for_cls: Optional[str] = Non
 
 def set_up_class_dependency_injection(mcs_args: McsArgs):
     cls_attrs_to_inject = [k for k, v in mcs_args.clsdict.items() if v == injectable]
-    mcs_args.clsdict[_INJECT_CLS_ATTRS] = \
-        cls_attrs_to_inject + mcs_args.getattr(_INJECT_CLS_ATTRS, [])
+    try:
+        mcs_args.clsdict[_INJECT_CLS_ATTRS] = \
+            cls_attrs_to_inject + mcs_args.getattr(_INJECT_CLS_ATTRS, [])
+    except TypeError as e:
+        if 'can only concatenate list (not "OptionalMetaclass") to list' not in str(e):
+            raise e
+        mcs_args.clsdict[_INJECT_CLS_ATTRS] = cls_attrs_to_inject
 
     if '__init__' not in mcs_args.clsdict and cls_attrs_to_inject:
         init = _inject_cls_attrs(
