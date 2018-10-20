@@ -1,6 +1,5 @@
 import importlib
 import os
-import sys
 
 from typing import *
 
@@ -26,11 +25,6 @@ class FolderDescriptor:
         return os.path.dirname(module.__file__)
 
 
-class RootFolderDescriptor:
-    def __get__(self, instance, cls):
-        return os.path.dirname(cls.folder)
-
-
 class NameDescriptor:
     def __get__(self, instance, cls):
         if issubclass(cls, AppBundle):
@@ -41,8 +35,7 @@ class NameDescriptor:
 class StaticFolderDescriptor:
     def __get__(self, instance, cls):
         if not hasattr(instance, '_static_folder'):
-            bundle_dir = os.path.dirname(sys.modules[instance.module_name].__file__)
-            instance._static_folder = os.path.join(bundle_dir, 'static')
+            instance._static_folder = os.path.join(instance.folder, 'static')
             if not os.path.exists(instance._static_folder):
                 instance._static_folder = None
         return instance._static_folder
@@ -50,18 +43,17 @@ class StaticFolderDescriptor:
 
 class StaticUrlPathDescriptor:
     def __get__(self, instance, cls):
-        if cls.static_folders:
+        if instance.static_folders:
             return f'/{slugify(cls.name)}/static'
 
 
 class TemplateFolderDescriptor:
     def __get__(self, instance, cls):
-        if not hasattr(cls, '_template_folder'):
-            bundle_dir = os.path.dirname(sys.modules[cls.module_name].__file__)
-            cls._template_folder = os.path.join(bundle_dir, 'templates')
-            if not os.path.exists(cls._template_folder):
-                cls._template_folder = None
-        return cls._template_folder
+        if not hasattr(instance, '_template_folder'):
+            instance._template_folder = os.path.join(instance.folder, 'templates')
+            if not os.path.exists(instance._template_folder):
+                instance._template_folder = None
+        return instance._template_folder
 
 
 class BundleMeta(type):
@@ -96,11 +88,6 @@ class Bundle(metaclass=BundleMeta):
     folder: str = FolderDescriptor()
     """
     Root directory path of the bundle's package. Automatically determined.
-    """
-
-    root_folder: str = RootFolderDescriptor()
-    """
-    Root directory path of the bundle. Automatically determined.
     """
 
     template_folder: Optional[str] = TemplateFolderDescriptor()

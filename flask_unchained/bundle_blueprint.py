@@ -50,7 +50,7 @@ class BundleBlueprint(Blueprint):
 
     def send_static_file(self, filename):
         if not self.has_static_folder:
-            raise RuntimeError('No static folder for this object')
+            raise RuntimeError(f'No static folder found for {self.bundle.name}')
         # Ensure get_send_file_max_age is called in all cases.
         # Here, we ensure get_send_file_max_age is called for Blueprints.
         cache_timeout = self.get_send_file_max_age(filename)

@@ -9,6 +9,8 @@
 * support specifying parameters to inject into services as class attributes
 * fix setting of `Route._controller_cls` when controllers extend another concrete controller with routes
 * update to marshmallow 2.16
+* remove `Bundle.root_folder` descriptor as it made no sense
+* fix `Bundle.static_url_path` descriptor
 
 ## 0.6.6 (2018/10/09)
 

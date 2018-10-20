@@ -35,7 +35,6 @@ dependency injection
 tests
 -----
 * register commands hook
-* add tests for remaining bundle descriptors
 
 
 lower priority
