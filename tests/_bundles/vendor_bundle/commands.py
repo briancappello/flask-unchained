@@ -8,14 +8,8 @@ def vendor_top_level():
 
 
 # this group will have its baz command overridden
-@click.group()
+@cli.group()
 def foo_group():
-    """vendor_bundle docstring"""
-
-
-# this group should get overridden by the myapp bundle
-@click.group()
-def goo_group():
     """vendor_bundle docstring"""
 
 
@@ -29,6 +23,12 @@ def bar():
 def baz():
     """vendor_bundle docstring"""
     click.echo('vendor_bundle')
+
+
+# this group should get overridden by the myapp bundle
+@cli.group()
+def goo_group():
+    """vendor_bundle docstring"""
 
 
 @goo_group.command()

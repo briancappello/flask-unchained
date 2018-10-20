@@ -25,16 +25,12 @@ documentation
 * document usage of admin, babel, and webpack bundles
 * document creating extendable bundles
 * finish tutorial
+* document injection via class attributes
 
 
 dependency injection
 --------------------
 * should services be lazily instantiated on an as-needed basis?
-
-
-tests
------
-* register commands hook
 
 
 lower priority
