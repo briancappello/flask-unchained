@@ -1,11 +1,13 @@
 import os
 import sys
 
+from py_meta_utils import OptionalClass
+
 from .utils import get_boolean_env
 
 
 class _CurrentAppMetaclass(type):
-    current_app = None
+    current_app = OptionalClass()
 
     def _set_current_app(cls, app):
         cls.current_app = app

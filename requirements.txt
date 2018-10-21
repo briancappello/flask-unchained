@@ -20,11 +20,12 @@ ipython>=7.0.1
 itsdangerous
 jinja2
 lxml
+markupsafe
 marshmallow
 marshmallow-sqlalchemy
 networkx>=2.1
 passlib
-py-meta-utils
+py-meta-utils>=0.6.2
 py-yaml-fixtures
 pyqt5
 speaklater
