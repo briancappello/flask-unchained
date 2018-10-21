@@ -4,6 +4,10 @@ from flask_unchained import BundleConfig
 
 
 class Config(BundleConfig):
+    """
+    Default configuration options for the webpack bundle.
+    """
+
     WEBPACK_MANIFEST_PATH = (
         None if not BundleConfig.current_app.static_folder
         else os.path.join(BundleConfig.current_app.static_folder,
@@ -14,6 +18,10 @@ class Config(BundleConfig):
 
 
 class ProdConfig(Config):
+    """
+    Default production configuration options for the webpack bundle.
+    """
+
     # use relative paths by default, ie, the same host as the backend
     WEBPACK_ASSETS_HOST = ''
     """
