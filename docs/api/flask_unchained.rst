@@ -1,18 +1,6 @@
 Flask Unchained
 ---------------
 
-AppBundle
-^^^^^^^^^
-
-.. autoclass:: flask_unchained.AppBundle
-   :members:
-
-AppConfig
-^^^^^^^^^
-
-.. autoclass:: flask_unchained.AppConfig
-   :members:
-
 AppFactory
 ^^^^^^^^^^
 
@@ -31,6 +19,24 @@ Bundle
 .. autoclass:: flask_unchained.Bundle
    :members:
    :exclude-members: has_views, iter_class_hierarchy
+
+AppBundle
+^^^^^^^^^
+
+.. autoclass:: flask_unchained.AppBundle
+   :members:
+
+BundleConfig
+^^^^^^^^^^^^
+
+.. autoclass:: flask_unchained.BundleConfig
+   :members:
+
+AppBundleConfig
+^^^^^^^^^^^^^^^
+
+.. autoclass:: flask_unchained.AppBundleConfig
+   :members:
 
 FlaskForm
 ^^^^^^^^^

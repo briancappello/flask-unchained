@@ -11,6 +11,7 @@
 * update to marshmallow 2.16
 * remove `Bundle.root_folder` descriptor as it made no sense
 * fix `Bundle.static_url_path` descriptor
+* rename `AppConfig` to `AppBundleConfig`
 
 ## 0.6.6 (2018/10/09)
 

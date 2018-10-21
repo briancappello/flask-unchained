@@ -61,7 +61,7 @@ If instead you'd like to use MariaDB/MySQL or PostgreSQL, now would be the time 
 
    # app/config.py
 
-   class Config(AppConfig):
+   class Config(AppBundleConfig):
        # ...
        SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{pw}@{host}:{port}/{db}'.format(
            engine=os.getenv('FLASK_DATABASE_ENGINE', 'postgresql+psycopg2'),

@@ -1,9 +1,9 @@
 import os
 
-from flask_unchained import AppConfig, get_boolean_env
+from flask_unchained import AppBundleConfig, get_boolean_env
 
 
-class Config(AppConfig):
+class Config(AppBundleConfig):
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key!')
 #! if security or session:
     #! SESSION_TYPE = "{{ 'sqlalchemy' if sqlalchemy else 'filesystem' }}"

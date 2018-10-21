@@ -1,7 +1,7 @@
-from flask_unchained import AppConfig
+from flask_unchained import AppBundleConfig
 
 
-class Config(AppConfig):
+class Config(AppBundleConfig):
     SECRET_KEY = 'not-secret-key'
 
     SECURITY_SEND_REGISTER_EMAIL = True

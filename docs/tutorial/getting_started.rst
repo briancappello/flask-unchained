@@ -160,7 +160,7 @@ Now, let's configure Flask Unchained:
 
 The purpose of ``unchained_config.py`` is to define which bundles to load and the keyword arguments passed to the :class:`~flask_unchained.FlaskUnchained` constructor (which takes the same arguments as the original :class:`~flask.Flask` constructor). Because we've named our app bundle module ``app``, we make this the last element of the ``BUNDLES`` list.
 
-Whenever you create a new app bundle, you must subclass :class:`~flask_unchained.AppBundle` in your app bundle's module root. The :class:`~flask_unchained.AppBundle` base class contains a bit of magic that's necessary for all the sub-modules of your bundle to be discovered by Flask Unchained.
+Whenever you create a new app bundle, you must subclass :class:`~flask_unchained.AppBundle` in your app bundle's module root. The :class:`~flask_unchained.Bundle` base class (which :class:`~flask_unchained.AppBundle` extends) contains a bit of magic that's necessary for all the sub-modules of your bundle to be discovered by Flask Unchained.
 
 .. code:: python
 
@@ -179,10 +179,10 @@ In order to configure your app, Flask Unchained uses environment-specific config
 
    import os
 
-   from flask_unchained import AppConfig
+   from flask_unchained import AppBundleConfig
 
 
-   class Config(AppConfig):
+   class Config(AppBundleConfig):
        SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key')
 
 
@@ -213,10 +213,10 @@ Taking the above into account, the truly minimally required app bundle config is
 
    import os
 
-   from flask_unchained import AppConfig
+   from flask_unchained import AppBundleConfig
 
 
-   class Config(AppConfig):
+   class Config(AppBundleConfig):
        SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key')
 
 Now let's define our hello world view:

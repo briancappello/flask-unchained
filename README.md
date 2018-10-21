@@ -131,10 +131,10 @@ Add the minimal required configuration:
 
 import os
 
-from flask_unchained import AppConfig
+from flask_unchained import AppBundleConfig
 
 
-class Config(AppConfig):
+class Config(AppBundleConfig):
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key')
 ```
 

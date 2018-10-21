@@ -27,7 +27,7 @@ class _ProjectRootDescriptor:
         return os.path.abspath(os.path.join(cls.APP_ROOT, os.pardir))
 
 
-class AppConfig(BundleConfig):
+class AppBundleConfig(BundleConfig):
     """
     Base class for app-bundle configs. Example usage::
 
@@ -35,9 +35,9 @@ class AppConfig(BundleConfig):
 
         import os
 
-        from flask_unchained import AppConfig
+        from flask_unchained import AppBundleConfig
 
-        class Config(AppConfig):
+        class Config(AppBundleConfig):
             SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key')
 
         class DevConfig(Config):

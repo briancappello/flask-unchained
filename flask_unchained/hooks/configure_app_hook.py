@@ -1,7 +1,7 @@
 from flask import Config
 from typing import *
 
-from ..app_config import AppConfig, BundleConfig
+from ..app_config import AppBundleConfig, BundleConfig
 from ..app_factory_hook import AppFactoryHook
 from ..bundle import Bundle, AppBundle
 from ..constants import DEV, PROD, STAGING, TEST
@@ -76,8 +76,8 @@ class ConfigureAppHook(AppFactoryHook):
 
         if (isinstance(bundle, AppBundle) and (
                 not base_config
-                or not issubclass(base_config, AppConfig))):
-            raise Exception("Could not find an AppConfig subclass in your app "
+                or not issubclass(base_config, AppBundleConfig))):
+            raise Exception("Could not find an AppBundleConfig subclass in your app "
                             "bundle's config module.")
 
         merged = Config(None)
