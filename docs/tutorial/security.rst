@@ -318,7 +318,7 @@ First we need to create our fixtures directory and files. The file names must ma
      confirmed_at: utcnow
      roles: ['Role(ROLE_USER)']
 
-The keys in the yaml files, ``admin``, ``user``, ``ROLE_USER`` and ``ROLE_ADMIN``, must each be unique across all of your fixtures. This is because they are used to specify relationships. The syntax there is :python:`'ModelClassName(key1, Optional[key2, ...])'`. If the relationship is on the many side, as it is in our case, then the relationship specifier must also be surrounded by ``[]`` square brackets (yaml syntax to specify it's a list).
+The keys in the yaml files, ``admin``, ``user``, ``ROLE_USER`` and ``ROLE_ADMIN``, must each be unique across all of your fixtures. This is because they are used to specify relationships. The syntax there is ``'ModelClassName(key1, Optional[key2, ...])'``. If the relationship is on the many side, as it is in our case, then the relationship specifier must also be surrounded by ``[]`` square brackets (yaml syntax to specify it's a list).
 
 It's not shown above, but the fixture files are actually *Jinja2 templates that generate yaml*. Fixtures also have access to the excellent `faker <https://faker.readthedocs.io/en/master/>`_ library to generate random data, for example we could have written :code:`email: {{ faker.free_email() }}` in the ``user`` fixture. Between access to faker and the power of Jinja2, it's quite easy to build up a bunch of fake content when you need to quickly.
 

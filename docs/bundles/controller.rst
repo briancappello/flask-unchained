@@ -179,6 +179,7 @@ Controllers have a few meta options that you can use to customize their behavior
 
 .. list-table::
    :header-rows: 1
+
    * - meta option name
      - description
      - default value
@@ -196,7 +197,7 @@ Controllers have a few meta options that you can use to customize their behavior
      - Defaults to your app config's ``TEMPLATE_FILE_EXTENSION`` setting, and overrides it if set.
    * - url_prefix
      - The url prefix to use for all routes from this controller.
-     - Defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). The resulting value is :python:`f'/{snake_case(pluralize(value))}'`.
+     - Defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). The resulting value is ``f'/{snake_case(pluralize(value))}'``.
 
 Overriding Controllers
 ######################
@@ -325,13 +326,12 @@ Resources have a few extra meta options on top of those that Controller includes
    * - meta option name
      - description
      - default value
-   * - member_param
-     - The url parameter rule to use for the special member functions (``get``, ``patch``,
-    ``put``, and ``delete``) of this resource.
+   * - :attr:`~flask_unchained.Resource.Meta.member_param`
+     - The url parameter rule to use for the special member functions (``get``, ``patch``, ``put``, and ``delete``) of this resource.
      - ``<int:id>``
-   * - unique_member_param
-     - The url parameter rule to use for the special member methods (``get``, ``patch``, ``put``, and ``delete``) of this resource when :attr:`~flask_unchained.Resource.Meta.member_param` conflicts with a subresource's ``member_param``.
-     - ``f'<{member_param_type}:{controller_name(cls)}_{member_param_name}>'
+   * - :attr:`~flask_unchained.Resource.Meta.unique_member_param`
+     - The url parameter rule to use for the special member methods (``get``, ``patch``, ``put``, and ``delete``) of this resource when :attr:`~flask_unchained.Resource.Meta.member_param` conflicts with a subresource's :attr:`~flask_unchained.Resource.Meta.member_param`.
+     - ``f'<{member_param_type}:{controller_name(cls)}_{member_param_name}>'``
 
 Overriding Resources
 ####################
@@ -345,7 +345,7 @@ Flask Unchained uses the Jinja templating language, just like stock Flask.
 
 By default bundles are configured to use a `templates` subfolder. This is configurable by setting :attr:`flask_unchained.Bundle.template_folder` to a custom path.
 
-Controllers each have their own template folder within ``Bundle.template_folder``. It defaults to :python:`snake_case(right_replace(ControllerClass.__name__, 'Controller', ''))` and is configurable by setting :attr:`flask_unchained.Controller.Meta.template_folder_name`.
+Controllers each have their own template folder within ``Bundle.template_folder``. It defaults to ``snake_case(right_replace(ControllerClass.__name__, 'Controller', ''))`` and is configurable by setting :attr:`flask_unchained.Controller.Meta.template_folder_name`.
 
 The default file extension used for templates is configured by setting ``TEMPLATE_FILE_EXTENSION``. It defaults to `.html`, and is also configurable on a per-controller basis by setting :attr:`flask_unchained.Controller.Meta.template_file_extension`.
 
@@ -392,7 +392,21 @@ If you encounter problems, you can set the ``EXPLAIN_TEMPLATE_LOADING`` config o
 Dependency Injection
 """"""""""""""""""""
 
-Controllers are configured with dependency injection set up on their constructors automatically. Here's an example of what it looks like::
+Controllers are configured with dependency injection set up on them automatically. You can use class attributes or the constructor (or both).
+
+Here's an example of using class attributes::
+
+   from flask_unchained import Controller, injectable
+   from flask_unchained.bundles.security import Security, SecurityService, SecurityUtilsService
+   from flask_unchained.bundles.sqlalchemy import SessionManager
+
+   class SecurityController(Controller):
+       security: Security = injectable
+       security_service: SecurityService = injectable
+       security_utils_service: SecurityUtilsService = injectable
+       session_manager: SessionManager = injectable
+
+And here's what the same thing using the constructor looks like::
 
    from flask_unchained import Controller, injectable
    from flask_unchained.bundles.security import Security, SecurityService, SecurityUtilsService
@@ -408,8 +422,6 @@ Controllers are configured with dependency injection set up on their constructor
            self.security_service = security_service
            self.security_utils_service = security_utils_service
            self.session_manager = session_manager
-
-By setting the default value of an argument to :attr:`flask_unchained.injectable`, we are informing the :class:`~flask_unchained.Unchained` extension that it should inject that argument. Services and extensions are automatically dependency-injectable by default, and by using the :meth:`flask_unchained.Unchained.service` decorator or the :meth:`flask_unchained.Unchained.register_service` method, you can register anything else you might want to as injectable.
 
 API Documentation
 ^^^^^^^^^^^^^^^^^

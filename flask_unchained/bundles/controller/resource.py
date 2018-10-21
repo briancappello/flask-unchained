@@ -51,7 +51,7 @@ class UrlPrefixMetaOption(MetaOption):
     The url prefix to use for all routes from this resource. Defaults to the class name,
     with the suffixes ``Resource``, ``MethodView``, ``Controller``, or ``View`` stripped,
     stopping after the first one found (if any). The resulting value is
-    :python:`f'/{snake_case(pluralize(value))}'`.
+    ``f'/{snake_case(pluralize(value))}'``.
     """
     def __init__(self):
         super().__init__('url_prefix', default=_missing, inherit=False)

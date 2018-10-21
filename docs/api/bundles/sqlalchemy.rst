@@ -43,20 +43,8 @@ BaseModel
 .. autoclass:: flask_unchained.bundles.sqlalchemy.base_model.BaseModel
    :members:
 
-BaseQuery
-~~~~~~~~~~
-
-.. autoclass:: flask_unchained.bundles.sqlalchemy.base_query.BaseQuery
-   :members:
-
 ModelForm
 ~~~~~~~~~~
 
 .. autoclass:: flask_unchained.bundles.sqlalchemy.model_form.ModelForm
-   :members:
-
-Validation
-~~~~~~~~~~
-
-.. automodule:: flask_unchained.bundles.sqlalchemy.validation
    :members:

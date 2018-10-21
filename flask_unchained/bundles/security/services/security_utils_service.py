@@ -210,7 +210,7 @@ class SecurityUtilsService(BaseService):
             5 days
             10 minutes
 
-        :param key: The config value key without the 'SECURITY_' prefix
+        :param key: The config value key
         """
         txt = current_app.config.get(key)
         values = txt.split()

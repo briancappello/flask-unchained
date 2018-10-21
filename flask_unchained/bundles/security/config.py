@@ -50,7 +50,7 @@ class Config(BundleConfig):
     SECURITY_DATETIME_FACTORY = lambda: datetime.now(timezone.utc)
     """
     Factory function to use when creating new dates. By default we use
-    :python:`datetime.now(timezone.utc)` to create a timezone-aware datetime.
+    ``datetime.now(timezone.utc)`` to create a timezone-aware datetime.
     """
 
     SECURITY_PASSWORD_SALT = 'security-password-salt'

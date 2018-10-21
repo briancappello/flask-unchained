@@ -1,6 +1,12 @@
 Flask Unchained
 ---------------
 
+AppBundle
+^^^^^^^^^
+
+.. autoclass:: flask_unchained.AppBundle
+   :members:
+
 AppConfig
 ^^^^^^^^^
 
@@ -11,6 +17,12 @@ AppFactory
 ^^^^^^^^^^
 
 .. autoclass:: flask_unchained.AppFactory
+   :members:
+
+BaseService
+^^^^^^^^^^^
+
+.. autoclass:: flask_unchained.BaseService
    :members:
 
 Bundle
@@ -37,6 +49,18 @@ Unchained
 
 .. autoclass:: flask_unchained.Unchained
    :members:
+
+Constants
+^^^^^^^^^
+
+.. automodule:: flask_unchained.constants
+   :members:
+
+injectable
+~~~~~~~~~~
+
+.. automodule:: flask_unchained.di
+   :members: injectable
 
 .. FIXME the docs for hooks are all messed up
 
@@ -135,11 +159,6 @@ Extension Development Utilities
 
 .. autoclass:: flask_unchained.utils.ConfigProperty
    :members:
-
-Metaclass Utilities
-~~~~~~~~~~~~~~~~~~~
-
-.. autofunction:: flask_unchained.utils.deep_getattr
 
 Attribute-access Dictionaries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -153,7 +153,7 @@ class UrlPrefixMetaOption(MetaOption):
     """
     The url prefix to use for all routes from this controller. Defaults to the class name,
     with the suffixes ``Controller`` or ``View`` stripped, stopping after the first found
-    (if any). The resulting value is :python:`f'/{snake_case(pluralize(value))}'`.
+    (if any). The resulting value is ``f'/{snake_case(pluralize(value))}'``.
     """
     def __init__(self):
         super().__init__('url_prefix', default=None, inherit=False)

@@ -40,6 +40,7 @@ release = 'v0.6.6'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosectionlabel',
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
     'sphinx_click.ext',
@@ -47,6 +48,7 @@ extensions = [
 ]
 
 autodoc_member_order = 'bysource'
+autosectionlabel_prefix_document = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -184,7 +186,7 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'click': ('http://click.pocoo.org/6/', None),
+    'click': ('https://click.palletsprojects.com/en/7.x/', None),
     'flask': ('http://flask.pocoo.org/docs/', None),
     'flask_admin': ('https://flask-admin.readthedocs.io/en/latest/', None),
     'flask_babelex': ('https://pythonhosted.org/Flask-BabelEx/', None),
@@ -194,7 +196,7 @@ intersphinx_mapping = {
     'flask_session': ('https://pythonhosted.org/Flask-Session/', None),
     'flask_sqlalchemy': ('http://flask-sqlalchemy.pocoo.org/latest/', None),
     'flask_wtf': ('https://flask-wtf.readthedocs.io/en/stable/', None),
-    'python': ('https://docs.python.org/', None),
-    'sqlalchemy': ('http://docs.sqlalchemy.org/en/latest/', None),
+    'python': ('https://docs.python.org/3/', None),
+    'sqlalchemy': ('https://docs.sqlalchemy.org/en/latest/', None),
     'werkzeug': ('http://werkzeug.pocoo.org/docs/0.14/', None),
 }

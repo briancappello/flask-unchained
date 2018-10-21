@@ -10,21 +10,18 @@ from .utils import (join, method_name_to_url, rename_parent_resource_param_name,
 class Route:
     """
     This is a semi-private class that you most likely shouldn't use directly.
-    Instead, you should use the public functions in
-    :module:`~flask_unchained.bundles.controller.routes`, and the
-    :func:`~flask_unchained.route` and :func:`~flask_unchained.no_route` decorators.
+    Instead, you should use the public functions in :ref:`api/bundles/controller:Routes`,
+    and the :func:`~flask_unchained.route` and :func:`~flask_unchained.no_route`
+    decorators.
 
-    This class is used to store an **intermediate** representation of route
-    details as an attribute on view functions and class view methods.
+    This class is used to store an *intermediate* representation of route details as
+    an attribute on view functions and class view methods. Most notably, this class's
+    :attr:`rule` and :attr:`full_rule` attributes may not represent the final url rule
+    that gets registered with :class:`~flask.Flask`.
 
-    Most notably, this class's rule and full_rule attributes may not represent
-    the final url rule that gets registered with Flask.
-
-    Further gotchas with `Controller` and `Resource` routes include that their
-    view_func must be finalized from the outside using
-    `TheControllerClass.method_as_view`, and for subresources, the blueprint
-    specified there can (will) be overridden by the parent resource's blueprint.
-    (If it does get overridden, a warning will at least be issued.)
+    Further gotchas with :class:`~flask_unchained.Controller` and
+    :class:`~flask_unchained.Resource` routes include that their view_func must be
+    finalized from the outside using ``TheControllerClass.method_as_view``.
     """
     def __init__(self, rule, view_func, blueprint=None, defaults=None,
                  endpoint=None, is_member=False, methods=None, only_if=None,

@@ -60,6 +60,7 @@ Furthermore, models in SQLAlchemy Unchained include three columns by default:
 
 .. list-table::
    :header-rows: 1
+
    * - column name
      - description
    * - ``id``

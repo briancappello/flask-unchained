@@ -8,7 +8,9 @@ from flask_unchained.cli import click
 @click.option('-f', '--fix-imports', default=False, is_flag=True,
               help='Fix imports using isort, before linting')
 def lint(fix_imports):
-    """Run flake8."""
+    """
+    Run flake8.
+    """
     from glob import glob
     from subprocess import call
 

@@ -15,7 +15,7 @@ from .utils import redirect, url_for
 
 class ControllerBundle(Bundle):
     """
-    The :class:`Bundle` subclass for the controller bundle.
+    The :class:`~flask_unchained.Bundle` subclass for the controller bundle.
     """
 
     def __init__(self):

@@ -13,7 +13,7 @@ from ..model_resource import ModelResource
 
 class Api:
     """
-    The `Api` extension::
+    The ``Api`` extension::
 
         from flask_unchained.bundles.api import api
     """
@@ -149,9 +149,9 @@ class Api:
         type and format when documenting parameters from Schema fields.
 
         :param Field field: Marshmallow Field class
-        ``*args`` can be:
-        - a pair of the form ``(type, format)`` to map to
-        - a core marshmallow field type (then that type's mapping is used)
+        :param: args:
+            - a pair of the form ``(type, format)`` to map to
+            - a core marshmallow field type (then that type's mapping is used)
 
         Examples::
 

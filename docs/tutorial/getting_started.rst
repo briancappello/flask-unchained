@@ -201,7 +201,7 @@ In order to configure your app, Flask Unchained uses environment-specific config
    class TestConfig(Config):
        pass
 
-How this works is pretty simple. First, we load configuration defaults defined within Flask Unchained itself. At the time of writing, the only defaults it sets are the ``DEBUG`` option (pulled from the ``FLASK_DEBUG`` environment variable), and only when :python:`env == 'test'`, :code:`TESTING = True` and :code:`WTF_CSRF_ENABLED = False`.
+How this works is pretty simple. First, we load configuration defaults defined within Flask Unchained itself. At the time of writing, the only defaults it sets are the ``DEBUG`` option (pulled from the ``FLASK_DEBUG`` environment variable), and only when ``env == 'test'``, :code:`TESTING = True` and :code:`WTF_CSRF_ENABLED = False`.
 
 Next, we load the config defaults from the bundles defined in your ``unchained_config.BUNDLES`` setting. First the options from the ``Config`` class are loaded, and then if an env-specific config class exists, we then load options from it (possibly overwriting settings from ``Config``). All of the config classes are optional; if they don't exist Flask Unchained will simply skip trying to load them. Your app bundle is the one bundle where the ``Config`` class isn't optional. It's also special in that it gets loaded last and can therefore override all of the default settings as loaded from Flask Unchained and your ``BUNDLES``.
 

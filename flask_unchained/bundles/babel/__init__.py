@@ -16,9 +16,9 @@ PLURAL_TRANSLATION_KEY_RE = re.compile(r'^(?P<domain>[a-z_.]+):[a-z_.]+\.plural$
 
 class BabelBundle(Bundle):
     """
-    The :class:`Bundle` subclass for the Babel Bundle. Responsible for configuring
-    the correct gettext callables with Jinja, as well as optionally registering
-    endpoints for language-specific URLs (if enabled).
+    The :class:`~flask_unchained.Bundle` subclass for the Babel Bundle. Responsible for
+    configuring the correct gettext callables with Jinja, as well as optionally
+    registering endpoints for language-specific URLs (if enabled).
     """
 
     command_group_names = ('babel',)

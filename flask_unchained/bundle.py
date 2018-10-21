@@ -81,7 +81,7 @@ class Bundle(metaclass=BundleMeta):
     name: str = NameDescriptor()
     """
     Name of the bundle. Defaults to the snake cased class name, unless it's your app
-    bundle, in which case :python:`snake_case(right_replace(cls.__name__, 'Bundle', ''))`
+    bundle, in which case ``snake_case(right_replace(cls.__name__, 'Bundle', ''))``
     gets used instead.
     """
 

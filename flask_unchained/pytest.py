@@ -20,7 +20,9 @@ from .unchained import unchained
 
 
 RenderedTemplate = namedtuple('RenderedTemplate', 'template context')
-"""A ``namedtuple`` returned by the :meth:`templates` pytest fixture."""
+"""
+A ``namedtuple`` returned by the :func:`~flask_unchained.pytest.templates` fixture.
+"""
 
 ENV_BUILDER_KWARGS = {name for name, param
                       in inspect.signature(EnvironBuilder).parameters.items()

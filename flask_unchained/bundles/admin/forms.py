@@ -22,7 +22,7 @@ class ReorderableForm(BaseForm):
 class EnumField(Select2Field):
     """
     An extension of :class:`~flask_admin.form.fields.Select2Field`, adding support
-    for :class:`~enum.Enum`s.
+    for :class:`~enum.Enum`.
     """
 
     def __init__(self, column, **kwargs):

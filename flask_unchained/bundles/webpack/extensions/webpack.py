@@ -8,7 +8,7 @@ from markupsafe import Markup
 
 class Webpack:
     """
-    The `Webpack` extension::
+    The ``Webpack`` extension::
 
         from flask_unchained.bundles.webpack import webpack
     """

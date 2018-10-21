@@ -8,13 +8,7 @@
         h5: "
         h6: #
 
-.. support inline python code highlighting using :python:`foo = bar(5)`
-.. role:: python(code)
-   :language: python
-
-
 .. BEGIN document -------------------------------------------------------------
-
 
 Flask Unchained
 ===============
@@ -25,7 +19,7 @@ Flask Unchained
 
    readme
    tutorial/index
-   how_it_works
+   how-flask-unchained-works/index
    bundles/index
    commands
    testing
