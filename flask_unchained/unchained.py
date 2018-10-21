@@ -9,8 +9,9 @@ from flask import Flask, current_app
 from typing import *
 from werkzeug.local import LocalProxy
 
-from .constants import DEV, PROD, STAGING, TEST, _INJECT_CLS_ATTRS
-from .di import ensure_service_name, injectable
+from .constants import (DEV, PROD, STAGING, TEST,
+                        _DI_AUTOMATICALLY_HANDLED, _INJECT_CLS_ATTRS)
+from .di import ensure_service_name, injectable, _inject_cls_attrs
 from .exceptions import ServiceUsageError
 from .utils import AttrDict
 
@@ -244,7 +245,9 @@ class Unchained:
                     # where decorated with @inject. which would be silly, but,
                     # it should still work regardless
                     cls.__signature__ = fn.__signature__
-                return cls or fn
+
+                if not cls:
+                    return fn
 
             sig = inspect.signature(fn)
 
@@ -284,10 +287,20 @@ class Unchained:
                                'make sure it gets injected.'
                         raise ServiceUsageError(msg)
 
+                if cls and not getattr(cls, _DI_AUTOMATICALLY_HANDLED, False):
+                    cls_attrs_to_inject = getattr(cls, _INJECT_CLS_ATTRS, [])
+                    for attr, value in vars(cls).items():
+                        if value == injectable:
+                            cls_attrs_to_inject.append(attr)
+
+                    if cls_attrs_to_inject:
+                        setattr(cls, _INJECT_CLS_ATTRS, cls_attrs_to_inject)
+                        _inject_cls_attrs()(cls)
+
                 return fn(*bound_args.args, **bound_args.kwargs)
 
             new_fn.__signature__ = sig
-            new_fn.__di_name__ = fn.__name__
+            new_fn.__di_name__ = getattr(fn, '__di_name__', fn.__name__)
 
             if cls:
                 cls.__init__ = new_fn

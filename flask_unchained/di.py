@@ -6,7 +6,7 @@ from py_meta_utils import (AbstractMetaOption, McsArgs, MetaOptionsFactory,
 from types import FunctionType
 from typing import *
 
-from .constants import _INJECT_CLS_ATTRS
+from .constants import _DI_AUTOMATICALLY_HANDLED, _INJECT_CLS_ATTRS
 from .string_utils import snake_case
 
 
@@ -69,6 +69,8 @@ def _inject_cls_attrs(_wrapped_fn=None, _call_super_for_cls: Optional[str] = Non
 
 
 def set_up_class_dependency_injection(mcs_args: McsArgs):
+    mcs_args.clsdict[_DI_AUTOMATICALLY_HANDLED] = True
+
     cls_attrs_to_inject = [k for k, v in mcs_args.clsdict.items() if v == injectable]
     try:
         mcs_args.clsdict[_INJECT_CLS_ATTRS] = \
@@ -89,7 +91,8 @@ def set_up_class_dependency_injection(mcs_args: McsArgs):
         from .unchained import unchained
         init = unchained.inject()(mcs_args.clsdict['__init__'])
         init.__di_name__ = mcs_args.name
-        mcs_args.clsdict['__init__'] = _inject_cls_attrs(_wrapped_fn=init)
+        mcs_args.clsdict['__init__'] = (init if not cls_attrs_to_inject
+                                        else _inject_cls_attrs(_wrapped_fn=init))
         mcs_args.clsdict['__signature__'] = init.__signature__
 
     for attr, value in mcs_args.clsdict.items():

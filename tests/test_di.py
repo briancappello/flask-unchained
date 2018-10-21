@@ -172,3 +172,33 @@ class TestInjectedClassAttributes:
                           FourService)
         assert isinstance(unchained.services.extended_class_attr_with_init.funky_service,
                           FunkyService)
+
+    @pytest.mark.bundles(['tests._bundles.services_bundle'])
+    def test_injected_class_attrs_works_on_manually_decorated_classes(self):
+        from tests._bundles.services_bundle.services import NotAutomatic, OneService
+        instance = NotAutomatic()
+        assert isinstance(instance.one_service, OneService)
+
+    @pytest.mark.bundles(['tests._bundles.services_bundle'])
+    def test_injected_class_attrs_works_on_extended_decorated_classes(self):
+        from tests._bundles.services_bundle.services import (
+            NotAutomaticExtended, OneService)
+        instance = NotAutomaticExtended()
+        assert isinstance(instance.one_service, OneService)
+
+    @pytest.mark.bundles(['tests._bundles.services_bundle'])
+    def test_injected_class_attrs_works_on_manually_decorated_classes_with_init(self):
+        from tests._bundles.services_bundle.services import (
+            NotAutomaticWithInit, OneService, TwoService)
+        instance = NotAutomaticWithInit()
+        assert isinstance(instance.one_service, OneService)
+        assert isinstance(instance.two_service, TwoService)
+
+    @pytest.mark.bundles(['tests._bundles.services_bundle'])
+    def test_injected_class_attrs_works_on_extended_decorated_classes_with_init(self):
+        from tests._bundles.services_bundle.services import (
+            NotAutomaticWithInitExtended, OneService, TwoService, FunkyService)
+        instance = NotAutomaticWithInitExtended()
+        assert isinstance(instance.one_service, OneService)
+        assert isinstance(instance.two_service, TwoService)
+        assert isinstance(instance.funky_service, FunkyService)

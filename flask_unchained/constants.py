@@ -34,3 +34,4 @@ STAGING = 'staging'
 TEST = 'test'
 
 _INJECT_CLS_ATTRS = '__inject_cls_attrs__'
+_DI_AUTOMATICALLY_HANDLED = '__di_automatically_handled__'

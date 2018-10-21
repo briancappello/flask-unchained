@@ -66,3 +66,28 @@ class ExtendedClassAttrWithInit(ClassAttrServiceWithInit):
     def __init__(self, four_service: FourService = injectable):
         super().__init__()
         self.four_service: FourService = four_service
+
+
+@unchained.inject()
+class NotAutomatic:
+    one_service: OneService = injectable
+
+
+@unchained.inject()
+class NotAutomaticWithInit:
+    one_service: OneService = injectable
+
+    def __init__(self, two_service: TwoService = injectable):
+        self.two_service = two_service
+
+
+# when not adding any new injectable class attrs, should not need to decorate here
+class NotAutomaticExtended(NotAutomatic):
+    pass
+
+
+# when adding new injectable class attrs, the extended class must be wrapped with
+# unchained.inject() again, because class decorators do not work with inheritance
+@unchained.inject()
+class NotAutomaticWithInitExtended(NotAutomaticWithInit):
+    funky_service: FunkyService = injectable
