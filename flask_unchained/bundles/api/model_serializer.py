@@ -7,16 +7,19 @@ try:
     from flask_marshmallow.sqla import ModelSchema, SchemaOpts
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
     from marshmallow.marshalling import Unmarshaller as BaseUnmarshaller
+    from marshmallow.schema import SchemaMeta
     from marshmallow_sqlalchemy.convert import (
         ModelConverter as BaseModelConverter, _should_exclude_field)
     from marshmallow_sqlalchemy.schema import ModelSchemaMeta
 except ImportError:
     from py_meta_utils import OptionalClass as ModelSchema
     from py_meta_utils import OptionalClass as SchemaOpts
+    from py_meta_utils import OptionalMetaclass as SchemaMeta
     from py_meta_utils import OptionalClass as MarshmallowValidationError
     from py_meta_utils import OptionalClass as BaseUnmarshaller
     from py_meta_utils import OptionalClass as BaseModelConverter
     from py_meta_utils import OptionalMetaclass as ModelSchemaMeta
+    _should_exclude_field = None
 
 
 READ_ONLY_FIELDS = {'slug', 'created_at', 'updated_at'}
@@ -46,6 +49,10 @@ class ModelConverter(BaseModelConverter):
         the same as the hybrid property name. Otherwise we just fallback to the
         upstream naming convention.
         """
+        # this prevents an error when building the docs
+        if not hasattr(model, '__mapper__'):
+            return
+
         result = dict_cls()
         base_fields = base_fields or {}
         for prop in model.__mapper__.iterate_properties:
@@ -129,6 +136,24 @@ class ModelSerializerMeta(ModelSchemaMeta):
     def __init__(cls, name, bases, clsdict):
         cls._resolve_processors()
         type.__init__(cls, name, bases, clsdict)
+
+    # override marshmallow_sqlalchemy.SchemaMeta
+    @classmethod
+    def get_declared_fields(mcs, klass, cls_fields, inherited_fields, dict_cls):
+        """
+        Updates declared fields with fields converted from the SQLAlchemy model
+        passed as the `model` class Meta option.
+        """
+        opts = klass.opts
+        Converter = opts.model_converter
+        converter = Converter(schema_cls=klass)
+        base_fields = SchemaMeta.get_declared_fields(
+            klass, cls_fields, inherited_fields, dict_cls
+        )
+        declared_fields = mcs.get_fields(converter, opts, base_fields, dict_cls)
+        if declared_fields:  # this is needed to prevent sphinx from blowing up
+            declared_fields.update(base_fields)
+        return declared_fields
 
 
 class Unmarshaller(BaseUnmarshaller):
