@@ -43,6 +43,7 @@ class TestDateTime:
     def _do_persist_dt(self, db, session_manager):
         class Timestamp(db.Model):
             dt = db.Column(db.DateTime)
+
         db.create_all()
 
         instance = Timestamp(dt=datetime(year, month, day, hour,
