@@ -145,16 +145,16 @@ class Resource(Controller, metaclass=ResourceMeta):
          - /
        * - GET
          - get
-         - /<cls.member_param>
+         - /<cls.Meta.member_param>
        * - PATCH
          - patch
-         - /<cls.member_param>
+         - /<cls.Meta.member_param>
        * - PUT
          - put
-         - /<cls.member_param>
+         - /<cls.Meta.member_param>
        * - DELETE
          - delete
-         - /<cls.member_param>
+         - /<cls.Meta.member_param>
 
     So, for example::
 

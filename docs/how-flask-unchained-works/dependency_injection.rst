@@ -85,7 +85,7 @@ You can use the :meth:`flask_unchained.Unchained.inject` decorator anywhere else
 Injecting Services into Extensions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-It's also possible to inject services into extension instances, however because extensions get initialized before services are registered and initialized, you *cannot* use the inject decorator as described above. Instead, extensions should defined a method named ``inject_services``::
+It's also possible to inject services into extension instances, however because extensions get initialized before services are registered and initialized, you *cannot* use the inject decorator as described above. Instead, extensions may define a method named ``inject_services``::
 
    class SweetExtension:
        def init_app(app):

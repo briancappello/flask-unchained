@@ -212,7 +212,7 @@ class ApiTestClient(HtmlTestClient):
 
 class HtmlTestResponse(Response):
     """
-    Like :class:`~flask.wrappers.Response`, except extended with methods for inspecting
+    Like :class:`flask.wrappers.Response`, except extended with methods for inspecting
     the parsed URL and automatically decoding the response to a string.
     """
 

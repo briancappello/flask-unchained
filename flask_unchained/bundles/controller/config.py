@@ -17,5 +17,5 @@ class Config(BundleConfig):
 
     TEMPLATE_FILE_EXTENSION = '.html'
     """
-    The default file extension to use for templates (if left unspecified).
+    The default file extension to use for templates.
     """

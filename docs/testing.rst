@@ -30,6 +30,8 @@ client
 api_client
 ^^^^^^^^^^
 
+.. autofunction:: flask_unchained.pytest.api_client
+
 templates
 ^^^^^^^^^
 

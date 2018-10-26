@@ -202,7 +202,7 @@ Controllers have a few meta options that you can use to customize their behavior
 Overriding Controllers
 ######################
 
-Controllers can be extended or overridden by creating an equivalently named subclass higher up in the bundle hierarchy. (In other words, either in a bundle that extends another bundle, or in your app bundle.) As an example, the security bundle includes :class:`~flask_unchained.bundles.security.SecurityController`. To extend it, you would simply subclass it like any other class in Python and change what you need to:
+Controllers can be extended or overridden by creating an equivalently named class higher up in the bundle hierarchy. (In other words, either in a bundle that extends another bundle, or in your app bundle.) As an example, the security bundle includes :class:`~flask_unchained.bundles.security.SecurityController`. To extend it, you would simply subclass it like any other class in Python and change what you need to:
 
 .. code:: python
 
@@ -210,7 +210,12 @@ Controllers can be extended or overridden by creating an equivalently named subc
 
    from flask_unchained.bundles.security import SecurityController as BaseSecurityController
 
+   # to extend BaseSecurityController
    class SecurityController(BaseSecurityController):
+       pass
+
+   # to completely override it, just use the same name without extending the base class
+   class SecurityController:
        pass
 
 Resource
@@ -233,16 +238,16 @@ The :class:`~flask_unchained.Resource` class extends :class:`~flask_unchained.Co
      - /
    * - GET
      - get
-     - /<cls.member_param>
+     - /<cls.Meta.member_param>
    * - PATCH
      - patch
-     - /<cls.member_param>
+     - /<cls.Meta.member_param>
    * - PUT
      - put
-     - /<cls.member_param>
+     - /<cls.Meta.member_param>
    * - DELETE
      - delete
-     - /<cls.member_param>
+     - /<cls.Meta.member_param>
 
 If you implement any of these methods, then the shown URL rules will automatically be used.
 
@@ -316,8 +321,8 @@ Resources have a few extra meta options on top of those that Controller includes
        class Meta:
            abstract: bool = False                         # default is False
            decorators: List[callable] = ()                # default is an empty tuple
-           template_folder_name: str = 'sites'            # see explanation below
-           template_file_extension: Optional[str] = None  # default is None
+           member_param: String = '<int:id>'
+           unique_member_parm: String = f'<{member_param_type}:{controller_name(cls)}_{member_param_name}>'
            url_prefix = Optional[str] = None              # default is None
 
 .. list-table::
@@ -341,13 +346,13 @@ Because :class:`~flask_unchained.Resource` is already a subclass of :class:`~fla
 Templating
 """"""""""
 
-Flask Unchained uses the Jinja templating language, just like stock Flask.
+Flask Unchained uses the `Jinja <http://jinja.pocoo.org/docs/>`_ templating language, just like stock Flask.
 
-By default bundles are configured to use a `templates` subfolder. This is configurable by setting :attr:`flask_unchained.Bundle.template_folder` to a custom path.
+By default bundles are configured to use a ``templates`` subfolder. This is configurable by setting :attr:`flask_unchained.Bundle.template_folder` to a custom path.
 
 Controllers each have their own template folder within ``Bundle.template_folder``. It defaults to ``snake_case(right_replace(ControllerClass.__name__, 'Controller', ''))`` and is configurable by setting :attr:`flask_unchained.Controller.Meta.template_folder_name`.
 
-The default file extension used for templates is configured by setting ``TEMPLATE_FILE_EXTENSION``. It defaults to `.html`, and is also configurable on a per-controller basis by setting :attr:`flask_unchained.Controller.Meta.template_file_extension`.
+The default file extension used for templates is configured by setting ``TEMPLATE_FILE_EXTENSION``. It defaults to ``.html``, and is also configurable on a per-controller basis by setting :attr:`flask_unchained.Controller.Meta.template_file_extension`.
 
 Taking the above into account, given the following controller:
 
@@ -374,7 +379,7 @@ Overriding Templates
 
 Templates can be overridden by placing an equivalently named template higher up in the bundle hierarchy.
 
-So for example, the security bundle includes default templates for all of its views. They are located at ``security/login.html``, ``security/logout.html``, ``security/register.html``, and so on. Thus, to extend or override them, you would make a ``security`` folder in your app bundle's or your security bundle's ``templates`` folder and put your customized ``login.html`` template in it. Flask Unchained will do the rest to make sure it uses the one you wanted. It's also worth noting that can even extend the template you're overriding, using the standard Jinja syntax (this doesn't work in stock Flask apps):
+So for example, the security bundle includes default templates for all of its views. They are located at ``security/login.html``, ``security/logout.html``, ``security/register.html``, and so on. Thus, to extend or override them, you would make a ``security`` folder in your app bundle's or your security bundle's ``templates`` folder and put your customized ``login.html`` template in it. Flask Unchained will do the rest to make sure it uses the one you wanted. It's also worth noting that you can even extend the template you're overriding, using the standard Jinja syntax (this doesn't work in stock Flask apps):
 
 .. code:: html+jinja
 

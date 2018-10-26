@@ -33,7 +33,7 @@ To create a new bundle, create a new package and subclass :class:`~flask_unchain
    * - static_folder
      - Root directory path of the bundle's static assets folder. By default, if there exists a folder named ``static`` in the bundle package, it will be used, otherwise ``None``.
    * - static_url_path
-     - Url path where this bundle's static assets will be served from. If static_folder is set, this will default to ``/<bundle.name>/static``, otherwise ``None``.
+     - Url path where this bundle's static assets will be served from. If static_folder is set, this will default to ``/<bundle-name>/static``, otherwise ``None``.
 
 As far as determining the directory structure for the rest of the bundle goes, it is actually subclasses of :class:`~flask_unchained.AppFactoryHook` that set the defaults. (Hooks are what do most of the work of initializing the app.) There are some hooks that always run, and others that will run only if their bundle is configured to load in your ``unchained_config.BUNDLES``. Flask Unchained provides a command to make it easier to discover hooks, what order they run in, and where they load from:
 
