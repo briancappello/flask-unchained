@@ -4,10 +4,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql.naming import (ConventionDict, _get_convention,
                                    conv as converted_name)
 from sqlalchemy_unchained import (DeclarativeMeta, BaseValidator, Required,
-                                  ValidationError, ValidationErrors, validates)
+                                  ValidationError, ValidationErrors)
 
 from .. import sqla
 from ..base_model import BaseModel
+from ..services import SessionManager, ModelManager
 from ..model_registry import UnchainedModelRegistry  # required so the correct one gets used
 
 
@@ -25,12 +26,15 @@ class SQLAlchemyUnchained(BaseSQLAlchemy):
                          metadata=metadata,
                          query_class=query_class,
                          model_class=model_class)
+        SessionManager.set_session_factory(lambda: self.session())
+        self.SessionManager = SessionManager
+        self.ModelManager = ModelManager
+
         self.Column = sqla.Column
         self.BigInteger = sqla.BigInteger
         self.DateTime = sqla.DateTime
         self.foreign_key = sqla.foreign_key
 
-        self.validates = validates
         self.BaseValidator = BaseValidator
         self.Required = Required
         self.ValidationError = ValidationError

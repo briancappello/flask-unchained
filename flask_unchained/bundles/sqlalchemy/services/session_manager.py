@@ -1,45 +1,15 @@
-from contextlib import contextmanager
-from flask_unchained import BaseService, injectable
-from typing import *
-
-from ..base_model import BaseModel as Model
-from ..extensions import SQLAlchemyUnchained
+from flask_unchained import BaseService
+from flask_unchained.di import ServiceMeta
+from sqlalchemy_unchained.session_manager import (SessionManager as _SessionManager,
+                                                  _SessionMetaclass)
 
 
-class SessionManager(BaseService):
+class SessionManagerServiceMetaclass(ServiceMeta, _SessionMetaclass):
+    pass
+
+
+class SessionManager(_SessionManager, BaseService,
+                     metaclass=SessionManagerServiceMetaclass):
     """
     The session manager.
     """
-    def __init__(self, db: SQLAlchemyUnchained = injectable):
-        self.db = db
-
-    def save(self, instance: Model, commit: bool = False):
-        self.db.session.add(instance)
-        if commit:
-            self.commit()
-
-    def save_all(self, instances: List[Model], commit: bool = False):
-        self.db.session.add_all(instances)
-        if commit:
-            self.commit()
-
-    def delete(self, instance: Model, commit: bool = False):
-        self.db.session.delete(instance)
-        if commit:
-            self.commit()
-
-    def commit(self):
-        self.db.session.commit()
-
-    @property
-    @contextmanager
-    def no_autoflush(self):
-        autoflush = self.db.session.autoflush
-        self.db.session.autoflush = False
-        try:
-            yield self
-        finally:
-            self.db.session.autoflush = autoflush
-
-    def __getattr__(self, method_name):
-        return getattr(self.db.session, method_name)

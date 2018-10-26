@@ -3,6 +3,8 @@ import pytest
 
 from flask_unchained import unchained, injectable
 
+from .services import SessionManager
+
 
 @pytest.fixture(autouse=True, scope='session')
 def db(app):
@@ -19,6 +21,7 @@ def db_session(db):
     transaction = connection.begin()
     session = db.create_scoped_session(options=dict(bind=connection, binds={}))
     db.session = session
+    SessionManager.set_session_factory(session)
     try:
         yield session
     finally:
