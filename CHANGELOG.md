@@ -12,6 +12,7 @@
 * remove `Bundle.root_folder` descriptor as it made no sense
 * fix `Bundle.static_url_path` descriptor
 * rename `AppConfig` to `AppBundleConfig`
+* specify required minimum package versions in `setup.py`, and pin versions in `requirements.txt`
 
 ## 0.6.6 (2018/10/09)
 
