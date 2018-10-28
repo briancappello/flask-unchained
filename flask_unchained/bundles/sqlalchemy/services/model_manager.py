@@ -9,7 +9,21 @@ from .session_manager import SessionManager
 
 
 class ModelManagerMetaOptionsFactory(ServiceMetaOptionsFactory):
+    _allowed_properties = ['model']
     _options = ServiceMetaOptionsFactory._options + [ModelMetaOption]
+
+    def __init__(self):
+        super().__init__()
+        self._model = None
+
+    @property
+    def model(self):
+        # make sure to always return the correct mapped model class
+        return unchained.sqlalchemy_bundle.models[self._model.__name__]
+
+    @model.setter
+    def model(self, model):
+        self._model = model
 
 
 class ModelManager(SessionManager):
@@ -21,13 +35,6 @@ class ModelManager(SessionManager):
     class Meta:
         abstract = True
         model = None
-
-    def __init__(self):
-        super().__init__()
-        try:
-            self.Meta.model = unchained.sqlalchemy_bundle.models[self.Meta.model.__name__]
-        except (AttributeError, KeyError):
-            pass
 
     @property
     def q(self) -> BaseQuery:

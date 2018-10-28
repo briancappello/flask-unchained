@@ -2,7 +2,7 @@
 
 ## 0.7.0 (unreleased)
 
-* require py-meta-utils 0.7.0 and sqlalchemy-unchained 0.6.2
+* require py-meta-utils 0.7.2 and sqlalchemy-unchained 0.6.3
 * require flask-sqlalchemy-unchained 0.4.1
 * rename `SQLAlchemy` extension class to `SQLAlchemyUnchained`
 * add a way for bundle configs to get access to the current app-under-construction

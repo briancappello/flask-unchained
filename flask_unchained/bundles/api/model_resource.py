@@ -234,7 +234,8 @@ class MethodDecoratorsMetaOption(MetaOption):
                     f'the {method_name} key'
 
 
-class ResourceMetaOptionsFactory(ResourceMetaOptionsFactory):
+class ModelResourceMetaOptionsFactory(ResourceMetaOptionsFactory):
+    _allowed_properties = ['model']
     _options = ResourceMetaOptionsFactory._options + [
         ModelMetaOption,
         SerializerMetaOption,
@@ -247,24 +248,32 @@ class ResourceMetaOptionsFactory(ResourceMetaOptionsFactory):
         MethodDecoratorsMetaOption,
     ]
 
+    def __init__(self):
+        super().__init__()
+        self._model = None
+
+    @property
+    def model(self):
+        # make sure to always return the correct mapped model class
+        return unchained.sqlalchemy_bundle.models[self._model.__name__]
+
+    @model.setter
+    def model(self, model):
+        self._model = model
+
 
 class ModelResource(Resource, metaclass=ModelResourceMeta):
     """
     Base class for model resources. This is intended for building RESTful APIs
     with SQLAlchemy models and Marshmallow serializers.
     """
-    _meta_options_factory_class = ResourceMetaOptionsFactory
+    _meta_options_factory_class = ModelResourceMetaOptionsFactory
 
     class Meta:
         abstract = True
 
     def __init__(self, session_manager: SessionManager = injectable):
         self.session_manager = session_manager
-        try:
-            self.Meta.model = \
-                unchained.sqlalchemy_bundle.models[self.Meta.model.__name__]
-        except KeyError:
-            pass
 
     @classmethod
     def methods(cls):

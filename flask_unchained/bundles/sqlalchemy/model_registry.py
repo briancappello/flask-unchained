@@ -20,6 +20,10 @@ class UnchainedModelRegistry(_ModelRegistry):
         #   - value is the attribute expected to exist
         self._relationships: Dict[str, Dict[str, str]] = {}
 
+    def _reset(self):
+        super()._reset()
+        self._relationships = {}
+
     def register(self, mcs_init_args: McsInitArgs):
         super().register(mcs_init_args)
 
