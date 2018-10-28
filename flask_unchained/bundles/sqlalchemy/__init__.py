@@ -18,6 +18,3 @@ class SQLAlchemyBundle(Bundle):
         """
         A lookup of model classes keyed by class name.
         """
-
-    def after_init_app(self, app):
-        UnchainedModelRegistry().finalize_mappings()
