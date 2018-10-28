@@ -4,7 +4,7 @@ import pytest
 from datetime import datetime, timezone
 
 from flask_unchained import AppFactory, TEST
-from flask_unchained.bundles.sqlalchemy.pytest import *
+from ..sqlalchemy.conftest import *
 from flask_unchained.bundles.security.pytest import *
 
 from tests.bundles.security._bundles.security.models import User, Role, UserRole
@@ -14,13 +14,11 @@ from tests.bundles.security._bundles.security.models import User, Role, UserRole
 # so that the only_if rules on routes work correctly with our @pytest.mark.options
 
 @pytest.fixture(autouse=True)
-def app(request, bundles):
+def app(request, bundles, db_ext):
     """
     Automatically used test fixture. Returns the application instance-under-test with
     a valid app context.
     """
-    unchained._reset()
-
     options = {}
     for mark in request.node.iter_markers('options'):
         kwargs = getattr(mark, 'kwargs', {})
@@ -37,15 +35,6 @@ def app(request, bundles):
     ctx.push()
     yield app
     ctx.pop()
-
-
-@pytest.fixture(autouse=True)
-def db(app):
-    db_ext = app.unchained.extensions.db
-    # FIXME might need to reflect the current db, drop, and then create...
-    db_ext.create_all()
-    yield db_ext
-    db_ext.drop_all()
 
 
 class UserFactory(ModelFactory):
