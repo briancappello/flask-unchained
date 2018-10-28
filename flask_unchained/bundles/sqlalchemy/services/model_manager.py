@@ -19,6 +19,8 @@ class ModelManagerMetaOptionsFactory(ServiceMetaOptionsFactory):
     @property
     def model(self):
         # make sure to always return the correct mapped model class
+        if not unchained._initialized or not self._model:
+            return self._model
         return unchained.sqlalchemy_bundle.models[self._model.__name__]
 
     @model.setter

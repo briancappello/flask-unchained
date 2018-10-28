@@ -99,11 +99,44 @@ class ModelSerializerOpts(SchemaOpts):
     Sets the default ``model_converter`` to :class:`ModelConverter`.
     """
     def __init__(self, meta, **kwargs):
+        self._model = None
         super().__init__(meta, **kwargs)
         self.model_converter = getattr(meta, 'model_converter', ModelConverter)
 
+    @property
+    def model(self):
+        # make sure to always return the correct mapped model class
+        if not unchained._initialized or not self._model:
+            return self._model
+        return unchained.sqlalchemy_bundle.models[self._model.__name__]
 
-class ModelSerializerMeta(ModelSchemaMeta):
+    @model.setter
+    def model(self, model):
+        self._model = model
+
+
+class _ModelDescriptor:
+    _model = None
+
+    def __get__(self, instance, owner):
+        # make sure to always return the correct mapped model class
+        if not unchained._initialized or not self._model:
+            return self._model
+        return unchained.sqlalchemy_bundle.models[self._model.__name__]
+
+    def __set__(self, instance, value):
+        self._model = value
+
+
+class _ModelSerializerMetaMetaclass(type):
+    model = _ModelDescriptor()
+
+
+class _BaseModelSerializerMeta(metaclass=_ModelSerializerMetaMetaclass):
+    pass
+
+
+class ModelSerializerMetaclass(ModelSchemaMeta):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         set_up_class_dependency_injection(mcs_args)
@@ -121,8 +154,9 @@ class ModelSerializerMeta(ModelSchemaMeta):
         if model_missing:
             raise AttributeError(f'{name} is missing the ``class Meta`` model attribute')
 
+        model = None
         try:
-            meta.model = unchained.sqlalchemy_bundle.models[meta.model.__name__]
+            model = unchained.sqlalchemy_bundle.models[meta.model.__name__]
         except AttributeError:
             # this happens when attempting to generate documentation and the
             # sqlalchemy bundle hasn't been loaded
@@ -130,7 +164,11 @@ class ModelSerializerMeta(ModelSchemaMeta):
         except KeyError:
             pass
 
-        clsdict['Meta'] = meta
+        meta_dict = dict(meta.__dict__)
+        meta_dict.pop('model', None)
+        clsdict['Meta'] = type('Meta', (_BaseModelSerializerMeta,), meta_dict)
+        clsdict['Meta'].model = model
+
         return super().__new__(*mcs_args)
 
     def __init__(cls, name, bases, clsdict):
@@ -168,7 +206,7 @@ class Unmarshaller(BaseUnmarshaller):
     __call__ = deserialize
 
 
-class ModelSerializer(ModelSchema, metaclass=ModelSerializerMeta):
+class ModelSerializer(ModelSchema, metaclass=ModelSerializerMetaclass):
     """
     Base class for database model serializers. This is pretty much a stock
     :class:`flask_marshmallow.sqla.ModelSchema`: it will automatically create
