@@ -152,8 +152,8 @@ def _load_bundle(bundle_package_name: str, type_checker):
     for module_name in [f'{bundle_package_name}.bundle', bundle_package_name]:
         try:
             module = importlib.import_module(module_name)
-        except (ImportError, ModuleNotFoundError) as e:
-            if bundle_package_name in str(e):
+        except ImportError as e:
+            if str(e) == f"No module named '{module_name}'":
                 continue
             raise e
 

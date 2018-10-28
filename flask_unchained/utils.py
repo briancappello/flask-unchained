@@ -96,7 +96,8 @@ def safe_import_module(module_name):
     try:
         return import_module(module_name)
     except ImportError as e:
-        if module_name not in str(e):
+        m = re.match(r"No module named '([\w\.]+)'", str(e))
+        if not m or not module_name.startswith(m.group(1)):
             raise e
 
 

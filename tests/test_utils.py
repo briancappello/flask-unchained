@@ -19,10 +19,7 @@ def test_get_boolean_env(monkeypatch):
 
 def test_safe_import_module():
     assert safe_import_module('gobblygook') is None
-
-    with pytest.raises(ModuleNotFoundError) as e:
-        safe_import_module('should.not.exist')
-    assert "No module named 'should'" in str(e)
+    assert safe_import_module('should.not.exist') is None
 
     module = safe_import_module('flask_unchained')
     assert module.__name__ == 'flask_unchained'
