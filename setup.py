@@ -77,7 +77,7 @@ setup(
         ],
         'sqlalchemy': [
             'flask-migrate>=2.2.1',
-            'flask-sqlalchemy-unchained>=0.6.3',
+            'flask-sqlalchemy-unchained>=0.6.4',
             'py-yaml-fixtures>=0.2',
         ],
     },

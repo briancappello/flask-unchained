@@ -2,8 +2,7 @@
 
 ## 0.7.0 (unreleased)
 
-* require py-meta-utils 0.7.2 and sqlalchemy-unchained 0.6.3
-* require flask-sqlalchemy-unchained 0.4.1
+* require py-meta-utils 0.7.2 and flask-sqlalchemy-unchained 0.6.4
 * rename `SQLAlchemy` extension class to `SQLAlchemyUnchained`
 * add a way for bundle configs to get access to the current app-under-construction
 * support specifying parameters to inject into services as class attributes
@@ -13,6 +12,7 @@
 * fix `Bundle.static_url_path` descriptor
 * rename `AppConfig` to `AppBundleConfig`
 * specify required minimum package versions in `setup.py`, and pin versions in `requirements.txt`
+* fix the `UnchainedModelRegistry.reset` method so it allows using factory_boy from `conftest.py`
 
 ## 0.6.6 (2018/10/09)
 

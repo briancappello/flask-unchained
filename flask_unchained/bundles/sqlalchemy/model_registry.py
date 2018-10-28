@@ -1,3 +1,4 @@
+import sys
 import warnings
 
 from py_meta_utils import McsInitArgs
@@ -21,6 +22,13 @@ class UnchainedModelRegistry(_ModelRegistry):
         self._relationships: Dict[str, Dict[str, str]] = {}
 
     def _reset(self):
+        for model in self._registry:
+            for model_module in self._registry[model]:
+                try:
+                    del sys.modules[model_module]
+                except KeyError:
+                    pass
+
         super()._reset()
         self._relationships = {}
 
