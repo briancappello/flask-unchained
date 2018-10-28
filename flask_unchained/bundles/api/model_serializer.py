@@ -148,10 +148,9 @@ class ModelSerializerMeta(ModelSchemaMeta):
         Converter = opts.model_converter
         converter = Converter(schema_cls=klass)
         base_fields = SchemaMeta.get_declared_fields(
-            klass, cls_fields, inherited_fields, dict_cls
-        )
+            klass, cls_fields, inherited_fields, dict_cls)
         declared_fields = mcs.get_fields(converter, opts, base_fields, dict_cls)
-        if declared_fields:  # this is needed to prevent sphinx from blowing up
+        if declared_fields is not None:  # prevents sphinx from blowing up
             declared_fields.update(base_fields)
         return declared_fields
 
