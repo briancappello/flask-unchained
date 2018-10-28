@@ -25,7 +25,7 @@ setup(
         'flask>=1.0.2',
         'flask_babelex>=0.9.3',
         'flask-wtf>=0.14.2',
-        'py-meta-utils>=0.7.2',
+        'py-meta-utils>=0.7.3',
         'networkx>=2.1',
     ],
     extras_require={
@@ -77,7 +77,7 @@ setup(
         ],
         'sqlalchemy': [
             'flask-migrate>=2.2.1',
-            'flask-sqlalchemy-unchained>=0.6.4',
+            'flask-sqlalchemy-unchained>=0.6.5',
             'py-yaml-fixtures>=0.2',
         ],
     },

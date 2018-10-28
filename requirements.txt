@@ -14,7 +14,7 @@ flask-marshmallow==0.9.0
 flask_migrate==2.2.1
 flask-principal==0.4.0
 flask-session==0.3.1
-flask-sqlalchemy-unchained==0.6.4
+flask-sqlalchemy-unchained==0.6.5
 flask_wtf==0.14.2
 IPython==7.1.1
 itsdangerous==0.24
@@ -25,7 +25,7 @@ marshmallow==2.16.1
 marshmallow-sqlalchemy==0.14.1
 networkx==2.1
 passlib==1.7.1
-py-meta-utils==0.7.2
+py-meta-utils==0.7.3
 py-yaml-fixtures==0.2.0
 pyqt5==5.11.2
 speaklater==1.3
