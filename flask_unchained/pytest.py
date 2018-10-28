@@ -61,14 +61,17 @@ def app(request):
     ctx.pop()
 
 
+# FIXME this only seems to work on tests themselves, but *not* for test fixtures :(
 @pytest.fixture(autouse=True)
 def maybe_inject_extensions_and_services(app, request):
     """
-    Automatically used test fixture. Allows for using dependency-injected services as
+    Automatically used test fixture. Allows for using services and extensions as
     if they were test fixtures::
 
-        def test_something(security_service=injectable, user_manager=injectable):
+        def test_something(db, mail, security_service, user_manager):
             # assert important stuff
+
+    **NOTE:** This only works on tests themselves; it will *not* work on test fixtures
     """
     item = request._pyfuncitem
     fixture_names = getattr(item, "fixturenames", request.fixturenames)
@@ -90,7 +93,7 @@ class FlaskCliRunner(CliRunner):
     Extended from upstream to run commands within the Flask app context.
 
     The CLI runner provides functionality to invoke a Click command line
-    script for unittesting purposes in a isolated environment. This only
+    script for unit testing purposes in a isolated environment. This only
     works in single-threaded systems without any concurrency as it changes the
     global interpreter state.
 

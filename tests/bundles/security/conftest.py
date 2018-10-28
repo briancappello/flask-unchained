@@ -32,6 +32,7 @@ def app(request, bundles):
         'tests.bundles.security._bundles.security',
         'tests.bundles.security._app',
     ], _config_overrides=options)
+
     ctx = app.app_context()
     ctx.push()
     yield app

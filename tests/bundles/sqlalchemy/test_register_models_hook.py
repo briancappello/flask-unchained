@@ -4,7 +4,7 @@ from flask_sqlalchemy_unchained import BaseModel as Model
 from flask_unchained import unchained
 from flask_unchained.bundles.sqlalchemy import SQLAlchemyBundle
 from flask_unchained.bundles.sqlalchemy.hooks import RegisterModelsHook
-from tests.conftest import POSTGRES
+from tests.bundles.sqlalchemy.conftest import POSTGRES
 from typing import *
 
 from ._bundles.app import MyAppBundle

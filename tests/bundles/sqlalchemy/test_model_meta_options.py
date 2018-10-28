@@ -1,7 +1,7 @@
 import pytest
 
 from flask_unchained.bundles.sqlalchemy.model_registry import UnchainedModelRegistry
-from tests.conftest import POSTGRES
+from tests.bundles.sqlalchemy.conftest import POSTGRES
 
 
 class TestModelMetaOptions:

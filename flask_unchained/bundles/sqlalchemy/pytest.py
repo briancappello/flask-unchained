@@ -3,7 +3,8 @@ import pytest
 
 from flask_unchained import unchained, injectable
 
-from .services import SessionManager
+# must import the model registry here so the right one gets used
+from .model_registry import UnchainedModelRegistry
 
 
 @pytest.fixture(autouse=True, scope='session')
@@ -21,7 +22,7 @@ def db_session(db):
     transaction = connection.begin()
     session = db.create_scoped_session(options=dict(bind=connection, binds={}))
     db.session = session
-    SessionManager.set_session_factory(session)
+
     try:
         yield session
     finally:
