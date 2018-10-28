@@ -1,6 +1,6 @@
 # Flask Unchained
 
-## The better way to build large Flask apps
+## The best way to build Flask apps
 
 Flask Unchained aims to provide a fully integrated, optional-batteries-included MVC web framework built on top of Flask and its extension ecosystem. It provides a Flask extension that implements the Application Factory Pattern, utilizing a standardized (but configurable) way to organize "bundles" of code, such that they become easily distributable, reusable, and customizable across multiple independent Flask Unchained projects. The focus is on developer productivity and enjoyment, and the architecture is inspired by [Symfony](https://symfony.com/), which is awesome, aside from the fact that it isn't Python ;)
 
@@ -14,10 +14,12 @@ Flask Unchained aims to provide a fully integrated, optional-batteries-included 
 
 * Python 3.6+
 * includes out-of-the-box (mostly optional) integrations with:
-   - [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) (translations, required)
-   - [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/) (forms and CSRF protection, required)
+   - [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) (translations, always enabled but optional)
+   - [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/) (forms and CSRF protection, always enabled)
    - [Flask-SQLAlchemy](http://flask-sqlalchemy.pocoo.org/latest/) and [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/) (database ORM and migrations, optional)
-   - [Flask-Login](http://flask-login.readthedocs.io/) and [Flask-Principal](https://pythonhosted.org/Flask-Principal/) (authentication and authorization, optional)
+   - [Flask-Login](http://flask-login.readthedocs.io/) (user authentication and sessions management) and [Flask-Principal](https://pythonhosted.org/Flask-Principal/) (user authorization with permissions and roles)
+     - includes optional support for registration (with optional email confirmation)
+     - optional change password and forgot password functionality
    - [Flask-Mail](https://pythonhosted.org/flask-mail/) (email sending support, optional)
    - [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/) (SQLAlchemy model serialization, optional)
    - [Flask-Session](https://pythonhosted.org/Flask-Session/) (server-side sessions, optional)

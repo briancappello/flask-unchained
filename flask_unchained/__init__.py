@@ -2,7 +2,7 @@
     flask_unchained
     ---------------
 
-    The better way to build large Flask apps
+    The best way to build Flask apps
 
     :copyright: Copyright © 2018 Brian Cappello
     :license: MIT, see LICENSE for more details
