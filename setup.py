@@ -60,6 +60,11 @@ setup(
             'PyQt5>=5.11.2',
             'qtconsole>=4.4.0',
         ],
+        'graphene': [
+            'flask-graphene>=2.0',
+            'graphene>=2.1.3',
+            'graphene-sqlalchemy>=2.1.0',
+        ],
         'mail': [
             'beautifulsoup4>=4.6.3',
             'lxml>=4.2.4',

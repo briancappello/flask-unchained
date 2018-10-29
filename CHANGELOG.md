@@ -2,20 +2,35 @@
 
 ## v0.7.0 (unreleased)
 
-- require py-meta-utils 0.7.3 and flask-sqlalchemy-unchained 0.6.6
-- rename `SQLAlchemy` extension class to `SQLAlchemyUnchained`
+### Features
+
+- :fire:GraphQL:fire: support with the new Graphene Bundle
+- add support specifying parameters to inject into classes as class attributes
+
+#### Configuration Improvements
+
 - add a way for bundle configs to get access to the current app-under-construction
-- support specifying parameters to inject into services as class attributes
-- fix setting of `Route._controller_cls` when controllers extend another concrete controller with routes
-- update to marshmallow 2.16
-- remove `Bundle.root_folder` descriptor as it made no sense
-- fix `Bundle.static_url_path` descriptor
-- rename `AppConfig` to `AppBundleConfig`
-- specify required minimum package versions in `setup.py`, and pin versions in `requirements.txt`
-- fix the `UnchainedModelRegistry.reset` method so it allows using factory_boy from `conftest.py`
-- improve documentation of how Flask Unchained works
 - make options in `app.config` accessible as attributes, eg `app.config.SECRET_KEY` is now the same as `app.config['SECRET_KEY']`
 - apply any settings from the app bundle config not already present in `app.config` as defaults before loading bundles
+
+### General
+
+- improve documentation of how Flask Unchained works
+- updated to py-meta-utils 0.7.3 and flask-sqlalchemy-unchained 0.6.6
+- update to marshmallow 2.16
+
+### Breaking Changes
+
+- rename `AppConfig` to `AppBundleConfig`
+- rename `SQLAlchemy` extension class to `SQLAlchemyUnchained`
+- remove `Bundle.root_folder` descriptor as it made no sense
+
+### Bug fixes
+
+- fix setting of `Route._controller_cls` when controllers extend another concrete controller with routes
+- fix `Bundle.static_url_path` descriptor
+- specify required minimum package versions in `setup.py`, and pin versions in `requirements.txt`
+- fix the `UnchainedModelRegistry.reset` method so it allows using factory_boy from `conftest.py`
 
 ## v0.6.6 (2018/10/09)
 
