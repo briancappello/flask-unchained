@@ -1,15 +1,14 @@
 from flask_unchained import BaseService
 from flask_unchained.di import ServiceMeta
 from sqlalchemy_unchained.session_manager import (SessionManager as _SessionManager,
-                                                  _SessionMetaclass)
+                                                  _SessionManagerMetaclass)
 
 
-class SessionManagerServiceMetaclass(ServiceMeta, _SessionMetaclass):
+class SessionManagerMetaclass(ServiceMeta, _SessionManagerMetaclass):
     pass
 
 
-class SessionManager(_SessionManager, BaseService,
-                     metaclass=SessionManagerServiceMetaclass):
+class SessionManager(_SessionManager, BaseService, metaclass=SessionManagerMetaclass):
     """
-    The session manager.
+    The database session manager service.
     """
