@@ -65,7 +65,7 @@ class Security(_SecurityConfigProperties):
         self.confirm_serializer = self._get_serializer(app, 'confirm')
         self.hashing_context = self._get_hashing_context(app)
         self.login_manager = self._get_login_manager(
-            app, app.config.get('SECURITY_ANONYMOUS_USER'))
+            app, app.config.SECURITY_ANONYMOUS_USER)
         self.login_serializer = self._get_serializer(app, 'login')
         self.principal = self._get_principal(app)
         self.pwd_context = self._get_pwd_context(app)
@@ -176,8 +176,8 @@ class Security(_SecurityConfigProperties):
         """
         Get the token hashing (and verifying) context.
         """
-        schemes = app.config.get('SECURITY_HASHING_SCHEMES')
-        deprecated = app.config.get('SECURITY_DEPRECATED_HASHING_SCHEMES')
+        schemes = app.config.SECURITY_HASHING_SCHEMES
+        deprecated = app.config.SECURITY_DEPRECATED_HASHING_SCHEMES
         return CryptContext(
             schemes=schemes,
             deprecated=deprecated)
@@ -218,9 +218,9 @@ class Security(_SecurityConfigProperties):
         """
         Get the password hashing context.
         """
-        pw_hash = app.config.get('SECURITY_PASSWORD_HASH')
-        schemes = app.config.get('SECURITY_PASSWORD_SCHEMES')
-        deprecated = app.config.get('SECURITY_DEPRECATED_PASSWORD_SCHEMES')
+        pw_hash = app.config.SECURITY_PASSWORD_HASH
+        schemes = app.config.SECURITY_PASSWORD_SCHEMES
+        deprecated = app.config.SECURITY_DEPRECATED_PASSWORD_SCHEMES
         if pw_hash not in schemes:
             allowed = (', '.join(schemes[:-1]) + ' and ' + schemes[-1])
             raise ValueError(
@@ -240,7 +240,7 @@ class Security(_SecurityConfigProperties):
           ``remember``, or ``reset``
         :return: URLSafeTimedSerializer
         """
-        secret_key = app.config.get('SECRET_KEY')
+        secret_key = app.config.SECRET_KEY
         salt = app.config.get('SECURITY_%s_SALT' % name.upper())
         return URLSafeTimedSerializer(secret_key=secret_key, salt=salt)
 

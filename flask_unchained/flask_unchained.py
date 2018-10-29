@@ -1,4 +1,10 @@
-from flask import Flask
+from flask import Flask, Config as _FlaskConfig
+
+from .utils import AttrDict
+
+
+class AttrDictFlaskConfig(AttrDict, _FlaskConfig):
+    pass
 
 
 class FlaskUnchained(Flask):
@@ -7,6 +13,8 @@ class FlaskUnchained(Flask):
     :meth:`register_blueprint` and :meth:`add_url_rule` to support
     automatic (optional) registration of URLs prefixed with a language code.
     """
+
+    config_class = AttrDictFlaskConfig
 
     env: str = None
     """

@@ -70,7 +70,7 @@ class SecurityService(BaseService):
         session['_id'] = app.login_manager._session_identifier_generator()
 
         if remember is None:
-            remember = app.config.get('SECURITY_DEFAULT_REMEMBER_ME')
+            remember = app.config.SECURITY_DEFAULT_REMEMBER_ME
         if remember:
             session['remember'] = 'set'
             if duration is not None:
@@ -105,7 +105,7 @@ class SecurityService(BaseService):
         elif confirmation_required in form.errors.get('email', []):
             error = confirmation_required
         else:
-            identity_attrs = app.config.get('SECURITY_USER_IDENTITY_ATTRIBUTES')
+            identity_attrs = app.config.SECURITY_USER_IDENTITY_ATTRIBUTES
             error = f"Invalid {', '.join(identity_attrs)} and/or password."
 
         # wipe out all individual field errors, we just want a single form-level error
@@ -158,7 +158,7 @@ class SecurityService(BaseService):
 
         if (send_email or (
                 send_email is None
-                and app.config.get('SECURITY_SEND_REGISTER_EMAIL'))):
+                and app.config.SECURITY_SEND_REGISTER_EMAIL)):
             self.send_mail(_('flask_unchained.bundles.security:email_subject.register'),
                            to=user.email,
                            template='security/email/welcome.html',
@@ -183,7 +183,7 @@ class SecurityService(BaseService):
         """
         user.password = password
         self.user_manager.save(user)
-        if send_email or (app.config.get('SECURITY_SEND_PASSWORD_CHANGED_EMAIL')
+        if send_email or (app.config.SECURITY_SEND_PASSWORD_CHANGED_EMAIL
                           and send_email is None):
             self.send_mail(
                 _('flask_unchained.bundles.security:email_subject.password_changed_notice'),
@@ -205,7 +205,7 @@ class SecurityService(BaseService):
         """
         user.password = password
         self.user_manager.save(user)
-        if app.config.get('SECURITY_SEND_PASSWORD_RESET_NOTICE_EMAIL'):
+        if app.config.SECURITY_SEND_PASSWORD_RESET_NOTICE_EMAIL:
             self.send_mail(
                 _('flask_unchained.bundles.security:email_subject.password_reset_notice'),
                 to=user.email,

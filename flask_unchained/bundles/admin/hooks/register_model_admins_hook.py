@@ -17,7 +17,7 @@ class RegisterModelAdminsHook(AppFactoryHook):
 
     def process_objects(self, app, objects):
         admin = self.unchained.extensions.admin
-        admin.category_icon_classes = app.config.get('ADMIN_CATEGORY_ICON_CLASSES')
+        admin.category_icon_classes = app.config.ADMIN_CATEGORY_ICON_CLASSES
 
         db = self.unchained.extensions.db
         models = self.unchained.sqlalchemy_bundle.models
@@ -32,7 +32,7 @@ class RegisterModelAdminsHook(AppFactoryHook):
                 session=db.session,
                 name=admin_cls.name,
                 endpoint=admin_cls.endpoint,
-                url=app.config.get('ADMIN_BASE_URL') + '/' + admin_cls.slug,
+                url=app.config.ADMIN_BASE_URL + '/' + admin_cls.slug,
                 category=admin_cls.category_name,
                 menu_class_name=admin_cls.menu_class_name,
                 menu_icon_value=admin_cls.menu_icon_value,

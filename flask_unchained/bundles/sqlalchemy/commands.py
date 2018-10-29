@@ -60,7 +60,7 @@ def reset_command(force):
 @maybe_fixtures_command(name='import-fixtures')
 @with_appcontext
 def import_fixtures():
-    fixtures_dir = current_app.config.get('PY_YAML_FIXTURES_DIR')
+    fixtures_dir = current_app.config.PY_YAML_FIXTURES_DIR
     if not fixtures_dir or not os.path.exists(fixtures_dir):
         msg = (f'Could not find the {fixtures_dir} directory, please make sure '
                'PY_YAML_FIXTURES_DIR is set correctly and the directory exists')

@@ -36,7 +36,7 @@ class ConfigProperty:
         self.key = key
 
     def __get__(self, instance, cls):
-        return current_app.config.get(self.key)
+        return current_app.config[self.key]
 
 
 class ConfigPropertyMeta(type):
@@ -58,8 +58,8 @@ class ConfigPropertyMeta(type):
             _custom: Optional[str] = ConfigProperty('MY_EXTENSION_CUSTOM')
 
         my_extension = MyExtension(app)
-        my_extension.foobar == current_app.config.get('MY_EXTENSION_FOOBAR')
-        my_extension._custom == current_app.config.get('MY_EXTENSION_CUSTOM')
+        my_extension.foobar == current_app.config.MY_EXTENSION_FOOBAR
+        my_extension._custom == current_app.config.MY_EXTENSION_CUSTOM
     """
     def __init__(cls, class_name, bases, clsdict):
         super().__init__(class_name, bases, clsdict)

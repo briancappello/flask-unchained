@@ -75,7 +75,7 @@ class SecurityController(Controller):
         return self.redirect('SECURITY_POST_LOGOUT_REDIRECT_ENDPOINT')
 
     @route(methods=['GET', 'POST'],
-           only_if=lambda app: app.config.get('SECURITY_REGISTERABLE'))
+           only_if=lambda app: app.config.SECURITY_REGISTERABLE)
     @anonymous_user_required
     def register(self):
         """
@@ -92,7 +92,7 @@ class SecurityController(Controller):
                            **self.security.run_ctx_processor('register'))
 
     @route(methods=['GET', 'POST'],
-           only_if=lambda app: app.config.get('SECURITY_CONFIRMABLE'))
+           only_if=lambda app: app.config.SECURITY_CONFIRMABLE)
     def send_confirmation_email(self):
         """
         View function which sends confirmation token and instructions to a user.
@@ -113,7 +113,7 @@ class SecurityController(Controller):
                            **self.security.run_ctx_processor('send_confirmation_email'))
 
     @route('/confirm/<token>',
-           only_if=lambda app: app.config.get('SECURITY_CONFIRMABLE'))
+           only_if=lambda app: app.config.SECURITY_CONFIRMABLE)
     def confirm_email(self, token):
         """
         View function to confirm a user's token from the confirmation email send to them.
@@ -131,7 +131,7 @@ class SecurityController(Controller):
             self.security_service.send_email_confirmation_instructions(user)
             self.flash(_('flask_unchained.bundles.security:flash.confirmation_expired',
                          email=user.email,
-                         within=app.config.get('SECURITY_CONFIRM_EMAIL_WITHIN')),
+                         within=app.config.SECURITY_CONFIRM_EMAIL_WITHIN),
                        category='error')
 
         if invalid or (expired and not already_confirmed):
@@ -154,7 +154,7 @@ class SecurityController(Controller):
                              'SECURITY_POST_LOGIN_REDIRECT_ENDPOINT')
 
     @route(methods=['GET', 'POST'],
-           only_if=lambda app: app.config.get('SECURITY_RECOVERABLE'))
+           only_if=lambda app: app.config.SECURITY_RECOVERABLE)
     @anonymous_user_required(msg='You are already logged in',
                              category='success')
     def forgot_password(self):
@@ -178,7 +178,7 @@ class SecurityController(Controller):
                            **self.security.run_ctx_processor('forgot_password'))
 
     @route('/reset-password/<string:token>', methods=['GET', 'POST'],
-           only_if=lambda app: app.config.get('SECURITY_RECOVERABLE'))
+           only_if=lambda app: app.config.SECURITY_RECOVERABLE)
     @anonymous_user_required
     def reset_password(self, token):
         """
@@ -196,11 +196,11 @@ class SecurityController(Controller):
             self.security_service.send_reset_password_instructions(user)
             self.flash(_('flask_unchained.bundles.security:flash.password_reset_expired',
                          email=user.email,
-                         within=app.config.get('SECURITY_RESET_PASSWORD_WITHIN')),
+                         within=app.config.SECURITY_RESET_PASSWORD_WITHIN),
                        category='error')
             return self.redirect('SECURITY_EXPIRED_RESET_TOKEN_REDIRECT')
 
-        spa_redirect = app.config.get('SECURITY_API_RESET_PASSWORD_HTTP_GET_REDIRECT')
+        spa_redirect = app.config.SECURITY_API_RESET_PASSWORD_HTTP_GET_REDIRECT
         if request.method == 'GET' and spa_redirect:
             return self.redirect(spa_redirect, token=token, _external=True)
 
@@ -226,7 +226,7 @@ class SecurityController(Controller):
                            **self.security.run_ctx_processor('reset_password'))
 
     @route(methods=['GET', 'POST'],
-           only_if=lambda app: app.config.get('SECURITY_CHANGEABLE'))
+           only_if=lambda app: app.config.SECURITY_CHANGEABLE)
     @auth_required
     def change_password(self):
         """

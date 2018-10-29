@@ -19,7 +19,7 @@ class SecurityUtilsService(BaseService):
 
         :param password: The password to sign.
         """
-        salt = current_app.config.get('SECURITY_PASSWORD_SALT')
+        salt = current_app.config.SECURITY_PASSWORD_SALT
 
         if salt is None:
             raise RuntimeError(
@@ -73,8 +73,8 @@ class SecurityUtilsService(BaseService):
 
         return self.security.pwd_context.hash(
             password,
-            **current_app.config.get('SECURITY_PASSWORD_HASH_OPTIONS').get(
-                current_app.config.get('SECURITY_PASSWORD_HASH'), {}))
+            **current_app.config.SECURITY_PASSWORD_HASH_OPTIONS.get(
+                current_app.config.SECURITY_PASSWORD_HASH, {}))
 
     def hash_data(self, data):
         """
@@ -93,7 +93,7 @@ class SecurityUtilsService(BaseService):
         """
         Return a bool indicating whether a password should be hashed twice.
         """
-        single_hash = current_app.config.get('SECURITY_PASSWORD_SINGLE_HASH')
+        single_hash = current_app.config.SECURITY_PASSWORD_SINGLE_HASH
         if single_hash and self.security.password_salt:
             raise RuntimeError('You may not specify a salt with '
                                'SECURITY_PASSWORD_SINGLE_HASH')
@@ -219,7 +219,7 @@ class SecurityUtilsService(BaseService):
     # FIXME-identity
     @staticmethod
     def get_identity_attributes():
-        attrs = current_app.config['SECURITY_USER_IDENTITY_ATTRIBUTES']
+        attrs = current_app.config.SECURITY_USER_IDENTITY_ATTRIBUTES
         try:
             attrs = [f.strip() for f in attrs.split(',')]
         except AttributeError:

@@ -12,7 +12,7 @@ class RegisterSessionModelHook(AppFactoryHook):
     run_after = ['init_extensions', 'models']
 
     def run_hook(self, app: Flask, bundles):
-        if app.config.get('SESSION_TYPE') != 'sqlalchemy':
+        if app.config.SESSION_TYPE != 'sqlalchemy':
             return
 
         Session = app.session_interface.sql_session_model

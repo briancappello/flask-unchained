@@ -19,9 +19,9 @@ class TestConfigureAppHook:
                                                         hook: ConfigureAppHook):
         hook.run_hook(app, [VendorBundle(), EmptyBundle(), MyAppBundle()])
 
-        assert app.config.get('APP_KEY') == 'app_key'
-        assert app.config.get('VENDOR_KEY1') == 'app_override'
-        assert app.config.get('VENDOR_KEY2') == 'vendor_key2'
+        assert app.config.APP_KEY == 'app_key'
+        assert app.config.VENDOR_KEY1 == 'app_override'
+        assert app.config.VENDOR_KEY2 == 'vendor_key2'
 
     def test_the_app_bundle_config_module_is_named_config(self, hook: ConfigureAppHook):
         assert hook.get_module_name(MyAppBundle()) == 'tests._bundles.myapp.config'

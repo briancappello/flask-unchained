@@ -17,7 +17,7 @@ class AdminSecurityMixin:
     def is_accessible(self):
         if (user.is_active
                 and user.is_authenticated
-                and user.has_role(current_app.config.get('ADMIN_ROLE_ADMIN_NAME'))):
+                and user.has_role(current_app.config.ADMIN_ADMIN_ROLE_NAME)):
             return True
         return False
 

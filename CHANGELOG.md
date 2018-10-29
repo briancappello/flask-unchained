@@ -14,6 +14,7 @@
 - specify required minimum package versions in `setup.py`, and pin versions in `requirements.txt`
 - fix the `UnchainedModelRegistry.reset` method so it allows using factory_boy from `conftest.py`
 - improve documentation of how Flask Unchained works
+- make options in `app.config` accessible as attributes, eg `app.config.SECRET_KEY` is now the same as `app.config['SECRET_KEY']`
 
 ## v0.6.6 (2018/10/09)
 

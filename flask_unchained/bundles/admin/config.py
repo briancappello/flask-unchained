@@ -10,10 +10,14 @@ class Config(BundleConfig):
     """
 
     ADMIN_NAME = 'Admin'
-    """The title of the admin section of the site."""
+    """
+    The title of the admin section of the site.
+    """
 
     ADMIN_BASE_URL = '/admin'
-    """Base url of the admin section of the site."""
+    """
+    Base url of the admin section of the site.
+    """
 
     ADMIN_INDEX_VIEW = AdminDashboardView()
     """
@@ -22,13 +26,19 @@ class Config(BundleConfig):
     """
 
     ADMIN_SUBDOMAIN = None
-    """Subdomain of the admin section of the site."""
+    """
+    Subdomain of the admin section of the site.
+    """
 
     ADMIN_BASE_TEMPLATE = 'admin/base.html'
-    """Base template to use for other admin templates."""
+    """
+    Base template to use for other admin templates.
+    """
 
     ADMIN_TEMPLATE_MODE = 'bootstrap3'
-    """Which version of bootstrap to use. (bootstrap2 or bootstrap3)"""
+    """
+    Which version of bootstrap to use. (bootstrap2 or bootstrap3)
+    """
 
     ADMIN_CATEGORY_ICON_CLASSES = {}
     """
@@ -43,14 +53,22 @@ class Config(BundleConfig):
         }
     """
 
-    ADMIN_ROLE_ADMIN_NAME = 'ROLE_ADMIN'
-    """The name of the Role which represents an admin."""
+    ADMIN_ADMIN_ROLE_NAME = 'ROLE_ADMIN'
+    """
+    The name of the Role which represents an admin.
+    """
 
     ADMIN_LOGIN_ENDPOINT = 'security.login'
-    """Name of the endpoint to use for the admin login view."""
+    """
+    Name of the endpoint to use for the admin login view.
+    """
 
     ADMIN_LOGOUT_ENDPOINT = 'security.logout'
-    """Name of the endpoint to use for the admin logout view."""
+    """
+    Name of the endpoint to use for the admin logout view.
+    """
 
     ADMIN_POST_LOGOUT_ENDPOINT = '/'
-    """Endpoint to redirect to after the user logs out of the admin."""
+    """
+    Endpoint to redirect to after the user logs out of the admin.
+    """

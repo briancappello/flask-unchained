@@ -192,7 +192,7 @@ class Controller(metaclass=ControllerMeta):
         :param msg: The message to flash.
         :param category: The category of the message.
         """
-        if not request.is_json and app.config.get('FLASH_MESSAGES'):
+        if not request.is_json and app.config.FLASH_MESSAGES:
             flash(msg, category)
 
     def render(self, template_name: str, **ctx):
@@ -205,7 +205,7 @@ class Controller(metaclass=ControllerMeta):
         """
         if '.' not in template_name:
             template_file_extension = (self.Meta.template_file_extension
-                                       or app.config.get('TEMPLATE_FILE_EXTENSION'))
+                                       or app.config.TEMPLATE_FILE_EXTENSION)
             template_name = f'{template_name}{template_file_extension}'
         if self.Meta.template_folder_name and os.sep not in template_name:
             template_name = os.path.join(self.Meta.template_folder_name,

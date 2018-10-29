@@ -12,12 +12,12 @@ class Admin(BaseAdmin):
 
     def init_app(self, app: Flask):
         self.app = app
-        self.name = app.config.get('ADMIN_NAME')
-        self.subdomain = app.config.get('ADMIN_SUBDOMAIN')
-        self._set_admin_index_view(app.config.get('ADMIN_INDEX_VIEW'),
-                                   url=app.config.get('ADMIN_BASE_URL'))
-        self.base_template = app.config.get('ADMIN_BASE_TEMPLATE')
-        self.template_mode = app.config.get('ADMIN_TEMPLATE_MODE')
+        self.name = app.config.ADMIN_NAME
+        self.subdomain = app.config.ADMIN_SUBDOMAIN
+        self._set_admin_index_view(app.config.ADMIN_INDEX_VIEW,
+                                   url=app.config.ADMIN_BASE_URL)
+        self.base_template = app.config.ADMIN_BASE_TEMPLATE
+        self.template_mode = app.config.ADMIN_TEMPLATE_MODE
 
         self._init_extension()
 

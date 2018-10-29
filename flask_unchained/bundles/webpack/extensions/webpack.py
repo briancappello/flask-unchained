@@ -48,7 +48,7 @@ class Webpack:
         return Markup(tag)
 
     def _load_assets(self, app):
-        manifest_path = app.config.get('WEBPACK_MANIFEST_PATH')
+        manifest_path = app.config.WEBPACK_MANIFEST_PATH
         if not manifest_path or not os.path.exists(manifest_path):
             return
 

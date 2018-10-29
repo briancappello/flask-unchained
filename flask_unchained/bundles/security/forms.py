@@ -76,7 +76,7 @@ class LoginForm(BaseForm, NextFormMixin):
 
         if not self.next.data:
             self.next.data = request.args.get('next', '')
-        self.remember.default = app.config.get('SECURITY_DEFAULT_REMEMBER_ME')
+        self.remember.default = app.config.SECURITY_DEFAULT_REMEMBER_ME
 
     def validate(self):
         if not super().validate():

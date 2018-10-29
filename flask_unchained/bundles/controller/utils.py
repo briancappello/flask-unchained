@@ -230,7 +230,7 @@ def _missing_to_default(arg, default=None):
 def _url_for(endpoint: str, **values) -> Union[str, None]:
     """
     The same as flask's url_for, except this also supports building external
-    urls for hosts that are different from app.config['SERVER_NAME']. One case
+    urls for hosts that are different from app.config.SERVER_NAME. One case
     where this is especially useful is for single page apps, where the frontend
     is not hosted by the same server as the backend, but the backend still needs
     to generate urls to frontend routes
@@ -257,7 +257,7 @@ def _validate_redirect_url(url, _external_host=None):
         return False
     url_next = urlsplit(url)
     url_base = urlsplit(request.host_url)
-    external_host = _external_host or current_app.config.get('EXTERNAL_SERVER_NAME') or ''
+    external_host = _external_host or current_app.config.get('EXTERNAL_SERVER_NAME', '')
     if ((url_next.netloc or url_next.scheme)
             and url_next.netloc != url_base.netloc
             and url_next.netloc not in external_host):

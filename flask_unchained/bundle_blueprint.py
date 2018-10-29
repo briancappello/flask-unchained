@@ -106,7 +106,7 @@ def _send_from_directories(directories, filename, **options):
 
         @app.route('/uploads/<path:filename>')
         def download_file(filename):
-            return send_from_directory(app.config['UPLOAD_FOLDER'],
+            return send_from_directory(app.config.UPLOAD_FOLDER,
                                        filename, as_attachment=True)
 
     .. admonition:: Sending files and Performance
