@@ -23,29 +23,23 @@ class GrapheneBundle(Bundle):
     # FIXME add flask_unchained.bundles.controller.routes.view function and make
     # that the way of adding graphql routes
     def after_init_app(self, app: FlaskUnchained):
-        graphql_url = app.config.GRAPHENE_URL
-        if graphql_url:
-            app.add_url_rule(
-                graphql_url,
-                view_func=GraphQLView.as_view(
-                    'graphql',
-                    schema=self.root_schema,
-                    graphiql=app.config.get('GRAPHENE_ENABLE_GRAPHIQL', False),
-                    pretty=app.config.get('GRAPHENE_PRETTY_JSON', False),
-                    batch=False,
-                ))
+        if app.config.GRAPHENE_URL:
+            app.add_url_rule(app.config.GRAPHENE_URL, view_func=GraphQLView.as_view(
+                'graphql',
+                schema=self.root_schema,
+                graphiql=app.config.GRAPHENE_ENABLE_GRAPHIQL,
+                pretty=app.config.GRAPHENE_PRETTY_JSON,
+                batch=False,
+            ))
 
-        graphql_batch_url = app.config.GRAPHENE_BATCH_URL
-        if graphql_batch_url:
-            app.add_url_rule(
-                graphql_batch_url,
-                view_func=GraphQLView.as_view(
-                    'graphql',
-                    schema=self.root_schema,
-                    graphiql=app.config.get('GRAPHENE_ENABLE_GRAPHIQL', False),
-                    pretty=app.config.get('GRAPHENE_PRETTY_JSON', False),
-                    batch=True,
-                ))
+        if app.config.GRAPHENE_BATCH_URL:
+            app.add_url_rule(app.config.GRAPHENE_BATCH_URL, view_func=GraphQLView.as_view(
+                'graphql',
+                schema=self.root_schema,
+                graphiql=app.config.GRAPHENE_ENABLE_GRAPHIQL,
+                pretty=app.config.GRAPHENE_PRETTY_JSON,
+                batch=True,
+            ))
 
 
 __all__ = [

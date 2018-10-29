@@ -13,7 +13,7 @@ class Config(BundleConfig):
     to disable.
     """
 
-    GRAPHENE_ENABLE_GRAPHIQL = True
+    GRAPHENE_ENABLE_GRAPHIQL = False
     """
     Whether or not to enable GraphIQL.
     """
@@ -25,6 +25,11 @@ class Config(BundleConfig):
 
 
 class DevConfig(Config):
+    GRAPHENE_ENABLE_GRAPHIQL = True
+    """
+    Whether or not to enable GraphIQL.
+    """
+
     GRAPHENE_PRETTY_JSON = True
     """
     Whether or not to pretty print the returned JSON.    
