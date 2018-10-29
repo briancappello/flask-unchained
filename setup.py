@@ -35,7 +35,7 @@ setup(
         'api': [
             'apispec>=0.39.0',
             'flask-marshmallow>=0.9.0',
-            'marshmallow>=2.16.1',
+            'marshmallow>=2.16.1,<3.0',
             'marshmallow-sqlalchemy>=0.14.1',
         ],
         'celery': [
