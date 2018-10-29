@@ -73,7 +73,7 @@ setup(
             'bcrypt>=3.1.4',
             'flask-login>=0.4.1',
             'flask-principal>=0.4.0',
-            'itsdangerous>=0.24,<1.0',
+            'itsdangerous>=1.1.0',
             'passlib>=1.7.1',
         ],
         'session': [
