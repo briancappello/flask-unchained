@@ -1,4 +1,5 @@
-from flask import Config
+import flask
+
 from typing import *
 
 from ..app_config import AppBundleConfig, BundleConfig
@@ -6,10 +7,11 @@ from ..app_factory_hook import AppFactoryHook
 from ..bundle import Bundle, AppBundle
 from ..constants import DEV, PROD, STAGING, TEST
 from ..flask_unchained import FlaskUnchained
-from ..utils import AttrDict
 
-BASE_CONFIG = 'Config'
-ENV_CONFIGS = {
+
+BASE_CONFIG_CLASS = 'Config'
+
+ENV_CONFIG_CLASSES = {
     DEV: 'DevConfig',
     PROD: 'ProdConfig',
     STAGING: 'StagingConfig',
@@ -45,17 +47,19 @@ class ConfigureAppHook(AppFactoryHook):
         if it exists, and then also if it exists, from an env-specific config class:
         one of ``DevConfig``, ``ProdConfig``, ``StagingConfig``, or ``TestConfig``.
         """
-        self.apply_default_config(app)
+        self.apply_default_config(app, bundles and bundles[-1] or None)
         BundleConfig._set_current_app(app)
         for bundle_ in bundles:
             for bundle in bundle_.iter_class_hierarchy():
-                bundle_config = self.get_config(bundle, app.env)
-                app.config.from_mapping(bundle_config)
+                app.config.from_mapping(self.get_bundle_config(bundle, app.env))
 
         if _config_overrides and isinstance(_config_overrides, dict):
             app.config.from_mapping(_config_overrides)
 
-    def apply_default_config(self, app: FlaskUnchained) -> None:
+    def apply_default_config(self,
+                             app: FlaskUnchained,
+                             app_bundle: Optional[Bundle] = None,
+                             ) -> None:
         from ..app_config import _ConfigDefaults
         app.config.from_object(_ConfigDefaults)
 
@@ -66,27 +70,33 @@ class ConfigureAppHook(AppFactoryHook):
             from ..app_config import _TestConfigDefaults
             app.config.from_object(_TestConfigDefaults)
 
-    def get_config(self,
-                   bundle: Bundle,
-                   env: Union[DEV, PROD, STAGING, TEST],
-                   ) -> AttrDict:
+        if isinstance(app_bundle, AppBundle):
+            app_bundle_config = self.get_bundle_config(app_bundle, app.env)
+            app.config.from_mapping(
+                {k: v for k, v in app_bundle_config.items() if k not in app.config})
+
+    def get_bundle_config(self,
+                          bundle: Bundle,
+                          env: Union[DEV, PROD, STAGING, TEST],
+                          ) -> flask.Config:
         bundle_config_module = self.import_bundle_module(bundle)
-        base_config = getattr(bundle_config_module, BASE_CONFIG, None)
-        env_config = getattr(bundle_config_module, ENV_CONFIGS[env], None)
+        base_config = getattr(bundle_config_module, BASE_CONFIG_CLASS, None)
+        env_config = getattr(bundle_config_module, ENV_CONFIG_CLASSES[env], None)
 
         if (isinstance(bundle, AppBundle) and (
                 not base_config
                 or not issubclass(base_config, AppBundleConfig))):
-            raise Exception("Could not find an AppBundleConfig subclass in your app "
-                            "bundle's config module.")
+            raise Exception(f"Could not find an AppBundleConfig subclass named "
+                            f"{BASE_CONFIG_CLASS} in your app bundle's "
+                            f"{self.get_module_name(bundle)} module.")
 
-        merged = Config(None)
+        merged = flask.Config(None)
         for config in [base_config, env_config]:
             if config:
                 merged.from_object(config)
 
         if isinstance(bundle, AppBundle) and 'SECRET_KEY' not in merged:
-            raise Exception("The `SECRET_KEY` config option is required. "
-                            "Please set it in your app bundle's base `Config` class.")
+            raise Exception(f"The `SECRET_KEY` config option is required. Please "
+                            f"set it in your app bundle's {BASE_CONFIG_CLASS} class.")
 
-        return AttrDict(merged)
+        return merged

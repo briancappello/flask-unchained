@@ -15,6 +15,7 @@
 - fix the `UnchainedModelRegistry.reset` method so it allows using factory_boy from `conftest.py`
 - improve documentation of how Flask Unchained works
 - make options in `app.config` accessible as attributes, eg `app.config.SECRET_KEY` is now the same as `app.config['SECRET_KEY']`
+- apply any settings from the app bundle config not already present in `app.config` as defaults before loading bundles
 
 ## v0.6.6 (2018/10/09)
 

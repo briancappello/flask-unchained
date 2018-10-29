@@ -84,7 +84,7 @@ ConfigureAppHook
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: flask_unchained.hooks.configure_app_hook.ConfigureAppHook
-   :members: bundle_module_name, run_before, run_after, run_hook, apply_default_config, get_config
+   :members: bundle_module_name, run_before, run_after, run_hook, apply_default_config, get_bundle_config
    :inherited-members: bundle_override_module_name_attr
 
 RegisterExtensionsHook
