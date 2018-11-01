@@ -191,11 +191,14 @@ intersphinx_mapping = {
     'flask_admin': ('https://flask-admin.readthedocs.io/en/latest/', None),
     'flask_babelex': ('https://pythonhosted.org/Flask-BabelEx/', None),
     'flask_mail': ('https://pythonhosted.org/flask-mail/', None),
-    'flask_marshmallow': ('https://flask-marshmallow.readthedocs.io/en/latest/', None),
+    'flask_marshmallow': (
+        'https://flask-marshmallow.readthedocs.io/en/latest/', None),
     'flask_migrate': ('https://flask-migrate.readthedocs.io/en/latest/', None),
     'flask_session': ('https://pythonhosted.org/Flask-Session/', None),
     'flask_sqlalchemy': ('http://flask-sqlalchemy.pocoo.org/latest/', None),
     'flask_wtf': ('https://flask-wtf.readthedocs.io/en/stable/', None),
+    'graphene_sqlalchemy': (
+        'http://docs.graphene-python.org/projects/sqlalchemy/en/latest/', None),
     'python': ('https://docs.python.org/3/', None),
     'sqlalchemy': ('https://docs.sqlalchemy.org/en/latest/', None),
     'werkzeug': ('http://werkzeug.pocoo.org/docs/0.14/', None),
