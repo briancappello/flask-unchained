@@ -5,7 +5,7 @@
 ### Features
 
 - :fire:GraphQL:fire: support with the new Graphene Bundle
-- add support specifying parameters to inject into classes as class attributes
+- add support for specifying parameters to inject into classes as class attributes
 
 #### Configuration Improvements
 
@@ -35,7 +35,7 @@
 
 ## v0.6.6 (2018/10/09)
 
-- ship `_templates` folder with the distribution so the `flask new <tempate>` command works when Flask unchained gets installed via `pip`
+- ship `_templates` folder with the distribution so that the `flask new <tempate>` command works when Flask Unchained gets installed via `pip`
 
 ## v0.6.0 - v0.6.5 (2018/10/09)
 
