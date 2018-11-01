@@ -34,8 +34,6 @@ class RunHooksHook(AppFactoryHook):
                 hook.run_hook(app, bundles)
             hook.update_shell_context(self.unchained._shell_ctx)
 
-        app.shell_context_processor(lambda: self.unchained._shell_ctx)
-
     def collect_from_bundles(self, bundles: List[Bundle]) -> List[AppFactoryHook]:
         hooks = self.collect_from_unchained()
         for bundle in bundles:

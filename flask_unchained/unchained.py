@@ -138,7 +138,8 @@ class Unchained:
         for b in bundles:
             b._deferred_functions = self._bundles[b.name]._deferred_functions
         self.bundles = AttrDict({b.name: b for b in bundles})
-        app.shell_context_processor(lambda: {b.__class__.__name__: b for b in bundles})
+        self._shell_ctx = {b.__class__.__name__: b for b in bundles}
+        app.shell_context_processor(lambda: self._shell_ctx)
 
         try:
             # must import AppBundle here to prevent circular dependency
