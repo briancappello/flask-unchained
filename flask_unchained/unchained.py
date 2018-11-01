@@ -169,19 +169,14 @@ class Unchained:
         run_hooks_hook.run_hook(app, bundles, _config_overrides=_config_overrides)
         self._initialized = True
 
-    def get_extension_local_proxy(self, ext_name):
-        """
-        Returns a :class:`~werkzeug.local.LocalProxy` to the extension with
-        `ext_name` as registered with the current app.
-        """
-        return LocalProxy(lambda: current_app.unchained.extensions[ext_name])
 
-    def get_service_local_proxy(self, service_name):
+    def get_local_proxy(self, name):
         """
-        Returns a :class:`~werkzeug.local.LocalProxy` to the service with
-        `service_name` as registered with the current app.
+        Returns a :class:`~werkzeug.local.LocalProxy` to the extension or service
+        with `name` as registered with the current app.
         """
-        return LocalProxy(lambda: current_app.unchained.services[service_name])
+        return LocalProxy(lambda: current_app.unchained.extensions.get(
+            name, current_app.unchained.services[name]))
 
     def _reset(self):
         """

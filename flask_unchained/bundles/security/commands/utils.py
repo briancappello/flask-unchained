@@ -5,8 +5,8 @@ from flask_unchained.cli import click
 
 from ..services import UserManager, RoleManager
 
-user_manager: UserManager = unchained.get_service_local_proxy('user_manager')
-role_manager: RoleManager = unchained.get_service_local_proxy('role_manager')
+user_manager: UserManager = unchained.get_local_proxy('user_manager')
+role_manager: RoleManager = unchained.get_local_proxy('role_manager')
 
 
 def _query_to_user(query):

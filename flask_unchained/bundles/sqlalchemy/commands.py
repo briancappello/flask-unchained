@@ -16,7 +16,7 @@ except ImportError:
 
 from .extensions import SQLAlchemyUnchained, migrate
 
-db_ext: SQLAlchemyUnchained = unchained.get_extension_local_proxy('db')
+db_ext: SQLAlchemyUnchained = unchained.get_local_proxy('db')
 
 
 @db.command('drop')

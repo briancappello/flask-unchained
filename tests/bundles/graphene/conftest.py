@@ -5,9 +5,9 @@ from flask_unchained.bundles.graphene.pytest import *
 from ..sqlalchemy.conftest import *
 
 
-parent_manager = unchained.get_service_local_proxy('parent_manager')
-child_manager = unchained.get_service_local_proxy('child_manager')
-session_manager = unchained.get_service_local_proxy('session_manager')
+parent_manager = unchained.get_local_proxy('parent_manager')
+child_manager = unchained.get_local_proxy('child_manager')
+session_manager = unchained.get_local_proxy('session_manager')
 
 
 @pytest.fixture(autouse=True)

@@ -7,8 +7,7 @@ from flask_unchained.bundles.sqlalchemy import db
 from . import types
 
 
-session_manager: db.SessionManager = \
-    unchained.get_service_local_proxy('session_manager')
+session_manager: db.SessionManager = unchained.get_local_proxy('session_manager')
 
 
 class CreateParent(graphene.Mutation):

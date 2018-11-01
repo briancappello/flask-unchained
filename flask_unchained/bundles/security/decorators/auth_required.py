@@ -7,7 +7,7 @@ from .roles_accepted import roles_accepted
 from .roles_required import roles_required
 from ..utils import current_user
 
-security = unchained.get_extension_local_proxy('security')
+security = unchained.get_local_proxy('security')
 
 
 def auth_required(decorated_fn=None, **role_rules):

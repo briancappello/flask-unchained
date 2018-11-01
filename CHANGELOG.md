@@ -21,6 +21,7 @@
 
 ### Breaking Changes
 
+- consolidate `unchained.get_extension_local_proxy` and `unchained.get_service_local_proxy` into a single function, `unchained.get_local_proxy`
 - rename `AppConfig` to `AppBundleConfig`
 - rename `SQLAlchemy` extension class to `SQLAlchemyUnchained`
 - remove `Bundle.root_folder` descriptor as it made no sense
