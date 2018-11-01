@@ -176,11 +176,8 @@ class Security(_SecurityConfigProperties):
         """
         Get the token hashing (and verifying) context.
         """
-        schemes = app.config.SECURITY_HASHING_SCHEMES
-        deprecated = app.config.SECURITY_DEPRECATED_HASHING_SCHEMES
-        return CryptContext(
-            schemes=schemes,
-            deprecated=deprecated)
+        return CryptContext(schemes=app.config.SECURITY_HASHING_SCHEMES,
+                            deprecated=app.config.SECURITY_DEPRECATED_HASHING_SCHEMES)
 
     def _get_login_manager(self,
                            app: FlaskUnchained,
@@ -190,29 +187,30 @@ class Security(_SecurityConfigProperties):
         Get an initialized instance of Flask Login's
         :class:`~flask_login.LoginManager`.
         """
-        lm = LoginManager()
-        lm.anonymous_user = anonymous_user or AnonymousUser
-        lm.localize_callback = _
-        lm.request_loader(self._request_loader)
-        lm.user_loader(
+        login_manager = LoginManager()
+        login_manager.anonymous_user = anonymous_user or AnonymousUser
+        login_manager.localize_callback = _
+        login_manager.request_loader(self._request_loader)
+        login_manager.user_loader(
             lambda *a, **kw: self.security_utils_service.user_loader(*a, **kw))
-        lm.login_view = 'security_controller.login'
-        lm.login_message, _('flask_unchained.bundles.security:error.login_required')
-        lm.login_message_category = 'info'
-        lm.needs_refresh_message = _(
+        login_manager.login_view = 'security_controller.login'
+        login_manager.login_message = _(
+            'flask_unchained.bundles.security:error.login_required')
+        login_manager.login_message_category = 'info'
+        login_manager.needs_refresh_message = _(
             'flask_unchained.bundles.security:error.fresh_login_required')
-        lm.needs_refresh_message_category = 'info'
-        lm.init_app(app)
-        return lm
+        login_manager.needs_refresh_message_category = 'info'
+        login_manager.init_app(app)
+        return login_manager
 
     def _get_principal(self, app: FlaskUnchained) -> Principal:
         """
         Get an initialized instance of Flask Principal's.
         :class:~flask_principal.Principal`.
         """
-        p = Principal(app, use_sessions=False)
-        p.identity_loader(self._identity_loader)
-        return p
+        principal = Principal(app, use_sessions=False)
+        principal.identity_loader(self._identity_loader)
+        return principal
 
     def _get_pwd_context(self, app: FlaskUnchained) -> CryptContext:
         """
@@ -220,16 +218,12 @@ class Security(_SecurityConfigProperties):
         """
         pw_hash = app.config.SECURITY_PASSWORD_HASH
         schemes = app.config.SECURITY_PASSWORD_SCHEMES
-        deprecated = app.config.SECURITY_DEPRECATED_PASSWORD_SCHEMES
         if pw_hash not in schemes:
             allowed = (', '.join(schemes[:-1]) + ' and ' + schemes[-1])
-            raise ValueError(
-                "Invalid password hashing scheme %r. Allowed values are %s" %
-                (pw_hash, allowed))
-        return CryptContext(
-            schemes=schemes,
-            default=pw_hash,
-            deprecated=deprecated)
+            raise ValueError(f'Invalid password hashing scheme {pw_hash}. '
+                             f'Allowed values are {allowed}.')
+        return CryptContext(schemes=schemes, default=pw_hash,
+                            deprecated=app.config.SECURITY_DEPRECATED_PASSWORD_SCHEMES)
 
     def _get_serializer(self, app: FlaskUnchained, name: str) -> URLSafeTimedSerializer:
         """
@@ -240,9 +234,8 @@ class Security(_SecurityConfigProperties):
           ``remember``, or ``reset``
         :return: URLSafeTimedSerializer
         """
-        secret_key = app.config.SECRET_KEY
         salt = app.config.get('SECURITY_%s_SALT' % name.upper())
-        return URLSafeTimedSerializer(secret_key=secret_key, salt=salt)
+        return URLSafeTimedSerializer(secret_key=app.config.SECRET_KEY, salt=salt)
 
     def _identity_loader(self) -> Union[Identity, None]:
         """
@@ -250,8 +243,7 @@ class Security(_SecurityConfigProperties):
         instance returned by :meth:`_get_principal`.
         """
         if not isinstance(current_user._get_current_object(), AnonymousUser):
-            identity = Identity(current_user.id)
-            return identity
+            return Identity(current_user.id)
 
     def _on_identity_loaded(self, sender, identity: Identity) -> None:
         """
@@ -271,18 +263,17 @@ class Security(_SecurityConfigProperties):
         """
         header_key = self.token_authentication_header
         args_key = self.token_authentication_key
-        header_token = request.headers.get(header_key, None)
-        token = request.args.get(args_key, header_token)
+        token = request.args.get(args_key, request.headers.get(header_key, None))
         if request.is_json:
             data = request.get_json(silent=True) or {}
             token = data.get(args_key, token)
 
         try:
-            data = self.remember_token_serializer.loads(
-                token, max_age=self.token_max_age)
+            data = self.remember_token_serializer.loads(token, max_age=self.token_max_age)
             user = self.user_manager.get(data[0])
             if user and self.security_utils_service.verify_hash(data[1], user.password):
                 return user
         except:
             pass
+
         return self.login_manager.anonymous_user()
