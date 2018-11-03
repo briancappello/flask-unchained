@@ -17,10 +17,7 @@ def bundles(ctx):
     """
     List discovered bundles.
     """
-    from ..app_factory import _load_bundles, _load_unchained_config
-    unchained_config = _load_unchained_config(ctx.obj.data['env'])
-    _, bundles = _load_bundles(getattr(unchained_config, 'BUNDLES', []))
-
+    bundles = _get_bundles(ctx.obj.data['env'])
     print_table(('Name', 'Location'),
                 [(bundle.name, f'{bundle.__module__}.{bundle.__class__.__name__}')
                  for bundle in bundles])
@@ -33,11 +30,9 @@ def hooks(ctx):
     List registered hooks (in the order they run).
     """
     from ..hooks.run_hooks_hook import RunHooksHook
-    from ..app_factory import _load_bundles, _load_unchained_config
-    unchained_config = _load_unchained_config(ctx.obj.data['env'])
-    _, bundles = _load_bundles(getattr(unchained_config, 'BUNDLES', []))
-    hooks = RunHooksHook(None).collect_from_bundles(bundles)
 
+    bundles = _get_bundles(ctx.obj.data['env'])
+    hooks = RunHooksHook(None).collect_from_bundles(bundles)
     print_table(('Hook Name',
                  'Default Bundle Module',
                  'Bundle Module Override Attr',
@@ -46,3 +41,10 @@ def hooks(ctx):
                  hook.bundle_module_name or '(None)',
                  hook.bundle_override_module_name_attr or '(None)',
                  format_docstring(hook.__doc__) or '(None)') for hook in hooks])
+
+
+def _get_bundles(env):
+    from ..app_factory import _load_bundles, _load_unchained_config
+
+    unchained_config = _load_unchained_config(env)
+    return _load_bundles(getattr(unchained_config, 'BUNDLES', []))[1]
