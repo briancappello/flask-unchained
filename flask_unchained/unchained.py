@@ -174,10 +174,16 @@ class Unchained:
     def get_local_proxy(self, name):
         """
         Returns a :class:`~werkzeug.local.LocalProxy` to the extension or service
-        with `name` as registered with the current app.
+        with ``name`` as registered with the current app.
         """
-        return LocalProxy(lambda: current_app.unchained.extensions.get(
-            name, current_app.unchained.services[name]))
+        def get_extension_or_service_by_name():
+            if name in current_app.unchained.extensions:
+                return current_app.unchained.extensions[name]
+            elif name in current_app.unchained.services:
+                return current_app.unchained.services[name]
+            raise KeyError(f'No extension or service was found with the name {name}.')
+
+        return LocalProxy(get_extension_or_service_by_name)
 
     def _reset(self):
         """
