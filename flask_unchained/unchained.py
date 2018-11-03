@@ -311,6 +311,12 @@ class Unchained:
             if cls:
                 cls.__init__ = new_fn
                 cls.__signature__ = sig
+                for attr, meth in vars(cls).items():
+                    if (attr.startswith('__')
+                            or not callable(meth)
+                            or hasattr(meth, '__signature__')):
+                        continue
+                    setattr(cls, attr, self.inject()(meth))
                 return cls
             return new_fn
 

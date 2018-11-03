@@ -91,3 +91,28 @@ class NotAutomaticExtended(NotAutomatic):
 @unchained.inject()
 class NotAutomaticWithInitExtended(NotAutomaticWithInit):
     funky_service: FunkyService = injectable
+
+
+class InjectableMethods(BaseService):
+    def __init__(self):
+        self.one_service = 'constructor_default'
+        self.two_service = 'constructor_default'
+
+    def one(self, one_service: OneService = injectable):
+        self.one_service = one_service
+
+    def two(self, two_service: TwoService = injectable):
+        self.two_service = two_service
+
+
+@unchained.inject()
+class NotAutomaticInjectableMethods:
+    def __init__(self):
+        self.one_service = 'constructor_default'
+        self.two_service = 'constructor_default'
+
+    def one(self, one_service: OneService = injectable):
+        self.one_service = one_service
+
+    def two(self, two_service: TwoService = injectable):
+        self.two_service = two_service

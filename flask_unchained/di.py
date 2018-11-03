@@ -96,7 +96,10 @@ def set_up_class_dependency_injection(mcs_args: McsArgs):
         mcs_args.clsdict['__signature__'] = init.__signature__
 
     for attr, value in mcs_args.clsdict.items():
-        if isinstance(value, FunctionType) and hasattr(value, '__signature__'):
+        if isinstance(value, FunctionType):
+            if not hasattr(value, '__signature__'):
+                from .unchained import unchained
+                mcs_args.clsdict[attr] = unchained.inject()(value)
             value.__di_name__ = (mcs_args.name if value.__name__ == '__init__'
                                  else f'{mcs_args.name}.{value.__name__}')
 
