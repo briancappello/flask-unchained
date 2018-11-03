@@ -122,6 +122,8 @@ class Unchained:
 
         self._deferred_functions = []
         self._initialized = False
+        self._models_initialized = False
+        self._services_initialized = False
         self._services_registry = {}
         self._shell_ctx = {}
 
@@ -168,8 +170,8 @@ class Unchained:
         from .hooks.run_hooks_hook import RunHooksHook
         run_hooks_hook = RunHooksHook(self)
         run_hooks_hook.run_hook(app, bundles, _config_overrides=_config_overrides)
-        self._initialized = True
 
+        self._initialized = True
 
     def get_local_proxy(self, name):
         """
@@ -190,6 +192,8 @@ class Unchained:
         This method is for use by tests only!
         """
         self._initialized = False
+        self._models_initialized = False
+        self._services_initialized = False
         self._services_registry = {}
         self.extensions = AttrDict()
         self.services = AttrDict()
@@ -198,7 +202,7 @@ class Unchained:
         """
         Decorator to mark something as a service.
         """
-        if self._initialized:
+        if self._services_initialized:
             from warnings import warn
             warn('Services have already been initialized. Please register '
                  f'{name} sooner.')
@@ -219,7 +223,7 @@ class Unchained:
             self.services[name] = service
             return
 
-        if self._initialized:
+        if self._services_initialized:
             from warnings import warn
             warn('Services have already been initialized. Please register '
                  f'{name} sooner.')
@@ -361,7 +365,7 @@ class Unchained:
                     raise Exception(f'No service found with the name {missing} '
                                     f'(required by {requester})')
 
-        self._initialized = True
+        self._services_initialized = True
 
     def _defer(self, fn):
         if self._initialized:

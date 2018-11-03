@@ -106,7 +106,7 @@ class ModelSerializerOpts(SchemaOpts):
     @property
     def model(self):
         # make sure to always return the correct mapped model class
-        if not unchained._initialized or not self._model:
+        if not unchained._models_initialized or not self._model:
             return self._model
         return unchained.sqlalchemy_bundle.models[self._model.__name__]
 
@@ -118,7 +118,7 @@ class ModelSerializerOpts(SchemaOpts):
 class _ModelDescriptor:
     def __get__(self, instance, owner):
         # make sure to always return the correct mapped model class
-        if not unchained._initialized or not instance._model:
+        if not unchained._models_initialized or not instance._model:
             return instance._model
         return unchained.sqlalchemy_bundle.models[instance._model.__name__]
 

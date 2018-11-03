@@ -26,6 +26,7 @@ class RegisterModelsHook(AppFactoryHook):
         # has final say over which models should end up getting mapped with
         # SQLAlchemy
         self.bundle.models = UnchainedModelRegistry().finalize_mappings()
+        self.unchained._models_initialized = True
 
     def type_check(self, obj: Any) -> bool:
         if not inspect.isclass(obj) or not issubclass(obj, Model):

@@ -195,6 +195,17 @@ class Bundle(metaclass=BundleMeta):
         views_module_name = getattr(self, 'views_module_name', 'views')
         return bool(safe_import_module(f'{self.module_name}.{views_module_name}'))
 
+    def __getattr__(self, name):
+        if name in {'before_request', 'after_request', 'teardown_request',
+                    'context_processor', 'url_defaults', 'url_value_preprocessor',
+                    'errorhandler'}:
+            from warnings import warn
+            warn('The app has already been initialized. Please register '
+                 f'{name} sooner.')
+            return
+
+        raise AttributeError(name)
+
 
 class AppBundle(Bundle):
     """
