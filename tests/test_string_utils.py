@@ -30,9 +30,9 @@ def test_class_case():
 def test_right_replace():
     assert right_replace('aabb', 'b', 'c') == 'aabc'
     assert right_replace('aabbcc', 'b', 'd') == 'aabdcc'
-    assert right_replace('abaa', 'a', 'c', count=2) == 'abcc'
-    assert right_replace('abaa', 'a', 'c', count=3) == 'cbcc'
-    assert right_replace('abaa', 'a', 'c', count=4) == 'cbcc'
+    assert right_replace('aabaaa', 'a', 'c', count=2) == 'aabacc'
+    assert right_replace('aabaaa', 'a', 'c', count=3) == 'aabccc'
+    assert right_replace('aabaaa', 'a', 'c', count=4) == 'acbccc'
     assert right_replace('abc', 'd', 'e') == 'abc'
     assert right_replace('', 'a', 'b') == ''
     assert right_replace(None, 'a', 'b') is None

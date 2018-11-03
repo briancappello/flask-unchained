@@ -5,12 +5,8 @@ from flask_unchained.hooks.init_extensions_hook import (
 from flask_unchained.unchained import Unchained
 
 from .._bundles.myapp import MyAppBundle, myext
-from .._bundles.myapp.extensions import MyExtension
-
 from .._bundles.empty_bundle import EmptyBundle
-
 from .._bundles.vendor_bundle import VendorBundle, awesome
-from .._bundles.vendor_bundle.extension import AwesomeExtension
 
 
 @pytest.fixture
@@ -19,13 +15,6 @@ def hook():
 
 
 class TestRegisterExtensionsHook:
-    def test_type_check(self, hook: InitExtensionsHook):
-        assert hook.type_check(AwesomeExtension) is False
-        assert hook.type_check(awesome) is True
-
-        assert hook.type_check(MyExtension) is False
-        assert hook.type_check(myext) is True
-
     def test_collect_from_bundle(self, hook: InitExtensionsHook):
         assert hook.collect_from_bundle(EmptyBundle()) == {}
 
