@@ -60,15 +60,13 @@ class ConfigureAppHook(AppFactoryHook):
                              app: FlaskUnchained,
                              app_bundle: Optional[Bundle] = None,
                              ) -> None:
-        from ..app_config import _ConfigDefaults
-        app.config.from_object(_ConfigDefaults)
+        from .. import app_config
 
+        app.config.from_object(app_config._ConfigDefaults)
         if app.env == DEV:
-            from ..app_config import _DevConfigDefaults
-            app.config.from_object(_DevConfigDefaults)
+            app.config.from_object(app_config._DevConfigDefaults)
         elif app.env == TEST:
-            from ..app_config import _TestConfigDefaults
-            app.config.from_object(_TestConfigDefaults)
+            app.config.from_object(app_config._TestConfigDefaults)
 
         if isinstance(app_bundle, AppBundle):
             app_bundle_config = self.get_bundle_config(app_bundle, app.env)

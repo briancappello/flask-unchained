@@ -1,4 +1,3 @@
-import inspect
 import networkx as nx
 
 from collections import namedtuple
@@ -81,6 +80,3 @@ class RegisterExtensionsHook(AppFactoryHook):
                 raise Exception(
                     f'Could not locate an extension with the name {ext_name!r}')
         return rv
-
-    def type_check(self, obj: Any) -> bool:
-        return not inspect.isclass(obj) and hasattr(obj, 'init_app')

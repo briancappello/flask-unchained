@@ -38,9 +38,8 @@ class RunHooksHook(AppFactoryHook):
         hooks = self.collect_from_unchained()
         for bundle in bundles:
             hooks += self.collect_from_bundle(bundle)
-        hook_tuples = self.resolve_hook_order(hooks)
         return [hook_tuple.Hook(self.unchained, hook_tuple.bundle)
-                for hook_tuple in hook_tuples]
+                for hook_tuple in self.resolve_hook_order(hooks)]
 
     def collect_from_unchained(self) -> List[HookTuple]:
         hooks_pkg = import_module('flask_unchained.hooks')
