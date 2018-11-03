@@ -7,7 +7,6 @@ class UserRole(db.Model):
     """
     class Meta:
         lazy_mapped = True
-        pk = None
 
     user_id = db.foreign_key('User', primary_key=True)
     user = db.relationship('User', back_populates='user_roles')

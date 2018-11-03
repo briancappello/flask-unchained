@@ -33,7 +33,6 @@ class OneUserRole(db.Model):
     """Join table between User and Role"""
     class Meta:
         lazy_mapped = True
-        pk = None
         # relationships = {'OneUser': 'user', 'OneRole': 'role'}
 
     user_id = db.foreign_key('OneUser', primary_key=True)

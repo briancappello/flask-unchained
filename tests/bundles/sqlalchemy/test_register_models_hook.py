@@ -91,13 +91,14 @@ class TestRegisterModelsHookTypeCheck:
     def test_type_check_model(self, db, hook: RegisterModelsHook):
         class M(db.Model):
             pass
+
         assert hook.type_check(db.Model) is False
         assert hook.type_check(M)
 
     @pytest.mark.options(SQLALCHEMY_DATABASE_URI=POSTGRES)
     def test_type_check_materialized_view(self, db, hook: RegisterModelsHook):
         class MVT(db.Model):
-            name = db.Column(db.Integer, primary_key=True)
+            id = db.Column(db.Integer, primary_key=True)
 
         class MV(db.MaterializedView):
             @classmethod
