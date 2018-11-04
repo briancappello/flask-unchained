@@ -319,7 +319,7 @@ class Unchained:
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         """
-        Register a new url rule. Acts the same as :meth:`~flask.Flask.add_url_rule`.
+        Register a new url rule. Acts the same as :meth:`flask.Flask.add_url_rule`.
         """
         self._defer(lambda app: app.add_url_rule(rule,
                                                  endpoint=endpoint,
@@ -509,11 +509,11 @@ class Unchained:
                         safe: bool = False,
                         ) -> Callable:
         """
-        Decorator to mark a function as a jinja template filter.
+        Decorator to mark a function as a Jinja template filter.
 
         :param name: The name of the filter, if different from the function name.
         :param pass_context: Whether or not to pass the template context into the filter.
-            If true, the first argument must be the context.
+            If ``True``, the first argument must be the context.
         :param inject: Whether or not this filter needs any dependencies injected.
         :param safe: Whether or not to mark the output of this filter as html-safe.
         """
@@ -539,11 +539,11 @@ class Unchained:
                         safe: bool = False,
                         ) -> Callable:
         """
-        Decorator to mark a function as a jinja template global (tag).
+        Decorator to mark a function as a Jinja template global (tag).
 
         :param name: The name of the tag, if different from the function name.
         :param pass_context: Whether or not to pass the template context into the tag.
-            If true, the first argument must be the context.
+            If ``True``, the first argument must be the context.
         :param inject: Whether or not this tag needs any dependencies injected.
         :param safe: Whether or not to mark the output of this tag as html-safe.
         """
@@ -573,7 +573,7 @@ class Unchained:
 
         :param name: The name of the tag, if different from the function name.
         :param pass_context: Whether or not to pass the template context into the tag.
-            If true, the first argument must be the context.
+            If ``True``, the first argument must be the context.
         :param inject: Whether or not this tag needs any dependencies injected.
         :param safe: Whether or not to mark the output of this tag as html-safe.
         """
@@ -588,7 +588,7 @@ class Unchained:
                       safe: bool = False,
                       ) -> Callable:
         """
-        Decorator to mark a function as a jinja template test.
+        Decorator to mark a function as a Jinja template test.
 
         :param name: The name of the test, if different from the function name.
         :param inject: Whether or not this test needs any dependencies injected.
