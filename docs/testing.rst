@@ -24,9 +24,6 @@ client
 
 .. autofunction:: flask_unchained.pytest.client
 
-.. autoclass:: flask_unchained.pytest.HtmlTestResponse
-   :members:
-
 api_client
 ^^^^^^^^^^
 
@@ -51,11 +48,13 @@ HtmlTestClient
 
 .. autoclass:: flask_unchained.pytest.HtmlTestClient
    :members:
+   :exclude-members: open
 
 HtmlTestResponse
 ^^^^^^^^^^^^^^^^
 
-.. autofunction:: flask_unchained.pytest.api_client
+.. autoclass:: flask_unchained.pytest.HtmlTestResponse
+   :members:
 
 ApiTestClient
 ^^^^^^^^^^^^^
