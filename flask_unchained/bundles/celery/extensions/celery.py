@@ -43,8 +43,11 @@ class Celery(BaseCelery):
         self.__autoset('broker_url', app.config.CELERY_BROKER_URL)
         self.__autoset('result_backend', app.config.CELERY_RESULT_BACKEND)
         self.config_from_object(app.config)
-        self.autodiscover_tasks(lambda: [bundle.module_name
-                                         for bundle in app.unchained.BUNDLES])
+
+        # we don't use self.autodiscover_tasks here, preferring instead to allow the
+        # DiscoverTasksHook to discover tasks. This way allows for bundles to define
+        # what module their tasks are located in (and in a consistent way with how it
+        # works for the rest of Flask Unchained)
 
     def _register_dill(self):
         def encode(obj, dumper=dill_dumps):
@@ -61,6 +64,7 @@ class Celery(BaseCelery):
             content_encoding='binary'
         )
 
+    # the same as upstream, but we need to copy it here so we can access it
     def __autoset(self, key, value):
         if value:
             self._preconf[key] = value
