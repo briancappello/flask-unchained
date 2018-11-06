@@ -225,3 +225,8 @@ class Resource(Controller, metaclass=ResourceMeta):
         view = super().method_as_view(method_name, *class_args, **class_kwargs)
         view.methods = cls.resource_methods.get(method_name, None)
         return view
+
+
+__all__ = [
+    'Resource',
+]

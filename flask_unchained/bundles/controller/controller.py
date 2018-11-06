@@ -334,3 +334,8 @@ class Controller(metaclass=ControllerMeta):
             view_func = decorator(view_func)
         functools.update_wrapper(view_func, original_view_func)
         return view_func
+
+
+__all__ = [
+    'Controller',
+]

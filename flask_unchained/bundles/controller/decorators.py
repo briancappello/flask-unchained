@@ -97,3 +97,9 @@ def no_route(arg=None):
     if callable(arg):
         return wrapper(arg)
     return wrapper
+
+
+__all__ = [
+    'route',
+    'no_route',
+]

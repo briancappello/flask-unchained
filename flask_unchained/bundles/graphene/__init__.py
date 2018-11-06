@@ -43,6 +43,7 @@ class GrapheneBundle(Bundle):
 
 
 __all__ = [
+    'GrapheneBundle',
     'MutationObjectType',
     'QueryObjectType',
     'SQLAlchemyObjectType',

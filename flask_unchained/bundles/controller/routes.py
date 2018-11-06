@@ -569,3 +569,25 @@ def _reduce_routes(routes: Iterable[Union[Route, RouteGenerator]],
             yield route
         else:
             yield from _reduce_routes(route)
+
+
+__all__ = [
+    # types
+    'Defaults',
+    'Endpoints',
+    'Methods',
+    'RouteGenerator',
+
+    # public api
+    'controller',
+    'resource',
+    'func',
+    'include',
+    'prefix',
+    'get',
+    'delete',
+    'post',
+    'patch',
+    'put',
+    'rule'
+]

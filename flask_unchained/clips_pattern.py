@@ -571,3 +571,10 @@ def singularize(word, pos=NOUN, custom=None):
                     inflection = inflection.replace('\\' + str(k + 1), '')
             return suffix.sub(inflection, word)
     return word
+
+
+__all__ = [
+    'de_camel',
+    'pluralize',
+    'singularize',
+]

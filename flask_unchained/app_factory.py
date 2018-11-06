@@ -175,3 +175,8 @@ def _is_bundle(module):
         is_subclass = issubclass(obj, Bundle) and obj not in {AppBundle, Bundle}
         return is_subclass and obj.__module__.startswith(module.__name__)
     return is_bundle
+
+
+__all__ = [
+    'AppFactory',
+]
