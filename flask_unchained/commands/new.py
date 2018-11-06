@@ -157,6 +157,9 @@ def new():
 @click.option('--celery/--no-celery', prompt='Celery Bundle',
               help='Whether or not to install the Celery Bundle.',
               default=lambda: default(False), show_default=True)
+@click.option('--graphene/--no-graphene', prompt='Graphene Bundle',
+              help='Whether or not to install the Graphene Bundle.',
+              default=lambda: default(False), show_default=True)
 @click.option('--mail/--no-mail', prompt='Mail Bundle',
               help='Whether or not to install the Mail Bundle.',
               default=lambda: default(False), show_default=True)
@@ -173,7 +176,8 @@ def new():
               help='Whether or not to install the Webpack Bundle.',
               default=lambda: default(False), show_default=True)
 def project(dest, app_bundle, force, dev,
-            admin, api, celery, mail, security, session, sqlalchemy, webpack):
+            admin, api, celery, graphene, mail,
+            security, session, sqlalchemy, webpack):
     """
     Create a new Flask Unchained project.
     """
@@ -185,7 +189,7 @@ def project(dest, app_bundle, force, dev,
 
     # build up a list of dependencies
     # IMPORTANT: keys here must match setup.py's `extra_requires` keys
-    ctx = dict(dev=dev, admin=admin, api=api, celery=celery,
+    ctx = dict(dev=dev, admin=admin, api=api, celery=celery, graphene=graphene,
                mail=mail, security=security, session=security or session,
                sqlalchemy=security or sqlalchemy, webpack=webpack)
     ctx['requirements'] = [k for k, v in ctx.items() if v]
@@ -200,6 +204,7 @@ def project(dest, app_bundle, force, dev,
         in [('api', ['app/serializers']),
             ('celery', ['app/tasks',
                         'celery.py']),
+            ('graphene', ['app/graphql']),
             ('mail', ['templates/email']),
             ('security', ['app/models/role.py',
                           'app/models/user.py',
