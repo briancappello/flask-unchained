@@ -12,15 +12,14 @@ from ..utils import current_user
 
 
 class SecurityController(Controller):
-    def __init__(self,
-                 security: Security = injectable,
-                 security_service: SecurityService = injectable,
-                 security_utils_service: SecurityUtilsService = injectable,
-                 session_manager: SessionManager = injectable):
-        self.security = security
-        self.security_service = security_service
-        self.security_utils_service = security_utils_service
-        self.session_manager = session_manager
+    """
+    The controller for the security bundle.
+    """
+
+    security: Security = injectable
+    security_service: SecurityService = injectable
+    security_utils_service: SecurityUtilsService = injectable
+    session_manager: SessionManager = injectable
 
     @route(only_if=False)
     @auth_required()

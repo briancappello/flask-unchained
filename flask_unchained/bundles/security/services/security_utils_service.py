@@ -8,9 +8,13 @@ from itsdangerous import BadSignature, SignatureExpired
 
 
 class SecurityUtilsService(BaseService):
-    def __init__(self, user_manager=injectable, security=injectable):
-        self.security = security
-        self.user_manager = user_manager
+    """
+    The security utils service. Mainly contains lower-level encryption/token handling
+    code.
+    """
+
+    security = injectable
+    user_manager = injectable
 
     def get_hmac(self, password):
         """

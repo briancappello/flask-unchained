@@ -13,6 +13,9 @@ class UserSerializer(ma.ModelSerializer):
     """
     Marshmallow serializer for the :class:`User` model.
     """
+
+    user_manager: UserManager = injectable
+
     email = ma.Email(required=True)
     roles = ma.Nested('RoleSerializer', only='name', many=True)
 
@@ -21,10 +24,6 @@ class UserSerializer(ma.ModelSerializer):
         exclude = ('confirmed_at', 'created_at', 'updated_at', 'user_roles')
         dump_only = ('active', 'roles')
         load_only = ('password',)
-
-    def __init__(self, *args, user_manager: UserManager = injectable, **kwargs):
-        self.user_manager = user_manager
-        super().__init__(*args, **kwargs)
 
     @ma.validates('email')
     def validate_email(self, email):

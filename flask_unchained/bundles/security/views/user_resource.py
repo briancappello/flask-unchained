@@ -14,6 +14,9 @@ class UserResource(ModelResource):
     """
     RESTful API resource for the :class:`User` model.
     """
+
+    security_service: SecurityService = injectable
+
     class Meta:
         model = User
         include_methods = {CREATE, GET, PATCH}
@@ -22,10 +25,6 @@ class UserResource(ModelResource):
             GET: [auth_required_same_user],
             PATCH: [auth_required_same_user],
         }
-
-    def __init__(self, security_service: SecurityService = injectable):
-        super().__init__()
-        self.security_service = security_service
 
     def create(self, user, errors):
         if errors:
