@@ -1,3 +1,19 @@
+"""
+This module acts a drop-in replacement for ``click``::
+
+    # before
+    import click
+
+    # after
+    from flask_unchained import click
+
+We override upstream to do the following:
+
+- we accept ``-h`` and ``--help`` instead of just ``--help`` for showing help
+- we support documenting help for ``click.Argument``
+- some minor customizations to the formatting of the help output
+"""
+
 import click
 import inspect as _inspect
 
