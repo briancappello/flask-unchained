@@ -1,8 +1,16 @@
-from __future__ import with_statement
+import logging
+import os
+
 from alembic import context
+from flask import current_app
 from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
-import logging
+
+# make sure the migrations versions directory exists
+versions_dir = os.path.join(current_app.config.PROJECT_ROOT,
+                            current_app.config.ALEMBIC['script_location'],
+                            'versions')
+os.makedirs(versions_dir, exist_ok=True)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -17,7 +25,6 @@ logger = logging.getLogger('alembic.env')
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from flask import current_app
 config.set_main_option('sqlalchemy.url',
                        current_app.config.SQLALCHEMY_DATABASE_URI)
 target_metadata = current_app.extensions['migrate'].db.metadata
