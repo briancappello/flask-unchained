@@ -2,7 +2,7 @@ import sqlalchemy
 from flask_admin.form import BaseForm
 from flask_admin.form.fields import Select2Field
 from flask_admin.model.form import converts
-from flask_admin.contrib.sqla.form import AdminModelConverter
+from flask_admin.contrib.sqla.form import AdminModelConverter as _BaseAdminModelConverter
 
 
 class ReorderableForm(BaseForm):
@@ -35,8 +35,8 @@ class EnumField(Select2Field):
             elif isinstance(value, str):
                 return column.type.enum_class[value]
             else:
-                raise ValueError('Invalid choice {enumclass} {value}'.format(
-                    enumclass=column.type.enum_class,
+                raise ValueError('Invalid choice {enum_class} {value}'.format(
+                    enum_class=column.type.enum_class,
                     value=value
                 ))
 
@@ -54,7 +54,7 @@ class EnumField(Select2Field):
             raise ValueError(self.gettext('Not a valid choice'))
 
 
-class CustomAdminConverter(AdminModelConverter):
+class AdminModelFormConverter(_BaseAdminModelConverter):
     @converts('sqlalchemy.sql.sqltypes.Enum')
     def convert_enum(self, field_args, **extra):
         return EnumField(column=extra['column'], **field_args)

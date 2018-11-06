@@ -1,10 +1,10 @@
 from datetime import date, datetime
 
-from flask_admin.contrib.sqla import ModelView as BaseModelView
+from flask_admin.contrib.sqla import ModelView as _BaseModelAdmin
 from flask_admin.consts import ICON_TYPE_GLYPH
 from flask_unchained.string_utils import slugify, snake_case
 
-from .forms import ReorderableForm, CustomAdminConverter
+from .forms import ReorderableForm, AdminModelFormConverter
 from .macro import macro
 from .security import AdminSecurityMixin
 
@@ -15,26 +15,26 @@ EXTEND_BASE_CLASS_ATTRIBUTES = (
 )
 
 
-class NameDescriptor:
+class _ModelAdminNameDescriptor:
     def __get__(self, instance, cls):
         if not cls.model or isinstance(cls.model, str):
             return None
         return cls.model.__plural_label__
 
 
-class EndpointDescriptor:
+class _ModelAdminEndpointDescriptor:
     def __get__(self, instance, cls):
         return snake_case(cls.__name__)
 
 
-class SlugDescriptor:
+class _ModelAdminSlugDescriptor:
     def __get__(self, instance, cls):
         if not cls.model or isinstance(cls.model, str):
             return None
         return slugify(cls.model.__plural_label__)
 
 
-class ModelAdmin(AdminSecurityMixin, BaseModelView):
+class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin):
     """
     Base class for SQLAlchemy model admins. More or less the same as
     :class:`~flask_admin.contrib.sqla.ModelView`, except we set some
@@ -43,9 +43,9 @@ class ModelAdmin(AdminSecurityMixin, BaseModelView):
 
     can_view_details = True
 
-    name = NameDescriptor()
-    endpoint = EndpointDescriptor()
-    slug = SlugDescriptor()
+    name = _ModelAdminNameDescriptor()
+    endpoint = _ModelAdminEndpointDescriptor()
+    slug = _ModelAdminSlugDescriptor()
 
     model = None
     category_name = None
@@ -67,7 +67,7 @@ class ModelAdmin(AdminSecurityMixin, BaseModelView):
     }
 
     form_base_class = ReorderableForm
-    model_form_converter = CustomAdminConverter
+    model_form_converter = AdminModelFormConverter
 
     def __getattribute__(self, item):
         """Allow class attribute names in EXTEND_BASE_CLASS_ATTRIBUTES that are
