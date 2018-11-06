@@ -1,14 +1,14 @@
 import os
 
-from flask import Blueprint, current_app
+from flask import Blueprint as _Blueprint, current_app
 from flask.helpers import safe_join, send_file
-from flask.blueprints import BlueprintSetupState as BaseSetupState
+from flask.blueprints import BlueprintSetupState as _BlueprintSetupState
 from flask.helpers import _endpoint_from_view_func
 from flask_unchained import Bundle
 from werkzeug.exceptions import BadRequest, NotFound
 
 
-class BlueprintSetupState(BaseSetupState):
+class _BundleBlueprintSetupState(_BlueprintSetupState):
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         """
         A helper method to register a rule (and optionally a view function)
@@ -26,7 +26,7 @@ class BlueprintSetupState(BaseSetupState):
         self.app.add_url_rule(rule, endpoint, view_func, defaults=defaults, **options)
 
 
-class BundleBlueprint(Blueprint):
+class BundleBlueprint(_Blueprint):
     """
     The purpose of this class is to register a custom template folder and/or
     static folder with Flask. For each bundle tht has a template folder, static
@@ -40,13 +40,13 @@ class BundleBlueprint(Blueprint):
 
     def __init__(self, bundle: Bundle):
         self.bundle = bundle
-        super().__init__(bundle.blueprint_name, bundle.module_name,
+        super().__init__(bundle._blueprint_name, bundle.module_name,
                          static_url_path=bundle.static_url_path,
                          template_folder=bundle.template_folder)
 
     @property
     def has_static_folder(self):
-        return bool(self.bundle.static_folders)
+        return bool(self.bundle._static_folders)
 
     def send_static_file(self, filename):
         if not self.has_static_folder:
@@ -54,11 +54,11 @@ class BundleBlueprint(Blueprint):
         # Ensure get_send_file_max_age is called in all cases.
         # Here, we ensure get_send_file_max_age is called for Blueprints.
         cache_timeout = self.get_send_file_max_age(filename)
-        return _send_from_directories(self.bundle.static_folders, filename,
+        return _send_from_directories(self.bundle._static_folders, filename,
                                       cache_timeout=cache_timeout)
 
     def make_setup_state(self, app, options, first_registration=False):
-        return BlueprintSetupState(self, app, options, first_registration)
+        return _BundleBlueprintSetupState(self, app, options, first_registration)
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         """
@@ -83,7 +83,7 @@ class BundleBlueprint(Blueprint):
         if self.has_static_folder:
             state.add_url_rule(self.static_url_path + '/<path:filename>',
                                view_func=self.send_static_file,
-                               endpoint=f'{self.bundle.blueprint_name}.static',
+                               endpoint=f'{self.bundle._blueprint_name}.static',
                                register_with_babel=False)
 
         for deferred in self.bundle._deferred_functions:
@@ -134,3 +134,8 @@ def _send_from_directories(directories, filename, **options):
         options.setdefault('conditional', True)
         return send_file(filename, **options)
     raise NotFound()
+
+
+__all__ = [
+    'BundleBlueprint',
+]
