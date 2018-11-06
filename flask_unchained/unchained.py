@@ -39,7 +39,6 @@ class Unchained:
     def __init__(self, env: Optional[Union[DEV, PROD, STAGING, TEST]] = None):
         self.bundles = AttrDict()
         self._bundles = _DeferredBundleFunctionsStore()
-        self.app_bundle = None
         self.babel_bundle = None
         self.env = env
         self.extensions = AttrDict()
@@ -57,17 +56,17 @@ class Unchained:
         Implemented to allow accessing bundles by their name as attributes on the
         ``unchained`` extension instance.
 
-        *Before* the app has been initialized, we don't actually know what bundles
-        the user has configured, and therefore we need to make a compromise: *any*
-        unrecognized attribute assess before the app has been initialized is assumed
-        to be a valid bundle name, and so we return a
-        :class:`~flask_unchained.bundle._DeferredBundleFunctions` instance that allows
-        registering deferred functions (as a replacement for that part of the public
-        Blueprint API).
+        *Before* the app has been initialized (ie at import time), we don't
+        actually know what bundles the user has configured, and therefore we
+        need to make a compromise: *any* unrecognized attribute assess before
+        the app has been initialized is assumed to be a valid bundle name, and
+        so we return a :class:`~flask_unchained.bundle._DeferredBundleFunctions`
+        instance that allows registering deferred functions (as a replacement
+        for that part of the public Blueprint API).
 
-        *After* the app has been initialized, we know what bundles the user configured,
-        and can therefore return the correct bundle instance (or raise
-        ``AttributeError`` if an invalid attribute was requested).
+        *After* the app has been initialized, we know what bundles the user
+        configured, and can therefore return the correct bundle instance (or
+        raise ``AttributeError`` if an invalid attribute was requested).
         """
         if name in self.bundles:
             return self.bundles[name]
@@ -91,19 +90,8 @@ class Unchained:
         self._shell_ctx = {b.__class__.__name__: b for b in bundles}
         app.shell_context_processor(lambda: self._shell_ctx)
 
-        try:
-            # must import AppBundle here to prevent circular dependency
-            from .bundle import AppBundle
-            self.app_bundle = [b for b in bundles if isinstance(b, AppBundle)][0]
-        except IndexError:
-            self.app_bundle = None
+        self.babel_bundle = self.bundles.get('babel_bundle', None)
 
-        try:
-            # must import BabelBundle here to prevent circular dependency
-            from .bundles.babel import BabelBundle
-            self.babel_bundle = [b for b in bundles if isinstance(b, BabelBundle)][0]
-        except IndexError:
-            self.babel_bundle = None
 
         self.env = env or self.env
         app.env = self.env
@@ -609,6 +597,10 @@ class Unchained:
         """
         This method is for use by tests only!
         """
+        self.bundles = AttrDict()
+        self._bundles = _DeferredBundleFunctionsStore()
+        self.babel_bundle = None
+
         self._initialized = False
         self._models_initialized = False
         self._services_initialized = False
