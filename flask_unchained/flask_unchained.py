@@ -1,10 +1,22 @@
 from flask import Flask, Config as _FlaskConfig
 
-from .utils import AttrDict
+from .unchained import Unchained, unchained
+from .utils import AttrDict as _AttrDict
 
 
-class AttrDictFlaskConfig(AttrDict, _FlaskConfig):
-    pass
+class _AttrDictFlaskConfig(_AttrDict, _FlaskConfig):
+    """
+    The config class for Flask Unchained. Implements attribute access for
+    config options, eg the following are equivalent::
+
+        secret_key = app.config['SECRET_KEY']
+        app.config['SECRET_KEY'] = 'super-secret'
+
+        secret_key = app.config.SECRET_KEY
+        app.config.SECRET_KEY = 'super-secret'
+
+    Otherwise the same as :class:`flask.Config`.
+    """
 
 
 class FlaskUnchained(Flask):
@@ -14,7 +26,7 @@ class FlaskUnchained(Flask):
     automatic (optional) registration of URLs prefixed with a language code.
     """
 
-    config_class = AttrDictFlaskConfig
+    config_class = _AttrDictFlaskConfig
 
     env: str = None
     """
@@ -22,11 +34,15 @@ class FlaskUnchained(Flask):
     ``production``, ``staging``, or ``test``.
     """
 
-    from .unchained import Unchained, unchained
+    # NOTE: the following all get set by ControllerBundle.before_init_app
+    # jinja_environment = UnchainedJinjaEnvironment
+    # jinja_options = {**app.jinja_options,
+    #                  'loader': UnchainedJinjaLoader(app)}
+    # jinja_env.globals['url_for'] = url_for
 
     unchained: Unchained = unchained
     """
-    The Flask Unchained extension instance.
+    The :class:`~flask_unchained.Unchained` extension instance.
     """
 
     def register_blueprint(self, blueprint, register_with_babel=True, **options):
@@ -53,3 +69,8 @@ class FlaskUnchained(Flask):
                 provide_automatic_options=provide_automatic_options, **options)
         return super().add_url_rule(rule, endpoint, view_func,
                                     provide_automatic_options, **options)
+
+
+__all__ = [
+    'FlaskUnchained',
+]
