@@ -33,4 +33,4 @@ Config
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-:doc:`../api/bundles/admin`
+See :doc:`../api/admin_bundle`

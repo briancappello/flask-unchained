@@ -1,49 +1,49 @@
-Controller Bundle API Documentation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Controller Bundle
+-----------------
 
 .. autoclass:: flask_unchained.bundles.controller.ControllerBundle
    :members:
 
 Config
-~~~~~~
+^^^^^^
 
 .. autoclass:: flask_unchained.bundles.controller.config.Config
    :members:
 
 Controller
-~~~~~~~~~~
+^^^^^^^^^^
 
 .. autoclass:: flask_unchained.Controller
    :members:
    :exclude-members: method_as_view
 
 Decorators
-~~~~~~~~~~
+^^^^^^^^^^
 
 .. autofunction:: flask_unchained.route
 .. autofunction:: flask_unchained.no_route
 
 Hooks
-~~~~~
+^^^^^
 
 .. automodule:: flask_unchained.bundles.controller.hooks
    :members:
 
 Resource
-~~~~~~~~
+^^^^^^^^
 
 .. autoclass:: flask_unchained.Resource
    :members:
    :exclude-members: method_as_view
 
 Route
-~~~~~
+^^^^^
 
 .. automodule:: flask_unchained.bundles.controller.route
    :members:
 
 Routes
-~~~~~~
+^^^^^^
 
 .. autofunction:: flask_unchained.controller
 .. autofunction:: flask_unchained.delete
@@ -58,7 +58,7 @@ Routes
 .. autofunction:: flask_unchained.rule
 
 Utils
-~~~~~
+^^^^^
 
 .. autofunction:: flask_unchained.redirect
 .. autofunction:: flask_unchained.url_for

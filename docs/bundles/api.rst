@@ -147,6 +147,7 @@ Model Resource Meta Options
 :class:`~flask_unchained.bundles.api.ModelResource` inherits all of the meta options from :class:`~flask_unchained.Controller` and :class:`~flask_unchained.Resource`, and it adds some options of its own:
 
 .. list-table::
+   :widths: 20 40 40
    :header-rows: 1
 
    * - meta option name
@@ -166,13 +167,13 @@ Model Resource Meta Options
      - Determined automatically by the model name. Can be set manually to override the automatic discovery.
    * - include_methods
      - A list of resource methods to automatically include.
-     - ``('list', 'create', 'get', 'patch', 'put', 'delete')``
+     - ``('list', 'create', 'get',`` ``'patch', 'put', 'delete')``
    * - exclude_methods
      - A list of resource methods to exclude.
      - ``()``
    * - include_decorators
      - A list of resource methods for which to automatically apply the default decorators.
-     - ``('list', 'create', 'get', 'patch', 'put', 'delete')``
+     - ``('list', 'create', 'get',`` ``'patch', 'put', 'delete')``
    * - exclude_decorators
      - A list of resource methods for which to *not* automatically apply the default decorators.
      - ``()``
@@ -186,4 +187,4 @@ FIXME: OpenAPI Documentation
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-:doc:`../api/bundles/api`
+See :doc:`../api/api_bundle`

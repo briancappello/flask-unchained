@@ -1,24 +1,24 @@
-Security Bundle API Documentation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Security Bundle
+---------------
 
 .. autoclass:: flask_unchained.bundles.security.SecurityBundle
    :members:
 
 
 Config
-~~~~~~
+^^^^^^
 
 .. automodule:: flask_unchained.bundles.security.config
    :members:
 
 Security Extension
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: flask_unchained.bundles.security.extensions.security.Security
    :members:
 
 Decorators
-~~~~~~~~~~
+^^^^^^^^^^
 
 .. autofunction:: flask_unchained.bundles.security.auth_required
 
@@ -27,7 +27,7 @@ Decorators
 .. autofunction:: flask_unchained.bundles.security.anonymous_user_required
 
 Forms
-~~~~~
+^^^^^
 
 LoginForm
 """""""""
@@ -74,7 +74,7 @@ Validators
 .. autofunction:: flask_unchained.bundles.security.forms.valid_user_email
 
 Models
-~~~~~~
+^^^^^^
 
 User
 """"
@@ -95,7 +95,7 @@ UserRole
    :members:
 
 Serializers
-~~~~~~~~~~~
+^^^^^^^^^^^
 
 UserSerializer
 """"""""""""""
@@ -110,7 +110,7 @@ RoleSerializer
    :members:
 
 Services
-~~~~~~~~
+^^^^^^^^
 
 SecurityService
 """""""""""""""
@@ -137,7 +137,7 @@ RoleManager
    :members:
 
 Views
-~~~~~
+^^^^^
 
 SecurityController
 """"""""""""""""""

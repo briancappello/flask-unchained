@@ -25,4 +25,4 @@ Commands
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-:doc:`../api/bundles/babel`
+See :doc:`../api/babel_bundle`

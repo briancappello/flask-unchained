@@ -105,4 +105,4 @@ Commands
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-:doc:`../api/bundles/sqlalchemy`
+See :doc:`../api/sqlalchemy_bundle`

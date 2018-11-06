@@ -18,7 +18,6 @@ Bundle
 
 .. autoclass:: flask_unchained.Bundle
    :members:
-   :exclude-members: has_views, iter_class_hierarchy
 
 AppBundle
 ^^^^^^^^^
@@ -68,8 +67,6 @@ injectable
 .. automodule:: flask_unchained.di
    :members: injectable
 
-.. FIXME the docs for hooks are all messed up
-
 Hooks
 ^^^^^
 
@@ -77,62 +74,70 @@ AppFactoryHook
 ~~~~~~~~~~~~~~
 
 .. autoclass:: flask_unchained.AppFactoryHook
-   :members: run_hook, process_objects, collect_from_bundles, collect_from_bundle, key_name, type_check, import_bundle_module, get_module_name, update_shell_context
-   :member-order: run_hook, process_objects, collect_from_bundles, collect_from_bundle, key_name, type_check, import_bundle_module, get_module_name, update_shell_context
+   :members:
 
 ConfigureAppHook
 ~~~~~~~~~~~~~~~~
 
-.. autoclass:: flask_unchained.hooks.configure_app_hook.ConfigureAppHook
-   :members: bundle_module_name, run_before, run_after, run_hook, apply_default_config, get_bundle_config
-   :inherited-members: bundle_override_module_name_attr
+.. autoclass:: flask_unchained.hooks.ConfigureAppHook
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :exclude-members: apply_default_config, collect_from_bundle, collect_from_bundles, discover_from_bundle_superclasses, get_bundle_config, get_module_name, import_bundle_module, limit_discovery_to_local_declarations, key_name, process_objects, type_check, update_shell_context
 
 RegisterExtensionsHook
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: flask_unchained.hooks.register_extensions_hook.RegisterExtensionsHook
-   :inherited-members: bundle_override_module_name_attr
-   :undoc-members: bundle_module_name, run_before, run_after
+.. autoclass:: flask_unchained.hooks.RegisterExtensionsHook
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :exclude-members: collect_from_bundle, collect_from_bundles, discover_from_bundle_superclasses, get_module_name, import_bundle_module, limit_discovery_to_local_declarations, key_name, process_objects, type_check, update_shell_context, run_hook, get_extension_tuples, resolve_extension_order
 
 InitExtensionsHook
 ~~~~~~~~~~~~~~~~~~
 
-.. automodule:: flask_unchained.hooks.init_extensions_hook
-   :members: InitExtensionsHook
-   :inherited-members: bundle_override_module_name_attr
-   :undoc-members: bundle_module_name, run_before, run_after
+.. autoclass:: flask_unchained.hooks.InitExtensionsHook
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :exclude-members: collect_from_bundle, collect_from_bundles, discover_from_bundle_superclasses, get_module_name, import_bundle_module, limit_discovery_to_local_declarations, key_name, process_objects, type_check, update_shell_context, run_hook, get_extension_tuples, resolve_extension_order
 
 InjectServicesIntoExtensionsHook
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: flask_unchained.hooks.inject_services_into_extensions_hook
-   :members: InjectServicesIntoExtensions
-   :inherited-members: bundle_override_module_name_attr
-   :undoc-members: bundle_module_name, run_before, run_after
+.. autoclass:: flask_unchained.hooks.InjectServicesIntoExtensionsHook
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :exclude-members: collect_from_bundle, collect_from_bundles, discover_from_bundle_superclasses, get_module_name, import_bundle_module, limit_discovery_to_local_declarations, key_name, process_objects, type_check, update_shell_context, run_hook
 
 RegisterCommandsHook
 ~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: flask_unchained.hooks.register_commands_hook
-   :members: RegisterCommandsHook
-   :inherited-members: bundle_override_module_name_attr
-   :undoc-members: bundle_module_name, run_before, run_after
+.. autoclass:: flask_unchained.hooks.RegisterCommandsHook
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :exclude-members: collect_from_bundle, collect_from_bundles, discover_from_bundle_superclasses, get_module_name, import_bundle_module, limit_discovery_to_local_declarations, key_name, process_objects, type_check, update_shell_context, run_hook, get_bundle_commands, get_bundle_command_groups, is_click_command, is_click_group
 
 RegisterServicesHook
 ~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: flask_unchained.hooks.register_services_hook.RegisterServicesHook
+.. autoclass:: flask_unchained.hooks.RegisterServicesHook
    :members:
-   :inherited-members: bundle_override_module_name_attr
-   :undoc-members: bundle_module_name, run_before, run_after
+   :undoc-members:
+   :inherited-members:
+   :exclude-members: collect_from_bundle, collect_from_bundles, discover_from_bundle_superclasses, get_module_name, import_bundle_module, limit_discovery_to_local_declarations, key_name, process_objects, type_check, update_shell_context, run_hook
 
 RunHooksHook
 ~~~~~~~~~~~~
 
-.. automodule:: flask_unchained.hooks.run_hooks_hook
-   :members: RunHooksHook
-   :inherited-members: bundle_override_module_name_attr
-   :undoc-members: bundle_module_name, run_before, run_after
+.. autoclass:: flask_unchained.hooks.RunHooksHook
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :exclude-members: collect_from_bundle, collect_from_bundles, discover_from_bundle_superclasses, get_module_name, import_bundle_module, limit_discovery_to_local_declarations, key_name, process_objects, type_check, update_shell_context, run_hook, collect_from_unchained, resolve_hook_order
 
 Utilities
 ^^^^^^^^^

@@ -65,4 +65,4 @@ The mail bundle includes one pytest fixture, :func:`~flask_unchained.bundles.mai
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-:doc:`../api/bundles/mail`
+See :doc:`../api/mail_bundle`

@@ -48,4 +48,4 @@ Commands
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-:doc:`../api/bundles/celery`
+See :doc:`../api/celery_bundle`

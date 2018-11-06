@@ -46,4 +46,4 @@ Commands
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-:doc:`../api/bundles/security`
+See :doc:`../api/security_bundle`

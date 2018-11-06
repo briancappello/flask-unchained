@@ -53,4 +53,4 @@ SESSION_TYPE      Required Options
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-:doc:`../api/bundles/session`
+See :doc:`../api/session_bundle`

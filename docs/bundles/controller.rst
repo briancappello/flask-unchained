@@ -431,4 +431,4 @@ And here's what the same thing using the constructor looks like::
 API Documentation
 ^^^^^^^^^^^^^^^^^
 
-:doc:`../api/bundles/controller`
+See :doc:`../api/controller_bundle`

@@ -1,5 +1,5 @@
-Webpack Bundle API Documentation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Webpack Bundle
+--------------
 
 Adds Webpack support to Flask Unchained.
 
@@ -7,13 +7,13 @@ Adds Webpack support to Flask Unchained.
    :members:
 
 Config
-~~~~~~
+^^^^^^
 
 .. automodule:: flask_unchained.bundles.webpack.config
    :members:
 
 Extensions
-~~~~~~~~~~
+^^^^^^^^^^
 
 .. autoclass:: flask_unchained.bundles.webpack.extensions.Webpack
    :members:
