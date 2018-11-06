@@ -15,6 +15,7 @@ except ImportError:
     from py_meta_utils import OptionalClass as iteritems
     from py_meta_utils import OptionalClass as is_collection
 
+
 class OpenAPIConverter(BaseOpenAPIConverter):
     def fields2jsonschema(self, fields, schema=None, use_refs=True, dump=True, name=None):
         """Return the JSON Schema Object for a given marshmallow
@@ -67,7 +68,8 @@ class OpenAPIConverter(BaseOpenAPIConverter):
 
         jsonschema = {
             'type': 'object',
-            'properties': OrderedLazyDict() if getattr(Meta, 'ordered', None) else LazyDict(),
+            'properties': (OrderedLazyDict() if getattr(Meta, 'ordered', None)
+                           else LazyDict()),
         }
 
         exclude = set(getattr(Meta, 'exclude', []))

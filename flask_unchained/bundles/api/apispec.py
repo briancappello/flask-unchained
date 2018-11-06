@@ -30,30 +30,29 @@ class APISpec(apispec.APISpec):
         self.ma_plugin = MarshmallowPlugin()
         plugins.extend([self.flask_plugin, self.ma_plugin])
 
-        super().__init__(
-            title=app.config.get('API_TITLE', app.name),
-            version=app.config.get('API_VERSION', '1'),
-            openapi_version=app.config.get('API_OPENAPI_VERSION', '2.0'),
-            info=dict(
-                description=app.config.get('API_DESCRIPTION', None),
-            ),
-            plugins=plugins,
-        )
+        super().__init__(title=app.config.API_TITLE or app.name,
+                         version=app.config.API_VERSION,
+                         openapi_version=app.config.API_OPENAPI_VERSION,
+                         info=dict(description=app.config.API_DESCRIPTION),
+                         plugins=plugins)
         self.register_routes(app)
 
+    # FIXME make a controller for these routes, inject this extension into it
     def register_routes(self, app: FlaskUnchained):
-        redoc_url_prefix = app.config.get('API_REDOC_URL_PREFIX', '/api-docs').rstrip('/')
-        template_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-        bp = Blueprint('api-docs', __name__, url_prefix=redoc_url_prefix,
-                       template_folder=template_folder)
+        bp = Blueprint('api-docs', __name__,
+                       url_prefix=app.config.API_REDOC_URL_PREFIX.rstrip('/'),
+                       template_folder=os.path.join(
+                           os.path.dirname(os.path.abspath(__file__)), 'templates'))
 
-        # Serve json spec at 'url_prefix/openapi.json' by default
-        json_path = app.config.get('OPENAPI_JSON_PATH', 'openapi.json')
-        bp.add_url_rule(json_path, endpoint='openapi_json', view_func=self._openapi_json)
+        # Serve json spec at `API_REDOC_URL_PREFIX/openapi.json` by default
+        bp.add_url_rule(app.config.API_OPENAPI_JSON_PATH,
+                        endpoint='openapi_json',
+                        view_func=self._openapi_json)
 
-        # Serve ReDoc at `url_prefix/' by default
-        redoc_path = app.config.get('OPENAPI_REDOC_PATH', '/')
-        bp.add_url_rule(redoc_path, endpoint='openapi_redoc', view_func=self._openapi_redoc)
+        # Serve ReDoc at `API_REDOC_URL_PREFIX/` by default
+        bp.add_url_rule(app.config.API_REDOC_PATH,
+                        endpoint='openapi_redoc',
+                        view_func=self._openapi_redoc)
 
         app.register_blueprint(bp, register_with_babel=False)
 
@@ -70,25 +69,11 @@ class APISpec(apispec.APISpec):
         """
         Expose OpenAPI spec with ReDoc
 
-        The ReDoc script URL can be specified as OPENAPI_REDOC_URL.
-        Otherwise, a CDN script is used based on the ReDoc version. The
-        version can - and should - be specified as OPENAPI_REDOC_VERSION,
-        otherwise, 'latest' is used.
-        When using 1.x branch (i.e. when OPENAPI_REDOC_VERSION is "latest" or
-        begins with "v1"), GitHub CDN is used.
-        When using 2.x branch (i.e. when OPENAPI_REDOC_VERSION is "next" or
-        begins with "2" or "v2"), unpkg nmp CDN is used.
-        OPENAPI_REDOC_VERSION is ignored when OPENAPI_REDOC_URL is passed.
+        The ReDoc script URL can be specified as ``API_REDOC_SOURCE_URL``
         """
-        redoc_url = self.app.config.get('OPENAPI_REDOC_URL', None)
-        redoc_version = self.app.config.get('OPENAPI_REDOC_VERSION', 'next')
-        if redoc_url is None:
-            redoc_url = (
-                'https://cdn.jsdelivr.net/npm/redoc@'
-                '{}/bundles/redoc.standalone.js'.format(redoc_version))
-        return render_template('redoc.html',
-                               title=self.app.config.get('API_TITLE', self.app.name),
-                               redoc_url=redoc_url)
+        return render_template('openapi/redoc.html',
+                               title=self.app.config.API_TITLE or self.app.name,
+                               redoc_url=self.app.config.API_REDOC_SOURCE_URL)
 
     def register_converter(self, converter, conv_type, conv_format=None):
         """

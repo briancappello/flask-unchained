@@ -5,7 +5,7 @@ from speaklater import _LazyString
 
 from .extensions import Api, Marshmallow, api, ma
 from .model_resource import ModelResource
-from .model_serializer import ModelSerializer, Unmarshaller
+from .model_serializer import ModelSerializer, _Unmarshaller
 
 
 class ApiBundle(Bundle):
@@ -45,9 +45,9 @@ class ApiBundle(Bundle):
     def before_init_app(self, app: FlaskUnchained):
         try:
             from marshmallow import marshalling
+            setattr(marshalling, 'Unmarshaller', _Unmarshaller)
         except ImportError:
             return
-        setattr(marshalling, 'Unmarshaller', Unmarshaller)
 
     def after_init_app(self, app: FlaskUnchained):
         """

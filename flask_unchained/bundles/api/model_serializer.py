@@ -1,31 +1,34 @@
 from flask_unchained import unchained
-from flask_unchained.di import set_up_class_dependency_injection
+from flask_unchained.di import _set_up_class_dependency_injection
 from flask_unchained.string_utils import camel_case, title_case
 from py_meta_utils import McsArgs
 
 try:
-    from flask_marshmallow.sqla import ModelSchema, SchemaOpts
+    from flask_marshmallow.sqla import (
+        ModelSchema as _BaseModelSerializer,
+        SchemaOpts as _BaseModelSerializerOptionsClass)
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
-    from marshmallow.marshalling import Unmarshaller as BaseUnmarshaller
-    from marshmallow.schema import SchemaMeta
+    from marshmallow.marshalling import Unmarshaller as _BaseUnmarshaller
+    from marshmallow.schema import SchemaMeta as _BaseModelSerializerMetaclass
     from marshmallow_sqlalchemy.convert import (
-        ModelConverter as BaseModelConverter, _should_exclude_field)
-    from marshmallow_sqlalchemy.schema import ModelSchemaMeta
+        ModelConverter as _BaseModelConverter, _should_exclude_field)
+    from marshmallow_sqlalchemy.schema import (
+        ModelSchemaMeta as _BaseModelSchemaMetaclass)
 except ImportError:
-    from py_meta_utils import OptionalClass as ModelSchema
-    from py_meta_utils import OptionalClass as SchemaOpts
-    from py_meta_utils import OptionalMetaclass as SchemaMeta
+    from py_meta_utils import OptionalClass as _BaseModelSerializer
+    from py_meta_utils import OptionalClass as _BaseModelSerializerOptionsClass
+    from py_meta_utils import OptionalMetaclass as _BaseModelSerializerMetaclass
     from py_meta_utils import OptionalClass as MarshmallowValidationError
-    from py_meta_utils import OptionalClass as BaseUnmarshaller
-    from py_meta_utils import OptionalClass as BaseModelConverter
-    from py_meta_utils import OptionalMetaclass as ModelSchemaMeta
+    from py_meta_utils import OptionalClass as _BaseUnmarshaller
+    from py_meta_utils import OptionalClass as _BaseModelConverter
+    from py_meta_utils import OptionalMetaclass as _BaseModelSchemaMetaclass
     _should_exclude_field = None
 
 
 READ_ONLY_FIELDS = {'slug', 'created_at', 'updated_at'}
 
 
-class ModelConverter(BaseModelConverter):
+class _ModelConverter(_BaseModelConverter):
     def fields_for_model(self, model, include_fk=False, fields=None,
                          exclude=None, base_fields=None, dict_cls=dict):
         """
@@ -94,27 +97,6 @@ class ModelConverter(BaseModelConverter):
         return field
 
 
-class ModelSerializerOpts(SchemaOpts):
-    """
-    Sets the default ``model_converter`` to :class:`ModelConverter`.
-    """
-    def __init__(self, meta, **kwargs):
-        self._model = None
-        super().__init__(meta, **kwargs)
-        self.model_converter = getattr(meta, 'model_converter', ModelConverter)
-
-    @property
-    def model(self):
-        # make sure to always return the correct mapped model class
-        if not unchained._models_initialized or not self._model:
-            return self._model
-        return unchained.sqlalchemy_bundle.models[self._model.__name__]
-
-    @model.setter
-    def model(self, model):
-        self._model = model
-
-
 class _ModelDescriptor:
     def __get__(self, instance, owner):
         # make sure to always return the correct mapped model class
@@ -130,14 +112,14 @@ class _ModelSerializerMetaMetaclass(type):
     model = _ModelDescriptor()
 
 
-class _BaseModelSerializerMeta(metaclass=_ModelSerializerMetaMetaclass):
+class _ModelSerializerMeta(metaclass=_ModelSerializerMetaMetaclass):
     pass
 
 
-class ModelSerializerMetaclass(ModelSchemaMeta):
+class _ModelSerializerMetaclass(_BaseModelSchemaMetaclass):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
-        set_up_class_dependency_injection(mcs_args)
+        _set_up_class_dependency_injection(mcs_args)
         if mcs_args.is_abstract:
             return super().__new__(*mcs_args)
 
@@ -164,7 +146,7 @@ class ModelSerializerMetaclass(ModelSchemaMeta):
 
         meta_dict = dict(meta.__dict__)
         meta_dict.pop('model', None)
-        clsdict['Meta'] = type('Meta', (_BaseModelSerializerMeta,), meta_dict)
+        clsdict['Meta'] = type('Meta', (_ModelSerializerMeta,), meta_dict)
         clsdict['Meta'].model = model
 
         return super().__new__(*mcs_args)
@@ -181,9 +163,8 @@ class ModelSerializerMetaclass(ModelSchemaMeta):
         passed as the `model` class Meta option.
         """
         opts = klass.opts
-        Converter = opts.model_converter
-        converter = Converter(schema_cls=klass)
-        base_fields = SchemaMeta.get_declared_fields(
+        converter = opts.model_converter(schema_cls=klass)
+        base_fields = _BaseModelSerializerMetaclass.get_declared_fields(
             klass, cls_fields, inherited_fields, dict_cls)
         declared_fields = mcs.get_fields(converter, opts, base_fields, dict_cls)
         if declared_fields is not None:  # prevents sphinx from blowing up
@@ -191,7 +172,7 @@ class ModelSerializerMetaclass(ModelSchemaMeta):
         return declared_fields
 
 
-class Unmarshaller(BaseUnmarshaller):
+class _Unmarshaller(_BaseUnmarshaller):
     def deserialize(self, data, fields_dict, many=False, partial=False,
                     dict_class=dict, index_errors=True, index=None):
         # when data is None, which happens when a POST request was made with an
@@ -204,7 +185,28 @@ class Unmarshaller(BaseUnmarshaller):
     __call__ = deserialize
 
 
-class ModelSerializer(ModelSchema, metaclass=ModelSerializerMetaclass):
+class _ModelSerializerOptionsClass(_BaseModelSerializerOptionsClass):
+    """
+    Sets the default ``model_converter`` to :class:`_ModelConverter`.
+    """
+    def __init__(self, meta, **kwargs):
+        self._model = None
+        super().__init__(meta, **kwargs)
+        self.model_converter = getattr(meta, 'model_converter', _ModelConverter)
+
+    @property
+    def model(self):
+        # make sure to always return the correct mapped model class
+        if not unchained._models_initialized or not self._model:
+            return self._model
+        return unchained.sqlalchemy_bundle.models[self._model.__name__]
+
+    @model.setter
+    def model(self, model):
+        self._model = model
+
+
+class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass):
     """
     Base class for database model serializers. This is pretty much a stock
     :class:`flask_marshmallow.sqla.ModelSchema`: it will automatically create
@@ -241,11 +243,11 @@ class ModelSerializer(ModelSchema, metaclass=ModelSerializerMetaclass):
     """
     __abstract__ = True
 
-    OPTIONS_CLASS = ModelSerializerOpts
+    OPTIONS_CLASS = _ModelSerializerOptionsClass
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._unmarshal = Unmarshaller()
+        self._unmarshal = _Unmarshaller()
 
     def is_create(self):
         """
@@ -298,3 +300,8 @@ class ModelSerializer(ModelSchema, metaclass=ModelSerializerMetaclass):
         if self.is_create() or int(id) == int(self.instance.id):
             return
         raise MarshmallowValidationError('ids do not match')
+
+
+__all__ = [
+    'ModelSerializer',
+]

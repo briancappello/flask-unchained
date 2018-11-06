@@ -8,11 +8,12 @@ from flask_unchained import (
     ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,
     CREATE, DELETE, GET, LIST, PATCH, PUT)
 from flask_unchained.bundles.controller.resource import (
-    ResourceMeta, ResourceMetaOptionsFactory)
+    _ResourceMetaclass, _ResourceMetaOptionsFactory)
 from flask_unchained.bundles.controller.route import Route
 from flask_unchained.bundles.controller.utils import get_param_tuples
 from flask_unchained.bundles.sqlalchemy import SessionManager
-from flask_unchained.bundles.sqlalchemy.meta_options import ModelMetaOption
+from flask_unchained.bundles.sqlalchemy.meta_options import (
+    ModelMetaOption as _ModelResourceModelMetaOption)
 from functools import partial
 from http import HTTPStatus
 from py_meta_utils import McsArgs, MetaOption, _missing
@@ -28,7 +29,7 @@ from .model_serializer import ModelSerializer
 from .utils import unpack
 
 
-class ModelResourceMeta(ResourceMeta):
+class _ModelResourceMetaclass(_ResourceMetaclass):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         if mcs_args.is_abstract:
@@ -58,7 +59,7 @@ class ModelResourceMeta(ResourceMeta):
         return cls
 
 
-class SerializerMetaOption(MetaOption):
+class _ModelResourceSerializerMetaOption(MetaOption):
     """
     The serializer instance to use. If left unspecified, it will be looked up by
     model name and automatically assigned.
@@ -74,7 +75,7 @@ class SerializerMetaOption(MetaOption):
             f'The {self.name} meta option must be an instance of ModelSerializer'
 
 
-class SerializerCreateMetaOption(MetaOption):
+class _ModelResourceSerializerCreateMetaOption(MetaOption):
     """
     The serializer instance to use for creating models. If left unspecified, it
     will be looked up by model name and automatically assigned.
@@ -90,7 +91,7 @@ class SerializerCreateMetaOption(MetaOption):
             f'The {self.name} meta option must be an instance of ModelSerializer'
 
 
-class SerializerManyMetaOption(MetaOption):
+class _ModelResourceSerializerManyMetaOption(MetaOption):
     """
     The serializer instance to use for listing models. If left unspecified, it
     will be looked up by model name and automatically assigned.
@@ -106,7 +107,7 @@ class SerializerManyMetaOption(MetaOption):
             f'The {self.name} meta option must be an instance of ModelSerializer'
 
 
-class IncludeMethodsMetaOption(MetaOption):
+class _ModelResourceIncludeMethodsMetaOption(MetaOption):
     """
     A list of resource methods to automatically include. Defaults to
     ``('list', 'create', 'get', 'patch', 'put', 'delete')``.
@@ -130,7 +131,7 @@ class IncludeMethodsMetaOption(MetaOption):
             f'are ' + ', '.join(ALL_METHODS)
 
 
-class ExcludeMethodsMetaOption(MetaOption):
+class _ModelResourceExcludeMethodsMetaOption(MetaOption):
     """
     A list of resource methods to exclude. Defaults to ``()``.
     """
@@ -146,7 +147,7 @@ class ExcludeMethodsMetaOption(MetaOption):
             f'are ' + ', '.join(ALL_METHODS)
 
 
-class IncludeDecoratorsMetaOption(MetaOption):
+class _ModelResourceIncludeDecoratorsMetaOption(MetaOption):
     """
     A list of resource methods for which to automatically apply the default decorators.
     Defaults to ``('list', 'create', 'get', 'patch', 'put', 'delete')``.
@@ -191,7 +192,7 @@ class IncludeDecoratorsMetaOption(MetaOption):
             f'are ' + ', '.join(ALL_METHODS)
 
 
-class ExcludeDecoratorsMetaOption(MetaOption):
+class _ModelResourceExcludeDecoratorsMetaOption(MetaOption):
     """
     A list of resource methods for which to *not* apply the default decorators, as
     outlined in :attr:`include_decorators`. Defaults to ``()``.
@@ -208,7 +209,7 @@ class ExcludeDecoratorsMetaOption(MetaOption):
             f'are ' + ', '.join(ALL_METHODS)
 
 
-class MethodDecoratorsMetaOption(MetaOption):
+class _ModelResourceMethodDecoratorsMetaOption(MetaOption):
     """
     This can either be a list of decorators to apply to *all* methods, or a
     dictionary of method names to a list of decorators to apply for each method.
@@ -234,18 +235,18 @@ class MethodDecoratorsMetaOption(MetaOption):
                     f'the {method_name} key'
 
 
-class ModelResourceMetaOptionsFactory(ResourceMetaOptionsFactory):
+class _ModelResourceMetaOptionsFactory(_ResourceMetaOptionsFactory):
     _allowed_properties = ['model']
-    _options = ResourceMetaOptionsFactory._options + [
-        ModelMetaOption,
-        SerializerMetaOption,
-        SerializerCreateMetaOption,
-        SerializerManyMetaOption,
-        IncludeMethodsMetaOption,
-        ExcludeMethodsMetaOption,
-        IncludeDecoratorsMetaOption,
-        ExcludeDecoratorsMetaOption,
-        MethodDecoratorsMetaOption,
+    _options = _ResourceMetaOptionsFactory._options + [
+        _ModelResourceModelMetaOption,
+        _ModelResourceSerializerMetaOption,
+        _ModelResourceSerializerCreateMetaOption,
+        _ModelResourceSerializerManyMetaOption,
+        _ModelResourceIncludeMethodsMetaOption,
+        _ModelResourceExcludeMethodsMetaOption,
+        _ModelResourceIncludeDecoratorsMetaOption,
+        _ModelResourceExcludeDecoratorsMetaOption,
+        _ModelResourceMethodDecoratorsMetaOption,
     ]
 
     def __init__(self):
@@ -264,12 +265,12 @@ class ModelResourceMetaOptionsFactory(ResourceMetaOptionsFactory):
         self._model = model
 
 
-class ModelResource(Resource, metaclass=ModelResourceMeta):
+class ModelResource(Resource, metaclass=_ModelResourceMetaclass):
     """
     Base class for model resources. This is intended for building RESTful APIs
     with SQLAlchemy models and Marshmallow serializers.
     """
-    _meta_options_factory_class = ModelResourceMetaOptionsFactory
+    _meta_options_factory_class = _ModelResourceMetaOptionsFactory
 
     class Meta:
         abstract = True
@@ -443,3 +444,8 @@ class ModelResource(Resource, metaclass=ModelResourceMeta):
             decorators.append(partial(put_loader,
                                       serializer=self.Meta.serializer))
         return decorators
+
+
+__all__ = [
+    'ModelResource',
+]

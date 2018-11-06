@@ -3,6 +3,7 @@ try:
 except ImportError:
     from collections import defaultdict
     __location_map__ = defaultdict(None)
+
 from flask_unchained import FlaskUnchained, unchained
 from flask_unchained import CREATE, DELETE, GET, LIST, PATCH, PUT
 from flask_unchained.string_utils import title_case, pluralize
@@ -26,7 +27,7 @@ class Api:
         self.app = app
         app.extensions['api'] = self
 
-        self.spec = APISpec(app, plugins=app.config.get('API_APISPEC_PLUGINS'))
+        self.spec = APISpec(app, plugins=app.config.API_APISPEC_PLUGINS)
 
     def register_serializer(self, serializer, name=None, **kwargs):
         """
@@ -47,8 +48,10 @@ class Api:
         :param resource:
         """
         model_name = resource.Meta.model.__name__
-        self.spec.add_tag({'name': model_name,
-                           'description': resource.Meta.model.__doc__})
+        self.spec.add_tag({
+            'name': model_name,
+            'description': resource.Meta.model.__doc__,
+        })
 
         for method in resource.methods():
             docs = {}
@@ -56,46 +59,64 @@ class Api:
             if method == CREATE:
                 http_method = 'post'
                 docs[http_method] = dict(
-                    parameters=[
-                        {'in': __location_map__['json'],
-                         'required': True,
-                         'schema': resource.Meta.serializer_create},
-                    ],
-                    responses={'201': dict(description=getattr(resource, CREATE).__doc__,
-                                           schema=resource.Meta.serializer_create)})
+                    parameters=[{
+                        'in': __location_map__['json'],
+                        'required': True,
+                        'schema': resource.Meta.serializer_create,
+                    }],
+                    responses={
+                        '201': dict(description=getattr(resource, CREATE).__doc__,
+                                    schema=resource.Meta.serializer_create),
+                    },
+                )
             elif method == DELETE:
                 docs[http_method] = dict(
                     parameters=[],
-                    responses={'204': dict(description=getattr(resource, DELETE).__doc__)})
+                    responses={
+                        '204': dict(description=getattr(resource, DELETE).__doc__),
+                    },
+                )
             elif method == GET:
                 docs[http_method] = dict(
                     parameters=[],
-                    responses={'200': dict(description=getattr(resource, GET).__doc__,
-                                           schema=resource.Meta.serializer)})
+                    responses={
+                        '200': dict(description=getattr(resource, GET).__doc__,
+                                    schema=resource.Meta.serializer),
+                    },
+                )
             elif method == LIST:
                 http_method = 'get'
                 docs[http_method] = dict(
                     parameters=[],
-                    responses={'200': dict(description=getattr(resource, LIST).__doc__,
-                                           schema=resource.Meta.serializer_many)})
+                    responses={
+                        '200': dict(description=getattr(resource, LIST).__doc__,
+                                    schema=resource.Meta.serializer_many),
+                    },
+                )
             elif method == PATCH:
                 docs[http_method] = dict(
-                    parameters=[
-                        {'in': __location_map__['json'],
-                         'required': False,
-                         'schema': resource.Meta.serializer},
-                    ],
-                    responses={'200': dict(description=getattr(resource, PATCH).__doc__,
-                                           schema=resource.Meta.serializer)})
+                    parameters=[{
+                        'in': __location_map__['json'],
+                        'required': False,
+                        'schema': resource.Meta.serializer,
+                    }],
+                    responses={
+                        '200': dict(description=getattr(resource, PATCH).__doc__,
+                                    schema=resource.Meta.serializer),
+                    },
+                )
             elif method == PUT:
                 docs[http_method] = dict(
-                    parameters=[
-                        {'in': __location_map__['json'],
-                         'required': True,
-                         'schema': resource.Meta.serializer},
-                    ],
-                    responses={'200': dict(description=getattr(resource, PUT).__doc__,
-                                           schema=resource.Meta.serializer)})
+                    parameters=[{
+                        'in': __location_map__['json'],
+                        'required': True,
+                        'schema': resource.Meta.serializer,
+                    }],
+                    responses={
+                        '200': dict(description=getattr(resource, PUT).__doc__,
+                                    schema=resource.Meta.serializer),
+                    },
+                )
 
             docs[http_method]['tags'] = [model_name]
             key = f'{resource.__name__}.{method}'
