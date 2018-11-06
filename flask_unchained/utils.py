@@ -18,7 +18,7 @@ class AttrDict(dict):
         self[key] = value
 
     def __repr__(self):
-        return f'{self.__class__.__name__}({super().__repr__()})'
+        return f'{self.__class__.__name__}({dict.__repr__(self)})'
 
 
 class ConfigProperty:
@@ -78,8 +78,8 @@ def format_docstring(docstring):
 
 def get_boolean_env(name, default):
     """
-    Converts environment variables to boolean values, where True is defined as:
-    value.lower() in {'true', 'yes', 'y', '1'} (everything else is False)
+    Converts environment variables to boolean values, where truthy is defined as:
+    ``value.lower() in {'true', 'yes', 'y', '1'}`` (everything else is falsy).
     """
     default = 'true' if default else 'false'
     return os.getenv(name, default).lower() in {'true', 'yes', 'y', '1'}
@@ -87,8 +87,8 @@ def get_boolean_env(name, default):
 
 def safe_import_module(module_name):
     """
-    Like importlib's import_module, except it does not raise ImportError
-    if the requested module_name was not found
+    Like :func:`importlib.import_module`, except it does not raise ``ImportError``
+    if the requested ``module_name`` was not found.
     """
     try:
         return import_module(module_name)
@@ -103,3 +103,14 @@ def utcnow():
     Returns a current timezone-aware datetime.datetime in UTC
     """
     return datetime.datetime.now(datetime.timezone.utc)
+
+
+__all__ = [
+    'AttrDict',
+    'ConfigProperty',
+    'ConfigPropertyMetaclass',
+    'format_docstring',
+    'get_boolean_env',
+    'safe_import_module',
+    'utcnow',
+]
