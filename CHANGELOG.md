@@ -40,7 +40,7 @@
 
 ## v0.6.0 - v0.6.5 (2018/10/09)
 
-**IMPORTANT**: these releases are broken, use `0.6.6`
+**IMPORTANT:** these releases are broken, use `v0.6.6`
 
 - export `get_boolean_env` from core `flask_unchained` package
 - export `param_converter` from core `flask_unchained` package
