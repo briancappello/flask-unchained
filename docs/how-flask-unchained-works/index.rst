@@ -5,6 +5,7 @@ How Flask Unchained Works
    :caption: Contents:
    :maxdepth: 2
 
+   configuration
    the_app_factory
    the_unchained_extension
    dependency_injection

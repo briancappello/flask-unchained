@@ -377,7 +377,9 @@ The security bundle comes with optional support for registration, required email
 
    # app/config.py
 
-   class Config:
+   from flask_unchained import AppBundleConfig
+
+   class Config(AppBundleConfig):
        # ...
        SECURITY_REGISTERABLE = True
 

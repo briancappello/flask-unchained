@@ -70,8 +70,7 @@ class ConfigureAppHook(AppFactoryHook):
 
         if isinstance(app_bundle, AppBundle):
             app_bundle_config = self.get_bundle_config(app_bundle, app.env)
-            app.config.from_mapping(
-                {k: v for k, v in app_bundle_config.items() if k not in app.config})
+            app.config.from_mapping(app_bundle_config)
 
     def get_bundle_config(self,
                           bundle: Bundle,

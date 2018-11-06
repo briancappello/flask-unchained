@@ -56,11 +56,11 @@ class Config(BundleConfig):
     """
 
 
-class DevConfig:
+class DevConfig(Config):
     LAZY_TRANSLATIONS = False
 
 
-class ProdConfig:
+class ProdConfig(Config):
     LAZY_TRANSLATIONS = True
 
 

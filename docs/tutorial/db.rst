@@ -49,7 +49,9 @@ If you'd like to change this, it would look like this:
 
    # app/config.py
 
-   class Config:
+   from flask_unchained import AppBundleConfig
+
+   class Config(AppBundleConfig):
       # ...
       SQLALCHEMY_DATABASE_URI = 'sqlite:///db/flaskr.sqlite'
 
@@ -60,6 +62,8 @@ If instead you'd like to use MariaDB/MySQL or PostgreSQL, now would be the time 
 .. code:: python
 
    # app/config.py
+
+   from flask_unchained import AppBundleConfig
 
    class Config(AppBundleConfig):
        # ...

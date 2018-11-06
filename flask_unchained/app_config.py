@@ -14,7 +14,20 @@ class _CurrentAppMetaclass(type):
 
 
 class BundleConfig(metaclass=_CurrentAppMetaclass):
-    pass
+    """
+    Base class for bundle configs. Allows access to the app-under-construction
+    as it's currently configured from the order bundles were declared in
+    ``unchained_config.BUNDLES``. Example usage::
+
+        # your_bundle_root/config.py
+
+        import os
+
+        from flask_unchained import BundleConfig
+
+        class Config(BundleConfig):
+            SHOULD_PRETTY_PRINT_JSON = BundleConfig.current_app.config.DEBUG
+    """
 
 
 class _AppRootDescriptor:
@@ -82,3 +95,9 @@ class _TestConfigDefaults:
     """
     Disable CSRF tokens in tests.
     """
+
+
+__all__ = [
+    'AppBundleConfig',
+    'BundleConfig',
+]
