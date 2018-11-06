@@ -2,7 +2,7 @@ from flask import Request
 from flask_login import LoginManager
 from flask_principal import Principal, Identity, UserNeed, RoleNeed, identity_loaded
 from flask_unchained import FlaskUnchained, injectable, lazy_gettext as _
-from flask_unchained.utils import ConfigProperty, ConfigPropertyMeta
+from flask_unchained.utils import ConfigProperty, ConfigPropertyMetaclass
 from itsdangerous import URLSafeTimedSerializer
 from passlib.context import CryptContext
 from types import FunctionType
@@ -14,7 +14,7 @@ from ..services.security_utils_service import SecurityUtilsService
 from ..services.user_manager import UserManager
 
 
-class _SecurityConfigProperties(metaclass=ConfigPropertyMeta):
+class _SecurityConfigProperties(metaclass=ConfigPropertyMetaclass):
     __config_prefix__ = 'SECURITY'
 
     changeable: bool = ConfigProperty()

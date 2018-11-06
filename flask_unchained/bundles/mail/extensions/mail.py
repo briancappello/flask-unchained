@@ -1,11 +1,11 @@
 from flask_mail import _MailMixin, Message
 from flask_unchained import FlaskUnchained
-from flask_unchained.utils import ConfigProperty, ConfigPropertyMeta
+from flask_unchained.utils import ConfigProperty, ConfigPropertyMetaclass
 from types import FunctionType
 from typing import *
 
 
-class Mail(_MailMixin, metaclass=ConfigPropertyMeta):
+class Mail(_MailMixin, metaclass=ConfigPropertyMetaclass):
     """
     The `Mail` extension::
 

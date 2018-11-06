@@ -23,10 +23,10 @@ class AttrDict(dict):
 
 class ConfigProperty:
     """
-    Used in conjunction with ConfigPropertyMeta, allows extension classes to
+    Used in conjunction with ConfigPropertyMetaclass, allows extension classes to
     create properties that proxy to the config value, eg app.config.get(key)
 
-    If key is left unspecified, in will be injected by ``ConfigPropertyMeta``,
+    If key is left unspecified, in will be injected by ``ConfigPropertyMetaclass``,
     defaulting to ``f'{ext_class_name}_{property_name}'.upper()``.
     """
     def __init__(self, key=None):
@@ -36,7 +36,7 @@ class ConfigProperty:
         return current_app.config[self.key]
 
 
-class ConfigPropertyMeta(type):
+class ConfigPropertyMetaclass(type):
     """
     Use this metaclass to enable config properties on extension classes. I'm not
     sold on this being a good idea for *new* extensions, but for backwards
@@ -47,7 +47,7 @@ class ConfigPropertyMeta(type):
 
     Example usage::
 
-        class MyExtension(metaclass=ConfigPropertyMeta):
+        class MyExtension(metaclass=ConfigPropertyMetaclass):
             __config_prefix__ = 'MY_EXTENSION'
             # if __config_prefix__ is unspecified, default is class_name.upper()
 

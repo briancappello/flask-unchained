@@ -26,6 +26,7 @@
 - rename `AppConfig` to `AppBundleConfig`
 - rename `SQLAlchemy` extension class to `SQLAlchemyUnchained`
 - remove `Bundle.root_folder` descriptor as it made no sense
+- rename `ConfigPropertyMeta` to `ConfigPropertyMetaclass`
 
 ### Bug fixes
 

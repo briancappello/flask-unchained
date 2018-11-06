@@ -165,7 +165,7 @@ String Utilities
 Extension Development Utilities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: flask_unchained.utils.ConfigPropertyMeta
+.. autoclass:: flask_unchained.utils.ConfigPropertyMetaclass
    :members:
 
 .. autoclass:: flask_unchained.utils.ConfigProperty
