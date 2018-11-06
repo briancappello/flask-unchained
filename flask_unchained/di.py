@@ -32,7 +32,7 @@ This allows MyService to be used in two ways::
 """
 
 
-def ensure_service_name(service, name=None):
+def _ensure_service_name(service, name=None):
     default = snake_case(service.__name__)
     name = name or getattr(service, '__di_name__', default) or default
 
@@ -48,9 +48,11 @@ def _inject_cls_attrs(_wrapped_fn=None, _call_super_for_cls: Optional[str] = Non
     def __init__(self, *args, **kwargs):
         from .unchained import unchained
         for param in self.__inject_cls_attrs__:
-            try:
-                value = unchained.extensions.get(param, unchained.services[param])
-            except KeyError:
+            if param in unchained.extensions:
+                value = unchained.extensions[param]
+            elif param in unchained.services:
+                value = unchained.services[param]
+            else:
                 raise Exception(f'No service found with the name {param} '
                                 f'(required by {self.__class__.__name__})')
             setattr(self, param, value)
@@ -68,7 +70,7 @@ def _inject_cls_attrs(_wrapped_fn=None, _call_super_for_cls: Optional[str] = Non
     return __init__
 
 
-def set_up_class_dependency_injection(mcs_args: McsArgs):
+def _set_up_class_dependency_injection(mcs_args: McsArgs):
     mcs_args.clsdict[_DI_AUTOMATICALLY_HANDLED] = True
 
     cls_attrs_to_inject = [k for k, v in mcs_args.clsdict.items() if v == injectable]
@@ -104,16 +106,16 @@ def set_up_class_dependency_injection(mcs_args: McsArgs):
                                  else f'{mcs_args.name}.{value.__name__}')
 
 
-class ServiceMetaOptionsFactory(MetaOptionsFactory):
+class _ServiceMetaOptionsFactory(MetaOptionsFactory):
     _options = [AbstractMetaOption]
 
 
-class ServiceMeta(type):
+class _ServiceMetaclass(type):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
-        set_up_class_dependency_injection(mcs_args)
+        _set_up_class_dependency_injection(mcs_args)
         process_factory_meta_options(
-            mcs_args, default_factory_class=ServiceMetaOptionsFactory)
+            mcs_args, default_factory_class=_ServiceMetaOptionsFactory)
 
         # extended concrete services should not inherit their super's di name
         if deep_getattr({}, bases, '__di_name__', None):
@@ -126,10 +128,10 @@ class ServiceMeta(type):
         if cls.Meta.abstract:
             return
 
-        ensure_service_name(cls)
+        _ensure_service_name(cls)
 
 
-class BaseService(metaclass=ServiceMeta):
+class BaseService(metaclass=_ServiceMetaclass):
     """
     Base class for services in Flask Unchained. Automatically sets up dependency
     injection on the constructor of the subclass, and allows for your service to
@@ -137,3 +139,9 @@ class BaseService(metaclass=ServiceMeta):
     """
     class Meta:
         abstract = True
+
+
+__all__ = [
+    'injectable',
+    'BaseService',
+]

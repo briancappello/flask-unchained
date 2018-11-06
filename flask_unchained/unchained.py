@@ -11,7 +11,7 @@ from werkzeug.local import LocalProxy
 
 from .constants import (DEV, PROD, STAGING, TEST,
                         _DI_AUTOMATICALLY_HANDLED, _INJECT_CLS_ATTRS)
-from .di import ensure_service_name, injectable, _inject_cls_attrs
+from .di import _ensure_service_name, injectable, _inject_cls_attrs
 from .exceptions import ServiceUsageError
 from .utils import AttrDict
 
@@ -143,7 +143,7 @@ class Unchained:
         """
         if not inspect.isclass(service):
             if hasattr(service, '__class__'):
-                ensure_service_name(service.__class__, name)
+                _ensure_service_name(service.__class__, name)
             self.services[name] = service
             return
 
@@ -153,7 +153,7 @@ class Unchained:
                  f'{name} sooner.')
             return
 
-        self._services_registry[ensure_service_name(service, name)] = service
+        self._services_registry[_ensure_service_name(service, name)] = service
 
     def inject(self, *args):
         """

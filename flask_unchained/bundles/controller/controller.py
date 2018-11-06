@@ -4,7 +4,7 @@ import os
 
 from flask import (after_this_request, current_app as app, flash, jsonify,
                    make_response, render_template, request)
-from flask_unchained.di import set_up_class_dependency_injection
+from flask_unchained.di import _set_up_class_dependency_injection
 from py_meta_utils import (AbstractMetaOption, McsArgs, MetaOption,
                            MetaOptionsFactory, deep_getattr, _missing,
                            process_factory_meta_options)
@@ -55,7 +55,7 @@ class ControllerMeta(type):
     """
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
-        set_up_class_dependency_injection(mcs_args)
+        _set_up_class_dependency_injection(mcs_args)
         if clsdict.get('__abstract__',
                        getattr(clsdict.get('Meta'), 'abstract', False)):
             mcs_args.clsdict[REMOVE_SUFFIXES_ATTR] = _get_remove_suffixes(
