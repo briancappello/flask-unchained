@@ -5,9 +5,9 @@ import os
 from flask import (after_this_request, current_app as app, flash, jsonify,
                    make_response, render_template, request)
 from flask_unchained.di import _set_up_class_dependency_injection
-from py_meta_utils import (AbstractMetaOption, McsArgs, MetaOption,
-                           MetaOptionsFactory, deep_getattr, _missing,
-                           process_factory_meta_options)
+from py_meta_utils import (AbstractMetaOption as _ControllerAbstractMetaOption,
+                           McsArgs, MetaOption, MetaOptionsFactory, deep_getattr,
+                           _missing, process_factory_meta_options)
 from http import HTTPStatus
 from types import FunctionType
 from typing import *
@@ -43,7 +43,7 @@ def _is_view_func(method_name, method):
     return is_function and not (is_private or has_no_routes)
 
 
-class ControllerMeta(type):
+class _ControllerMetaclass(type):
     """
     Metaclass for Controller class
 
@@ -63,7 +63,7 @@ class ControllerMeta(type):
             mcs_args.clsdict[NOT_VIEWS_ATTR] = _get_not_views(clsdict, bases)
 
         process_factory_meta_options(
-            mcs_args, default_factory_class=ControllerMetaOptionsFactory)
+            mcs_args, default_factory_class=_ControllerMetaOptionsFactory)
 
         cls = super().__new__(*mcs_args)
         if mcs_args.Meta.abstract:
@@ -91,7 +91,7 @@ class ControllerMeta(type):
                 route._controller_cls = cls
 
 
-class DecoratorsMetaOption(MetaOption):
+class _ControllerDecoratorsMetaOption(MetaOption):
     """
     A list of decorators to apply to all views in this controller.
     """
@@ -107,7 +107,7 @@ class DecoratorsMetaOption(MetaOption):
             f'The {self.name} meta option must be a list of callables.'
 
 
-class TemplateFolderNameMetaOption(MetaOption):
+class _ControllerTemplateFolderNameMetaOption(MetaOption):
     """
     The name of the folder containing the templates for this controller's views. Defaults
     to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping
@@ -132,7 +132,7 @@ class TemplateFolderNameMetaOption(MetaOption):
             f'The {self.name} meta option must be a string and not a full path'
 
 
-class TemplateFileExtensionMetaOption(MetaOption):
+class _ControllerTemplateFileExtensionMetaOption(MetaOption):
     """
     The filename extension to use for templates for this controller's views.
     Defaults to your app config's ``TEMPLATE_FILE_EXTENSION`` setting, and
@@ -149,7 +149,7 @@ class TemplateFileExtensionMetaOption(MetaOption):
             f'The {self.name} meta option must be a string'
 
 
-class UrlPrefixMetaOption(MetaOption):
+class _ControllerUrlPrefixMetaOption(MetaOption):
     """
     The url prefix to use for all routes from this controller. Defaults to the class name,
     with the suffixes ``Controller`` or ``View`` stripped, stopping after the first found
@@ -166,21 +166,21 @@ class UrlPrefixMetaOption(MetaOption):
             f'The {self.name} meta option must be a string'
 
 
-class ControllerMetaOptionsFactory(MetaOptionsFactory):
+class _ControllerMetaOptionsFactory(MetaOptionsFactory):
     _options = [
-        AbstractMetaOption,
-        DecoratorsMetaOption,
-        TemplateFolderNameMetaOption,
-        TemplateFileExtensionMetaOption,
-        UrlPrefixMetaOption,
+        _ControllerAbstractMetaOption,
+        _ControllerDecoratorsMetaOption,
+        _ControllerTemplateFolderNameMetaOption,
+        _ControllerTemplateFileExtensionMetaOption,
+        _ControllerUrlPrefixMetaOption,
     ]
 
 
-class Controller(metaclass=ControllerMeta):
+class Controller(metaclass=_ControllerMetaclass):
     """
     Base class for class-based views in Flask Unchained.
     """
-    _meta_options_factory_class = ControllerMetaOptionsFactory
+    _meta_options_factory_class = _ControllerMetaOptionsFactory
 
     class Meta:
         abstract = True

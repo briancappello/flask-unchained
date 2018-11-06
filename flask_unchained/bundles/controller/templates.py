@@ -1,6 +1,7 @@
 """
-Extends Flask's template loading support to allow overriding/extending/including
-templates with the same name as templates from later template folders
+Extend Flask's template loading support to allow overriding/extending/including
+templates with the same name/path as templates from later template folders (ie
+from superclass bundles in the hierarchy)
 """
 import re
 
@@ -90,7 +91,11 @@ def pretty_num(depth):
 
 
 def explain_template_loading_attempts(app, template, attempts):
-    """This should help developers understand what failed"""
+    """
+    This should help developers understand what failed. Mostly the same as
+    :func:`flask.debughelpers.explain_template_loading_attempts`, except here we've
+    extended it to support showing what :class:`UnchainedJinjaLoader` is doing.
+    """
     from flask import Flask, Blueprint
     from flask.debughelpers import _dump_loader_info
     from flask.globals import _request_ctx_stack
