@@ -83,27 +83,26 @@ class Unchained:
                  bundles: Optional[List] = None,
                  _config_overrides: Optional[Dict[str, Any]] = None,
                  ) -> None:
+        # deferred import to prevent circular dependency
+        from .hooks.run_hooks_hook import RunHooksHook
+
+        self.env = env or self.env
+        app.env = self.env
+        app.extensions['unchained'] = self
+        app.unchained = self
+
         bundles = bundles or []
         for b in bundles:
             b._deferred_functions = self._bundles[b.name]._deferred_functions
         self.bundles = AttrDict({b.name: b for b in bundles})
-        self._shell_ctx = {b.__class__.__name__: b for b in bundles}
-        app.shell_context_processor(lambda: self._shell_ctx)
-
         self.babel_bundle = self.bundles.get('babel_bundle', None)
 
-
-        self.env = env or self.env
-        app.env = self.env
-
-        app.extensions['unchained'] = self
-        app.unchained = self
+        self._shell_ctx = {b.name: b for b in bundles}
+        app.shell_context_processor(lambda: self._shell_ctx)
 
         for deferred in self._deferred_functions:
             deferred(app)
 
-        # must import the RunHooksHook here to prevent a circular dependency
-        from .hooks.run_hooks_hook import RunHooksHook
         run_hooks_hook = RunHooksHook(self)
         run_hooks_hook.run_hook(app, bundles, _config_overrides=_config_overrides)
 
@@ -600,13 +599,16 @@ class Unchained:
         self.bundles = AttrDict()
         self._bundles = _DeferredBundleFunctionsStore()
         self.babel_bundle = None
+        self.env = None
+        self.extensions = AttrDict()
+        self.services = AttrDict()
 
+        self._deferred_functions = []
         self._initialized = False
         self._models_initialized = False
         self._services_initialized = False
         self._services_registry = {}
-        self.extensions = AttrDict()
-        self.services = AttrDict()
+        self._shell_ctx = {}
 
 
 def _inject(fn, inject_args):
@@ -625,3 +627,9 @@ def _make_safe(fn):
 
 
 unchained = Unchained()
+
+
+__all__ = [
+    'unchained',
+    'Unchained',
+]
