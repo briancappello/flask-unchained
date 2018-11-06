@@ -18,7 +18,7 @@ class RegisterCommandsHook(AppFactoryHook):
     name = 'commands'
     run_after = ['extension_services']
 
-    _limit_discovery_to_local_declarations = False
+    limit_discovery_to_local_declarations = False
 
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         commands = {}
@@ -45,7 +45,7 @@ class RegisterCommandsHook(AppFactoryHook):
             return self.is_click_command(obj) and obj.name not in group_command_names
 
         commands = {}
-        for bundle in bundle.iter_class_hierarchy():
+        for bundle in bundle._iter_class_hierarchy():
             module = self.import_bundle_module(bundle)
             if not module:
                 continue
@@ -56,7 +56,7 @@ class RegisterCommandsHook(AppFactoryHook):
     def get_bundle_command_groups(self, bundle: Bundle):
         command_groups = {}
         module_found = False
-        for bundle in bundle.iter_class_hierarchy():
+        for bundle in bundle._iter_class_hierarchy():
             module = self.import_bundle_module(bundle)
             if not module:
                 continue

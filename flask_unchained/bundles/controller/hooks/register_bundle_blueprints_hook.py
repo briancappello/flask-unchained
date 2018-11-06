@@ -17,10 +17,10 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
 
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         for bundle_ in reversed(bundles):
-            for bundle in bundle_.iter_class_hierarchy(reverse=False):
+            for bundle in bundle_._iter_class_hierarchy(reverse=False):
                 if (bundle.template_folder
-                        or bundle.static_folders
-                        or bundle.has_views()):
+                        or bundle._static_folders
+                        or bundle._has_views()):
                     bp = BundleBlueprint(bundle)
                     for route in self.bundle.bundle_routes.get(bundle.module_name, []):
                         bp.add_url_rule(route.full_rule,

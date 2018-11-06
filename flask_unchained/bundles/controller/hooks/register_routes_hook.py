@@ -41,8 +41,8 @@ class RegisterRoutesHook(AppFactoryHook):
         bundle_names = [(
             bundle.module_name,
             [bundle_super.module_name
-             for bundle_super in bundle.iter_class_hierarchy(include_self=False)
-             if bundle_super.has_views()],
+             for bundle_super in bundle._iter_class_hierarchy(include_self=False)
+             if bundle_super._has_views()],
         ) for bundle in app.unchained.bundles.values()]
 
         bundle_route_endpoints = set()
@@ -77,7 +77,7 @@ class RegisterRoutesHook(AppFactoryHook):
                                  f'in the {module_name} module!')
 
     def collect_from_bundle(self, bundle: Bundle):
-        if not bundle.has_views():
+        if not bundle._has_views():
             return ()
 
         bundle_views_module_name = getattr(bundle, 'views_module_name', 'views')

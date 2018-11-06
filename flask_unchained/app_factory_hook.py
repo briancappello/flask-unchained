@@ -13,13 +13,13 @@ from .unchained import Unchained
 from .utils import safe_import_module
 
 
-class BundleOverrideModuleNameAttrDescriptor:
+class _BundleOverrideModuleNameAttrDescriptor:
     def __get__(self, instance, cls):
         if cls.bundle_module_name:
             return f'{cls.bundle_module_name}_module_name'.replace('.', '_')
 
 
-class HookNameDescriptor:
+class _HookNameDescriptor:
     def __get__(self, instance, cls):
         return snake_case(cls.__name__)
 
@@ -41,20 +41,39 @@ class AppFactoryHook:
     Hooks can also modify the shell context using :meth:`update_shell_context`.
     """
 
-    name: str = HookNameDescriptor()
+    name: str = _HookNameDescriptor()
+    """
+    The name of this hook. Defaults to the snake-cased class name.
+    """
+
     run_before: Union[List[str], Tuple[str, ...]] = ()
+    """
+    An optional list of hook names that this hook must run *before*.
+    """
+
     run_after: Union[List[str], Tuple[str, ...]] = ()
+    """
+    An optional list of hook names that this hook must run *after*.
+    """
 
     bundle_module_name: str = None
-    bundle_override_module_name_attr: str = \
-        BundleOverrideModuleNameAttrDescriptor()
-
-    _discover_from_bundle_superclasses: bool = True
     """
-    Whether or not to search the whole bundle inheritance hierarchy for objects.
+    The default module name this hook will load from in bundles. Should be set to
+    ``None`` if your hook does not use that default functionality.
     """
 
-    _limit_discovery_to_local_declarations: bool = True
+    bundle_override_module_name_attr: str = _BundleOverrideModuleNameAttrDescriptor()
+    """
+    The attribute name that bundles can set on themselves to override the module
+    this hook will load from for that bundle.
+    """
+
+    discover_from_bundle_superclasses: bool = True
+    """
+    Whether or not to search the whole bundle hierarchy for objects.
+    """
+
+    limit_discovery_to_local_declarations: bool = True
     """
     Whether or not to only include objects declared within bundles (ie not
     imported from other places, like third-party code).
@@ -62,7 +81,14 @@ class AppFactoryHook:
 
     def __init__(self, unchained: Unchained, bundle=None):
         self.unchained = unchained
+        """
+        The :class:`~flask_unchained.Unchained` extension instance.
+        """
+
         self.bundle = bundle
+        """
+        The :class:`~flask_unchained.Bundle` instance this hook is from (if any).
+        """
 
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         """
@@ -114,8 +140,8 @@ class AppFactoryHook:
         Bundle subclasses can override objects discovered in superclass bundles.
         """
         members = {}
-        hierarchy = ([bundle] if not self._discover_from_bundle_superclasses
-                     else bundle.iter_class_hierarchy())
+        hierarchy = ([bundle] if not self.discover_from_bundle_superclasses
+                     else bundle._iter_class_hierarchy())
         for bundle in hierarchy:
             module = self.import_bundle_module(bundle)
             if not module:
@@ -161,10 +187,10 @@ class AppFactoryHook:
                 is_local_declaration = obj.__module__.startswith(module.__name__)
             else:
                 is_local_declaration = False
-                if self._limit_discovery_to_local_declarations:
+                if self.limit_discovery_to_local_declarations:
                     raise NotImplementedError
 
-            if not self._limit_discovery_to_local_declarations or is_local_declaration:
+            if not self.limit_discovery_to_local_declarations or is_local_declaration:
                 yield self.key_name(name, obj), obj
 
     def key_name(self, name, obj):
@@ -198,3 +224,8 @@ class AppFactoryHook:
         Implement to add objects to the cli shell context.
         """
         pass
+
+
+__all__ = [
+    'AppFactoryHook',
+]

@@ -14,25 +14,34 @@ def _normalize_module_name(module_name):
     return module_name
 
 
-class ModuleNameDescriptor:
+class _BundleMetaclass(type):
+    def __new__(mcs, name, bases, clsdict):
+        # check if the user explicitly set module_name
+        module_name = clsdict.get('module_name')
+        if isinstance(module_name, str):
+            clsdict['module_name'] = _normalize_module_name(module_name)
+        return super().__new__(mcs, name, bases, clsdict)
+
+
+class _BundleModuleNameDescriptor:
     def __get__(self, instance, cls):
         return _normalize_module_name(cls.__module__)
 
 
-class FolderDescriptor:
+class _BundleFolderDescriptor:
     def __get__(self, instance, cls):
         module = importlib.import_module(cls.module_name)
         return os.path.dirname(module.__file__)
 
 
-class NameDescriptor:
+class _BundleNameDescriptor:
     def __get__(self, instance, cls):
         if issubclass(cls, AppBundle):
             return snake_case(right_replace(cls.__name__, 'Bundle', ''))
         return snake_case(cls.__name__)
 
 
-class StaticFolderDescriptor:
+class _BundleStaticFolderDescriptor:
     def __get__(self, instance, cls):
         if not hasattr(instance, '_static_folder'):
             instance._static_folder = os.path.join(instance.folder, 'static')
@@ -41,13 +50,13 @@ class StaticFolderDescriptor:
         return instance._static_folder
 
 
-class StaticUrlPathDescriptor:
+class _BundleStaticUrlPathDescriptor:
     def __get__(self, instance, cls):
-        if instance.static_folders:
+        if instance._static_folders:
             return f'/{slugify(cls.name)}/static'
 
 
-class TemplateFolderDescriptor:
+class _BundleTemplateFolderDescriptor:
     def __get__(self, instance, cls):
         if not hasattr(instance, '_template_folder'):
             instance._template_folder = os.path.join(instance.folder, 'templates')
@@ -57,6 +66,10 @@ class TemplateFolderDescriptor:
 
 
 class _DeferredBundleFunctions:
+    """
+    The public interface for replacing Blueprints with Bundles.
+    """
+
     def __init__(self):
         self._deferred_functions = []
 
@@ -132,55 +145,43 @@ class _DeferredBundleFunctions:
         return decorator
 
 
-class BundleMeta(type):
-    def __new__(mcs, name, bases, clsdict):
-        # check if the user explicitly set module_name
-        module_name = clsdict.get('module_name')
-        if isinstance(module_name, str):
-            clsdict['module_name'] = _normalize_module_name(module_name)
-        return super().__new__(mcs, name, bases, clsdict)
-
-    def __repr__(cls):
-        return f'<{cls.__name__} name={cls.name!r} module={cls.module_name!r}>'
-
-
-class Bundle(metaclass=BundleMeta):
+class Bundle(metaclass=_BundleMetaclass):
     """
     Base class for bundles.
     """
 
-    module_name: str = ModuleNameDescriptor()
+    module_name: str = _BundleModuleNameDescriptor()
     """
     Top-level module name of the bundle (dot notation). Automatically determined.
     """
 
-    name: str = NameDescriptor()
+    name: str = _BundleNameDescriptor()
     """
     Name of the bundle. Defaults to the snake cased class name, unless it's your app
     bundle, in which case ``snake_case(right_replace(cls.__name__, 'Bundle', ''))``
     gets used instead.
     """
 
-    folder: str = FolderDescriptor()
+    folder: str = _BundleFolderDescriptor()
     """
     Root directory path of the bundle's package. Automatically determined.
     """
 
-    template_folder: Optional[str] = TemplateFolderDescriptor()
+    template_folder: Optional[str] = _BundleTemplateFolderDescriptor()
     """
     Root directory path of the bundle's template folder. By default, if there exists
     a folder named ``templates`` in the bundle package
     :attr:`~flask_unchained.Bundle.folder`, it will be used, otherwise ``None``.
     """
 
-    static_folder: Optional[str] = StaticFolderDescriptor()
+    static_folder: Optional[str] = _BundleStaticFolderDescriptor()
     """
     Root directory path of the bundle's static assets folder. By default, if there exists
     a folder named ``static`` in the bundle package
     :attr:`~flask_unchained.Bundle.folder`, it will be used, otherwise ``None``.
     """
 
-    static_url_path: Optional[str] = StaticUrlPathDescriptor()
+    static_url_path: Optional[str] = _BundleStaticUrlPathDescriptor()
     """
     Url path where this bundle's static assets will be served from. If
     :attr:`~flask_unchained.Bundle.static_folder` is set, this will default to
@@ -188,6 +189,14 @@ class Bundle(metaclass=BundleMeta):
     """
 
     _deferred_functions = []
+    """
+    Deferred functions to be registered with the
+    :class:`~flask_unchained.bundle_blueprint.BundleBlueprint` that gets created
+    for this bundle.
+
+    The :class:`~flask_unchained.Unchained` extension copies these values from the
+    :class:`_DeferredBundleFunctions` instance it created for this bundle.
+    """
 
     def before_init_app(self, app: FlaskUnchained):
         """
@@ -205,7 +214,7 @@ class Bundle(metaclass=BundleMeta):
         """
         pass
 
-    def iter_class_hierarchy(self, include_self=True, reverse=True):
+    def _iter_class_hierarchy(self, include_self=True, reverse=True):
         """
         Iterate over the bundle classes in the hierarchy. Yields base-most
         super classes first (aka opposite of Method Resolution Order).
@@ -223,35 +232,39 @@ class Bundle(metaclass=BundleMeta):
                 else:
                     yield bundle()
 
-    def has_views(self):
+    def _has_views(self):
         """
         Returns True if any of the bundles in the hierarchy has a views module.
 
         For internal use only.
         """
-        for bundle in self.iter_class_hierarchy():
+        for bundle in self._iter_class_hierarchy():
             if bundle._has_views_module():
                 return True
         return False
 
+    def _has_views_module(self):
+        views_module_name = getattr(self, 'views_module_name', 'views')
+        return bool(safe_import_module(f'{self.module_name}.{views_module_name}'))
+
     @property
-    def blueprint_name(self):
+    def _blueprint_name(self):
         if self._is_top_bundle() or not self._has_hierarchy_name_conflicts():
             return self.name
 
-        for i, bundle in enumerate(self.iter_class_hierarchy()):
+        for i, bundle in enumerate(self._iter_class_hierarchy()):
             if bundle.__class__ == self.__class__:
                 break
         return f'{self.name}_{i}'
 
     @property
-    def static_folders(self):
+    def _static_folders(self):
         if not self._has_hierarchy_name_conflicts():
             return [self.static_folder] if self.static_folder else []
         elif not self._is_top_bundle():
             return []
 
-        return [b.static_folder for b in self.iter_class_hierarchy(reverse=False)
+        return [b.static_folder for b in self._iter_class_hierarchy(reverse=False)
                 if b.static_folder and b.name == self.name]
 
     def _is_top_bundle(self):
@@ -265,11 +278,7 @@ class Bundle(metaclass=BundleMeta):
             subclasses = top_bundle.__subclasses__()
 
         return any([b.name == self.name and b.__class__ != self.__class__
-                    for b in top_bundle().iter_class_hierarchy()])
-
-    def _has_views_module(self):
-        views_module_name = getattr(self, 'views_module_name', 'views')
-        return bool(safe_import_module(f'{self.module_name}.{views_module_name}'))
+                    for b in top_bundle()._iter_class_hierarchy()])
 
     def __getattr__(self, name):
         if name in {'before_request', 'after_request', 'teardown_request',
@@ -282,6 +291,11 @@ class Bundle(metaclass=BundleMeta):
 
         raise AttributeError(name)
 
+    def __repr__(self):
+        return (f'<{self.__class__.__name__} '
+                f'name={self.name!r} '
+                f'module={self.module_name!r}>')
+
 
 class AppBundle(Bundle):
     """
@@ -289,3 +303,9 @@ class AppBundle(Bundle):
     bundle.
     """
     pass
+
+
+__all__ = [
+    'AppBundle',
+    'Bundle',
+]

@@ -89,32 +89,32 @@ class TestBundle:
         expected = "<FoobarBundle name='foobaz' module='tests.test_bundle'>"
         assert str(FoobarBundle) == expected
 
-    def test_iter_class_hierarchy(self):
-        hierarchy = list(OverrideVendorBundle().iter_class_hierarchy())
+    def test__iter_class_hierarchy(self):
+        hierarchy = list(OverrideVendorBundle()._iter_class_hierarchy())
         assert len(hierarchy) == 2
         assert isinstance(hierarchy[0], VendorBundle)
         assert isinstance(hierarchy[1], OverrideVendorBundle)
 
-        hierarchy = list(OverrideVendorBundle().iter_class_hierarchy(include_self=False))
+        hierarchy = list(OverrideVendorBundle()._iter_class_hierarchy(include_self=False))
         assert len(hierarchy) == 1
         assert isinstance(hierarchy[0], VendorBundle)
 
-        hierarchy = list(OverrideVendorBundle().iter_class_hierarchy(reverse=False))
+        hierarchy = list(OverrideVendorBundle()._iter_class_hierarchy(reverse=False))
         assert len(hierarchy) == 2
         assert isinstance(hierarchy[0], OverrideVendorBundle)
         assert isinstance(hierarchy[1], VendorBundle)
 
-    def test_has_views(self):
-        assert MyAppBundle().has_views() is False
-        assert VendorBundle().has_views() is True
-        assert OverrideVendorBundle().has_views() is True
+    def test__has_views(self):
+        assert MyAppBundle()._has_views() is False
+        assert VendorBundle()._has_views() is True
+        assert OverrideVendorBundle()._has_views() is True
 
     def test_blueprint_name(self):
-        assert MyAppBundle().blueprint_name == 'my_app'
-        assert VendorBundle().blueprint_name == 'vendor_bundle_0'
-        assert OverrideVendorBundle().blueprint_name == 'vendor_bundle'
+        assert MyAppBundle()._blueprint_name == 'my_app'
+        assert VendorBundle()._blueprint_name == 'vendor_bundle_0'
+        assert OverrideVendorBundle()._blueprint_name == 'vendor_bundle'
 
     def test_static_folders(self):
-        assert MyAppBundle().static_folders == [MyAppBundle().static_folder]
-        assert VendorBundle().static_folders == []
-        assert OverrideVendorBundle().static_folders == [VendorBundle().static_folder]
+        assert MyAppBundle()._static_folders == [MyAppBundle().static_folder]
+        assert VendorBundle()._static_folders == []
+        assert OverrideVendorBundle()._static_folders == [VendorBundle().static_folder]

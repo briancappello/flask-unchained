@@ -13,7 +13,7 @@ class RegisterBlueprintsHook(AppFactoryHook):
     name = 'blueprints'
     run_after = ['bundle_blueprints']
 
-    _limit_discovery_to_local_declarations = False
+    limit_discovery_to_local_declarations = False
 
     def process_objects(self, app: FlaskUnchained, blueprints: List[Blueprint]):
         for blueprint in reversed(blueprints):
@@ -35,7 +35,7 @@ class RegisterBlueprintsHook(AppFactoryHook):
             return []
 
         blueprint_names = []
-        for bundle in bundle.iter_class_hierarchy():
+        for bundle in bundle._iter_class_hierarchy():
             for bp_name in getattr(bundle, 'blueprint_names', [bundle.name]):
                 if bp_name not in blueprint_names:
                     blueprint_names += [bp_name]

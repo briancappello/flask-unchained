@@ -50,7 +50,7 @@ class ConfigureAppHook(AppFactoryHook):
         self.apply_default_config(app, bundles and bundles[-1] or None)
         BundleConfig._set_current_app(app)
         for bundle_ in bundles:
-            for bundle in bundle_.iter_class_hierarchy():
+            for bundle in bundle_._iter_class_hierarchy():
                 app.config.from_mapping(self.get_bundle_config(bundle, app.env))
 
         if _config_overrides and isinstance(_config_overrides, dict):
