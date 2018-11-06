@@ -61,7 +61,7 @@ setup(
             'qtconsole>=4.4.0',
         ],
         'graphene': [
-            'flask-graphene>=2.0',
+            'flask-graphql>=2.0',
             'graphene>=2.1.3',
             'graphene-sqlalchemy>=2.1.0',
         ],
