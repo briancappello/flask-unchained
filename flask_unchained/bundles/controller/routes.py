@@ -3,7 +3,7 @@ import inspect
 
 from flask import Blueprint
 from flask_unchained import FlaskUnchained
-from flask_unchained.utils import _missing
+from py_meta_utils import _missing
 from typing import *
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR

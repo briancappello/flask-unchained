@@ -3,7 +3,7 @@ import re
 from flask import (Response, current_app, request, redirect as flask_redirect,
                    url_for as flask_url_for)
 from flask_unchained.string_utils import kebab_case, right_replace, snake_case
-from flask_unchained.utils import _missing
+from py_meta_utils import _missing
 from typing import *
 from urllib.parse import urlsplit
 from werkzeug.local import LocalProxy

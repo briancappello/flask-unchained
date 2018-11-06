@@ -1,7 +1,7 @@
 import inspect
 
 from flask_unchained.string_utils import snake_case
-from flask_unchained.utils import _missing
+from py_meta_utils import _missing
 
 from .utils import (join, method_name_to_url, rename_parent_resource_param_name,
                     controller_name, get_param_tuples)

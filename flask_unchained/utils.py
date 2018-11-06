@@ -6,9 +6,6 @@ from flask import current_app
 from importlib import import_module
 
 
-_missing = type('_missing', (), {'__bool__': lambda self: False})()
-
-
 class AttrDict(dict):
     """
     A dictionary subclass that implements attribute access, ie using the dot operator
