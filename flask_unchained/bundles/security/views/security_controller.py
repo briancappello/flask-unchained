@@ -46,7 +46,8 @@ class SecurityController(Controller):
             if request.is_json:
                 return self.jsonify({'token': form.user.get_auth_token(),
                                      'user': form.user})
-            self.flash(_('flask_unchained.bundles.security:flash.login'), category='success')
+            self.flash(_('flask_unchained.bundles.security:flash.login'),
+                       category='success')
             return self.redirect('SECURITY_POST_LOGIN_REDIRECT_ENDPOINT')
 
         elif form.errors:
@@ -70,7 +71,8 @@ class SecurityController(Controller):
         if request.is_json:
             return '', HTTPStatus.NO_CONTENT
 
-        self.flash(_('flask_unchained.bundles.security:flash.logout'), category='success')
+        self.flash(_('flask_unchained.bundles.security:flash.logout'),
+                   category='success')
         return self.redirect('SECURITY_POST_LOGOUT_REDIRECT_ENDPOINT')
 
     @route(methods=['GET', 'POST'],
@@ -122,8 +124,9 @@ class SecurityController(Controller):
             self.security_utils_service.confirm_email_token_status(token)
         if not user or invalid:
             invalid = True
-            self.flash(_('flask_unchained.bundles.security:flash.invalid_confirmation_token'),
-                       category='error')
+            self.flash(
+                _('flask_unchained.bundles.security:flash.invalid_confirmation_token'),
+                category='error')
 
         already_confirmed = user is not None and user.confirmed_at is not None
         if expired and not already_confirmed:
@@ -165,7 +168,8 @@ class SecurityController(Controller):
         if form.validate_on_submit():
             self.security_service.send_reset_password_instructions(form.user)
             self.flash(_('flask_unchained.bundles.security:flash.password_reset_request',
-                         email=form.user.email), category='info')
+                         email=form.user.email),
+                       category='info')
             if request.is_json:
                 return '', HTTPStatus.NO_CONTENT
 
@@ -188,8 +192,9 @@ class SecurityController(Controller):
         expired, invalid, user = \
             self.security_utils_service.reset_password_token_status(token)
         if invalid:
-            self.flash(_('flask_unchained.bundles.security:flash.invalid_reset_password_token'),
-                       category='error')
+            self.flash(
+                _('flask_unchained.bundles.security:flash.invalid_reset_password_token'),
+                category='error')
             return self.redirect('SECURITY_INVALID_RESET_TOKEN_REDIRECT')
         elif expired:
             self.security_service.send_reset_password_instructions(user)

@@ -14,6 +14,7 @@ from .utils import current_user
 
 password_equal = validators.EqualTo('password', message=_(
     'flask_unchained.bundles.security:error.retype_password_mismatch'))
+
 new_password_equal = validators.EqualTo('new_password', message=_(
     'flask_unchained.bundles.security:error.retype_password_mismatch'))
 
@@ -21,16 +22,17 @@ new_password_equal = validators.EqualTo('new_password', message=_(
 @unchained.inject('user_manager')
 def unique_user_email(form, field, user_manager: UserManager = injectable):
     if user_manager.get_by(email=field.data) is not None:
-        msg = _('flask_unchained.bundles.security:error.email_already_associated',
-                email=field.data)
-        raise ValidationError(msg)
+        raise ValidationError(
+            _('flask_unchained.bundles.security:error.email_already_associated',
+              email=field.data))
 
 
 @unchained.inject('user_manager')
 def valid_user_email(form, field, user_manager: UserManager = injectable):
     form.user = user_manager.get_by(email=field.data)
     if form.user is None:
-        raise ValidationError(_('flask_unchained.bundles.security:error.user_does_not_exist'))
+        raise ValidationError(
+            _('flask_unchained.bundles.security:error.user_does_not_exist'))
 
 
 class BaseForm(ModelForm):
@@ -46,8 +48,8 @@ class NextFormMixin:
     def validate_next(self, field):
         if field.data and not _validate_redirect_url(field.data):
             field.data = ''
-            raise ValidationError(_(
-                'flask_unchained.bundles.security:error.invalid_next_redirect'))
+            raise ValidationError(
+                _('flask_unchained.bundles.security:error.invalid_next_redirect'))
 
 
 @unchained.inject('security_service', 'security_utils_service')
@@ -139,16 +141,20 @@ class ChangePasswordForm(BaseForm):
         model_fields = {'new_password': 'password',
                         'new_password_confirm': 'password'}
 
-    password = fields.PasswordField(_('flask_unchained.bundles.security:form_field.password'))
+    password = fields.PasswordField(
+        _('flask_unchained.bundles.security:form_field.password'))
     new_password = fields.PasswordField(
         _('flask_unchained.bundles.security:form_field.new_password'))
     new_password_confirm = fields.PasswordField(
         _('flask_unchained.bundles.security:form_field.retype_password'),
         validators=[new_password_equal])
 
-    submit = fields.SubmitField(_('flask_unchained.bundles.security:form_submit.change_password'))
+    submit = fields.SubmitField(
+        _('flask_unchained.bundles.security:form_submit.change_password'))
 
-    def __init__(self, *args, security_utils_service: SecurityUtilsService = injectable,
+    def __init__(self,
+                 *args,
+                 security_utils_service: SecurityUtilsService = injectable,
                  **kwargs):
         super().__init__(*args, **kwargs)
         self.security_utils_service = security_utils_service
