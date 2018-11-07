@@ -1,8 +1,8 @@
 import graphene
-import graphql
 
 from flask_unchained import unchained
 from flask_unchained.bundles.sqlalchemy import db
+from graphql import GraphQLError
 
 from . import types
 
@@ -27,7 +27,7 @@ class CreateParent(graphene.Mutation):
         try:
             parent = types.Parent._meta.model(children=children, **kwargs)
         except db.ValidationErrors as e:
-            raise graphql.GraphQLError(str(e))
+            raise GraphQLError(str(e))
 
         session_manager.save(parent, commit=True)
         return CreateParent(parent=parent, success=True)
@@ -61,7 +61,7 @@ class EditParent(graphene.Mutation):
         try:
             parent.update(**{k: v for k, v in kwargs.items() if v})
         except db.ValidationErrors as e:
-            raise graphql.GraphQLError(str(e))
+            raise GraphQLError(str(e))
 
         if children:
             parent.children = (session_manager
