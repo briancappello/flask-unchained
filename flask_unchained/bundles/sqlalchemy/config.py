@@ -16,6 +16,14 @@ class Config(BundleConfig):
     for more info.
     """
 
+    SQLALCHEMY_TRANSACTION_ISOLATION_LEVEL = None
+    """
+    Set the engine-wide transaction isolation level.
+
+    See `the docs <https://docs.sqlalchemy.org/en/latest/orm/session_transaction.html#setting-transaction-isolation-levels>`_
+    for more info.
+    """
+
     SQLALCHEMY_ECHO = False
     """
     If set to ``True`` SQLAlchemy will log all the statements issued to stderr which can

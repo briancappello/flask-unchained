@@ -1,68 +1,63 @@
-import inspect
-
-from flask_sqlalchemy_unchained import BaseModel as Model
-from flask_unchained.string_utils import snake_case
-from sqlalchemy.schema import ForeignKey
+from sqlalchemy_unchained.foreign_key import _get_fk_col_args
 from typing import *
 
 from .column import Column
-from ..model_registry import UnchainedModelRegistry
 from .types import BigInteger
 
 
-def foreign_key(model_or_table_name_or_column_name: Union[str, Type[Model]],
-                model_or_table_name: Optional[Union[str, Type[Model]]] = None,
-                *,
+def foreign_key(*args,
                 fk_col: Optional[str] = None,
                 primary_key: bool = False,
+                nullable: bool = False,
                 **kwargs,
                 ) -> Column:
-    """Helper method to add a foreign key column to a model.
+    """
+    Helper method to add a foreign key column to a model.
 
     For example::
 
-        class Post(Model):
-            category_id = foreign_key('Category')
-            category = relationship('Category', back_populates='posts')
+        class Post(db.Model):
+            category_id = db.foreign_key('Category')
+            category = db.relationship('Category', back_populates='posts')
 
     Is equivalent to::
 
-        class Post(Model):
-            category_id = Column(BigInteger, ForeignKey('category.id'), nullable=False)
-            category = relationship('Category', back_populates='posts')
+        class Post(db.Model):
+            category_id = db.Column(db.BigInteger, db.ForeignKey('category.id'),
+                                    nullable=False)
+            category = db.relationship('Category', back_populates='posts')
 
-    :param model_or_table_name_or_column_name: If two arguments are given, then
-        this is treated as the column name. Otherwise, it's treated as the table
-        name (see docs for model_or_table_name)
+    Customizing all the things::
 
-    :param model_or_table_name: the model or table name to link to
+        class Post(db.Model):
+            _category_id = db.foreign_key('category_id',  # db column name
+                                          db.String,      # db column type
+                                          'categories',   # foreign table name
+                                          fk_col='pk')    # foreign key col name
 
-        If given a lowercase string, it's treated as an explicit table name.
+    Would be equivalent to::
 
-        If there are any uppercase characters, it's assumed to be a model name,
-        and will be converted to snake case using the same automatic conversion
-        as Flask-SQLAlchemy does itself.
+        class Post(db.Model):
+            _category_id = db.Column('category_id', db.String,
+                                     db.ForeignKey('categories.pk'))
 
-        If given a subclass of :class:`flask_sqlalchemy.Model`, use its
-        :attr:`__tablename__` attribute.
+    :param args: :func:`foreign_key` takes up to three positional arguments.
+    Most commonly, you will only pass one argument, which should be the table
+    name you're linking to (or indirectly, the model class/name works too).
+    If you want to customize the column name the foreign key gets stored in
+    the database under, then it must be the first string argument, and you must
+    *also* supply the table name. You can customize the column type that gets
+    used by passing it too, eg ``sa.Integer`` or ``sa.String(36)``.
 
-    :param str fk_col: column name of the primary key (defaults to "id")
-    :param bool primary_key: Whether or not this Column is a primary key
-    :param dict kwargs: any other kwargs to pass the Column constructor
+    :param str fk_col: The column name of the primary key on the *opposite* side
+      of the relationship (defaults to
+      :attr:`sqlalchemy_unchained._ModelRegistry.default_primary_key_column`).
+    :param bool primary_key: Whether or not this :class:`~sqlalchemy.Column` is
+                             a primary key.
+    :param bool nullable: Whether or not this :class:`~sqlalchemy.Column` should
+                          be nullable.
+    :param kwargs: Any other kwargs to pass the :class:`~sqlalchemy.Column`
+                   constructor.
     """
-    fk_col = fk_col or UnchainedModelRegistry().default_primary_key_column
-    column_name = model_or_table_name_or_column_name
-    if model_or_table_name is None:
-        column_name = None
-        model_or_table_name = model_or_table_name_or_column_name
-
-    table_name = model_or_table_name
-    if inspect.isclass(model_or_table_name):
-        table_name = model_or_table_name.__tablename__
-    elif table_name != table_name.lower():
-        table_name = snake_case(model_or_table_name)
-
-    args = [column_name] if column_name else []
-    args += [BigInteger, ForeignKey(f'{table_name}.{fk_col}')]
-
-    return Column(*args, primary_key=primary_key, **kwargs)
+    return Column(*_get_fk_col_args(args, fk_col, _default_col_type=BigInteger),
+                  primary_key=primary_key, nullable=nullable, **kwargs)
