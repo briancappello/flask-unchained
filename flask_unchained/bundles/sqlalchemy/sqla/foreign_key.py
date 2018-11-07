@@ -35,11 +35,13 @@ def foreign_key(*args,
                                           'categories',   # foreign table name
                                           fk_col='pk')    # foreign key col name
 
-    Would be equivalent to::
+    Is equivalent to::
 
         class Post(db.Model):
-            _category_id = db.Column('category_id', db.String,
-                                     db.ForeignKey('categories.pk'))
+            _category_id = db.Column('category_id',
+                                     db.String,
+                                     db.ForeignKey('categories.pk'),
+                                     nullable=False)
 
     :param args: :func:`foreign_key` takes up to three positional arguments.
     Most commonly, you will only pass one argument, which should be the table
