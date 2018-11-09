@@ -87,7 +87,7 @@ class TestBundleDescriptorsWithInheritance:
 class TestBundle:
     def test_repr(self):
         expected = "<FoobarBundle name='foobaz' module='tests.test_bundle'>"
-        assert str(FoobarBundle) == expected
+        assert str(FoobarBundle()) == expected
 
     def test__iter_class_hierarchy(self):
         hierarchy = list(OverrideVendorBundle()._iter_class_hierarchy())
