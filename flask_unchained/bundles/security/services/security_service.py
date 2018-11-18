@@ -19,16 +19,25 @@ from ..signals import (
 
 
 class SecurityService(BaseService):
-    def __init__(self,
-                 security: Security = injectable,
-                 security_utils_service: SecurityUtilsService = injectable,
-                 user_manager: UserManager = injectable,
-                 mail: Optional[Mail] = None,  # injectable, but optional
-                 ):
+    """
+    The security service.
+
+    Contains shared business logic that doesn't belong in controllers, but isn't
+    so low level that it belongs in
+    :class:`~flask_unchained.bundles.security.SecurityUtilsService`.
+    """
+
+    security: Security = injectable
+    security_utils_service: SecurityUtilsService = injectable
+    user_manager: UserManager = injectable
+
+    # the mail extension is an optional dependency
+    # it will get injected if it's installed, and ignored if not.
+    # FIXME: this only works because of how services get instantiated by
+    # unchained._init_services, and it will *not* work anywhere else.
+    # FIXME: should probably make it work everywhere, and document its existence
+    def __init__(self, mail: Optional[Mail] = None):
         self.mail = mail
-        self.security = security
-        self.security_utils_service = security_utils_service
-        self.user_manager = user_manager
 
     def login_user(self,
                    user: User,
