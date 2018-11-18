@@ -97,8 +97,8 @@ class LoginForm(BaseForm, NextFormMixin):
             self.password.errors.append(
                 _('flask_unchained.bundles.security:error.password_not_set'))
             return False
-        if not self.security_utils_service.verify_and_update_password(
-                self.password.data, self.user):
+        if not self.security_utils_service.verify_password(self.user,
+                                                           self.password.data):
             self.password.errors.append(
                 _('flask_unchained.bundles.security:error.invalid_password'))
             return False
@@ -162,8 +162,8 @@ class ChangePasswordForm(BaseForm):
     def validate(self):
         result = super().validate()
 
-        if not self.security_utils_service.verify_and_update_password(
-                self.password.data, current_user):
+        if not self.security_utils_service.verify_password(current_user,
+                                                           self.password.data):
             self.password.errors.append(
                 _('flask_unchained.bundles.security:error.invalid_password'))
             return False

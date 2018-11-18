@@ -52,7 +52,7 @@ class TestUsersCommands:
 
     @pytest.mark.user(password='old-password')
     def test_set_password(self, user, cli_runner, security_utils_service):
-        assert security_utils_service.verify_and_update_password('old-password', user)
+        assert security_utils_service.verify_password(user, 'old-password')
         result = cli_runner.invoke(set_password, args=[
             'email=user@example.com',
             '--password', 'new-password',
@@ -62,7 +62,7 @@ class TestUsersCommands:
         assert result.output.strip().splitlines()[-1] == \
             "Successfully updated password for " \
             "User(id=1, email='user@example.com', active=True)"
-        assert security_utils_service.verify_and_update_password('new-password', user)
+        assert security_utils_service.verify_password(user, 'new-password')
 
     @pytest.mark.user(confirmed_at=None)
     def test_confirm_user(self, user, cli_runner, user_manager):

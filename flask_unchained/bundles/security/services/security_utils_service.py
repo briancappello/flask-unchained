@@ -42,15 +42,15 @@ class SecurityUtilsService(BaseService):
                 self.security.hashing_context.hash(encode_string(user._password))]
         return self.security.remember_token_serializer.dumps(data)
 
-    def verify_and_update_password(self, password, user):
+    def verify_password(self, user, password):
         """
         Returns ``True`` if the password is valid for the specified user.
 
         Additionally, the hashed password in the database is updated if the
         hashing algorithm happens to have changed.
 
-        :param password: A plaintext password to verify
         :param user: The user to verify against
+        :param password: The plaintext password to verify
         """
         if self.use_double_hash(user.password):
             verified = self.security.pwd_context.verify(

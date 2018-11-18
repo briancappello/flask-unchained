@@ -29,6 +29,7 @@
 - remove `Bundle.root_folder` descriptor as it made no sense
 - rename `ConfigPropertyMeta` to `ConfigPropertyMetaclass`
 - renamed the Graphene Bundle's `QueryObjectType` to `QueriesObjectType` and `MutationObjectType` to `MutationsObjectType`
+- renamed the Security Bundle's `SecurityUtilsService.verify_and_update_password` method to `verify_password`
 
 ### Bug fixes
 
