@@ -2,7 +2,7 @@ import flask
 
 from typing import *
 
-from ..app_config import AppBundleConfig, BundleConfig
+from ..config import AppBundleConfig, BundleConfig
 from ..app_factory_hook import AppFactoryHook
 from ..bundle import Bundle, AppBundle
 from ..constants import DEV, PROD, STAGING, TEST
@@ -60,13 +60,13 @@ class ConfigureAppHook(AppFactoryHook):
                              app: FlaskUnchained,
                              app_bundle: Optional[Bundle] = None,
                              ) -> None:
-        from .. import app_config
+        from .. import config
 
-        app.config.from_object(app_config._ConfigDefaults)
+        app.config.from_object(config._ConfigDefaults)
         if app.env == DEV:
-            app.config.from_object(app_config._DevConfigDefaults)
+            app.config.from_object(config._DevConfigDefaults)
         elif app.env == TEST:
-            app.config.from_object(app_config._TestConfigDefaults)
+            app.config.from_object(config._TestConfigDefaults)
 
         if isinstance(app_bundle, AppBundle):
             app_bundle_config = self.get_bundle_config(app_bundle, app.env)
