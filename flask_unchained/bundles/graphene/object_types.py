@@ -93,6 +93,10 @@ class SQLAlchemyObjectType(_SQLAObjectType):
             raise TypeError(f'Your _meta ObjectTypeOptions class must extend '
                             f'{SQLAlchemyObjectTypeOptions.__qualname__}')
 
+        # make sure we provide graphene the correct mapped model class
+        if unchained._models_initialized:
+            model = unchained.sqlalchemy_bundle.models[model.__name__]
+
         return super().__init_subclass_with_meta__(
             model=model, registry=registry, skip_registry=skip_registry,
             only_fields=only_fields, exclude_fields=exclude_fields,
