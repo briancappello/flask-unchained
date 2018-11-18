@@ -54,8 +54,13 @@ class Api:
         })
 
         for method in resource.methods():
+            key = f'{resource.__name__}.{method}'
+            if key not in unchained.controller_bundle.controller_endpoints:
+                continue
+
             docs = {}
             http_method = method
+
             if method == CREATE:
                 http_method = 'post'
                 docs[http_method] = dict(
@@ -119,14 +124,12 @@ class Api:
                 )
 
             docs[http_method]['tags'] = [model_name]
-            key = f'{resource.__name__}.{method}'
-            route = unchained.controller_bundle.controller_endpoints[key]
-
             display_name = title_case(model_name)
             if method == LIST:
                 display_name = pluralize(display_name)
             docs[http_method]['summary'] = f'{http_method.upper()} {display_name}'
 
+            route = unchained.controller_bundle.controller_endpoints[key]
             for rule in self.app.url_map.iter_rules(route.endpoint):
                 self.spec.add_path(app=self.app, rule=rule, operations=docs,
                                    view=route.view_func)

@@ -58,7 +58,9 @@ class ApiBundle(Bundle):
         app.before_first_request(self.register_model_resources)
 
     def register_model_resources(self):
+        print('WTF?', unchained.api_bundle.resources_by_model)
         for resource in unchained.api_bundle.resources_by_model.values():
+            print(resource)
             api.register_model_resource(resource)
 
     def set_json_encoder(self, app: FlaskUnchained):
