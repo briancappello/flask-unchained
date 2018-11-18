@@ -44,12 +44,12 @@ def foreign_key(*args,
                                      nullable=False)
 
     :param args: :func:`foreign_key` takes up to three positional arguments.
-    Most commonly, you will only pass one argument, which should be the table
-    name you're linking to (or indirectly, the model class/name works too).
+    Most commonly, you will only pass one argument, which should be the model
+    name, the model class, or table name you're linking to.
     If you want to customize the column name the foreign key gets stored in
-    the database under, then it must be the first string argument, and you must
-    *also* supply the table name. You can customize the column type that gets
-    used by passing it too, eg ``sa.Integer`` or ``sa.String(36)``.
+    the database under, then *it must be the first string argument*, and you must
+    *also* supply the model name, class or table name. You can also customize the
+    column type (eg ``sa.Integer`` or ``sa.String(36)``) by passing it as an arg.
 
     :param str fk_col: The column name of the primary key on the *opposite* side
       of the relationship (defaults to

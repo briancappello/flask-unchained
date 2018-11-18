@@ -157,7 +157,32 @@ class Unchained:
 
     def inject(self, *args):
         """
-        Decorator to mark a callable as needing dependencies injected.
+        Decorator to mark a class, method, or function as needing dependencies injected.
+
+        Example usage::
+
+            from flask_unchained import unchained, injectable
+
+            # automatically figure out which params to inject
+            @unchained.inject()
+            def my_function(not_injected, some_service: SomeService = injectable):
+                # do stuff
+
+            # or declare injectables explicitly
+            @unchained.inject('some_service')
+            def my_function(not_injected, some_service: SomeService):
+                # do stuff
+
+            # use it on a class to set up injection on everything
+            @unchained.inject()
+            class MyClass:
+                some_service: SomeService = injectable
+
+                def __init__(self, another_service: AnotherService = injectable):
+                    self.another_service = another_service
+
+                def a_method(self, yet_another_service = injectable):
+                    yet_another_service.do_stuff()
         """
         used_without_parenthesis = len(args) and callable(args[0])
         has_explicit_args = len(args) and all(isinstance(x, str) for x in args)
