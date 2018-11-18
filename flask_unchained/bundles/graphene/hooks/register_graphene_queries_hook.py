@@ -3,7 +3,7 @@ import inspect
 from flask_unchained import AppFactoryHook, FlaskUnchained
 from typing import *
 
-from ..object_types import QueryObjectType
+from ..object_types import QueriesObjectType
 
 
 class RegisterGrapheneQueriesHook(AppFactoryHook):
@@ -13,10 +13,10 @@ class RegisterGrapheneQueriesHook(AppFactoryHook):
 
     def process_objects(self,
                         app: FlaskUnchained,
-                        queries: Dict[str, QueryObjectType]):
+                        queries: Dict[str, QueriesObjectType]):
         self.bundle.queries = queries
 
     def type_check(self, obj: Any):
-        is_subclass = inspect.isclass(obj) and issubclass(obj, QueryObjectType)
-        return is_subclass and obj != QueryObjectType and (
+        is_subclass = inspect.isclass(obj) and issubclass(obj, QueriesObjectType)
+        return is_subclass and obj != QueriesObjectType and (
                 not hasattr(obj, 'Meta') or not getattr(obj.Meta, 'abstract', False))

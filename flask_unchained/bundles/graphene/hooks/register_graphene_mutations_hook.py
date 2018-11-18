@@ -3,7 +3,7 @@ import inspect
 from flask_unchained import AppFactoryHook, FlaskUnchained
 from typing import *
 
-from ..object_types import MutationObjectType
+from ..object_types import MutationsObjectType
 
 
 class RegisterGrapheneMutationsHook(AppFactoryHook):
@@ -13,10 +13,10 @@ class RegisterGrapheneMutationsHook(AppFactoryHook):
 
     def process_objects(self,
                         app: FlaskUnchained,
-                        mutations: Dict[str, MutationObjectType]):
+                        mutations: Dict[str, MutationsObjectType]):
         self.bundle.mutations = mutations
 
     def type_check(self, obj: Any):
-        is_subclass = inspect.isclass(obj) and issubclass(obj, MutationObjectType)
-        return is_subclass and obj != MutationObjectType and (
+        is_subclass = inspect.isclass(obj) and issubclass(obj, MutationsObjectType)
+        return is_subclass and obj != MutationsObjectType and (
                 not hasattr(obj, 'Meta') or not getattr(obj.Meta, 'abstract', False))

@@ -4,7 +4,7 @@ from flask_graphql import GraphQLView
 from flask_unchained import Bundle, FlaskUnchained
 from typing import *
 
-from .object_types import MutationObjectType, QueryObjectType, SQLAlchemyObjectType
+from .object_types import MutationsObjectType, QueriesObjectType, SQLAlchemyObjectType
 
 
 class GrapheneBundle(Bundle):
@@ -16,8 +16,8 @@ class GrapheneBundle(Bundle):
     and types. Automatically created.
     """
 
-    mutations: Dict[str, Type[MutationObjectType]] = {}
-    queries: Dict[str, Type[QueryObjectType]] = {}
+    mutations: Dict[str, Type[MutationsObjectType]] = {}
+    queries: Dict[str, Type[QueriesObjectType]] = {}
     types: Dict[str, Type[SQLAlchemyObjectType]] = {}
 
     # FIXME add flask_unchained.bundles.controller.routes.view function and make
@@ -44,7 +44,7 @@ class GrapheneBundle(Bundle):
 
 __all__ = [
     'GrapheneBundle',
-    'MutationObjectType',
-    'QueryObjectType',
+    'MutationsObjectType',
+    'QueriesObjectType',
     'SQLAlchemyObjectType',
 ]

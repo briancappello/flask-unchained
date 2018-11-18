@@ -115,7 +115,7 @@ def _get_list_resolver(list_: graphene.List):
     return _get_list
 
 
-class _QueryObjectTypeMetaclass(_BaseObjectTypeMetaclass):
+class _QueriesObjectTypeMetaclass(_BaseObjectTypeMetaclass):
     def __new__(mcs, name, bases, clsdict):
         fields, lists = [], []
         for attr, value in clsdict.items():
@@ -133,7 +133,7 @@ class _QueryObjectTypeMetaclass(_BaseObjectTypeMetaclass):
         return super().__new__(mcs, name, bases, clsdict)
 
 
-class QueryObjectType(graphene.ObjectType, metaclass=_QueryObjectTypeMetaclass):
+class QueriesObjectType(graphene.ObjectType, metaclass=_QueriesObjectTypeMetaclass):
     """
     Base class for ``query`` schema definitions. :class:`graphene.Field` and
     :class:`graphene.List` fields are automatically resolved (but you can
@@ -143,11 +143,11 @@ class QueryObjectType(graphene.ObjectType, metaclass=_QueryObjectTypeMetaclass):
 
         # your_bundle/graphql/schema.py
 
-        from flask_unchained.bundles.graphene import QueryObjectType
+        from flask_unchained.bundles.graphene import QueriesObjectType
 
         from . import types
 
-        class YourBundleQueries(QueryObjectType):
+        class YourBundleQueries(QueriesObjectType):
             parent = graphene.Field(types.Parent, id=graphene.ID(required=True))
             parents = graphene.List(types.Parent)
 
@@ -165,7 +165,7 @@ class QueryObjectType(graphene.ObjectType, metaclass=_QueryObjectTypeMetaclass):
         abstract = True
 
 
-class MutationObjectType(graphene.ObjectType):
+class MutationsObjectType(graphene.ObjectType):
     """
     Base class for ``mutation`` schema definitions.
 
@@ -246,11 +246,11 @@ class MutationObjectType(graphene.ObjectType):
 
         # your_bundle/graphql/schema.py
 
-        from flask_unchained.bundles.graphene import MutationObjectType
+        from flask_unchained.bundles.graphene import MutationsObjectType
 
         from . import mutations
 
-        class YourBundleMutations(MutationObjectType):
+        class YourBundleMutations(MutationsObjectType):
             create_parent = mutations.CreateParent.Field()
             delete_parent = mutations.DeleteParent.Field()
             edit_parent = mutations.EditParent.Field()
