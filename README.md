@@ -54,6 +54,14 @@ pip install -r requirements-dev.txt
 flask run
 ```
 
+NOTE: If you enabled the SQLAlchemy Bundle, then you may need to run migrations before running the development server:
+
+```bash
+flask db init
+flask db migrate -m 'create initial tables'
+flask db upgrade
+```
+
 ## What does it look like?
 
 Unlike stock Flask, Flask Unchained apps cannot be written in a single file. Instead, we've defined a (configurable) folder convention that must be followed for Flask Unchained to be able to correctly discover all of your code. A minimal Hello World application structure looks like this:
