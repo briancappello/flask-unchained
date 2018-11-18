@@ -14,7 +14,7 @@ class FlaskForm(BaseForm):
                  **kwargs):
         """
         :param formdata:
-            Used to pass data coming from the enduser, usually `request.POST` or
+            Used to pass data coming from the end user, usually `request.POST` or
             equivalent. formdata should be some sort of request-data wrapper which
             can get multiple parameters from the form input, and values are unicode
             strings, e.g. a Werkzeug/Django/WebOb MultiDict
