@@ -299,8 +299,8 @@ class Bundle(metaclass=_BundleMetaclass):
 
 class AppBundle(Bundle):
     """
-    Like :class:`Bundle`, except used to specify your bundle is the top-most application
-    bundle.
+    Like :class:`Bundle`, except used to specify your bundle is the top-most
+    application bundle.
     """
     pass
 

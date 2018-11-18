@@ -28,13 +28,12 @@ class _BundleBlueprintSetupState(_BlueprintSetupState):
 
 class BundleBlueprint(_Blueprint):
     """
-    The purpose of this class is to register a custom template folder and/or
-    static folder with Flask. For each bundle tht has a template folder, static
-    folder, and/or a views module, a ``BundleBlueprint`` will get registered.
-
-    If the ``BundleBlueprint`` is for the top-level bundle in a hierarchy, and
-    there exist views registered as routes with the app from the bundle hierarchy,
-    then that ``BundleBlueprint`` will also be assigned all of those views/routes.
+    This is a semi-private class to make blueprints compatible with bundles and
+    their hierarchies. Bundle blueprints are created automatically for each bundle
+    tht has a template folder and/or static folder. If *any* bundle in the hierarchy
+    has views/routes that should be registered with the app, then those views/routes
+    will get registered *only* with the :class:`BundleBlueprint` for the *top-most*
+    bundle in the hierarchy.
     """
     url_prefix = None
 
