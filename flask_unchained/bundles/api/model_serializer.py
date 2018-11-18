@@ -10,8 +10,7 @@ try:
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
     from marshmallow.marshalling import Unmarshaller as _BaseUnmarshaller
     from marshmallow.schema import SchemaMeta as _BaseModelSerializerMetaclass
-    from marshmallow_sqlalchemy.convert import (
-        ModelConverter as _BaseModelConverter, _should_exclude_field)
+    from marshmallow_sqlalchemy.convert import ModelConverter as _BaseModelConverter
     from marshmallow_sqlalchemy.schema import (
         ModelSchemaMeta as _BaseModelSchemaMetaclass)
 except ImportError:
@@ -22,7 +21,6 @@ except ImportError:
     from py_meta_utils import OptionalClass as _BaseUnmarshaller
     from py_meta_utils import OptionalClass as _BaseModelConverter
     from py_meta_utils import OptionalMetaclass as _BaseModelSchemaMetaclass
-    _should_exclude_field = None
 
 
 READ_ONLY_FIELDS = {'slug', 'created_at', 'updated_at'}
@@ -59,7 +57,7 @@ class _ModelConverter(_BaseModelConverter):
         result = dict_cls()
         base_fields = base_fields or {}
         for prop in model.__mapper__.iterate_properties:
-            if _should_exclude_field(prop, fields=fields, exclude=exclude):
+            if self._should_exclude_field(prop, fields=fields, exclude=exclude):
                 continue
 
             attr_name = prop.key

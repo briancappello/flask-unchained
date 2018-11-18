@@ -20,6 +20,7 @@
 - improve documentation of how Flask Unchained works
 - updated to py-meta-utils 0.7.3 and flask-sqlalchemy-unchained 0.6.8
 - update to marshmallow 2.16
+- update to marshmallow-sqlalchemy 0.15
 
 ### Breaking Changes
 

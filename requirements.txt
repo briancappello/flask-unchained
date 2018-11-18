@@ -25,7 +25,7 @@ jinja2==2.10
 lxml==4.2.4
 markupsafe==1.0
 marshmallow==2.16.1
-marshmallow-sqlalchemy==0.14.1
+marshmallow-sqlalchemy==0.15.0
 networkx==2.1
 passlib==1.7.1
 py-meta-utils==0.7.3
