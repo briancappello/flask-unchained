@@ -7,6 +7,7 @@
 - :fire:GraphQL:fire: support with the new Graphene Bundle
 - add support for specifying parameters to inject into classes as class attributes
 - when using `unchained.inject()` on a class, or subclassing a class that supports automatic dependency injection, all non-dunderscore methods now support having dependencies injected
+- the `include` function used in `routes.py` now supports specifying the url prefix as the first argument
 
 #### Configuration Improvements
 

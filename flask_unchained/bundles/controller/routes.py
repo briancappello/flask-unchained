@@ -193,34 +193,58 @@ def get(rule: str,
                 only_if=only_if, **rule_options)
 
 
-def include(module_name: str,
+def include(url_prefix_or_module_name: str,
+            module_name: Optional[str] = None,
             *,
             attr: str = 'routes',
             exclude: Optional[Endpoints] = None,
             only: Optional[Endpoints] = None,
             ) -> RouteGenerator:
     """
-    Include the routes from another module. For example::
+    Include the routes from another module at that point in the tree. For example::
 
-        # some_bundle/routes.py
-
+        # project-root/bundles/primes/routes.py
         routes = lambda: [
-            controller(OneController),
-            controller(TwoController),
+            controller('/two', TwoController),
+            controller('/three', ThreeController),
+            controller('/five', FiveController),
         ]
 
-        # your_app_bundle/routes.py
 
+        # project-root/bundles/blog/routes.py
         routes = lambda: [
-            controller(SiteController),
+            func('/', index),
+            controller('/authors', AuthorController),
+            controller('/posts', PostController),
+        ]
+
+
+        # project-root/your_app_bundle/routes.py
+        routes = lambda: [
             include('some_bundle.routes'),
+
+            # these last two are equivalent
+            include('/blog', 'bundles.blog.routes'),
+            prefix('/blog', [
+                include('bundles.blog.routes'),
+            ]),
         ]
 
-    :param module_name: The module name of the routes to include.
+    :param url_prefix_or_module_name: The module name, or a url prefix for all
+                                      of the included routes in the module name
+                                      passed as the second argument.
+    :param module_name: The module name of the routes to include if a url prefix
+                        was given as the first argument.
     :param attr: The attribute name in the module, if different from ``routes``.
     :param exclude: An optional list of endpoints to exclude.
     :param only: An optional list of endpoints to only include.
     """
+    url_prefix = None
+    if module_name is None:
+        module_name = url_prefix_or_module_name
+    else:
+        url_prefix = url_prefix_or_module_name
+
     module = importlib.import_module(module_name)
     try:
         routes = getattr(module, attr)()
@@ -228,12 +252,11 @@ def include(module_name: str,
         raise AttributeError(f'Could not find a variable named `{attr}` '
                              f'in the {module_name} module!')
 
-    for route in _reduce_routes(routes):
-        excluded = exclude and route.endpoint in exclude
-        not_included = only and route.endpoint not in only
-        if excluded or not_included:
-            continue
-        yield route
+    routes = _reduce_routes(routes, exclude=exclude, only=only)
+    if url_prefix:
+        yield from prefix(url_prefix, routes)
+    else:
+        yield from routes
 
 
 def patch(rule: str,
@@ -560,15 +583,20 @@ def _normalize_controller_routes(rules: Iterable[Route],
 
 
 def _reduce_routes(routes: Iterable[Union[Route, RouteGenerator]],
+                   exclude: Optional[Endpoints] = None,
+                   only: Optional[Endpoints] = None,
                    ) -> RouteGenerator:
     if not routes:
         return ()
 
     for route in routes:
         if isinstance(route, Route):
-            yield route
+            excluded = exclude and route.endpoint in exclude
+            not_included = only and route.endpoint not in only
+            if not (excluded or not_included):
+                yield route
         else:
-            yield from _reduce_routes(route)
+            yield from _reduce_routes(route, exclude=exclude, only=only)
 
 
 __all__ = [
