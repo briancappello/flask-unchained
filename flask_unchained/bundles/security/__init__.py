@@ -1,6 +1,7 @@
 from flask_unchained import Bundle
 
 from .decorators import anonymous_user_required, auth_required, auth_required_same_user
+from .exceptions import SecurityException, AuthenticationError
 from .models import AnonymousUser, User, Role, UserRole
 from .services import SecurityService, SecurityUtilsService, UserManager, RoleManager
 from .utils import current_user

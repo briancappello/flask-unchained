@@ -6,6 +6,7 @@ from http import HTTPStatus
 from werkzeug.datastructures import MultiDict
 
 from ..decorators import anonymous_user_required, auth_required
+from ..exceptions import AuthenticationError
 from ..extensions import Security
 from ..services import SecurityService, SecurityUtilsService
 from ..utils import current_user
@@ -40,21 +41,32 @@ class SecurityController(Controller):
         View function to log a user in. Supports html and json requests.
         """
         form = self._get_form('SECURITY_LOGIN_FORM')
-        if (form.validate_on_submit()
-                and self.security_service.login_user(form.user, form.remember.data)):
-            self.after_this_request(self._commit)
-            if request.is_json:
-                return self.jsonify({'token': form.user.get_auth_token(),
-                                     'user': form.user})
-            self.flash(_('flask_unchained.bundles.security:flash.login'),
-                       category='success')
-            return self.redirect('SECURITY_POST_LOGIN_REDIRECT_ENDPOINT')
+        if form.validate_on_submit():
+            try:
+                self.security_service.login_user(form.user, form.remember.data)
+            except AuthenticationError as e:
+                form._errors = {'_error': [str(e)]}
+            else:
+                self.after_this_request(self._commit)
+                if request.is_json:
+                    return self.jsonify({'token': form.user.get_auth_token(),
+                                         'user': form.user})
+                self.flash(_('flask_unchained.bundles.security:flash.login'),
+                           category='success')
+                return self.redirect('SECURITY_POST_LOGIN_REDIRECT_ENDPOINT')
+        else:
+            # FIXME-identity
+            identity_attrs = app.config.SECURITY_USER_IDENTITY_ATTRIBUTES
+            msg = f"Invalid {', '.join(identity_attrs)} and/or password."
 
-        elif form.errors:
-            form = self.security_service.process_login_errors(form)
-            if request.is_json:
-                return self.jsonify({'error': form.errors.get('_error')[0]},
-                                    code=HTTPStatus.UNAUTHORIZED)
+            # we just want a single top-level form error
+            form._errors = {'_error': [msg]}
+            for field in form._fields.values():
+                field.errors = None
+
+        if form.errors and request.is_json:
+            return self.jsonify({'error': form.errors.get('_error')[0]},
+                                code=HTTPStatus.UNAUTHORIZED)
 
         return self.render('login',
                            login_user_form=form,

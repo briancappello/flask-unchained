@@ -10,6 +10,7 @@ from typing import *
 
 from .security_utils_service import SecurityUtilsService
 from .user_manager import UserManager
+from ..exceptions import AuthenticationError
 from ..extensions import Security
 from ..models import User
 from ..signals import (confirm_instructions_sent, reset_password_instructions_sent,
@@ -59,11 +60,18 @@ class SecurityService(BaseService):
         :type fresh: bool
         """
         if not user.active and not force:
-            return False
+            raise AuthenticationError(
+                _('flask_unchained.bundles.security:error.disabled_account'))
 
-        if (self.security.confirmable and not user.confirmed_at
+        if (not user.confirmed_at
+                and self.security.confirmable
                 and not self.security.login_without_confirmation):
-            return False
+            raise AuthenticationError(
+                _('flask_unchained.bundles.security:error.confirmation_required'))
+
+        if not user.password:
+            raise AuthenticationError(
+                _('flask_unchained.bundles.security:error.password_not_set'))
 
         session['user_id'] = getattr(user, user.Meta.pk)
         session['_fresh'] = fresh
@@ -89,30 +97,6 @@ class SecurityService(BaseService):
         identity_changed.send(app._get_current_object(),
                               identity=Identity(user.id))
         return True
-
-    def process_login_errors(self, form):
-        """
-        An opportunity to modify the login form's error messages before returning
-        the response to the user. The idea is to try not to leak excess account info
-        without being too unfriendly to actually-valid-users.
-
-        :param form: An instance of the config option `SECURITY_LOGIN_FORM` class.
-        """
-        account_disabled = _('flask_unchained.bundles.security:error.disabled_account')
-        confirmation_required = _('flask_unchained.bundles.security:error.confirmation_required')
-        if account_disabled in form.errors.get('email', []):
-            error = account_disabled
-        elif confirmation_required in form.errors.get('email', []):
-            error = confirmation_required
-        else:
-            identity_attrs = app.config.SECURITY_USER_IDENTITY_ATTRIBUTES
-            error = f"Invalid {', '.join(identity_attrs)} and/or password."
-
-        # wipe out all individual field errors, we just want a single form-level error
-        form._errors = {'_error': [error]}
-        for field in form._fields.values():
-            field.errors = None
-        return form
 
     def logout_user(self):
         """

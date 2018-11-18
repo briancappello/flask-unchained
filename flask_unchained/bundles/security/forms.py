@@ -93,24 +93,10 @@ class LoginForm(BaseForm, NextFormMixin):
             self.email.errors.append(
                 _('flask_unchained.bundles.security:error.user_does_not_exist'))
             return False
-        if not self.user.password:
-            self.password.errors.append(
-                _('flask_unchained.bundles.security:error.password_not_set'))
-            return False
         if not self.security_utils_service.verify_password(self.user,
                                                            self.password.data):
             self.password.errors.append(
                 _('flask_unchained.bundles.security:error.invalid_password'))
-            return False
-        if (not self.security_service.security.login_without_confirmation
-                and self.security_service.security.confirmable
-                and self.user.confirmed_at is None):
-            self.email.errors.append(
-                _('flask_unchained.bundles.security:error.confirmation_required'))
-            return False
-        if not self.user.active:
-            self.email.errors.append(
-                _('flask_unchained.bundles.security:error.disabled_account'))
             return False
         return True
 
