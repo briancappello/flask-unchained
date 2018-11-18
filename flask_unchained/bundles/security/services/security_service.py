@@ -1,7 +1,7 @@
 from datetime import timedelta
 from flask import _request_ctx_stack, current_app as app, session
 from flask_login.signals import user_logged_in
-from flask_login.utils import _get_user, logout_user as _logout_user
+from flask_login.utils import logout_user as _logout_user
 from flask_principal import Identity, AnonymousIdentity, identity_changed
 from flask_unchained import url_for, lazy_gettext as _
 from flask_unchained.bundles.mail import Mail
@@ -13,8 +13,9 @@ from .user_manager import UserManager
 from ..exceptions import AuthenticationError
 from ..extensions import Security
 from ..models import User
-from ..signals import (confirm_instructions_sent, reset_password_instructions_sent,
-                       password_changed, password_reset, user_confirmed, user_registered)
+from ..signals import (
+    confirm_instructions_sent, reset_password_instructions_sent,
+    password_changed, password_reset, user_confirmed, user_registered)
 
 
 class SecurityService(BaseService):
@@ -83,17 +84,13 @@ class SecurityService(BaseService):
             session['remember'] = 'set'
             if duration is not None:
                 try:
-                    # equal to timedelta.total_seconds() but works with Python 2.6
-                    session['remember_seconds'] = (duration.microseconds +
-                                                   (duration.seconds +
-                                                    duration.days * 24 * 3600) *
-                                                   10 ** 6) / 10.0 ** 6
+                    session['remember_seconds'] = duration.total_seconds()
                 except AttributeError:
                     raise Exception('duration must be a datetime.timedelta, '
                                     'instead got: {0}'.format(duration))
 
         _request_ctx_stack.top.user = user
-        user_logged_in.send(app._get_current_object(), user=_get_user())
+        user_logged_in.send(app._get_current_object(), user=user)
         identity_changed.send(app._get_current_object(),
                               identity=Identity(user.id))
         return True
@@ -108,9 +105,9 @@ class SecurityService(BaseService):
 
         for key in ('identity.name', 'identity.auth_type'):
             session.pop(key, None)
+        _logout_user()
         identity_changed.send(app._get_current_object(),
                               identity=AnonymousIdentity())
-        _logout_user()
 
     def register_user(self, user, allow_login=None, send_email=None):
         """
