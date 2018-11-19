@@ -18,28 +18,31 @@
 ### General
 
 - improve documentation of how Flask Unchained works
-- updated to py-meta-utils 0.7.3 and flask-sqlalchemy-unchained 0.6.8
+- update to py-meta-utils 0.7.3 and flask-sqlalchemy-unchained 0.6.8
 - update to marshmallow 2.16
 - update to marshmallow-sqlalchemy 0.15
 
 ### Breaking Changes
 
 - consolidate `unchained.get_extension_local_proxy` and `unchained.get_service_local_proxy` into a single function, `unchained.get_local_proxy`
-- renamed the `flask_unchained.app_config` module to `flask_unchained.config`
 - rename `AppConfig` to `AppBundleConfig`
-- rename `SQLAlchemy` extension class to `SQLAlchemyUnchained`
-- remove `Bundle.root_folder` descriptor as it made no sense
-- rename `ConfigPropertyMeta` to `ConfigPropertyMetaclass`
-- renamed `flask_unchained.bundles.sqlalchemy.model_form` to `flask_unchained.bundles.sqlalchemy.forms`
-- renamed the Graphene Bundle's `QueryObjectType` to `QueriesObjectType` and `MutationObjectType` to `MutationsObjectType`
-- renamed the Security Bundle's `SecurityUtilsService.verify_and_update_password` method to `verify_password`
+- rename the `SQLAlchemy` extension class to `SQLAlchemyUnchained`
+- rename `flask_unchained.bundles.sqlalchemy.model_form` to `flask_unchained.bundles.sqlalchemy.forms`
+- rename the Graphene Bundle's `QueryObjectType` to `QueriesObjectType` and `MutationObjectType` to `MutationsObjectType`
+- rename the Security Bundle's `SecurityUtilsService.verify_and_update_password` method to `verify_password`
+- (internal) descriptors, metaclasses, meta options, and meta option factories are now protected
+- (internal) rename the `flask_unchained.app_config` module to `flask_unchained.config`
+- (internal) remove the `Bundle.root_folder` descriptor as it made no sense (`Bundle.folder` is the bundle package's root folder)
+- (internal) rename `ConfigPropertyMeta` to `ConfigPropertyMetaclass`
 
 ### Bug fixes
 
+- fix the `Api` extension so it only generates docs for model resources that are registered with the app
 - fix setting of `Route._controller_cls` when controllers extend another concrete controller with routes
 - fix `Bundle.static_url_path` descriptor
 - specify required minimum package versions in `setup.py`, and pin versions in `requirements.txt`
 - fix the `UnchainedModelRegistry.reset` method so it allows using factory_boy from `conftest.py`
+- fix the `flask celery` commands so that they gracefully terminate instead of leaving zombie processes running
 
 ## v0.6.6 (2018/10/09)
 
