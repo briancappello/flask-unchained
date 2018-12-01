@@ -11,7 +11,7 @@ from .extensions import Security, security
 
 class SecurityBundle(Bundle):
     """
-    The :class:`Bundle` subclass for the Security Bundle. Has no special behavior.
+    The :class:`~flask_unchained.Bundle` subclass for the Security Bundle.
     """
 
     blueprint_names = []
