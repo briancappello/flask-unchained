@@ -4,7 +4,7 @@ from flask_unchained import Bundle
 from .alembic import MaterializedViewMigration
 from .base_model import BaseModel
 from .extensions import Migrate, SQLAlchemyUnchained, db, migrate
-from .forms import ModelForm
+from .forms import ModelForm, QuerySelectField, QuerySelectMultipleField
 from .model_registry import UnchainedModelRegistry
 from .services import ModelManager, SessionManager
 

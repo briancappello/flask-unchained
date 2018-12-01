@@ -1,5 +1,6 @@
 from flask_unchained import FlaskForm, unchained
 from sqlalchemy_unchained.validation import ValidationError, ValidationErrors
+from wtforms.ext.sqlalchemy.fields import *
 
 
 class ModelForm(FlaskForm):
