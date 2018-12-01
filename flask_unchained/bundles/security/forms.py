@@ -3,13 +3,17 @@ import inspect
 from flask import current_app as app, request
 from flask_unchained.bundles.controller.utils import _validate_redirect_url
 from flask_unchained.bundles.sqlalchemy import ModelForm
-from flask_unchained import unchained, injectable, lazy_gettext as _
+from flask_unchained import unchained, lazy_gettext as _
 from wtforms import (Field, HiddenField, StringField, SubmitField, ValidationError,
                      fields, validators)
 
 from .models import User
-from .services import SecurityService, SecurityUtilsService, UserManager
+from .services import SecurityUtilsService, UserManager
 from .utils import current_user
+
+user_manager: UserManager = unchained.get_local_proxy('user_manager')
+security_utils_service: SecurityUtilsService = \
+    unchained.get_local_proxy('security_utils_service')
 
 
 password_equal = validators.EqualTo('password', message=_(
@@ -19,16 +23,14 @@ new_password_equal = validators.EqualTo('new_password', message=_(
     'flask_unchained.bundles.security:error.retype_password_mismatch'))
 
 
-@unchained.inject('user_manager')
-def unique_user_email(form, field, user_manager: UserManager = injectable):
+def unique_user_email(form, field):
     if user_manager.get_by(email=field.data) is not None:
         raise ValidationError(
             _('flask_unchained.bundles.security:error.email_already_associated',
               email=field.data))
 
 
-@unchained.inject('user_manager')
-def valid_user_email(form, field, user_manager: UserManager = injectable):
+def valid_user_email(form, field):
     form.user = user_manager.get_by(email=field.data)
     if form.user is None:
         raise ValidationError(
@@ -52,7 +54,6 @@ class NextFormMixin:
                 _('flask_unchained.bundles.security:error.invalid_next_redirect'))
 
 
-@unchained.inject('security_service', 'security_utils_service')
 class LoginForm(BaseForm, NextFormMixin):
     """The default login form"""
     class Meta:
@@ -67,13 +68,8 @@ class LoginForm(BaseForm, NextFormMixin):
     submit = fields.SubmitField(
         _('flask_unchained.bundles.security:form_submit.login'))
 
-    def __init__(self, *args,
-                 security_service: SecurityService = injectable,
-                 security_utils_service: SecurityUtilsService = injectable,
-                 **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.security_service = security_service
-        self.security_utils_service = security_utils_service
         self.user = None
 
         if not self.next.data:
@@ -84,17 +80,17 @@ class LoginForm(BaseForm, NextFormMixin):
         if not super().validate():
             # FIXME-identity
             if (set(self.errors.keys()) -
-                    set(self.security_utils_service.get_identity_attributes())):
+                    set(security_utils_service.get_identity_attributes())):
                 return False
 
-        self.user = self.security_utils_service.user_loader(self.email.data)
+        self.user = security_utils_service.user_loader(self.email.data)
 
         if self.user is None:
             self.email.errors.append(
                 _('flask_unchained.bundles.security:error.user_does_not_exist'))
             return False
-        if not self.security_utils_service.verify_password(self.user,
-                                                           self.password.data):
+        if not security_utils_service.verify_password(self.user,
+                                                      self.password.data):
             self.password.errors.append(
                 _('flask_unchained.bundles.security:error.invalid_password'))
             return False
@@ -120,7 +116,6 @@ class PasswordFormMixin:
         validators=[password_equal])
 
 
-@unchained.inject('security_utils_service')
 class ChangePasswordForm(BaseForm):
     class Meta:
         model = User
@@ -138,18 +133,11 @@ class ChangePasswordForm(BaseForm):
     submit = fields.SubmitField(
         _('flask_unchained.bundles.security:form_submit.change_password'))
 
-    def __init__(self,
-                 *args,
-                 security_utils_service: SecurityUtilsService = injectable,
-                 **kwargs):
-        super().__init__(*args, **kwargs)
-        self.security_utils_service = security_utils_service
-
     def validate(self):
         result = super().validate()
 
-        if not self.security_utils_service.verify_password(current_user,
-                                                           self.password.data):
+        if not security_utils_service.verify_password(current_user,
+                                                      self.password.data):
             self.password.errors.append(
                 _('flask_unchained.bundles.security:error.invalid_password'))
             return False
