@@ -6,6 +6,7 @@ from graphene.utils.subclass_with_meta import (
 from graphene_sqlalchemy import SQLAlchemyObjectType as _SQLAObjectType
 from graphene_sqlalchemy.types import (
     SQLAlchemyObjectTypeOptions as _SQLAObjectTypeOptions)
+from sqlalchemy.orm import class_mapper
 
 
 class SQLAlchemyObjectTypeOptions(_SQLAObjectTypeOptions):
@@ -96,6 +97,10 @@ class SQLAlchemyObjectType(_SQLAObjectType):
         # make sure we provide graphene the correct mapped model class
         if unchained._models_initialized:
             model = unchained.sqlalchemy_bundle.models[model.__name__]
+
+            # graphene has a horrible habbit of eating exceptions and this is one
+            # place where it does, so we preempt it (if this fails it should throw)
+            class_mapper(model)
 
         return super().__init_subclass_with_meta__(
             model=model, registry=registry, skip_registry=skip_registry,
