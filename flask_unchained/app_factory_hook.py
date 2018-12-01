@@ -190,10 +190,10 @@ class AppFactoryHook:
                 if self.limit_discovery_to_local_declarations:
                     raise NotImplementedError
 
-            if not self.limit_discovery_to_local_declarations or is_local_declaration:
+            if is_local_declaration or not self.limit_discovery_to_local_declarations:
                 yield self.key_name(name, obj), obj
 
-    def key_name(self, name, obj):
+    def key_name(self, name: str, obj: Any) -> str:
         """
         Override to use a custom key to determine uniqueness/overriding.
         """
