@@ -82,8 +82,9 @@ setup(
         ],
         'sqlalchemy': [
             'flask-migrate>=2.2.1',
-            'flask-sqlalchemy-unchained>=0.6.8',
+            'flask-sqlalchemy-unchained>=0.6.9',
             'py-yaml-fixtures>=0.2',
+            'sqlalchemy-unchained>=0.6.9',
         ],
     },
 
