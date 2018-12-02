@@ -11,6 +11,7 @@
 __version__ = '0.6.6'
 
 
+from . import _compat
 from .app_factory import AppFactory
 from .app_factory_hook import AppFactoryHook
 from .config import AppBundleConfig, BundleConfig
