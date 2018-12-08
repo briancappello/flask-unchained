@@ -2,7 +2,7 @@ from alembic import command as alembic
 from flask.cli import with_appcontext
 from flask_migrate.cli import db
 from flask_unchained import click, unchained
-from flask_unchained.bundles.sqlalchemy.hooks import DbFixtureDirsHook
+from flask_unchained.bundles.sqlalchemy.hooks import ModelFixtureFoldersHook
 
 maybe_fixtures_command = db.command
 try:
@@ -60,7 +60,7 @@ def reset_command(force):
 def import_fixtures():
     fixture_dirs = []
     for bundle in unchained.bundles.values():
-        fixtures_dir = DbFixtureDirsHook.get_fixtures_dir(bundle)
+        fixtures_dir = ModelFixtureFoldersHook.get_fixtures_dir(bundle)
         if fixtures_dir:
             fixture_dirs.append(fixtures_dir)
 

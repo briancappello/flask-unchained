@@ -3,15 +3,17 @@ import os
 from flask_unchained import AppFactoryHook, Bundle
 
 
-class DbFixtureDirsHook(AppFactoryHook):
+class ModelFixtureFoldersHook(AppFactoryHook):
     """
-
+    Determines the bundle folder to load database fixtures from (if any).
     """
     # we implement this hook only for fixtures folder name customization purposes
 
     bundle_module_name = 'fixtures'
-    name = 'db_fixture_dirs'
+    bundle_override_module_name_attr = 'fixtures_folder_name'
+    name = 'model_fixture_folders'
     run_after = ['models']
+    run_before = ['init_extensions']
 
     def run_hook(self, *args, **kwargs):
         pass  # noop

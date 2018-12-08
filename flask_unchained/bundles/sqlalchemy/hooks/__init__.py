@@ -1,2 +1,2 @@
-from .db_fixture_dirs_hook import DbFixtureDirsHook
+from .model_fixture_folders_hook import ModelFixtureFoldersHook
 from .register_models_hook import RegisterModelsHook
