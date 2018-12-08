@@ -1,10 +1,8 @@
-import os
-
 from alembic import command as alembic
-from flask import current_app
 from flask.cli import with_appcontext
 from flask_migrate.cli import db
 from flask_unchained import click, unchained
+from flask_unchained.bundles.sqlalchemy.hooks import DbFixtureDirsHook
 
 maybe_fixtures_command = db.command
 try:
@@ -60,17 +58,15 @@ def reset_command(force):
 @maybe_fixtures_command(name='import-fixtures')
 @with_appcontext
 def import_fixtures():
-    fixtures_dir = current_app.config.PY_YAML_FIXTURES_DIR
-    if not fixtures_dir or not os.path.exists(fixtures_dir):
-        msg = (f'Could not find the {fixtures_dir} directory, please make sure '
-               'PY_YAML_FIXTURES_DIR is set correctly and the directory exists')
-        raise NotADirectoryError(msg)
+    fixture_dirs = []
+    for bundle in unchained.bundles.values():
+        fixtures_dir = DbFixtureDirsHook.get_fixtures_dir(bundle)
+        if fixtures_dir:
+            fixture_dirs.append(fixtures_dir)
 
     factory = SQLAlchemyModelFactory(db_ext.session,
                                      unchained.sqlalchemy_bundle.models)
-    loader = FixturesLoader(factory, fixtures_dir=fixtures_dir)
-
-    click.echo(f'Loading fixtures from `{fixtures_dir}` directory')
-    for identifier_key, model in loader.create_all().items():
-        click.echo(f'Created {identifier_key}: {model!r}')
+    loader = FixturesLoader(factory, fixture_dirs=fixture_dirs)
+    loader.create_all(lambda identifier, model, created: click.echo(
+        f'{"Creating" if created else "Updating"} {identifier.key}: {model!r}'))
     click.echo('Finished adding fixtures')

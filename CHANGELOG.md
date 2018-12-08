@@ -8,6 +8,7 @@
 - add support for specifying parameters to inject into classes as class attributes
 - when using `unchained.inject()` on a class, or subclassing a class that supports automatic dependency injection, all non-dunderscore methods now support having dependencies injected
 - the `include` function used in `routes.py` now supports specifying the url prefix as the first argument
+- support distributing and loading database fixture files with/from bundles
 
 #### Configuration Improvements
 
@@ -19,6 +20,7 @@
 
 - improve documentation of how Flask Unchained works
 - update to py-meta-utils 0.7.3 and sqlalchemy-unchained 0.6.9
+- update to py-yaml-fixtures 0.3.2
 - update to marshmallow 2.16
 - update to marshmallow-sqlalchemy 0.15
 

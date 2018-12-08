@@ -15,11 +15,6 @@ security bundle
 * implement support for OAuth 2.0
 
 
-sqlalchemy bundle / py-yaml-fixtures
-------------------------------------
-* it would be nice to be able to distribute fixture files in bundles, and have them be loadable from every bundle where they are found
-
-
 logging
 -------
 * integrate Flask-LogConfig (or Logbook, need to investigate)
