@@ -206,17 +206,19 @@ class AppFactoryHook:
         """
         raise NotImplementedError
 
-    def import_bundle_module(self, bundle: Bundle):
-        if self.bundle_module_name is None:
+    @classmethod
+    def import_bundle_module(cls, bundle: Bundle):
+        if cls.bundle_module_name is None:
             raise NotImplementedError('you must set the `bundle_module_name` '
                                       'class attribute on your hook to use '
                                       'this feature')
-        return safe_import_module(self.get_module_name(bundle))
+        return safe_import_module(cls.get_module_name(bundle))
 
-    def get_module_name(self, bundle: Bundle) -> str:
+    @classmethod
+    def get_module_name(cls, bundle: Bundle) -> str:
         module_name = getattr(bundle,
-                              self.bundle_override_module_name_attr,
-                              self.bundle_module_name)
+                              cls.bundle_override_module_name_attr,
+                              cls.bundle_module_name)
         return f'{bundle.module_name}.{module_name}'
 
     def update_shell_context(self, ctx: dict):
