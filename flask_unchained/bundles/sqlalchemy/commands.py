@@ -56,11 +56,14 @@ def reset_command(force):
 
 
 @maybe_fixtures_command(name='import-fixtures')
+@click.argument('bundles', nargs=-1,
+                help='Bundle names to load from (defaults to all)')
 @with_appcontext
-def import_fixtures():
+def import_fixtures(bundles=None):
     fixture_dirs = []
-    for bundle in unchained.bundles.values():
-        fixtures_dir = ModelFixtureFoldersHook.get_fixtures_dir(bundle)
+    for bundle_name in (bundles or unchained.bundles.keys()):
+        fixtures_dir = ModelFixtureFoldersHook.get_fixtures_dir(
+            unchained.bundles[bundle_name])
         if fixtures_dir:
             fixture_dirs.append(fixtures_dir)
 
