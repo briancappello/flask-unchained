@@ -46,6 +46,7 @@
 - fix the `UnchainedModelRegistry.reset` method so it allows using factory_boy from `conftest.py`
 - fix the `flask celery` commands so that they gracefully terminate instead of leaving zombie processes running
 - fix `param_converter` to allowing converting models from optional query parameters
+- add support to graphene for working with SQLAlchemy BigInteger columns
 
 ## v0.6.6 (2018/10/09)
 
