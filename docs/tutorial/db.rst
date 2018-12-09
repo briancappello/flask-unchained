@@ -10,7 +10,7 @@ First we need to install SQLAlchemy and related dependencies:
 
 .. code:: bash
 
-   pip install flask-unchained[sqlalchemy]
+   pip install flask-unchained[sqlalchemy] py-yaml-fixtures
 
 We also need to update our tests so that they load the pytest fixtures from the SQLAlchemy Bundle:
 
@@ -35,6 +35,7 @@ Next, enable the SQLAlchemy Bundle so we can begin using it:
    BUNDLES = [
        # ...
        'flask_unchained.bundles.sqlalchemy',
+       'py_yaml_fixtures',
        'app',
    ]
 

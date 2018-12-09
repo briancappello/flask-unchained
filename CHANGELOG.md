@@ -20,12 +20,12 @@
 
 - improve documentation of how Flask Unchained works
 - update to py-meta-utils 0.7.3 and sqlalchemy-unchained 0.6.9
-- update to py-yaml-fixtures 0.3.2
 - update to marshmallow 2.16
 - update to marshmallow-sqlalchemy 0.15
 
 ### Breaking Changes
 
+- move database fixture loading code into the `py_yaml_fixtures` package (which is now a bundle as of v0.4.0)
 - consolidate `unchained.get_extension_local_proxy` and `unchained.get_service_local_proxy` into a single function, `unchained.get_local_proxy`
 - rename `AppConfig` to `AppBundleConfig`
 - rename the `SQLAlchemy` extension class to `SQLAlchemyUnchained`

@@ -2,12 +2,11 @@ from alembic import command as alembic
 from flask.cli import with_appcontext
 from flask_migrate.cli import db
 from flask_unchained import click, unchained
-from flask_unchained.bundles.sqlalchemy.hooks import ModelFixtureFoldersHook
 
 maybe_fixtures_command = db.command
 try:
     from py_yaml_fixtures import FixturesLoader
-    from py_yaml_fixtures.factories import SQLAlchemyModelFactory
+    from py_yaml_fixtures.factories.sqlalchemy import SQLAlchemyModelFactory
 except ImportError:
     # disable the import-fixtures command if py_yaml_fixtures isn't installed
     maybe_fixtures_command = lambda *a, **kw: lambda fn: None
@@ -53,23 +52,3 @@ def reset_command(force):
     alembic.upgrade(migrate.get_config(None), 'head')
 
     click.echo('Done.')
-
-
-@maybe_fixtures_command(name='import-fixtures')
-@click.argument('bundles', nargs=-1,
-                help='Bundle names to load from (defaults to all)')
-@with_appcontext
-def import_fixtures(bundles=None):
-    fixture_dirs = []
-    for bundle_name in (bundles or unchained.bundles.keys()):
-        fixtures_dir = ModelFixtureFoldersHook.get_fixtures_dir(
-            unchained.bundles[bundle_name])
-        if fixtures_dir:
-            fixture_dirs.append(fixtures_dir)
-
-    factory = SQLAlchemyModelFactory(db_ext.session,
-                                     unchained.sqlalchemy_bundle.models)
-    loader = FixturesLoader(factory, fixture_dirs=fixture_dirs)
-    loader.create_all(lambda identifier, model, created: click.echo(
-        f'{"Creating" if created else "Updating"} {identifier.key}: {model!r}'))
-    click.echo('Finished adding fixtures')
