@@ -207,12 +207,12 @@ class MutationsObjectType(graphene.ObjectType):
         import graphene
 
         from flask_unchained import unchained
-        from flask_unchained.bundles.sqlalchemy import db
+        from flask_unchained.bundles.sqlalchemy import SessionManager, db
         from graphql import GraphQLError
 
         from . import types
 
-        session_manager: db.SessionManager = unchained.get_local_proxy('session_manager')
+        session_manager: SessionManager = unchained.get_local_proxy('session_manager')
 
         class CreateParent(graphene.Mutation):
             class Arguments:

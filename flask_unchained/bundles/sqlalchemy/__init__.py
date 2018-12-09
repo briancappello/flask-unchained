@@ -1,5 +1,6 @@
 from flask_sqlalchemy_unchained import BaseQuery
 from flask_unchained import Bundle
+from sqlalchemy_unchained import ValidationError, ValidationErrors
 
 from .alembic import MaterializedViewMigration
 from .base_model import BaseModel
