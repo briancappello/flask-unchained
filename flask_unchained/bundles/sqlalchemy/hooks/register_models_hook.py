@@ -17,7 +17,7 @@ class RegisterModelsHook(AppFactoryHook):
     bundle_module_name = 'models'
     name = 'models'
     run_after = ['extensions']
-    run_before = ['services', 'init_extensions']
+    run_before = ['configure_app', 'init_extensions', 'services']
 
     def process_objects(self, app: FlaskUnchained, _):
         # this hook is responsible for discovering models, which happens by
