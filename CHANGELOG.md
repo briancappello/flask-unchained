@@ -71,7 +71,7 @@
 - make the `bundles` attribute on the `Unchained` extension an `AttrDict`
    - bundles are now instantiated instead of passing the classes around directly
 - add default config options, making `DEBUG` and `TESTING` unnecessary to set manually
-- add a `_form_name` attribute to `FlaskForm` to automatically name forms when rendering them programmatically
+- add a `_name` attribute to `FlaskForm` to automatically name forms when rendering them programmatically
 - add `get_extension_local_proxy` and `get_service_local_proxy` methods to the `Unchained` extension
 - add support for overriding static files from bundles
 - minor refactor of the declarative routing for `Controller` and `Resource` classes

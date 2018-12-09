@@ -1,6 +1,6 @@
 {% macro render_form(form) %}
   {% set action = kwargs.get('action', url_for(kwargs['endpoint'])) %}
-  <form name="{{ form._form_name }}" action="{{ action }}" method="POST">
+  <form name="{{ form._name }}" action="{{ action }}" method="POST">
     {{ render_errors(form.errors.get('_error', [])) }}
     {% for field in form %}
       {{ render_field(field) }}

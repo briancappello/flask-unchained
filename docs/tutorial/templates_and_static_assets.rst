@@ -551,7 +551,7 @@ What is this mythical ``render_form`` macro? Well, we need to write it ourselves
 
    {% macro render_form(form) %}
      {% set action = kwargs.get('action', url_for(kwargs['endpoint'])) %}
-     <form name="{{ form._form_name }}" {% if action %}action="{{ action }}"{% endif %} method="POST">
+     <form name="{{ form._name }}" {% if action %}action="{{ action }}"{% endif %} method="POST">
        {{ render_errors(form.errors.get('_error', [])) }}
        {% for field in form %}
          {{ render_field(field) }}
