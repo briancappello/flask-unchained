@@ -45,6 +45,7 @@
 - specify required minimum package versions in `setup.py`, and pin versions in `requirements.txt`
 - fix the `UnchainedModelRegistry.reset` method so it allows using factory_boy from `conftest.py`
 - fix the `flask celery` commands so that they gracefully terminate instead of leaving zombie processes running
+- fix `param_converter` to allowing converting models from optional query parameters
 
 ## v0.6.6 (2018/10/09)
 

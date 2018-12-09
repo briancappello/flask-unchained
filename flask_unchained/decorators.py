@@ -69,6 +69,9 @@ def _convert_models(view_kwargs: dict,
                     url_param_names_to_models: dict,
                     ) -> dict:
     for url_param_name, model_mapping in url_param_names_to_models.items():
+        if url_param_name not in view_kwargs and url_param_name not in request.args:
+            continue
+
         arg_name = None
         model = model_mapping
         if isinstance(model_mapping, dict):
@@ -83,7 +86,7 @@ def _convert_models(view_kwargs: dict,
         filter_by = url_param_name.replace(
             snake_case(model.__name__) + '_', '')
         instance = model.query.filter_by(**{
-            filter_by: view_kwargs.pop(url_param_name),
+            filter_by: view_kwargs.pop(url_param_name, request.args.get(url_param_name)),
         }).first()
 
         if not instance:
@@ -98,7 +101,8 @@ def _convert_query_params(view_kwargs: dict,
                           param_name_to_converters: dict,
                           ) -> dict:
     for name, converter in param_name_to_converters.items():
-        if name not in request.args:
+        is_model_converter = isinstance(converter, type) and issubclass(converter, Model)
+        if is_model_converter or name not in request.args:
             continue
 
         value = request.args.getlist(name)
