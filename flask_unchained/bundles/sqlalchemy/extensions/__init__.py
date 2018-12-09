@@ -1,5 +1,5 @@
 from .migrate import Migrate
-from .sqlalchemy import SQLAlchemyUnchained
+from .sqlalchemy_unchained import SQLAlchemyUnchained
 
 
 db = SQLAlchemyUnchained()

@@ -8,7 +8,7 @@ from sqlalchemy_unchained import (DeclarativeMeta, BaseValidator, Required,
 
 from .. import sqla
 from ..base_model import BaseModel
-from ..services import SessionManager, ModelManager
+from ..services import SessionManager
 from ..model_registry import UnchainedModelRegistry  # required so the correct one gets used
 
 
@@ -27,8 +27,6 @@ class SQLAlchemyUnchained(BaseSQLAlchemy):
                          query_class=query_class,
                          model_class=model_class)
         SessionManager.set_session_factory(lambda: self.session())
-        self.SessionManager = SessionManager
-        self.ModelManager = ModelManager
 
         self.Column = sqla.Column
         self.BigInteger = sqla.BigInteger
