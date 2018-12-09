@@ -53,12 +53,13 @@ setup(
             'tox>=3.5.2',
         ],
         'docs': [
+            'IPython>=7.1.1',
+            'PyQt5>=5.11.2',
+            'qtconsole>=4.4.0',
             'sphinx>=1.8.1',
             'sphinx-autobuild>=0.7.1',
             'sphinx-click>=1.4.0',
             'sphinx-rtd-theme>=0.4.2',
-            'PyQt5>=5.11.2',
-            'qtconsole>=4.4.0',
         ],
         'graphene': [
             'flask-graphql>=2.0',
