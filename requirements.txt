@@ -36,3 +36,4 @@ sqlalchemy==1.2.12
 sqlalchemy-unchained==0.6.9
 qtconsole==4.4.0
 werkzeug==0.14.1
+Flask-OAuthlib

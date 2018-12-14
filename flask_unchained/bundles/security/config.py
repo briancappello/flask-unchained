@@ -268,6 +268,15 @@ class Config(BundleConfig):
     Defaults to True, and it's strongly recommended to leave this option enabled.
     """
 
+    # oauth2 client functionality
+    SECURITY_OAUTH_PROVIDER = 'github'
+    SECURITY_OAUTH_BASE_URL = 'https://api.github.com/'
+    SECURITY_OAUTH_CONSUMER_KEY = 'a11a1bda412d928fb39a'
+    SECURITY_OAUTH_CONSUMER_SECRET = '92b7cf30bc42c49d589a10372c3f9ff3bb310037'
+    SECURITY_OAUTH_REQUEST_TOKEN_PARAMS = {'scope': 'user:email'}
+    SECURITY_OAUTH_ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token',
+    SECURITY_OAUTH_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
+
 
 class TestConfig(Config):
     """

@@ -1,4 +1,4 @@
-from flask import current_app as app, request
+from flask import current_app as app, request, session, url_for
 from flask_unchained import Controller, route, lazy_gettext as _
 from flask_unchained import injectable
 from flask_unchained.bundles.sqlalchemy import SessionManager
@@ -11,6 +11,7 @@ from ..extensions import Security
 from ..services import SecurityService, SecurityUtilsService
 from ..utils import current_user
 
+from flask_oauthlib.client import OAuth
 
 class SecurityController(Controller):
     """
@@ -21,6 +22,7 @@ class SecurityController(Controller):
     security_service: SecurityService = injectable
     security_utils_service: SecurityUtilsService = injectable
     session_manager: SessionManager = injectable
+
 
     @route(only_if=False)
     @auth_required()
@@ -77,6 +79,8 @@ class SecurityController(Controller):
         """
         View function to log a user out. Supports html and json requests.
         """
+        session.pop('oauth_token', None)
+
         if current_user.is_authenticated:
             self.security_service.logout_user()
 
@@ -112,7 +116,8 @@ class SecurityController(Controller):
         """
         form = self._get_form('SECURITY_SEND_CONFIRMATION_FORM')
         if form.validate_on_submit():
-            self.security_service.send_email_confirmation_instructions(form.user)
+            self.security_service.send_email_confirmation_instructions(
+                form.user)
             self.flash(_('flask_unchained.bundles.security:flash.confirmation_request',
                          email=form.user.email), category='info')
             if request.is_json:
@@ -278,3 +283,64 @@ class SecurityController(Controller):
     def _commit(self, response=None):
         self.session_manager.commit()
         return response
+
+    @route(methods=['GET', 'POST'])
+    @anonymous_user_required(msg='You are already logged in', category='success')
+    def oauthlogin(self):
+        """
+        View function to log a user in using oauth.
+        """
+
+
+        oauth = OAuth(app)
+
+        oauth_provider = oauth.remote_app(
+            app.config.SECURITY_OAUTH_PROVIDER,
+            consumer_key=app.config.SECURITY_OAUTH_CONSUMER_KEY,
+            consumer_secret=app.config.SECURITY_OAUTH_CONSUMER_SECRET,
+            #request_token_params=app.config.SECURITY_OAUTH_REQUEST_TOKEN_PARAMS,
+            base_url=app.config.SECURITY_OAUTH_BASE_URL,
+            request_token_url=None,
+            access_token_method='POST',
+            access_token_url=app.config.SECURITY_OAUTH_ACCESS_TOKEN_URL,
+            authorize_url=app.config.SECURITY_OAUTH_AUTHORIZE_URL,
+        )
+        return oauth_provider.authorize(callback=url_for('security_controller.oauthauthorized', _external=True, _scheme='https'))
+
+    @route(methods=['GET', 'POST'])
+    @anonymous_user_required(msg='You are already logged in', category='success')
+    def oauthauthorized(self):
+
+
+        oauth = OAuth(app)
+
+        oauth_provider = oauth.remote_app(
+            app.config.SECURITY_OAUTH_PROVIDER,
+            consumer_key=app.config.SECURITY_OAUTH_CONSUMER_KEY,
+            consumer_secret=app.config.SECURITY_OAUTH_CONSUMER_SECRET,
+            #request_token_params=app.config.SECURITY_OAUTH_REQUEST_TOKEN_PARAMS,
+            base_url=app.config.SECURITY_OAUTH_BASE_URL,
+            request_token_url=None,
+            access_token_method='POST',
+            access_token_url=app.config.SECURITY_OAUTH_ACCESS_TOKEN_URL,
+            authorize_url=app.config.SECURITY_OAUTH_AUTHORIZE_URL,
+        )
+        resp = oauth_provider.authorized_response()
+        if resp is None or resp.get('access_token') is None:
+            return 'Access denied: reason=%s error=%s resp=%s' % (
+                request.args['error'],
+                request.args['error_description'],
+                resp
+            )
+        session['oauth_token'] = (resp['access_token'], '')
+
+        user = oauth_provider.get('user')
+        self.security_service.login_user(user, user.data)
+
+        self.after_this_request(self._commit)
+        if request.is_json:
+            return self.jsonify({'token': form.user.get_auth_token(),
+                                    'user': form.user})
+        self.flash(_('flask_unchained.bundles.security:flash.login'),
+                    category='success')
+        return self.redirect('SECURITY_POST_LOGIN_REDIRECT_ENDPOINT')
