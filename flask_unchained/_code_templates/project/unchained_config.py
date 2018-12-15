@@ -25,7 +25,10 @@ BUNDLES = [
     #! if celery:
     'flask_unchained.bundles.celery',  # move before mail to send emails synchronously
     #! endif
-    #! if security:
+    #! if oauth:
+    'flask_unchained.bundles.oauth',
+    #! endif
+    #! if security or oauth:
     'flask_unchained.bundles.security',
     #! endif
     #! if security or session:
