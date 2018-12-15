@@ -18,7 +18,7 @@ class OAuthController(Controller):
 
     @route(methods=['GET', 'POST'])
     def authorized(self):
-        resp = self.oauth.authorized_response()
+        resp = self.oauth.github.authorized_response()
         if resp is None or resp.get('access_token') is None:
             return 'Access denied: reason=%s error=%s resp=%s' % (
                 request.args['error'],
@@ -26,9 +26,9 @@ class OAuthController(Controller):
                 resp
             )
         session['oauth_token'] = (resp['access_token'], '')
-        user = self.oauth.get('user')
+        user = self.oauth.github.get('user')
 
         user_login = user.data['login']
         user_email = user.data['email']
-        
+
         return self.redirect('SECURITY_POST_LOGIN_REDIRECT_ENDPOINT')
