@@ -23,6 +23,28 @@ class SecurityController(Controller):
     security_utils_service: SecurityUtilsService = injectable
     session_manager: SessionManager = injectable
 
+    def __init__(self):
+        super()
+
+        self.oauth = OAuth(app)
+
+        self.oauth_provider = self.oauth.remote_app(
+            app.config.SECURITY_OAUTH_PROVIDER,
+            consumer_key=app.config.SECURITY_OAUTH_CONSUMER_KEY,
+            consumer_secret=app.config.SECURITY_OAUTH_CONSUMER_SECRET,
+            #request_token_params=app.config.SECURITY_OAUTH_REQUEST_TOKEN_PARAMS,
+            base_url=app.config.SECURITY_OAUTH_BASE_URL,
+            request_token_url=None,
+            access_token_method='POST',
+            access_token_url=app.config.SECURITY_OAUTH_ACCESS_TOKEN_URL,
+            authorize_url=app.config.SECURITY_OAUTH_AUTHORIZE_URL,
+        )
+
+
+        @self.oauth_provider.tokengetter
+        def get_oauth_token():
+            return session.get('oauth_token')
+
 
     @route(only_if=False)
     @auth_required()
@@ -290,43 +312,15 @@ class SecurityController(Controller):
         """
         View function to log a user in using oauth.
         """
-
-
-        oauth = OAuth(app)
-
-        oauth_provider = oauth.remote_app(
-            app.config.SECURITY_OAUTH_PROVIDER,
-            consumer_key=app.config.SECURITY_OAUTH_CONSUMER_KEY,
-            consumer_secret=app.config.SECURITY_OAUTH_CONSUMER_SECRET,
-            #request_token_params=app.config.SECURITY_OAUTH_REQUEST_TOKEN_PARAMS,
-            base_url=app.config.SECURITY_OAUTH_BASE_URL,
-            request_token_url=None,
-            access_token_method='POST',
-            access_token_url=app.config.SECURITY_OAUTH_ACCESS_TOKEN_URL,
-            authorize_url=app.config.SECURITY_OAUTH_AUTHORIZE_URL,
-        )
-        return oauth_provider.authorize(callback=url_for('security_controller.oauthauthorized', _external=True, _scheme='https'))
+        return self.oauth_provider.authorize(callback=url_for('security_controller.oauthauthorized', _external=True, _scheme='https'))
 
     @route(methods=['GET', 'POST'])
     @anonymous_user_required(msg='You are already logged in', category='success')
     def oauthauthorized(self):
-
-
-        oauth = OAuth(app)
-
-        oauth_provider = oauth.remote_app(
-            app.config.SECURITY_OAUTH_PROVIDER,
-            consumer_key=app.config.SECURITY_OAUTH_CONSUMER_KEY,
-            consumer_secret=app.config.SECURITY_OAUTH_CONSUMER_SECRET,
-            #request_token_params=app.config.SECURITY_OAUTH_REQUEST_TOKEN_PARAMS,
-            base_url=app.config.SECURITY_OAUTH_BASE_URL,
-            request_token_url=None,
-            access_token_method='POST',
-            access_token_url=app.config.SECURITY_OAUTH_ACCESS_TOKEN_URL,
-            authorize_url=app.config.SECURITY_OAUTH_AUTHORIZE_URL,
-        )
-        resp = oauth_provider.authorized_response()
+        
+        resp = self.oauth_provider.authorized_response()
         if resp is None or resp.get('access_token') is None:
+            print(request.args)
             return 'Access denied: reason=%s error=%s resp=%s' % (
                 request.args['error'],
                 request.args['error_description'],
@@ -334,13 +328,19 @@ class SecurityController(Controller):
             )
         session['oauth_token'] = (resp['access_token'], '')
 
-        user = oauth_provider.get('user')
-        self.security_service.login_user(user, user.data)
+        user = self.oauth_provider.get('user')
+        
+        user_login = user.data['login']
+        user_email = user.data['email']
+        # TODO: login or create user here
 
-        self.after_this_request(self._commit)
-        if request.is_json:
-            return self.jsonify({'token': form.user.get_auth_token(),
-                                    'user': form.user})
+        #self.security_service.login_user(user, False)
+
+        #self.after_this_request(self._commit)
+        #if request.is_json:
+        #    return self.jsonify({'token': form.user.get_auth_token(),
+        #                            'user': form.user})
         self.flash(_('flask_unchained.bundles.security:flash.login'),
                     category='success')
         return self.redirect('SECURITY_POST_LOGIN_REDIRECT_ENDPOINT')
+

@@ -270,13 +270,33 @@ class Config(BundleConfig):
 
     # oauth2 client functionality
     SECURITY_OAUTH_PROVIDER = 'github'
+    """
+    Name of provider.
+    """
     SECURITY_OAUTH_BASE_URL = 'https://api.github.com/'
-    SECURITY_OAUTH_CONSUMER_KEY = 'a11a1bda412d928fb39a'
-    SECURITY_OAUTH_CONSUMER_SECRET = '92b7cf30bc42c49d589a10372c3f9ff3bb310037'
+    """
+    OAuth base url.
+    """
+    SECURITY_OAUTH_CONSUMER_KEY = '7415f334080d95ba08d6'
+    """
+    Consumer or Api Key you get from the provider.
+    """
+    SECURITY_OAUTH_CONSUMER_SECRET = 'dfd55ed4a3afde93ae39ee8452e94ec5d44f56cd'
+    """
+    Secret for the Key.
+    """
     SECURITY_OAUTH_REQUEST_TOKEN_PARAMS = {'scope': 'user:email'}
+    """
+    Some request params.
+    """
     SECURITY_OAUTH_ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token',
+    """
+    Endpoint for access token.
+    """
     SECURITY_OAUTH_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
-
+    """
+    Endpoint for authorize.
+    """
 
 class TestConfig(Config):
     """
