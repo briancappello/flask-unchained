@@ -4,10 +4,12 @@ from flask_unchained import (
 from http import HTTPStatus
 
 from ..extensions import OAuth
+from ..services import OAuthService
 
 
 class OAuthController(Controller):
     oauth: OAuth = injectable
+    oauth_service: OAuthService = injectable
 
     @route('/login/<string:remote_app>')
     def login(self, remote_app):
@@ -34,6 +36,7 @@ class OAuthController(Controller):
                   ))
 
         session['oauth_token'] = resp['access_token']
+        self.oauth_service.on_authorized(provider)
 
         self.flash(_('flask_unchained.bundles.security:flash.login'),
                    category='success')
