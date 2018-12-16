@@ -11,6 +11,7 @@ Bundles
    celery
    controller
    mail
+   oauth
    security
    session
    sqlalchemy
