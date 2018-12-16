@@ -27,7 +27,7 @@ And enable the bundles in your ``unchained_config.py``:
        'app',
    ]
 
-And set the AOuthController to your apps ``routes.py``:
+And set the OAuthController to your app's ``routes.py``:
 
 .. code:: python
 
@@ -58,6 +58,11 @@ Config
             access_token_url='https://github.com/login/oauth/access_token',
             authorize_url='https://github.com/login/oauth/authorize'
         )
+
+This configuration will be available at the endpoint '/login/github'.
+
+A second configuration for gitlab as oauth provider could be called OAUTH_REMOTE_APP_GITLAB = dict(...)
+which will be available at the endpoint 'login/gitlab'.
 
 For more information and oauth config examples see:
     `Flask OAuthlib Examples <http://github.com/lepture/flask-oauthlib/tree/master/example>`_
