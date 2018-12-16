@@ -17,4 +17,4 @@ class OAuth(BaseOAuth):
                 REMOTE_APP_NAME_CONFIG_PREFIX):].lower()
             remote_app = self.remote_app(remote_app_name, app_key=config_key)
 
-            remote_app.tokengetter(lambda: session.get(f'{remote_app_name}_oauth_token'))
+            remote_app.tokengetter(lambda: session.get('oauth_token'))

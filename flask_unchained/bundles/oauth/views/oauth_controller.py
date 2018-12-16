@@ -33,7 +33,7 @@ class OAuthController(Controller):
                       description=request.args['error_description'],
                   ))
 
-        session[f'P{remote_app}_oauth_token'] = resp['access_token']
+        session['oauth_token'] = resp['access_token']
 
         self.flash(_('flask_unchained.bundles.security:flash.login'),
                    category='success')
