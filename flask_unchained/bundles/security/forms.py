@@ -16,6 +16,9 @@ security_utils_service: SecurityUtilsService = \
     unchained.get_local_proxy('security_utils_service')
 
 
+password_required = validators.DataRequired(
+    _('flask_unchained.bundles.security:password_required'))
+
 password_equal = validators.EqualTo('password', message=_(
     'flask_unchained.bundles.security:error.retype_password_mismatch'))
 
@@ -89,8 +92,11 @@ class LoginForm(BaseForm, NextFormMixin):
             self.email.errors.append(
                 _('flask_unchained.bundles.security:error.user_does_not_exist'))
             return False
-        if not security_utils_service.verify_password(self.user,
-                                                      self.password.data):
+        elif not self.password.data:
+            self.password.errors.append(
+                _('flask_unchained.bundles.security:password_required'))
+            return False
+        elif not security_utils_service.verify_password(self.user, self.password.data):
             self.password.errors.append(
                 _('flask_unchained.bundles.security:error.invalid_password'))
             return False
@@ -110,10 +116,11 @@ class ForgotPasswordForm(BaseForm):
 
 class PasswordFormMixin:
     password = fields.PasswordField(
-        _('flask_unchained.bundles.security:form_field.password'))
+        _('flask_unchained.bundles.security:form_field.password'),
+        validators=[password_required])
     password_confirm = fields.PasswordField(
         _('flask_unchained.bundles.security:form_field.retype_password'),
-        validators=[password_equal])
+        validators=[password_equal, password_required])
 
 
 class ChangePasswordForm(BaseForm):
@@ -123,12 +130,14 @@ class ChangePasswordForm(BaseForm):
                         'new_password_confirm': 'password'}
 
     password = fields.PasswordField(
-        _('flask_unchained.bundles.security:form_field.password'))
+        _('flask_unchained.bundles.security:form_field.password'),
+        validators=[password_required])
     new_password = fields.PasswordField(
-        _('flask_unchained.bundles.security:form_field.new_password'))
+        _('flask_unchained.bundles.security:form_field.new_password'),
+        validators=[password_required])
     new_password_confirm = fields.PasswordField(
         _('flask_unchained.bundles.security:form_field.retype_password'),
-        validators=[new_password_equal])
+        validators=[new_password_equal, password_required])
 
     submit = fields.SubmitField(
         _('flask_unchained.bundles.security:form_submit.change_password'))
@@ -136,12 +145,11 @@ class ChangePasswordForm(BaseForm):
     def validate(self):
         result = super().validate()
 
-        if not security_utils_service.verify_password(current_user,
-                                                      self.password.data):
+        if not security_utils_service.verify_password(current_user, self.password.data):
             self.password.errors.append(
                 _('flask_unchained.bundles.security:error.invalid_password'))
             return False
-        if self.password.data == self.new_password.data:
+        elif self.password.data == self.new_password.data:
             self.new_password.errors.append(
                 _('flask_unchained.bundles.security:error.password_is_the_same'))
             return False

@@ -3,7 +3,7 @@ try:
 except ImportError:
     from py_meta_utils import OptionalClass as ma
 
-from flask_unchained import injectable
+from flask_unchained import injectable, lazy_gettext as _
 
 from ..models import User
 from ..services import UserManager
@@ -17,6 +17,7 @@ class UserSerializer(ma.ModelSerializer):
     user_manager: UserManager = injectable
 
     email = ma.Email(required=True)
+    password = ma.String(required=True)
     roles = ma.Nested('RoleSerializer', only='name', many=True)
 
     class Meta:
@@ -29,4 +30,6 @@ class UserSerializer(ma.ModelSerializer):
     def validate_email(self, email):
         existing = self.user_manager.get_by(email=email)
         if existing and (self.is_create() or existing != self.instance):
-            raise ma.ValidationError('Sorry, that email is already taken.')
+            raise ma.ValidationError(
+                _('flask_unchained.bundles.security:error.email_already_associated',
+                  email=email))

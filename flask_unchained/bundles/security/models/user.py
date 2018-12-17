@@ -20,8 +20,7 @@ class User(db.Model):
     email = db.Column(db.String(64), unique=True, index=True, info=dict(
         required=_('flask_unchained.bundles.security:email_required'),
         validators=[EmailValidator]))
-    _password = db.Column('password', db.String, info=dict(
-        required=_('flask_unchained.bundles.security:password_required')))
+    _password = db.Column('password', db.String, nullable=True)
     active = db.Column(db.Boolean(name='active'), default=False)
     confirmed_at = db.Column(db.DateTime(), nullable=True)
 
