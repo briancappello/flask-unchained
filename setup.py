@@ -70,6 +70,9 @@ setup(
             'beautifulsoup4>=4.6.3',
             'lxml>=4.2.4',
         ],
+        'oauth': [
+            'Flask-OAuthlib>=0.9.5',
+        ],
         'security': [
             'bcrypt>=3.1.4',
             'flask-login>=0.4.1',

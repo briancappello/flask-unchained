@@ -163,6 +163,9 @@ def new():
 @click.option('--mail/--no-mail', prompt='Mail Bundle',
               help='Whether or not to install the Mail Bundle.',
               default=lambda: default(False), show_default=True)
+@click.option('--oauth/--no-oauth', prompt='OAuth Bundle',
+              help='Whether or not to install the OAuth Bundle.',
+              default=lambda: default(False), show_default=True)
 @click.option('--security/--no-security', prompt='Security Bundle',
               help='Whether or not to install the Security Bundle.',
               default=lambda: default(False), show_default=True)
@@ -176,7 +179,7 @@ def new():
               help='Whether or not to install the Webpack Bundle.',
               default=lambda: default(False), show_default=True)
 def project(dest, app_bundle, force, dev,
-            admin, api, celery, graphene, mail,
+            admin, api, celery, graphene, mail, oauth,
             security, session, sqlalchemy, webpack):
     """
     Create a new Flask Unchained project.
@@ -190,7 +193,7 @@ def project(dest, app_bundle, force, dev,
     # build up a list of dependencies
     # IMPORTANT: keys here must match setup.py's `extra_requires` keys
     ctx = dict(dev=dev, admin=admin, api=api, celery=celery, graphene=graphene,
-               mail=mail, security=security, session=security or session,
+               mail=mail, oauth=oauth, security=security or oauth, session=security or session,
                sqlalchemy=security or sqlalchemy, webpack=webpack)
     ctx['requirements'] = [k for k, v in ctx.items() if v]
 
