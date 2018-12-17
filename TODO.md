@@ -15,7 +15,6 @@ api bundle [help wanted]
 security bundle [help wanted]
 -----------------------------
 * implement support for JWT tokens (and maybe PASETO tokens too?)
-* implement support for OAuth 2.0
 
 
 logging

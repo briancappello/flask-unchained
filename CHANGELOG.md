@@ -4,6 +4,7 @@
 
 ### Features
 
+- :fire:OAuth:fire: support with the new OAuth Bundle (many thanks to [@chriamue](https://github.com/chriamue)!)
 - :fire:GraphQL:fire: support with the new Graphene Bundle
 - add support for specifying parameters to inject into classes as class attributes
 - when using `unchained.inject()` on a class, or subclassing a class that supports automatic dependency injection, all non-dunderscore methods now support having dependencies injected
