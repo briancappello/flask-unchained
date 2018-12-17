@@ -2,6 +2,7 @@ from flask_unchained import unchained
 from flask_unchained.di import _set_up_class_dependency_injection
 from flask_unchained.string_utils import camel_case, title_case
 from py_meta_utils import McsArgs
+from speaklater import _LazyString
 
 try:
     from flask_marshmallow.sqla import (
@@ -264,6 +265,8 @@ class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass)
                              'Field may not be null.'}
         for field_name in error.field_names:
             for i, msg in enumerate(error.messages[field_name]):
+                if isinstance(msg, _LazyString):
+                    msg = str(msg)
                 if msg in required_messages:
                     label = title_case(field_name)
                     error.messages[field_name][i] = f'{label} is required.'
