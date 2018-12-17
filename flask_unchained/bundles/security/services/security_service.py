@@ -69,19 +69,20 @@ class SecurityService(BaseService):
             marked as not "fresh". Defaults to ``True``.
         :type fresh: bool
         """
-        if not user.active and not force:
-            raise AuthenticationError(
-                _('flask_unchained.bundles.security:error.disabled_account'))
+        if not force:
+            if not user.active:
+                raise AuthenticationError(
+                    _('flask_unchained.bundles.security:error.disabled_account'))
 
-        if (not user.confirmed_at
-                and self.security.confirmable
-                and not self.security.login_without_confirmation):
-            raise AuthenticationError(
-                _('flask_unchained.bundles.security:error.confirmation_required'))
+            if (not user.confirmed_at
+                    and self.security.confirmable
+                    and not self.security.login_without_confirmation):
+                raise AuthenticationError(
+                    _('flask_unchained.bundles.security:error.confirmation_required'))
 
-        if not user.password:
-            raise AuthenticationError(
-                _('flask_unchained.bundles.security:error.password_not_set'))
+            if not user.password:
+                raise AuthenticationError(
+                    _('flask_unchained.bundles.security:error.password_not_set'))
 
         session['user_id'] = getattr(user, user.Meta.pk)
         session['_fresh'] = fresh
@@ -118,7 +119,8 @@ class SecurityService(BaseService):
         identity_changed.send(app._get_current_object(),
                               identity=AnonymousIdentity())
 
-    def register_user(self, user, allow_login=None, send_email=None):
+    def register_user(self, user, allow_login=None, send_email=None,
+                      _force_login_without_confirmation=False):
         """
         Service method to register a user.
 
@@ -127,7 +129,8 @@ class SecurityService(BaseService):
         Returns True if the user has been logged in, False otherwise.
         """
         should_login_user = (not self.security.confirmable
-                             or self.security.login_without_confirmation)
+                             or self.security.login_without_confirmation
+                             or _force_login_without_confirmation)
         should_login_user = (should_login_user if allow_login is None
                              else allow_login and should_login_user)
         if should_login_user:
@@ -138,7 +141,7 @@ class SecurityService(BaseService):
         self.user_manager.save(user, commit=True)
 
         confirmation_link, token = None, None
-        if self.security.confirmable:
+        if self.security.confirmable and not _force_login_without_confirmation:
             token = self.security_utils_service.generate_confirmation_token(user)
             confirmation_link = url_for('security_controller.confirm_email',
                                         token=token, _external=True)
@@ -156,7 +159,7 @@ class SecurityService(BaseService):
                            confirmation_link=confirmation_link)
 
         if should_login_user:
-            return self.login_user(user)
+            return self.login_user(user, force=_force_login_without_confirmation)
         return False
 
     def change_password(self, user, password, send_email=None):
