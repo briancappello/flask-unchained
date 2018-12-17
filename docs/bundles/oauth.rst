@@ -31,38 +31,63 @@ And set the OAuthController to your app's ``routes.py``:
 
 .. code:: python
 
-    # your_app_root/routes.py
+    # your_app_bundle_root/routes.py
 
     from flask_unchained.bundles.oauth.views import OAuthController
 
     routes = lambda: [
-        controller(SiteController),
+        # ...
         controller(OAuthController),
     ]
 
 Config
 ^^^^^^
 
+The OAuth bundle includes support for two remote providers by default:
+
+- amazon
+- github
+
+To configure these, would look like this:
+
 .. code:: python
 
-    # your_app_root/config.py
+   # your_app_bundle_root/config.py
 
-    class ProdConfig(Config):
-        OAUTH_REMOTE_APP_GITHUB = dict(
-            consumer_key='',
-            consumer_secret='',
-            request_token_params={'scope': 'user:email'},
-            base_url='https://api.github.com/',
-            request_token_url=None,
-            access_token_method='POST',
-            access_token_url='https://github.com/login/oauth/access_token',
-            authorize_url='https://github.com/login/oauth/authorize'
-        )
+   import os
 
-This configuration will be available at the endpoint '/login/github'.
+   from flask_unchained import AppBundleConfig
 
-A second configuration for gitlab as oauth provider could be called OAUTH_REMOTE_APP_GITLAB = dict(...)
-which will be available at the endpoint 'login/gitlab'.
+   class Config(AppBundleConfig):
+       OAUTH_GITHUB_CONSUMER_KEY = os.getenv('OAUTH_GITHUB_CONSUMER_KEY', '')
+       OAUTH_GITHUB_CONSUMER_SECRET = os.getenv('OAUTH_GITHUB_CONSUMER_SECRET', '')
 
-For more information and oauth config examples see:
+       OAUTH_AMAZON_CONSUMER_KEY = os.getenv('OAUTH_AMAZON_CONSUMER_KEY', '')
+       OAUTH_AMAZON_CONSUMER_SECRET = os.getenv('OAUTH_AMAZON_CONSUMER_SECRET', '')
+
+You can also add other remote providers, for example to add support for the (made up) ``abc`` provider:
+
+.. code:: python
+
+   # your_app_bundle_root/config.py
+
+   import os
+
+   from flask_unchained import AppBundleConfig
+
+   class Config(AppBundleConfig):
+       OAUTH_REMOTE_APP_ABC = dict(
+           consumer_key=os.getenv('OAUTH_ABC_CONSUMER_KEY', ''),
+           consumer_secret=os.getenv('OAUTH_ABC_CONSUMER_SECRET', ''),
+           base_url='https://api.abc.com/',
+           access_token_url='https://abc.com/login/oauth/access_token',
+           access_token_method='POST',
+           authorize_url='https://abc.com/login/oauth/authorize'
+           request_token_url=None,
+           request_token_params={'scope': 'user:email'},
+       )
+
+Each remote provider is available at its respective endpoint: ``/login/<remote-app-name>``
+
+For more information and OAuth config examples see:
     `Flask OAuthlib Examples <http://github.com/lepture/flask-oauthlib/tree/master/example>`_
