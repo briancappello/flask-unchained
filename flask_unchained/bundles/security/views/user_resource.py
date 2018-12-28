@@ -1,9 +1,5 @@
-try:
-    from flask_unchained.bundles.api import ModelResource
-except ImportError:
-    from py_meta_utils import OptionalClass as ModelResource
-
 from flask_unchained import CREATE, GET, PATCH, injectable
+from flask_unchained.bundles.api import ModelResource
 
 from ..decorators import anonymous_user_required, auth_required_same_user
 from ..models import User
