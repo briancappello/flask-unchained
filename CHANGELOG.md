@@ -10,6 +10,7 @@
 - when using `unchained.inject()` on a class, or subclassing a class that supports automatic dependency injection, all non-dunderscore methods now support having dependencies injected
 - the `include` function used in `routes.py` now supports specifying the url prefix as the first argument
 - support distributing and loading database fixture files with/from bundles
+- implement proper support for `ModelForm` (it now adds fields for columns by default)
 
 #### Configuration Improvements
 

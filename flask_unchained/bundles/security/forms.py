@@ -41,6 +41,10 @@ def valid_user_email(form, field):
 
 
 class BaseForm(ModelForm):
+    class Meta:
+        abstract = True
+        only = ()
+
     def __init__(self, *args, **kwargs):
         if app.testing:
             self.TIME_LIMIT = None
