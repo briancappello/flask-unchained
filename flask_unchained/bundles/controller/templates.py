@@ -23,15 +23,11 @@ def parse_template(template):
     return m.group('template'), int(m.group('depth'))
 
 
-def make_template_override(template, depth):
-    return f'{template}__{depth + 1}__'
-
-
 class UnchainedJinjaEnvironment(Environment):
     def join_path(self, template, parent):
         parent, depth = parse_template(parent)
         if template == parent:
-            return make_template_override(template, depth)
+            return f'{template}__{depth + 1}__'
         return template
 
 
@@ -79,16 +75,15 @@ class UnchainedJinjaLoader(DispatchingJinjaLoader):
         raise TemplateNotFound(template)
 
 
-def pretty_num(depth):
-    depth += 1
-    if depth == 1:
-        return '1st'
-    elif depth == 2:
-        return '2nd'
-    elif depth == 3:
-        return '3rd'
+def pretty_num(num):
+    if num % 10 == 1 and num != 11:
+        return f'{num}st'
+    elif num % 10 == 2 and num != 12:
+        return f'{num}nd'
+    elif num % 10 == 3 and num != 13:
+        return f'{num}rd'
     else:
-        return depth + 'th'
+        return f'{num}th'
 
 
 def explain_template_loading_attempts(app, template, attempts):
@@ -102,8 +97,7 @@ def explain_template_loading_attempts(app, template, attempts):
     from flask.globals import _request_ctx_stack
 
     template, expected_priors = parse_template(template)
-    info = ['Locating %s template "%s":' % (pretty_num(expected_priors),
-                                            template)]
+    info = [f'Locating {pretty_num(expected_priors + 1)} template "{template}":']
 
     total_found = 0
     blueprint = None
