@@ -46,7 +46,7 @@ class OAuthController(Controller):
 
         email, data = self.oauth_service.get_user_details(provider)
         user, created = self.user_manager.get_or_create(email=email,
-                                                        **data,
+                                                        defaults=data,
                                                         commit=True)
         if created:
             self.security_service.register_user(
