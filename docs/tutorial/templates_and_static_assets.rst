@@ -72,10 +72,10 @@ And also the included ``templates/_navbar.html`` and ``templates/_flashes.html``
 
    {% macro nav_link(label) %}
      {% set href = kwargs.get('href', url_for(kwargs['endpoint'])) %}
-     <li class="nav-item {% if endpoint is active %}active{% endif %}">
+     <li class="nav-item {% if kwargs is active %}active{% endif %}">
        <a class="nav-link" href="{{ href }}">
          {{ label }}
-         {% if endpoint is active %}
+         {% if kwargs is active %}
            <span class="sr-only">(current)</span>
          {% endif %}
        </a>

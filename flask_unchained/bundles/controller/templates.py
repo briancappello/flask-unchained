@@ -9,6 +9,7 @@ from flask import request
 from flask.templating import DispatchingJinjaLoader, Environment
 from flask_unchained import unchained
 from jinja2 import TemplateNotFound
+from typing import *
 
 
 TEMPLATE_OVERRIDE_RE = re.compile(r'^(?P<template>.+)__(?P<depth>\d+)__$')
@@ -154,5 +155,21 @@ def explain_template_loading_attempts(app, template, attempts):
 
 
 @unchained.template_test(name='active')
-def is_active(endpoint):
-    return request.endpoint == endpoint
+def is_active(endpoint_or_kwargs: Union[str, dict]):
+    endpoint = None
+    href = None
+    if isinstance(endpoint_or_kwargs, str):
+        if '/' in endpoint_or_kwargs:
+            href = endpoint_or_kwargs
+        else:
+            endpoint = endpoint_or_kwargs
+    elif isinstance(endpoint_or_kwargs, dict):
+        endpoint = endpoint_or_kwargs.get('endpoint')
+        href = endpoint_or_kwargs.get('href')
+    else:
+        raise TypeError('the first argument to is_active must be a str or dict')
+
+    if endpoint:
+        return endpoint == request.endpoint
+
+    return href == request.path or href == request.url
