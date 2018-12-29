@@ -28,7 +28,7 @@ marshmallow==2.16.1
 marshmallow-sqlalchemy==0.15.0
 networkx==2.2
 passlib==1.7.1
-py-meta-utils==0.7.3
+py-meta-utils==0.7.4
 py-yaml-fixtures==0.4.0
 pyqt5==5.11.2
 speaklater==1.3
