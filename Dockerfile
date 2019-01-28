@@ -15,3 +15,4 @@ WORKDIR /flask/src
 USER flask
 
 CMD ["flask", "run", "--host", "0.0.0.0", "--port", "5000"]
+EXPOSE 5000
