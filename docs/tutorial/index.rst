@@ -13,6 +13,7 @@ Tutorial
     session
     security
     building_the_portfolio
+    docker
 
 This tutorial will walk you through creating a basic portfolio application for monitoring your investments. Users will be able to register, log in, create portfolios and manage the stocks in them. You will be able to package and install the application on other computers.
 
