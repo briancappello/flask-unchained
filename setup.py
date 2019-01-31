@@ -22,6 +22,7 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'blinker>=1.4',
+        'click>=7.0',
         'flask>=1.0.2',
         'flask_babelex>=0.9.3',
         'flask-wtf>=0.14.2',
