@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v0.7.0 (unreleased)
+## v0.7.0 (2019/01/30)
 
 ### Features
 

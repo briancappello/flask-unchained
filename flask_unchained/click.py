@@ -86,11 +86,6 @@ class Command(click.Command):
             context_settings=_update_ctx_settings(context_settings),
             options_metavar=options_metavar)
 
-        # FIXME: these two lines are for backwards compatibility with click 6.7,
-        # FIXME: and should be removed once on 7+
-        self.short_help = short_help
-        self.short_help = self.get_short_help_str()
-
     # overridden to support displaying args before the options metavar
     def collect_usage_pieces(self, ctx):
         rv = []
@@ -133,11 +128,6 @@ class GroupOverrideMixin:
             kwargs.pop('context_settings', None)), **kwargs)
         self.subcommand_metavar = 'COMMAND [<args>...]'
         self.subcommands_metavar = 'COMMAND1 [<args>...] [COMMAND2 [<args>...]]'
-
-        # FIXME: these two lines are for backwards compatibility with click 6.7,
-        # FIXME: and should be removed once on 7+
-        self.short_help = kwargs.get('short_help')
-        self.short_help = self.get_short_help_str()
 
     def command(self, *args, **kwargs):
         """
