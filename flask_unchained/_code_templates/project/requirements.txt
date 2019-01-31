@@ -1,2 +1,2 @@
-#! flask-unchained[{{ ','.join(requirements) }}]>=0.6.6
+#! flask-unchained[{{ ','.join(requirements) }}]>=0.7.0
 jinja2-time>=0.2.0

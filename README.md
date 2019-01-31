@@ -269,9 +269,7 @@ class NameSubmission(db.Model):
     #                        onupdate=sqlalchemy.func.now())
 ```
 
-###
-
-Services
+### Services
 
 ```python
 # hello-flask-unchained/app/services.py
