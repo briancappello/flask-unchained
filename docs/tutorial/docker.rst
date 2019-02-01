@@ -59,10 +59,10 @@ A simple compose file for an flask-unchained project is following:
    version: '3'
     services:
         postgres:
-            image: postgres:9.6.5
+            image: postgres:11.1-alpine
         
         redis:
-            image: redis:3.2-alpine
+            image: redis:5.0-alpine
             command: redis-server
             expose:
             - 6379
