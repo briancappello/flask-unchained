@@ -1,5 +1,6 @@
 import importlib
 import inspect
+import itertools
 
 from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
 from typing import *
@@ -31,12 +32,10 @@ class RegisterRoutesHook(AppFactoryHook):
             # Flask doesn't complain; it will match the first route found,
             # but maybe we should at least warn the user?
             if route.should_register(app):
-                self.bundle.endpoints[route.endpoint] = route
-
-                # FIXME this assumes a single endpoint per view function
+                self.bundle.endpoints[route.endpoint].append(route)
                 if route._controller_cls:
                     key = f'{route._controller_cls.__name__}.{route.method_name}'
-                    self.bundle.controller_endpoints[key] = route
+                    self.bundle.controller_endpoints[key].append(route)
 
         bundle_names = [(
             bundle.module_name,
@@ -46,18 +45,21 @@ class RegisterRoutesHook(AppFactoryHook):
         ) for bundle in app.unchained.bundles.values()]
 
         bundle_route_endpoints = set()
-        for endpoint, route in self.bundle.endpoints.items():
-            module_name = route.module_name
-            for top_level_bundle_name, hierarchy in bundle_names:
-                for bundle_name in hierarchy:
-                    if module_name and module_name.startswith(bundle_name):
-                        self.bundle.bundle_routes[top_level_bundle_name].append(route)
-                        bundle_route_endpoints.add(endpoint)
-                        break
+        for endpoint, routes in self.bundle.endpoints.items():
+            for route in routes:
+                module_name = route.module_name
+                for top_level_bundle_name, hierarchy in bundle_names:
+                    for bundle_name in hierarchy:
+                        if module_name and module_name.startswith(bundle_name):
+                            self.bundle.bundle_routes[top_level_bundle_name].append(route)
+                            bundle_route_endpoints.add(endpoint)
+                            break
 
-        self.bundle.other_routes = [route for endpoint, route
-                                    in self.bundle.endpoints.items()
-                                    if endpoint not in bundle_route_endpoints]
+        self.bundle.other_routes = itertools.chain.from_iterable([
+            routes for endpoint, routes
+            in self.bundle.endpoints.items()
+            if endpoint not in bundle_route_endpoints
+        ])
 
         for route in self.bundle.other_routes:
             app.add_url_rule(route.full_rule,

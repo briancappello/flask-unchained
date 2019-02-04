@@ -129,10 +129,11 @@ class Api:
                 display_name = pluralize(display_name)
             docs[http_method]['summary'] = f'{http_method.upper()} {display_name}'
 
-            route = unchained.controller_bundle.controller_endpoints[key]
-            for rule in self.app.url_map.iter_rules(route.endpoint):
-                self.spec.add_path(app=self.app, rule=rule, operations=docs,
-                                   view=route.view_func)
+            routes = unchained.controller_bundle.controller_endpoints[key]
+            for route in routes:
+                for rule in self.app.url_map.iter_rules(route.endpoint):
+                    self.spec.add_path(app=self.app, rule=rule, operations=docs,
+                                       view=route.view_func)
 
     def register_converter(self, converter, conv_type, conv_format=None, *, name=None):
         """

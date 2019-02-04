@@ -232,7 +232,7 @@ class Unchained:
                 bound_args = sig.bind_partial(*fn_args, **fn_kwargs)
                 bound_args.apply_defaults()
                 for k, v in bound_args.arguments.items():
-                    if v == injectable:
+                    if isinstance(v, str) and v == injectable:
                         di_name = new_fn.__di_name__
                         is_constructor = ('.' not in di_name
                                           and di_name != di_name.lower())

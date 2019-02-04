@@ -20,12 +20,12 @@ class ControllerBundle(Bundle):
 
     def __init__(self):
 
-        self.endpoints: Dict[str, Route] = {}
+        self.endpoints: Dict[str, Route] = defaultdict(list)
         """
         Lookup of routes by endpoint name.
         """
 
-        self.controller_endpoints: Dict[str, Route] = {}
+        self.controller_endpoints: Dict[str, Route] = defaultdict(list)
         """
         Lookup of routes by keys: f'{ControllerClassName}.{view_method_name}'
         """
