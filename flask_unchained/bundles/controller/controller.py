@@ -54,6 +54,7 @@ class _ControllerMetaclass(type):
       create a new Route for each method that needs one
     """
     def __new__(mcs, name, bases, clsdict):
+        clsdict['_view_funcs'] = {}
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         _set_up_class_dependency_injection(mcs_args)
         if clsdict.get('__abstract__',
