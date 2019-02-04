@@ -5,6 +5,7 @@
 ### Bug fixes
 
 - support multiple routing rules with the same endpoint per view function
+- fix type error in dependency injection when comparing parameter values with string
 
 ## v0.7.0 (2019/01/30)
 
