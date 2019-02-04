@@ -181,6 +181,7 @@ class Controller(metaclass=_ControllerMetaclass):
     Base class for class-based views in Flask Unchained.
     """
     _meta_options_factory_class = _ControllerMetaOptionsFactory
+    _view_funcs = {}
 
     class Meta:
         abstract = True
@@ -306,16 +307,19 @@ class Controller(metaclass=_ControllerMetaclass):
         - we also apply them in reverse, so that they get applied in the
           logical top-to-bottom order as declared in controllers
         """
-        def view_func(*args, **kwargs):
-            self = view_func.view_class(*class_args, **class_kwargs)
-            return self.dispatch_request(method_name, *args, **kwargs)
+        if method_name not in cls._view_funcs:
+            def view_func(*args, **kwargs):
+                self = view_func.view_class(*class_args, **class_kwargs)
+                return self.dispatch_request(method_name, *args, **kwargs)
 
-        wrapper_assignments = (set(functools.WRAPPER_ASSIGNMENTS)
-                               .difference({'__qualname__'}))
-        functools.update_wrapper(view_func, getattr(cls, method_name),
-                                 assigned=list(wrapper_assignments))
-        view_func.view_class = cls
-        return view_func
+            wrapper_assignments = (set(functools.WRAPPER_ASSIGNMENTS)
+                                   .difference({'__qualname__'}))
+            functools.update_wrapper(view_func, getattr(cls, method_name),
+                                     assigned=list(wrapper_assignments))
+            view_func.view_class = cls
+            cls._view_funcs[method_name] = view_func
+
+        return cls._view_funcs[method_name]
 
     def dispatch_request(self, method_name, *view_args, **view_kwargs):
         decorators = self.get_decorators(method_name)
