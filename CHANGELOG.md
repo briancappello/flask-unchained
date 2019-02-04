@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v0.7.1 (unreleased)
+## v0.7.1 (2019/02/04)
 
 ### Bug fixes
 
