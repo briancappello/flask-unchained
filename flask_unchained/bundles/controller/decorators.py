@@ -10,9 +10,10 @@ def route(rule=None, blueprint=None, defaults=None, endpoint=None,
     however, the ``is_member`` perhaps deserves an example::
 
         class UserResource(ModelResource):
-            model = User
-            member_param = '<int:id>'
-            include_methods = ['list', 'get']
+            class Meta:
+                model = User
+                member_param = '<int:id>'
+                include_methods = ['list', 'get']
 
             @route(is_member=True, methods=['POST'])
             def set_profile_pic(user):
@@ -20,7 +21,7 @@ def route(rule=None, blueprint=None, defaults=None, endpoint=None,
 
         # registered like so in your ``app_bundle/routes.py``:
         routes = lambda: [
-            resource(UserResource)
+            resource(UserResource),
         ]
 
         # results in the following routes:

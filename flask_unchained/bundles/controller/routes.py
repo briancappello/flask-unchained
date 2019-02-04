@@ -335,7 +335,8 @@ def prefix(url_prefix: str,
     """
     for route in _reduce_routes(children):
         route = route.copy()
-        route.rule = join(url_prefix, route.rule)
+        route.rule = join(url_prefix, route.rule,
+                          trailing_slash=route.rule.endswith('/'))
         yield route
 
 
@@ -447,7 +448,8 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
         subroute._unique_member_param = unique_member_param
         subroute = subroute.copy()
         subroute.rule = rename_parent_resource_param_name(
-            subroute, rule=join(url_prefix, member_param, subroute.rule))
+            subroute, rule=join(url_prefix, member_param, subroute.rule,
+                                trailing_slash=subroute.rule.endswith('/')))
         yield subroute
 
 

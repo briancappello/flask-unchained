@@ -39,15 +39,15 @@ class TestRegisterRoutesHook:
             hook.run_hook(app, [VendorBundle(), AppBundle()])
 
             expected = {'one.view_one': 'view_one rendered',
-                         'two.view_two': 'view_two rendered',
-                         'three.view_three': 'view_three rendered',
-                         'four.view_four': 'view_four rendered'}
+                        'two.view_two': 'view_two rendered',
+                        'three.view_three': 'view_three rendered',
+                        'four.view_four': 'view_four rendered'}
 
             # check endpoints added to store
             assert list(hook.bundle.endpoints.keys()) == list(expected.keys())
             for endpoint in expected:
-                route = hook.bundle.endpoints[endpoint]
-                assert route.view_func() == expected[endpoint]
+                for route in hook.bundle.endpoints[endpoint]:
+                    assert route.view_func() == expected[endpoint]
 
             # check endpoints registered with app
             assert set(app.view_functions.keys()) == set(expected.keys())
@@ -69,8 +69,8 @@ class TestRegisterRoutesHook:
             # check endpoints added to store
             assert list(hook.bundle.endpoints.keys()) == list(expected.keys())
             for endpoint in expected:
-                route = hook.bundle.endpoints[endpoint]
-                assert route.view_func() == expected[endpoint]
+                for route in hook.bundle.endpoints[endpoint]:
+                    assert route.view_func() == expected[endpoint]
 
             # check endpoints registered with app
             assert set(app.view_functions.keys()) == set(expected.keys())
