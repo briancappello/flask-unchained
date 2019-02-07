@@ -1,4 +1,4 @@
-FROM python:3.7-stretch
+FROM python:3.6-stretch
 ARG VERSION=v0.7.0
 
 ENV PYTHONUNBUFFERED 1
