@@ -2,12 +2,18 @@ import inspect
 import re
 
 try:
-    import lxml
     from bs4 import BeautifulSoup
 except ImportError:
     BeautifulSoup = None
     from warnings import warn
-    warn('BeautifulSoup and/or lxml was not installed. Will not automatically '
+    warn('BeautifulSoup4 is not installed. Will not automatically '
+         'convert html email messages to plain text.')
+
+try:
+    import lxml
+except ImportError:
+    from warnings import warn
+    warn('lxml is not installed. Will not automatically '
          'convert html email messages to plain text.')
 
 from flask import render_template
