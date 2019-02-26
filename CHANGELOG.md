@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v0.7.2 (unreleased)
+## v0.7.2 (2019/02/25)
 
 - fix the project's registered name on PyPI so it doesn't contain spaces
 
