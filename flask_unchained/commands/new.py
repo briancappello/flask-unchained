@@ -206,7 +206,7 @@ def project(dest, app_bundle, force, dev,
         for option, files
         in [('api', ['app/serializers']),
             ('celery', ['app/tasks',
-                        'celery.py']),
+                        'celery_app.py']),
             ('graphene', ['app/graphql']),
             ('mail', ['templates/email']),
             ('security', ['app/models/role.py',
