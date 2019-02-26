@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.7.3 (2019/02/26)
+
+- do not generate `celery_app.py` for new projects without the celery bundle enabled
+- improve user warnings when mail bundle is enabled but lxml or beautifulsoup isn't installed
+- bump required versions of py-meta-utils and sqlalchemy-unchained
+
 ## v0.7.2 (2019/02/25)
 
 - fix the project's registered name on PyPI so it doesn't contain spaces
