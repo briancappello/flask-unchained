@@ -1,4 +1,3 @@
-import inspect
 import sys
 
 from flask_unchained import AppFactoryHook, FlaskUnchained
@@ -29,7 +28,7 @@ class RegisterModelsHook(AppFactoryHook):
         self.unchained._models_initialized = True
 
     def type_check(self, obj: Any) -> bool:
-        if not inspect.isclass(obj) or not issubclass(obj, Model):
+        if not isinstance(obj, type) or not issubclass(obj, Model):
             return False
         return hasattr(obj, 'Meta') and not obj.Meta.abstract
 

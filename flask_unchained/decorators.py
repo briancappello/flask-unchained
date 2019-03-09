@@ -1,5 +1,3 @@
-import inspect
-
 from enum import Enum
 from functools import wraps
 from http import HTTPStatus
@@ -77,7 +75,7 @@ def _convert_models(view_kwargs: dict,
         if isinstance(model_mapping, dict):
             arg_name, model = list(model_mapping.items())[0]
 
-        if not (inspect.isclass(model) and issubclass(model, Model)):
+        if not (isinstance(model, type) and issubclass(model, Model)):
             continue
 
         if not arg_name:
