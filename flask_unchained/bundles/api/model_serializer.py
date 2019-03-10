@@ -136,10 +136,12 @@ class _ModelSerializerMetaclass(_BaseModelSchemaMetaclass):
         model = None
         try:
             model = unchained.sqlalchemy_bundle.models[meta.model.__name__]
-        except AttributeError:
+        except AttributeError as e:
             # this happens when attempting to generate documentation and the
             # sqlalchemy bundle hasn't been loaded
-            pass
+            safe_error = "'_DeferredBundleFunctions' object has no attribute 'models'"
+            if safe_error not in str(e):
+                raise e
         except KeyError:
             pass
 
