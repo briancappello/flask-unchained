@@ -7,6 +7,7 @@
 - add `.gitignore` to `flask new project` command
 - fix compatibility with SQLAlchemy 1.3
 - improve error message when no `config` module found in the app bundle
+- silence "changed in marshmallow 3" warnings
 
 ## v0.7.3 (2019/02/26)
 
