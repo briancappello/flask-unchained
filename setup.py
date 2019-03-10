@@ -31,7 +31,8 @@ setup(
     ],
     extras_require={
         'admin': [
-            'flask-admin>=1.5.1',
+            'flask-admin>=1.5.3',
+            'sqlalchemy<1.3',
         ],
         'api': [
             'apispec>=0.39.0',
