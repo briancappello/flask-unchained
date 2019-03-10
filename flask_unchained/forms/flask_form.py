@@ -38,7 +38,7 @@ class FlaskForm(BaseForm):
         """
         super().__init__(formdata=formdata, obj=obj, prefix=prefix, data=data, meta=meta,
                          **kwargs)
-        self._name = snake_case(self.__class__.__name__)
+        self._name = bytes(snake_case(self.__class__.__name__), 'utf-8')
 
     def __iter__(self):
         if not self.field_order:
