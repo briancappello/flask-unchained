@@ -46,5 +46,5 @@ BaseModel
 ModelForm
 ^^^^^^^^^^
 
-.. autoclass:: flask_unchained.bundles.sqlalchemy.model_form.ModelForm
+.. autoclass:: flask_unchained.bundles.sqlalchemy.forms.ModelForm
    :members:
