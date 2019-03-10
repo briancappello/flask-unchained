@@ -80,12 +80,17 @@ class ConfigureAppHook(AppFactoryHook):
         base_config = getattr(bundle_config_module, BASE_CONFIG_CLASS, None)
         env_config = getattr(bundle_config_module, ENV_CONFIG_CLASSES[env], None)
 
-        if (isinstance(bundle, AppBundle) and (
-                not base_config
-                or not issubclass(base_config, AppBundleConfig))):
-            raise Exception(f"Could not find an AppBundleConfig subclass named "
-                            f"{BASE_CONFIG_CLASS} in your app bundle's "
-                            f"{self.get_module_name(bundle)} module.")
+        if isinstance(bundle, AppBundle):
+            if not bundle_config_module:
+                module_name = self.get_bundle_module_name(bundle)
+                raise Exception(
+                    f'Could not find the `{module_name}` module in your app bundle.')
+
+            if not base_config or not issubclass(base_config, AppBundleConfig):
+                raise Exception(
+                    f"Could not find an AppBundleConfig subclass named "
+                    f"{BASE_CONFIG_CLASS} in your app bundle's "
+                    f"{self.get_module_name(bundle)} module.")
 
         merged = flask.Config(None)
         for config in [base_config, env_config]:

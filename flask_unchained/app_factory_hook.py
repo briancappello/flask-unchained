@@ -216,10 +216,13 @@ class AppFactoryHook:
 
     @classmethod
     def get_module_name(cls, bundle: Bundle) -> str:
-        module_name = getattr(bundle,
-                              cls.bundle_override_module_name_attr,
-                              cls.bundle_module_name)
-        return f'{bundle.module_name}.{module_name}'
+        return f'{bundle.module_name}.{cls.get_bundle_module_name(bundle)}'
+
+    @classmethod
+    def get_bundle_module_name(cls, bundle: Bundle) -> str:
+        return getattr(bundle,
+                       cls.bundle_override_module_name_attr,
+                       cls.bundle_module_name)
 
     def update_shell_context(self, ctx: dict):
         """
