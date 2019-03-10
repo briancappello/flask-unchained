@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.7.4 (unreleased)
+
+- add `ModelForm.make_instance` convenience method
+- fix `ModelForm.name` to return `bytes`
+- add `.gitignore` to `flask new project` command
+- fix compatibility with SQLAlchemy 1.3
+- improve error message when no `config` module found in the app bundle
+
 ## v0.7.3 (2019/02/26)
 
 - do not generate `celery_app.py` for new projects without the celery bundle enabled
