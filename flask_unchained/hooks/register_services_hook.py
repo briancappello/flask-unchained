@@ -1,5 +1,3 @@
-import inspect
-
 from typing import *
 
 from ..app_factory_hook import AppFactoryHook
@@ -28,7 +26,7 @@ class RegisterServicesHook(AppFactoryHook):
         return obj.__di_name__
 
     def type_check(self, obj) -> bool:
-        if not inspect.isclass(obj):
+        if not isinstance(obj, type):
             return False
         return issubclass(obj, BaseService) and hasattr(obj, '__di_name__')
 

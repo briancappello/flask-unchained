@@ -1,4 +1,3 @@
-import inspect
 import networkx as nx
 
 from collections import namedtuple
@@ -51,7 +50,7 @@ class RunHooksHook(AppFactoryHook):
                 for Hook in super().collect_from_bundle(bundle).values()]
 
     def type_check(self, obj: Any) -> bool:
-        is_class = inspect.isclass(obj) and issubclass(obj, AppFactoryHook)
+        is_class = isinstance(obj, type) and issubclass(obj, AppFactoryHook)
         return is_class and obj not in {AppFactoryHook, RunHooksHook}
 
     def resolve_hook_order(self, hook_tuples: List[HookTuple]) -> List[HookTuple]:

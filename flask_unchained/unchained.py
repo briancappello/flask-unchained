@@ -141,7 +141,7 @@ class Unchained:
         """
         Method to register a service.
         """
-        if not inspect.isclass(service):
+        if not isinstance(service, type):
             if hasattr(service, '__class__'):
                 _ensure_service_name(service.__class__, name)
             self.services[name] = service
@@ -189,7 +189,7 @@ class Unchained:
 
         def wrapper(fn):
             cls = None
-            if inspect.isclass(fn):
+            if isinstance(fn, type):
                 cls = fn
                 fn = cls.__init__
 
@@ -307,7 +307,7 @@ class Unchained:
                       for n in dag.successors(name)
                       if n not in getattr(service, _INJECT_CLS_ATTRS)}
 
-            if not inspect.isclass(service):
+            if not isinstance(service, type):
                 self.services[name] = functools.partial(service, **params)
             else:
                 try:

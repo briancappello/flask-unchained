@@ -1,5 +1,3 @@
-import inspect
-
 from flask_unchained import AppFactoryHook, FlaskUnchained
 from typing import *
 
@@ -17,6 +15,6 @@ class RegisterGrapheneMutationsHook(AppFactoryHook):
         self.bundle.mutations = mutations
 
     def type_check(self, obj: Any):
-        is_subclass = inspect.isclass(obj) and issubclass(obj, MutationsObjectType)
+        is_subclass = isinstance(obj, type) and issubclass(obj, MutationsObjectType)
         return is_subclass and obj != MutationsObjectType and (
                 not hasattr(obj, 'Meta') or not getattr(obj.Meta, 'abstract', False))

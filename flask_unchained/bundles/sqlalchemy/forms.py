@@ -234,3 +234,11 @@ class ModelForm(FlaskForm, metaclass=_ModelFormMetaclass):
     @property
     def data(self):
         return dict((name, f.data) for name, f in self._fields.items())
+
+    def make_instance(self):
+        return self.Meta.model(**self.data)
+
+
+__all__ = [
+    'ModelForm',
+]

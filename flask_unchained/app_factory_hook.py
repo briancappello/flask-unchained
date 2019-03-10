@@ -183,7 +183,7 @@ class AppFactoryHook:
             # it's ever needed:
             #
             # https://stackoverflow.com/questions/14413025/how-can-i-find-out-where-an-object-has-been-instantiated#14413108
-            if inspect.isclass(obj):
+            if isinstance(obj, type):
                 is_local_declaration = obj.__module__.startswith(module.__name__)
             else:
                 is_local_declaration = False

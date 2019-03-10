@@ -1,5 +1,3 @@
-import inspect
-
 from flask import Flask
 from flask_unchained import AppFactoryHook
 from flask_unchained.string_utils import title_case
@@ -39,7 +37,7 @@ class RegisterSerializersHook(AppFactoryHook):
                 self.bundle.many_by_model[model_name] = serializer
 
     def type_check(self, obj):
-        if not inspect.isclass(obj):
+        if not isinstance(obj, type):
             return False
         return issubclass(obj, ModelSerializer) and obj != ModelSerializer
 

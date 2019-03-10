@@ -1,5 +1,3 @@
-import inspect
-
 from flask_unchained import AppFactoryHook, FlaskUnchained
 from typing import *
 
@@ -17,6 +15,6 @@ class RegisterGrapheneQueriesHook(AppFactoryHook):
         self.bundle.queries = queries
 
     def type_check(self, obj: Any):
-        is_subclass = inspect.isclass(obj) and issubclass(obj, QueriesObjectType)
+        is_subclass = isinstance(obj, type) and issubclass(obj, QueriesObjectType)
         return is_subclass and obj != QueriesObjectType and (
                 not hasattr(obj, 'Meta') or not getattr(obj.Meta, 'abstract', False))

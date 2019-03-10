@@ -1,5 +1,3 @@
-import inspect
-
 from flask_unchained import AppFactoryHook
 
 from ..model_admin import ModelAdmin
@@ -42,5 +40,5 @@ class RegisterModelAdminsHook(AppFactoryHook):
             admin.add_view(model_admin)
 
     def type_check(self, obj):
-        is_class = inspect.isclass(obj) and issubclass(obj, ModelAdmin)
+        is_class = isinstance(obj, type) and issubclass(obj, ModelAdmin)
         return is_class and obj != ModelAdmin

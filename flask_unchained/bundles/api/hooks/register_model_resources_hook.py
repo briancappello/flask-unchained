@@ -1,5 +1,3 @@
-import inspect
-
 from flask_unchained import AppFactoryHook
 
 from ..model_resource import ModelResource
@@ -43,6 +41,6 @@ class RegisterModelResourcesHook(AppFactoryHook):
             resource_cls.Meta.serializer_create = serializer
 
     def type_check(self, obj):
-        if not inspect.isclass(obj):
+        if not isinstance(obj, type):
             return False
         return issubclass(obj, ModelResource) and obj != ModelResource

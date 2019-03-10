@@ -1,5 +1,3 @@
-import inspect
-
 from flask_unchained import unchained
 from py_meta_utils import McsArgs, MetaOption
 from sqlalchemy.orm import RelationshipProperty
@@ -25,7 +23,7 @@ class ModelMetaOption(MetaOption):
             return
 
         from .base_model import BaseModel
-        if not (inspect.isclass(value) and issubclass(value, BaseModel)):
+        if not (isinstance(value, type) and issubclass(value, BaseModel)):
             raise TypeError(f'{mcs_args.name} is missing the model Meta attribute')
 
 

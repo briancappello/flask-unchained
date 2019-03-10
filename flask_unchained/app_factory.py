@@ -170,7 +170,7 @@ def _load_bundle(bundle_package_name: str, type_checker):
 
 def _is_bundle(module):
     def is_bundle(obj):
-        if not inspect.isclass(obj):
+        if not isinstance(obj, type):
             return False
         is_subclass = issubclass(obj, Bundle) and obj not in {AppBundle, Bundle}
         return is_subclass and obj.__module__.startswith(module.__name__)

@@ -1,5 +1,4 @@
 import importlib
-import inspect
 
 from flask import Blueprint
 from flask_unchained import FlaskUnchained
@@ -517,7 +516,7 @@ def _inherit_route_options(parent: Route, child: Route):
 
 
 def _is_controller_cls(controller_cls, has_rule):
-    is_controller = (inspect.isclass(controller_cls)
+    is_controller = (isinstance(controller_cls, type)
                      and issubclass(controller_cls, Controller))
     is_resource = is_controller and issubclass(controller_cls, Resource)
     if is_controller and not is_resource:
@@ -535,7 +534,7 @@ def _is_controller_cls(controller_cls, has_rule):
 
 
 def _is_resource_cls(resource_cls, has_rule):
-    if inspect.isclass(resource_cls) and issubclass(resource_cls, Resource):
+    if isinstance(resource_cls, type) and issubclass(resource_cls, Resource):
         return True
 
     if has_rule:
