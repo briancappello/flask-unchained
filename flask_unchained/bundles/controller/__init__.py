@@ -10,7 +10,7 @@ from .resource import Resource
 from .route import Route
 from .routes import (
     controller, delete, func, get, include, patch, post, prefix, put, resource, rule)
-from .utils import redirect, url_for
+from .utils import StringConverter, redirect, url_for
 
 
 class ControllerBundle(Bundle):
@@ -50,6 +50,9 @@ class ControllerBundle(Bundle):
         app.jinja_options = {**app.jinja_options,
                              'loader': UnchainedJinjaLoader(app)}
         app.jinja_env.globals['url_for'] = url_for
+
+        for name in ['string', 'str']:
+            app.url_map.converters[name] = StringConverter
 
     def after_init_app(self, app: FlaskUnchained):
         """

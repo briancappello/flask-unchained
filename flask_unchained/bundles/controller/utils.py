@@ -7,13 +7,46 @@ from py_meta_utils import _missing
 from typing import *
 from urllib.parse import urlsplit
 from werkzeug.local import LocalProxy
-from werkzeug.routing import BuildError
+from werkzeug.routing import BuildError, UnicodeConverter
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
 
 
 PARAM_NAME_RE = re.compile(r'<(\w+:)?(?P<param_name>\w+)>')
 LAST_PARAM_NAME_RE = re.compile(r'<(\w+:)?(?P<param_name>\w+)>$')
+
+
+class StringConverter(UnicodeConverter):
+    """
+    This converter is the default converter and accepts any string but
+    only one path segment.  Thus the string can not include a slash.
+
+    This is the default validator.
+
+    Example::
+
+        Rule('/pages/<page>'),
+        Rule('/<string(length=2):lang_code>')
+
+    :param map: the :class:`Map`.
+    :param minlength: the minimum length of the string.  Must be greater
+                      or equal 1.
+    :param maxlength: the maximum length of the string.
+    :param length: the exact length of the string.
+    """
+    def __init__(self, map, minlength=1, maxlength=None, length=None, upper=False):
+        super().__init__(map, minlength, maxlength, length)
+        self.is_upper = upper
+
+    def to_python(self, value: str):
+        if self.is_upper:
+            return super().to_python(value).upper()
+        return super().to_python(value)
+
+    def to_url(self, value):
+        if self.is_upper:
+            return super().to_url(value).upper()
+        return super().to_url(value)
 
 
 def controller_name(cls, _remove_suffixes=None) -> str:
