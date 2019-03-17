@@ -44,6 +44,7 @@ class Unchained:
         self.extensions = AttrDict()
         self.services = AttrDict()
 
+        self._app = None
         self._deferred_functions = []
         self._initialized = False
         self._models_initialized = False
@@ -90,6 +91,7 @@ class Unchained:
         app.env = self.env
         app.extensions['unchained'] = self
         app.unchained = self
+        self._app = app
 
         bundles = bundles or []
         for b in bundles:
@@ -305,7 +307,10 @@ class Unchained:
             service = self._services_registry[name]
             params = {n: self.extensions.get(n, self.services.get(n))
                       for n in dag.successors(name)
-                      if n not in getattr(service, _INJECT_CLS_ATTRS)}
+                      if n not in getattr(service, _INJECT_CLS_ATTRS)
+                      and (n in self.extensions or self.services)}
+            if 'config' in inspect.signature(service).parameters:
+                params['config'] = self._app.config
 
             if not isinstance(service, type):
                 self.services[name] = functools.partial(service, **params)

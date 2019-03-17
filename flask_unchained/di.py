@@ -48,7 +48,9 @@ def _inject_cls_attrs(_wrapped_fn=None, _call_super_for_cls: Optional[str] = Non
     def __init__(self, *args, **kwargs):
         from .unchained import unchained
         for param in self.__inject_cls_attrs__:
-            if param in unchained.extensions:
+            if param == 'config':
+                value = unchained._app.config
+            elif param in unchained.extensions:
                 value = unchained.extensions[param]
             elif param in unchained.services:
                 value = unchained.services[param]
