@@ -1,7 +1,9 @@
 # CHANGELOG
 
-## v0.7.4 (unreleased)
+## v0.7.4 (2019/03/17)
 
+- support injecting current app config into services
+- extend the `string` url parameter converter to support `upper=True/False`
 - add `ModelForm.make_instance` convenience method
 - fix `ModelForm.name` to return `bytes`
 - add `.gitignore` to `flask new project` command
