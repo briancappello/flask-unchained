@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.7.5 (2019/03/24)
+
+- hopefully actually fix compatibility with SQLAlchemy 1.3
+
 ## v0.7.4 (2019/03/17)
 
 - support injecting current app config into services

@@ -1,6 +1,6 @@
+from alembic.util import immutabledict  # NOQA (this *must* be first...  because alembic)
 from alembic.autogenerate import comparators, renderers
 from alembic.operations import Operations
-from alembic.util import immutabledict  # NOQA (this *must* be here...  why, no clue)
 from sqlalchemy.dialects.postgresql.base import PGInspector
 
 from .reversible_op import ReversibleOp
