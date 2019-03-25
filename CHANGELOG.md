@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v0.7.6 (2019/03/24)
+
 ## v0.7.5 (2019/03/24)
 
 - hopefully actually fix compatibility with SQLAlchemy 1.3

@@ -8,7 +8,7 @@
     :license: MIT, see LICENSE for more details
 """
 
-__version__ = '0.7.5'
+__version__ = '0.7.6'
 
 
 from . import _compat

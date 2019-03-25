@@ -1,4 +1,3 @@
-from alembic.util import immutabledict  # NOQA (this *must* be first...  because alembic)
 from alembic.autogenerate import comparators, renderers
 from alembic.operations import Operations
 from sqlalchemy.dialects.postgresql.base import PGInspector
