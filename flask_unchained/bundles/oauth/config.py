@@ -19,3 +19,12 @@ class Config(BundleConfig):
         request_token_url=None,
         request_token_params={'scope': 'profile:email'},
     )
+    
+    OAUTH_REMOTE_APP_GITLAB = dict(
+        base_url='https://gitlab.com/api/v4/user',
+        access_token_url='https://gitlab.com/oauth/token',
+        access_token_method='POST',
+        authorize_url='https://gitlab.com/oauth/authorize',
+        request_token_url=None,
+        request_token_params={'scope': 'openid read_user'},
+    )
