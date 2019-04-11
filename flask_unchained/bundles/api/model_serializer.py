@@ -192,8 +192,6 @@ class _ModelSerializerOptionsClass(_BaseModelSerializerOptionsClass):
     """
     def __init__(self, meta, **kwargs):
         self._model = None
-        if not hasattr(meta, 'strict'):
-            meta.strict = True
         super().__init__(meta, **kwargs)
         self.model_converter = getattr(meta, 'model_converter', _ModelConverter)
 

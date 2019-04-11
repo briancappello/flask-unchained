@@ -1,8 +1,3 @@
-from flask_unchained import request
-from marshmallow.exceptions import ValidationError
-from marshmallow.schema import UnmarshalResult
-
-
 # from Flask-RESTful
 def unpack(value):
     """
@@ -24,12 +19,3 @@ def unpack(value):
         pass
 
     return value, 200, {}
-
-
-def safe_load(serializer, instance=None, partial=False):
-    try:
-        return serializer.load(request.get_json(),
-                               instance=instance,
-                               partial=partial)
-    except ValidationError as e:
-        return UnmarshalResult(None, e.normalized_messages())

@@ -1,9 +1,7 @@
 from functools import wraps
 from http import HTTPStatus
 
-from flask import abort
-
-from .utils import safe_load
+from flask import abort, request
 
 
 def list_loader(*decorator_args, model):
@@ -33,8 +31,9 @@ def patch_loader(*decorator_args, serializer):
     def wrapped(fn):
         @wraps(fn)
         def decorated(*args, **kwargs):
-            result = safe_load(serializer, instance=kwargs.pop('instance'),
-                               partial=True)
+            result = serializer.load(request.get_json(),
+                                     instance=kwargs.pop('instance'),
+                                     partial=True)
             if not result.errors and not result.data.id:
                 abort(HTTPStatus.NOT_FOUND)
             return fn(*result)
@@ -54,7 +53,8 @@ def put_loader(*decorator_args, serializer):
     def wrapped(fn):
         @wraps(fn)
         def decorated(*args, **kwargs):
-            result = safe_load(serializer, instance=kwargs.pop('instance'))
+            result = serializer.load(request.get_json(),
+                                     instance=kwargs.pop('instance'))
             if not result.errors and not result.data.id:
                 abort(HTTPStatus.NOT_FOUND)
             return fn(*result)
@@ -74,7 +74,7 @@ def post_loader(*decorator_args, serializer):
     def wrapped(fn):
         @wraps(fn)
         def decorated(*args, **kwargs):
-            return fn(*safe_load(serializer))
+            return fn(*serializer.load(request.get_json()))
         return decorated
 
     if decorator_args and callable(decorator_args[0]):

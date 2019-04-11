@@ -35,7 +35,6 @@ pip install git+https://github.com/sqlalchemy/alembic.git@d46de05b8b3281a85e6b10
 - fix `ModelForm.name` to return `bytes`
 - add `.gitignore` to `flask new project` command
 - improve error message when no `config` module found in the app bundle
-- silence "changed in marshmallow 3" warnings
 
 ## v0.7.3 (2019/02/26)
 
