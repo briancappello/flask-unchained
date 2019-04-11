@@ -1,10 +1,30 @@
 # CHANGELOG
 
+## v0.7.7 (2019/04/11)
+
+- bump requirements
+
+- NOTE: broken with sqlalchemy bundle, must install alembic using:
+
+```bash
+pip install git+https://github.com/sqlalchemy/alembic.git@d46de05b8b3281a85e6b107ef3f3407e232eb9e9#egg=alembic
+```
+
 ## v0.7.6 (2019/03/24)
+
+- NOTE: broken with sqlalchemy bundle, must install alembic using:
+
+```bash
+pip install git+https://github.com/sqlalchemy/alembic.git@d46de05b8b3281a85e6b107ef3f3407e232eb9e9#egg=alembic
+```
 
 ## v0.7.5 (2019/03/24)
 
-- hopefully actually fix compatibility with SQLAlchemy 1.3
+- NOTE: broken with sqlalchemy bundle, must install alembic using:
+
+```bash
+pip install git+https://github.com/sqlalchemy/alembic.git@d46de05b8b3281a85e6b107ef3f3407e232eb9e9#egg=alembic
+```
 
 ## v0.7.4 (2019/03/17)
 
@@ -13,7 +33,6 @@
 - add `ModelForm.make_instance` convenience method
 - fix `ModelForm.name` to return `bytes`
 - add `.gitignore` to `flask new project` command
-- fix compatibility with SQLAlchemy 1.3
 - improve error message when no `config` module found in the app bundle
 - silence "changed in marshmallow 3" warnings
 

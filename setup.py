@@ -26,7 +26,7 @@ setup(
         'flask>=1.0.2',
         'flask_babelex>=0.9.3',
         'flask-wtf>=0.14.2',
-        'py-meta-utils>=0.7.5',
+        'py-meta-utils>=0.7.6',
         'networkx>=2.1',
     ],
     extras_require={
@@ -36,9 +36,9 @@ setup(
         ],
         'api': [
             'apispec>=0.39.0',
-            'flask-marshmallow>=0.9.0',
-            'marshmallow>=2.16.1,<3.0',
-            'marshmallow-sqlalchemy>=0.15,<0.16',
+            'flask-marshmallow>=0.10.0',
+            'marshmallow>=2.19.2,<3.0',
+            'marshmallow-sqlalchemy>=0.16.2,<0.17',
         ],
         'celery': [
             'celery>=4.2.1',
@@ -88,8 +88,8 @@ setup(
         ],
         'sqlalchemy': [
             'flask-migrate>=2.2.1',
-            'flask-sqlalchemy-unchained>=0.7.1',
-            'sqlalchemy-unchained>=0.7.1',
+            'flask-sqlalchemy-unchained>=0.7.2',
+            'sqlalchemy-unchained>=0.7.2',
         ],
     },
 
