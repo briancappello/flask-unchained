@@ -79,7 +79,7 @@ The architecture is inspired by [Symfony](https://symfony.com/), which is enterp
 ```bash
 # (create a virtual environment)
 pip install flask-unchained[dev]
-flask new project <your-project-folder-name>
+flask new project <your-project-folder-name> --prompt
 
 # (answer the questions and `cd` into the new directory)
 pip install -r requirements-dev.txt

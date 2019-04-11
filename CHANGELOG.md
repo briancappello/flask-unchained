@@ -3,6 +3,7 @@
 ## v0.7.7 (2019/04/11)
 
 - bump requirements
+- change behavior of `flask new project` command to use defaults unless `--prompt` is given
 
 - NOTE: broken with sqlalchemy bundle, must install alembic using:
 

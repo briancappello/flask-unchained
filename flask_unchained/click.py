@@ -34,10 +34,10 @@ def default(value):
     return value
 
 
-def skip_prompting(ctx, param, value):
+def should_prompt(ctx, param, value):
     global SKIP_PROMPTING
 
-    if value:
+    if value is False:
         SKIP_PROMPTING = True
     else:
         SKIP_PROMPTING = False

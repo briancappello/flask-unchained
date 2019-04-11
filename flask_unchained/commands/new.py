@@ -4,7 +4,7 @@ import shutil
 import sys
 
 from flask_unchained.cli import click
-from flask_unchained.click import default, skip_prompting
+from flask_unchained.click import default, should_prompt
 from flask_unchained.string_utils import right_replace
 from jinja2 import Environment
 from typing import *
@@ -141,10 +141,11 @@ def new():
               callback=_validate_module_name)
 @click.option('--force/--no-force', default=False, show_default=True,
               help='Whether or not to force creation if project folder is not empty.')
-@click.option('--no-prompt', is_eager=True, is_flag=True, expose_value=False,
+@click.option('--prompt/--no-prompt',
+              is_eager=True, is_flag=True, expose_value=False,
               help='Whether or not to skip prompting and just use the defaults.',
               default=False, show_default=True,
-              callback=skip_prompting)
+              callback=should_prompt)
 @click.option('--dev/--no-dev', prompt='Development Mode',
               help='Whether or not to install development dependencies.',
               default=lambda: default(True), show_default=True)
