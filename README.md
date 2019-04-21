@@ -86,13 +86,9 @@ pip install -r requirements-dev.txt
 flask run
 ```
 
-**NOTE:** If you enabled the SQLAlchemy Bundle, then you need to install [alembic](https://github.com/sqlalchemy/alembic) version 1.0.9 or greater. As of this writing, 1.0.9 is unreleased, so you need the following:
+**NOTE:** If you enabled the SQLAlchemy Bundle, then you need to install [alembic](https://github.com/sqlalchemy/alembic) version 1.0.9 or greater.
 
-```bash
-pip install git+https://github.com/sqlalchemy/alembic.git@d46de05b8b3281a85e6b107ef3f3407e232eb9e9#egg=alembic
-```
-
-You may also need to run migrations first:
+You may also need to run migrations before starting the development server:
 
 ```bash
 flask db init
