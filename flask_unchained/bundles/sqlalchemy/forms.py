@@ -176,9 +176,15 @@ class _ModelFormMetaclass(_FormMetaclass):
                                        field_args=Meta.field_args,
                                        db_session=db.session,
                                        converter=_ModelConverter())
+            # mcs_args.clsdict.update(new_clsdict)
             new_clsdict.update(mcs_args.clsdict)
             mcs_args.clsdict = new_clsdict
         return super().__new__(*mcs_args)
+
+    def __call__(self, *args, **kwargs):
+        cls = super().__call__(*args, **kwargs)
+        cls._unbound_fields.sort()
+        return cls
 
 
 class ModelForm(FlaskForm, metaclass=_ModelFormMetaclass):
@@ -199,8 +205,8 @@ class ModelForm(FlaskForm, metaclass=_ModelFormMetaclass):
             return validation_passed
 
         try:
-            self.Meta.model.validate(**{k: v for k, v in self.data.items()
-                                        if hasattr(self.Meta.model, k)})
+            self.Meta.model.validate_values(**{k: v for k, v in self.data.items()
+                                               if hasattr(self.Meta.model, k)})
         except ValidationErrors as e:
             for col_name, errors in e.errors.items():
                 field = self._fields[col_name]

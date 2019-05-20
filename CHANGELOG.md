@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.7.9 (unreleased)
+
+- compatibility with `sqlalchemy-unchained >= 0.7.6`
+
 ## v0.7.8 (2019/04/21)
 
 - bump required `alembic` version to 1.0.9, fixes `immutabledict is not defined` error
