@@ -54,11 +54,15 @@ def app(request):
         kwargs = getattr(mark, 'kwargs', {})
         options.update({k.upper(): v for k, v in kwargs.items()})
 
-    app = AppFactory.create_app(TEST, _config_overrides=options)
-    ctx = app.app_context()
-    ctx.push()
-    yield app
-    ctx.pop()
+    try:
+        app = AppFactory.create_app(TEST, _config_overrides=options)
+    except ImportError:
+        yield None
+    else:
+        ctx = app.app_context()
+        ctx.push()
+        yield app
+        ctx.pop()
 
 
 # FIXME this only seems to work on tests themselves, but *not* for test fixtures :(
@@ -73,6 +77,9 @@ def maybe_inject_extensions_and_services(app, request):
 
     **NOTE:** This only works on tests themselves; it will *not* work on test fixtures
     """
+    if app is None:
+        return
+
     item = request._pyfuncitem
     fixture_names = getattr(item, "fixturenames", request.fixturenames)
     for arg_name in fixture_names:
