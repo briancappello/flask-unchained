@@ -247,6 +247,9 @@ class ProdConfig(Config):
     
 class StagingConfig(ProdConfig):
     pass
+
+class TestConfig(Config):
+    pass
 ```
 
 ### Models
