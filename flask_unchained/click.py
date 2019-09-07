@@ -12,6 +12,7 @@ We override upstream to do the following:
 - we accept ``-h`` and ``--help`` instead of just ``--help`` for showing help
 - we support documenting help for ``click.Argument``
 - some minor customizations to the formatting of the help output
+- support automatic dependency injection on commands
 """
 
 import click
@@ -80,8 +81,11 @@ class Command(click.Command):
     def __init__(self, name, context_settings=None, callback=None, params=None,
                  help=None, epilog=None, short_help=None, add_help_option=True,
                  options_metavar='[OPTIONS]'):
+        from .unchained import unchained
+
         super().__init__(
-            name, callback=callback, params=params, help=help, epilog=epilog,
+            name, callback=unchained.inject(callback), params=params,
+            help=help, epilog=epilog,
             short_help=short_help, add_help_option=add_help_option,
             context_settings=_update_ctx_settings(context_settings),
             options_metavar=options_metavar)

@@ -49,7 +49,6 @@ lower priority
 * verify it's possible to override hooks (certainly bundles should be able to override hooks from parent bundles, but should it also be possible to override unchained's hooks too?)
 * admin bundle could also use some improvement
    - honestly i haven't spent much time looking too deeply into flask-admin, and am kind of leaning towards investigating building something around React-Admin
-* should commands have dependency injection set up automatically on them?
 * it should probably be possible to define multiple modules a hook should load from
 
 
