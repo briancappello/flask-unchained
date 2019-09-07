@@ -74,8 +74,8 @@ class SecurityService(BaseService):
                 raise AuthenticationError(
                     _('flask_unchained.bundles.security:error.disabled_account'))
 
-            if (not user.confirmed_at
-                    and self.security.confirmable
+            if (self.security.confirmable
+                    and not user.confirmed_at
                     and not self.security.login_without_confirmation):
                 raise AuthenticationError(
                     _('flask_unchained.bundles.security:error.confirmation_required'))
