@@ -29,16 +29,19 @@ class TestHtmlSendConfirmationEmail:
         # have them request a new confirmation email
         r = client.post('security_controller.send_confirmation_email',
                         data=dict(email=user.email))
+        assert r.status_code == 302
 
         # make sure they get emailed a new confirmation token
         assert len(outbox) == 2
-        assert len(templates) == 3
+        assert len(templates) == 2
         assert templates[1].template.name == \
                'security/email/email_confirmation_instructions.html'
         assert templates[0].context.get('confirmation_link') != \
                templates[1].context.get('confirmation_link')
 
         # make sure the frontend tells them to check their email
+        r = client.follow_redirects(r)
+        assert len(templates) == 3
         assert r.status_code == 200
         assert templates[2].template.name == \
                'security/send_confirmation_email.html'

@@ -1,4 +1,6 @@
 import pytest
+
+from flask_unchained import url_for
 from flask_unchained.bundles.mail.pytest import *
 
 
@@ -31,6 +33,9 @@ class TestHtmlForgotPassword:
     def test_valid_request(self, user, client, outbox, templates):
         r = client.post('security_controller.forgot_password',
                         data=dict(email=user.email))
+        assert r.status_code == 302
+        assert r.path == url_for('security_controller.forgot_password')
+        r = client.follow_redirects(r)
         assert r.status_code == 200
         assert len(outbox) == 1
         assert templates[0].template.name == \

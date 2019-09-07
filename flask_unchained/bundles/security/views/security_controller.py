@@ -98,7 +98,12 @@ class SecurityController(Controller):
         if form.validate_on_submit():
             user = self.security_service.user_manager.create(**form.to_dict())
             self.security_service.register_user(user)
+            if request.is_json:
+                return '', HTTPStatus.NO_CONTENT
             return self.redirect('SECURITY_POST_REGISTER_REDIRECT_ENDPOINT')
+
+        elif form.errors and request.is_json:
+            return self.errors(form.errors)
 
         return self.render('register',
                            register_user_form=form,
@@ -117,6 +122,7 @@ class SecurityController(Controller):
                          email=form.user.email), category='info')
             if request.is_json:
                 return '', HTTPStatus.NO_CONTENT
+            return self.redirect('send_confirmation_email')
 
         elif form.errors and request.is_json:
             return self.errors(form.errors)
@@ -184,6 +190,7 @@ class SecurityController(Controller):
                        category='info')
             if request.is_json:
                 return '', HTTPStatus.NO_CONTENT
+            return self.redirect('forgot_password')
 
         elif form.errors and request.is_json:
             return self.errors(form.errors)
