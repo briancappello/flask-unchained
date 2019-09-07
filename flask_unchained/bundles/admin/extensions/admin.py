@@ -1,6 +1,5 @@
-from flask import Flask
 from flask_admin import Admin as BaseAdmin, helpers
-from flask_unchained import url_for
+from flask_unchained import url_for, FlaskUnchained
 
 
 class Admin(BaseAdmin):
@@ -10,7 +9,7 @@ class Admin(BaseAdmin):
         from flask_unchained.bundles.admin import admin
     """
 
-    def init_app(self, app: Flask):
+    def init_app(self, app: FlaskUnchained):
         self.app = app
         self.name = app.config.ADMIN_NAME
         self.subdomain = app.config.ADMIN_SUBDOMAIN
