@@ -27,7 +27,7 @@ except ImportError:
     from py_meta_utils import OptionalClass as QtWidgets
     from py_meta_utils import OptionalClass as RichJupyterWidget
 
-    class cli:
+    class click:
         @staticmethod
         def command(*args, **kwargs):
             return lambda fn: None
@@ -123,7 +123,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, jupyter_widget):
         super().__init__()
         self.setCentralWidget(jupyter_widget)
-        self.setWindowTitle('Flask QtConsole')
+        self.setWindowTitle('Flask Unchained QtConsole')
 
         base_path = os.path.abspath(os.path.dirname(qtconsoleapp.__file__))
         icon_path = os.path.join(base_path, 'resources', 'icon', 'JupyterConsole.svg')
