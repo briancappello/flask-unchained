@@ -5,7 +5,7 @@ from typing import *
 from warnings import warn
 
 from ..app_factory_hook import AppFactoryHook
-from ..bundle import Bundle
+from ..bundles import Bundle
 from ..flask_unchained import FlaskUnchained
 
 

@@ -15,7 +15,7 @@ from . import _compat
 from .app_factory import AppFactory
 from .app_factory_hook import AppFactoryHook
 from .config import AppBundleConfig, BundleConfig
-from .bundle import AppBundle, Bundle
+from .bundles import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
 from .decorators import param_converter
 from .di import BaseService, injectable

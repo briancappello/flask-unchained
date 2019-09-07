@@ -4,7 +4,7 @@ from typing import *
 
 from ..config import AppBundleConfig, BundleConfig
 from ..app_factory_hook import AppFactoryHook
-from ..bundle import Bundle, AppBundle
+from ..bundles import Bundle, AppBundle
 from ..constants import DEV, PROD, STAGING, TEST
 from ..flask_unchained import FlaskUnchained
 

@@ -5,7 +5,7 @@ from importlib import import_module
 from typing import *
 
 from ..app_factory_hook import AppFactoryHook
-from ..bundle import Bundle
+from ..bundles import Bundle
 from ..flask_unchained import FlaskUnchained
 
 

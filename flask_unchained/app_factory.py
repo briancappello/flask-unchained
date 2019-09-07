@@ -5,7 +5,7 @@ import sys
 
 from typing import *
 
-from .bundle import AppBundle, Bundle
+from .bundles import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
 from .exceptions import BundleNotFoundError
 from .flask_unchained import FlaskUnchained

@@ -5,7 +5,7 @@ import pkgutil
 from types import FunctionType
 from typing import *
 
-from .bundle import AppBundle, Bundle
+from .bundles import AppBundle, Bundle
 from .exceptions import NameCollisionError
 from .flask_unchained import FlaskUnchained
 from .string_utils import snake_case

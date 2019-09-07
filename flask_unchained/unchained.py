@@ -22,7 +22,7 @@ class _DeferredBundleFunctionsStore:
 
     def __getitem__(self, bundle_name):
         if bundle_name not in self._bundles:
-            from .bundle import _DeferredBundleFunctions
+            from .bundles import _DeferredBundleFunctions
             self._bundles[bundle_name] = _DeferredBundleFunctions()
         return self._bundles[bundle_name]
 

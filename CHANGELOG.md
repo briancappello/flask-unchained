@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.7.10 (unreleased)
+
+- move `Bundle`, `AppBundle`, and `BundleBlueprint` into the `flask_unchained.bundles` module
+
 ## v0.7.9 (2019/05/19)
 
 - compatibility with `sqlalchemy-unchained >= 0.7.6`
