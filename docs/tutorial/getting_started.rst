@@ -300,11 +300,7 @@ And last but not least, for the ``8th`` requirement, this again is handled autom
 
 Let's get back to finishing our hello view. We need to add a template for it to render. :meth:`flask_unchained.Controller.render` knows that when you pass a template name of ``index``, it should look for ``site/index.html`` in the bundle's ``templates`` folder.
 
-The ``site`` prefix is determined from the controller's class name:
-
-.. code:: python
-
-   snake_case(right_replace(SiteController.__name__, 'Controller', ''))
+The ``site`` prefix is determined from the controller's class name. By default we right strip any ``Controller`` or ``View`` suffix from the class name, and then convert the remainder to snake case.
 
 You can also set it manually to customize the folder the controller will look for its templates in, like so:
 

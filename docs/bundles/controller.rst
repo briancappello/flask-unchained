@@ -191,7 +191,7 @@ Controllers have a few meta options that you can use to customize their behavior
      - ()
    * - template_folder_name
      - The name of the folder containing the templates for this controller's views.
-     - Defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). It then gets pluralized and converted to snake-case.
+     - Defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). It then gets converted to snake-case.
    * - template_file_extension
      - The filename extension to use for templates for this controller's views.
      - Defaults to your app config's ``TEMPLATE_FILE_EXTENSION`` setting, and overrides it if set.
@@ -350,7 +350,7 @@ Flask Unchained uses the `Jinja <http://jinja.pocoo.org/docs/>`_ templating lang
 
 By default bundles are configured to use a ``templates`` subfolder. This is configurable by setting :attr:`flask_unchained.Bundle.template_folder` to a custom path.
 
-Controllers each have their own template folder within ``Bundle.template_folder``. It defaults to ``snake_case(right_replace(ControllerClass.__name__, 'Controller', ''))`` and is configurable by setting :attr:`flask_unchained.Controller.Meta.template_folder_name`.
+Controllers each have their own template folder within ``Bundle.template_folder``. It defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). It then gets converted to snake-case. Or you can set it manually with :attr:`flask_unchained.Controller.Meta.template_folder_name`.
 
 The default file extension used for templates is configured by setting ``TEMPLATE_FILE_EXTENSION``. It defaults to ``.html``, and is also configurable on a per-controller basis by setting :attr:`flask_unchained.Controller.Meta.template_file_extension`.
 

@@ -112,8 +112,7 @@ class _ControllerTemplateFolderNameMetaOption(MetaOption):
     """
     The name of the folder containing the templates for this controller's views. Defaults
     to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping
-    after the first one is found (if any). It then gets pluralized and converted to
-    snake-case.
+    after the first one is found (if any). It then gets converted to snake-case.
     """
     def __init__(self):
         super().__init__('template_folder_name', default=_missing, inherit=False)
