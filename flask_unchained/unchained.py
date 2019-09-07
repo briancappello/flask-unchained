@@ -308,7 +308,7 @@ class Unchained:
             params = {n: self.extensions.get(n, self.services.get(n))
                       for n in dag.successors(name)
                       if n not in getattr(service, _INJECT_CLS_ATTRS)
-                      and (n in self.extensions or self.services)}
+                      and (n in self.extensions or n in self.services)}
             if 'config' in inspect.signature(service).parameters:
                 params['config'] = self._app.config
 
