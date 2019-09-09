@@ -1,5 +1,5 @@
 from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
-from flask_unchained.bundles import BundleBlueprint
+from flask_unchained.bundles._blueprint import BundleBlueprint
 from typing import *
 
 # FIXME test template resolution order when this is used in combination with
