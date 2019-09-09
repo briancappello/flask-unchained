@@ -2,8 +2,9 @@
 
 ## v0.7.10 (unreleased)
 
-- move `Bundle`, `AppBundle`, and `BundleBlueprint` into the `flask_unchained.bundles` module
+- move `Bundle` and `AppBundle` into the `flask_unchained.bundles` module
 - set up automatic dependency injection on commands
+- update `ConfigureAppHook` to load configs from every bundle in the hierarchy
 
 ## v0.7.9 (2019/05/19)
 

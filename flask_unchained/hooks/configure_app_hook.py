@@ -47,8 +47,9 @@ class ConfigureAppHook(AppFactoryHook):
         if it exists, and then also if it exists, from an env-specific config class:
         one of ``DevConfig``, ``ProdConfig``, ``StagingConfig``, or ``TestConfig``.
         """
-        self.apply_default_config(app, bundles and bundles[-1] or None)
         BundleConfig._set_current_app(app)
+
+        self.apply_default_config(app, bundles and bundles[-1] or None)
         for bundle_ in bundles:
             for bundle in bundle_._iter_class_hierarchy():
                 app.config.from_mapping(self.get_bundle_config(bundle, app.env))
@@ -76,6 +77,20 @@ class ConfigureAppHook(AppFactoryHook):
                           bundle: Bundle,
                           env: Union[DEV, PROD, STAGING, TEST],
                           ) -> flask.Config:
+        if isinstance(bundle, AppBundle):
+            config = self._get_bundle_config(bundle, env)
+        else:
+            config = flask.Config(None)
+            for bundle_ in bundle._iter_class_hierarchy():
+                config.update(self._get_bundle_config(bundle_, env))
+
+        if isinstance(bundle, AppBundle) and 'SECRET_KEY' not in config:
+            raise Exception(f"The `SECRET_KEY` config option is required. Please "
+                            f"set it in your app bundle's {BASE_CONFIG_CLASS} class.")
+
+        return config
+
+    def _get_bundle_config(self, bundle, env):
         bundle_config_module = self.import_bundle_module(bundle)
         base_config = getattr(bundle_config_module, BASE_CONFIG_CLASS, None)
         env_config = getattr(bundle_config_module, ENV_CONFIG_CLASSES[env], None)
@@ -96,9 +111,5 @@ class ConfigureAppHook(AppFactoryHook):
         for config in [base_config, env_config]:
             if config:
                 merged.from_object(config)
-
-        if isinstance(bundle, AppBundle) and 'SECRET_KEY' not in merged:
-            raise Exception(f"The `SECRET_KEY` config option is required. Please "
-                            f"set it in your app bundle's {BASE_CONFIG_CLASS} class.")
 
         return merged
