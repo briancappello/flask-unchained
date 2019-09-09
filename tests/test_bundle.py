@@ -99,7 +99,7 @@ class TestBundle:
         assert len(hierarchy) == 1
         assert isinstance(hierarchy[0], VendorBundle)
 
-        hierarchy = list(OverrideVendorBundle()._iter_class_hierarchy(reverse=False))
+        hierarchy = list(OverrideVendorBundle()._iter_class_hierarchy(reverse_mro=False))
         assert len(hierarchy) == 2
         assert isinstance(hierarchy[0], OverrideVendorBundle)
         assert isinstance(hierarchy[1], VendorBundle)

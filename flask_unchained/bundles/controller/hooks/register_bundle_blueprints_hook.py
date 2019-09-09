@@ -17,7 +17,7 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
 
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         for bundle_ in reversed(bundles):
-            for bundle in bundle_._iter_class_hierarchy(reverse=False):
+            for bundle in bundle_._iter_class_hierarchy(reverse_mro=False):
                 if (bundle.template_folder
                         or bundle._static_folders
                         or bundle._has_views()):

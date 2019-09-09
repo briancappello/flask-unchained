@@ -214,7 +214,7 @@ class Bundle(metaclass=_BundleMetaclass):
         """
         pass
 
-    def _iter_class_hierarchy(self, include_self=True, reverse=True):
+    def _iter_class_hierarchy(self, include_self=True, reverse_mro=True):
         """
         Iterate over the bundle classes in the hierarchy. Yields base-most
         super classes first (aka opposite of Method Resolution Order).
@@ -222,10 +222,10 @@ class Bundle(metaclass=_BundleMetaclass):
         For internal use only.
 
         :param include_self: Whether or not to yield the top-level bundle.
-        :param reverse: Pass False to yield bundles in Method Resolution Order.
+        :param reverse_mro: Pass False to yield bundles in Method Resolution Order.
         """
         supers = self.__class__.__mro__[(0 if include_self else 1):]
-        for bundle in (supers if not reverse else reversed(supers)):
+        for bundle in (reversed(supers) if reverse_mro else supers):
             if issubclass(bundle, Bundle) and bundle not in {AppBundle, Bundle}:
                 if bundle == self.__class__:
                     yield self
@@ -264,7 +264,7 @@ class Bundle(metaclass=_BundleMetaclass):
         elif not self._is_top_bundle():
             return []
 
-        return [b.static_folder for b in self._iter_class_hierarchy(reverse=False)
+        return [b.static_folder for b in self._iter_class_hierarchy(reverse_mro=False)
                 if b.static_folder and b.name == self.name]
 
     def _is_top_bundle(self):
