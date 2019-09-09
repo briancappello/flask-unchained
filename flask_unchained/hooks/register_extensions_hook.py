@@ -52,7 +52,6 @@ class RegisterExtensionsHook(AppFactoryHook):
 
     def update_shell_context(self, ctx: Dict[str, Any]):
         ctx.update(self.unchained.extensions)
-        ctx.update({'unchained': self.unchained})
 
     def resolve_extension_order(self, extensions: List[ExtensionTuple],
                                 ) -> List[ExtensionTuple]:

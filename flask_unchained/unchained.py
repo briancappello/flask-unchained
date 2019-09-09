@@ -100,6 +100,7 @@ class Unchained:
         self.babel_bundle = self.bundles.get('babel_bundle', None)
 
         self._shell_ctx = {b.name: b for b in bundles}
+        self._shell_ctx['unchained'] = self
         app.shell_context_processor(lambda: self._shell_ctx)
 
         for deferred in self._deferred_functions:
