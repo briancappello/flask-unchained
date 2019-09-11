@@ -13,7 +13,6 @@ import time
 
 from flask.cli import with_appcontext  # alias this here
 from flask_unchained import AppFactory, click
-from flask_unchained.app_factory import _load_unchained_config
 from flask_unchained.constants import DEV, PROD, STAGING, TEST
 from flask_unchained.utils import get_boolean_env
 from traceback import format_exc
@@ -38,7 +37,7 @@ def clear_env_vars():
 
 def _should_create_basic_app(env):
     try:
-        _load_unchained_config(env)
+        AppFactory().load_unchained_config(env)
         return False
     except ImportError:
         return True
@@ -50,10 +49,10 @@ def cli_create_app(_):
     env = os.getenv('FLASK_ENV')
 
     if _should_create_basic_app(env):
-        return AppFactory.create_basic_app()
+        return AppFactory().create_basic_app()
 
     try:
-        return AppFactory.create_app(env)
+        return AppFactory().create_app(env)
     except:
         print(format_exc())
         clear_env_vars()

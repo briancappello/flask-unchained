@@ -55,7 +55,7 @@ def app(request):
         options.update({k.upper(): v for k, v in kwargs.items()})
 
     try:
-        app = AppFactory.create_app(TEST, _config_overrides=options)
+        app = AppFactory().create_app(TEST, _config_overrides=options)
     except ImportError:
         yield None
     else:

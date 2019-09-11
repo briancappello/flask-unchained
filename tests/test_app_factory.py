@@ -1,6 +1,6 @@
 import pytest
 
-from flask_unchained import app_factory
+from flask_unchained.app_factory import AppFactory, BundleNotFoundError
 
 from ._bundles.app_bundle_in_module.bundle import AppBundleInModule
 from ._bundles.bundle_in_module.bundle import ModuleBundle
@@ -20,25 +20,25 @@ vendor_bundle = 'tests._bundles.vendor_bundle'
 
 class TestLoadBundles:
     def test_bundle_in_module(self):
-        app_bundle, bundles = app_factory._load_bundles([bundle_in_module])
+        app_bundle, bundles = AppFactory().load_bundles([bundle_in_module])
         assert app_bundle is None
         assert len(bundles) == 3
         assert isinstance(bundles[-1], ModuleBundle)
 
     def test_bundle_in_init(self):
-        app_bundle, bundles = app_factory._load_bundles([empty_bundle])
+        app_bundle, bundles = AppFactory().load_bundles([empty_bundle])
         assert app_bundle is None
         assert len(bundles) == 3
         assert isinstance(bundles[-1], EmptyBundle)
 
     def test_no_bundle_found(self):
-        with pytest.raises(app_factory.BundleNotFoundError) as e:
-            app_factory._load_bundles([error_bundle])
+        with pytest.raises(BundleNotFoundError) as e:
+            AppFactory().load_bundles([error_bundle])
         msg = f'Unable to find a Bundle subclass in the {error_bundle} bundle!'
         assert msg in str(e)
 
     def test_multiple_bundles(self):
-        app_bundle, bundles = app_factory._load_bundles([bundle_in_module,
+        app_bundle, bundles = AppFactory().load_bundles([bundle_in_module,
                                                          empty_bundle,
                                                          vendor_bundle])
         assert app_bundle is None
@@ -48,7 +48,7 @@ class TestLoadBundles:
         assert isinstance(bundles[-1], BaseVendorBundle)
 
     def test_multiple_bundles_including_app_bundle(self):
-        app_bundle, bundles = app_factory._load_bundles([bundle_in_module,
+        app_bundle, bundles = AppFactory().load_bundles([bundle_in_module,
                                                          empty_bundle,
                                                          override_vendor_bundle,
                                                          myapp])
@@ -60,7 +60,7 @@ class TestLoadBundles:
         assert isinstance(bundles[-1], MyAppBundle)
 
     def test_multiple_bundles_including_app_bundle_in_module(self):
-        app_bundle, bundles = app_factory._load_bundles([bundle_in_module,
+        app_bundle, bundles = AppFactory().load_bundles([bundle_in_module,
                                                          override_vendor_bundle,
                                                          app_bundle_in_module])
         assert isinstance(app_bundle, AppBundleInModule)

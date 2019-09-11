@@ -91,7 +91,7 @@ def app(bundles, db_ext, request):
         kwargs = getattr(mark, 'kwargs', {})
         options.update({k.upper(): v for k, v in kwargs.items()})
 
-    app = AppFactory.create_app(TEST, bundles=bundles, _config_overrides=options)
+    app = AppFactory().create_app(TEST, bundles=bundles, _config_overrides=options)
     ctx = app.app_context()
     ctx.push()
     yield app

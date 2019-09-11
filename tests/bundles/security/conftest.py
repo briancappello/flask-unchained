@@ -24,7 +24,7 @@ def app(request, bundles, db_ext):
         kwargs = getattr(mark, 'kwargs', {})
         options.update({k.upper(): v for k, v in kwargs.items()})
 
-    app = AppFactory.create_app(TEST, bundles=bundles + [
+    app = AppFactory().create_app(TEST, bundles=bundles + [
         'flask_unchained.bundles.api',
         'flask_unchained.bundles.mail',
         'tests.bundles.security._bundles.security',

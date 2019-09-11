@@ -2,7 +2,7 @@ The App Factory
 ---------------
 
 Flask Unchained implements the application factory pattern. There is one entry point,
-:meth:`flask_unchained.AppFactory.create_app`:
+:meth:`flask_unchained.AppFactory().create_app`:
 
 .. code:: python
 
@@ -13,12 +13,12 @@ Flask Unchained implements the application factory pattern. There is one entry p
    from flask_unchained import AppFactory, PROD
 
 
-   app = AppFactory.create_app(os.getenv('FLASK_ENV', PROD))
+   app = AppFactory().create_app(os.getenv('FLASK_ENV', PROD))
 
 (In development and testing, this happens automatically behind the scenes when you call
 the ``flask`` and ``pytest`` commands.)
 
-The :meth:`~flask_unchained.AppFactory.create_app` classmethod does the following:
+The :meth:`~flask_unchained.AppFactory().create_app` classmethod does the following:
 
 1. It load's your project's ``unchained_config`` module.
 
@@ -32,4 +32,4 @@ The :meth:`~flask_unchained.AppFactory.create_app` classmethod does the followin
 
 6. And once again for each bundle, the app factory calls :meth:`~flask_unchained.Bundle.after_init_app`.
 
-7. Lastly, :meth:`~flask_unchained.AppFactory.create_app` returns the :class:`~flask_unchained.FlaskUnchained` application instance, ready to rock and roll.
+7. Lastly, :meth:`~flask_unchained.AppFactory().create_app` returns the :class:`~flask_unchained.FlaskUnchained` application instance, ready to rock and roll.

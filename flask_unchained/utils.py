@@ -66,6 +66,20 @@ class ConfigPropertyMetaclass(type):
                 descriptor.key = f'{config_prefix}_{property_name}'.upper()
 
 
+def cwd_import(module_name):
+    """
+    Attempt to import a module from the current working directory.
+
+    Raises ``ImportError`` if not found, or the found module isn't from the current
+    working directory.
+    """
+    module = import_module(module_name)
+    expected_path = os.path.join(os.getcwd(), module_name.replace('.', os.sep) + '.py')
+    if module.__file__ != expected_path:
+        raise ImportError
+    return module
+
+
 def format_docstring(docstring):
     """
     Strips whitespace from docstrings (both on the ends, and in the middle, replacing
@@ -109,6 +123,7 @@ __all__ = [
     'AttrDict',
     'ConfigProperty',
     'ConfigPropertyMetaclass',
+    'cwd_import',
     'format_docstring',
     'get_boolean_env',
     'safe_import_module',
