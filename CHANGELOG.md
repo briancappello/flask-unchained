@@ -1,10 +1,11 @@
 # CHANGELOG
 
-## v0.7.10 (unreleased)
+## v0.8.0 (unreleased)
 
 - move `Bundle` and `AppBundle` into the `flask_unchained.bundles` module
 - set up automatic dependency injection on commands
 - update `ConfigureAppHook` to load configs from every bundle in the hierarchy
+- require `sqlalchemy-unchained>=0.8`
 
 ## v0.7.9 (2019/05/19)
 

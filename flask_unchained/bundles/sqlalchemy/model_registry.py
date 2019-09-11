@@ -39,7 +39,9 @@ class UnchainedModelRegistry(_ModelRegistry):
         if relationships:
             self._relationships[mcs_init_args.name] = relationships
 
-    def should_initialize(self, model_name):
+    def should_initialize(self, mcs_init_args: McsInitArgs):
+        model_name = mcs_init_args.name
+
         if model_name in self._initialized:
             return False
 
