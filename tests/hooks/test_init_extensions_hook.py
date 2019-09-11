@@ -91,5 +91,4 @@ class TestRegisterExtensionsHook:
         data = {'one': 1, 'two': 2, 'three': 3}
         hook.unchained.extensions = data
         hook.update_shell_context(ctx)
-        data['unchained'] = hook.unchained
         assert ctx == data
