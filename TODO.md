@@ -1,9 +1,3 @@
-config files
-------------
-* probably would be nice to have some kind of command to view the current config
-    - maybe filter by bundle
-
-
 api bundle [help wanted]
 ------------------------
 * finish integrating OpenAPI/APISpec
@@ -31,7 +25,6 @@ documentation
 
 dependency injection
 --------------------
-* might be nice to have a command to list all services and extensions
 * should services be lazily instantiated on an as-needed basis?
 * maybe make the `injectable` default parameter value optional if the type annotation is recognized as a registered service or extension?
 
@@ -46,7 +39,6 @@ webpack support [help wanted]
 
 lower priority
 --------------
-* verify it's possible to override hooks (certainly bundles should be able to override hooks from parent bundles, but should it also be possible to override unchained's hooks too?)
 * admin bundle could also use some improvement
    - honestly i haven't spent much time looking too deeply into flask-admin, and am kind of leaning towards investigating building something around React-Admin
 * it should probably be possible to define multiple modules a hook should load from
