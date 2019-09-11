@@ -1,6 +1,7 @@
 import datetime
 import os
 import re
+import sys
 
 from flask import current_app
 from importlib import import_module
@@ -73,6 +74,9 @@ def cwd_import(module_name):
     Raises ``ImportError`` if not found, or the found module isn't from the current
     working directory.
     """
+    if not sys.path or sys.path[0] != os.getcwd():
+        sys.path.insert(0, os.getcwd())
+
     module = import_module(module_name)
     expected_path = os.path.join(os.getcwd(), module_name.replace('.', os.sep) + '.py')
     if module.__file__ != expected_path:
