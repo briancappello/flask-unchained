@@ -18,6 +18,7 @@ from flask_unchained.utils import get_boolean_env
 from traceback import format_exc
 
 from .click import GroupOverrideMixin
+from .utils import cwd_import
 
 
 ENV_ALIASES = {'dev': DEV, 'prod': PROD}
@@ -37,7 +38,7 @@ def clear_env_vars():
 
 def _should_create_basic_app(env):
     try:
-        AppFactory().load_unchained_config(env)
+        AppFactory.load_unchained_config(env)
         return False
     except ImportError:
         return True
@@ -50,7 +51,6 @@ def cli_create_app(_):
 
     if _should_create_basic_app(env):
         return AppFactory().create_basic_app()
-
     try:
         return AppFactory().create_app(env)
     except:
@@ -160,6 +160,12 @@ def main():
 
     debug = get_boolean_env('FLASK_DEBUG', env not in PROD_ENVS)
     os.environ['FLASK_DEBUG'] = 'true' if debug else 'false'
+
+    app_factory = os.getenv('FLASK_APP_FACTORY', None)
+    if app_factory:
+        module_name, class_name = app_factory.rsplit('.', 1)
+        app_factory_cls = getattr(cwd_import(module_name), class_name)
+        AppFactory.set_singleton_class(app_factory_cls)
 
     if _should_create_basic_app(env):
         cli = _get_basic_cli()

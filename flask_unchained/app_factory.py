@@ -104,7 +104,8 @@ class AppFactory(metaclass=Singleton):
 
         return app
 
-    def load_unchained_config(self, env: Union[DEV, PROD, STAGING, TEST]):
+    @staticmethod
+    def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):
         if not sys.path or sys.path[0] != os.getcwd():
             sys.path.insert(0, os.getcwd())
 
