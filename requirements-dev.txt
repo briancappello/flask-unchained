@@ -5,7 +5,7 @@ factory_boy==2.11.1
 m2r==0.2.1
 mock==2.0.0
 psycopg2==2.7.5
-pytest==3.9.3
+pytest==4.6.5
 pytest-flask==0.14.0
 sphinx==1.8.1
 sphinx-autobuild==0.7.1

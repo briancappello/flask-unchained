@@ -50,7 +50,7 @@ setup(
             'IPython>=7.1.1',
             'm2r>=0.2.1',
             'mock>=2.0.0',
-            'pytest>=3.9.3',
+            'pytest>=3.9.3,<5',
             'pytest-flask>=0.14.0',
             'tox>=3.5.2',
         ],

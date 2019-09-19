@@ -233,7 +233,7 @@ class Connection(object):
         """
         assert message.send_to, "No recipients have been added"
 
-        assert message.sender, (
+        assert message.sender is not None, (
             "The message does not specify a sender and a default sender "
             "has not been configured")
 
