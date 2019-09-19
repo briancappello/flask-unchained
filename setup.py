@@ -28,6 +28,7 @@ setup(
         'flask-wtf>=0.14.2',
         'py-meta-utils>=0.7.6',
         'networkx>=2.1',
+        'werkzeug>=0.15.3',
     ],
     extras_require={
         'admin': [
