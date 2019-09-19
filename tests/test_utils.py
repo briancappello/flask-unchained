@@ -29,4 +29,4 @@ def test_utc_now():
     assert utcnow().tzinfo == datetime.timezone.utc
     with pytest.raises(TypeError) as e:
         assert utcnow() <= datetime.datetime.utcnow()
-    assert "can't compare offset-naive and offset-aware datetimes" in str(e)
+    assert "can't compare offset-naive and offset-aware datetimes" in str(e.value)

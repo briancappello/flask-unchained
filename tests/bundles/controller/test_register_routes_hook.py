@@ -32,7 +32,7 @@ class TestRegisterRoutesHook:
 
         with pytest.raises(AttributeError) as e:
             hook.get_explicit_routes(EmptyBundle())
-        assert 'Could not find a variable named `routes`' in str(e)
+        assert 'Could not find a variable named `routes`' in str(e.value)
 
     def test_run_hook_with_explicit_routes(self, app, hook: RegisterRoutesHook):
         with app.test_request_context():

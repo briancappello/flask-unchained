@@ -149,7 +149,7 @@ class TestRegisterModelsHookCollectFromBundle:
                 '`tests.bundles.sqlalchemy._bundles.backref.models.OneRelationship`. Currently ' \
                 'this is unsupported; please use `db.relationship` with '\
                 'the `back_populates` kwarg on both sides instead.'
-        assert error in str(e)
+        assert error in str(e.value)
 
     def test_it_works_with_polymorphic(self, db, hook: RegisterModelsHook):
         hook.run_hook(None, [PolymorphicBundle()])

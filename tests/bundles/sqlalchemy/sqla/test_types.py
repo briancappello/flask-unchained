@@ -19,7 +19,7 @@ class TestDateTime:
         dt = datetime(year, month, day, hour)
         with pytest.raises(ValueError) as e:
             types.DateTime().process_bind_param(dt)
-        assert 'Cannot persist timezone-naive datetime' in str(e)
+        assert 'Cannot persist timezone-naive datetime' in str(e.value)
 
     def test_process_result_value(self):
         dt = datetime(year, month, day, hour, tzinfo=timezone.utc)

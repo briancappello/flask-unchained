@@ -35,7 +35,7 @@ class TestLoadBundles:
         with pytest.raises(app_factory.BundleNotFoundError) as e:
             app_factory._load_bundles([error_bundle])
         msg = f'Unable to find a Bundle subclass in the {error_bundle} bundle!'
-        assert msg in str(e)
+        assert msg in str(e.value)
 
     def test_multiple_bundles(self):
         app_bundle, bundles = app_factory._load_bundles([bundle_in_module,

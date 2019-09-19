@@ -51,7 +51,7 @@ class TestRegisterExtensionsHook:
         ]
         with pytest.raises(Exception) as e:
             hook.resolve_extension_order(exts)
-        assert 'Circular dependency detected' in str(e)
+        assert 'Circular dependency detected' in str(e.value)
 
     def test_process_objects(self, app, hook: InitExtensionsHook):
         class FakeExt:
