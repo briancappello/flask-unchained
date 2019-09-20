@@ -11,6 +11,11 @@ security bundle [help wanted]
 * implement support for JWT tokens (and maybe PASETO tokens too?)
 
 
+oauth bundle
+------------
+* switch over from deprecated Flask-OAuthlib to https://github.com/lepture/authlib
+
+
 logging
 -------
 * integrate Flask-LogConfig (or Loguru, rather new but looks promising)
