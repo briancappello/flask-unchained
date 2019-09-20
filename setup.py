@@ -27,6 +27,7 @@ setup(
         'flask_babelex>=0.9.3',
         'flask-wtf>=0.14.2',
         'py-meta-utils>=0.7.6',
+        'pyterminalsize>=0.1.0',
         'networkx>=2.1',
         'werkzeug>=0.15.3',
     ],
