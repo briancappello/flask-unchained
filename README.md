@@ -83,7 +83,7 @@ The architecture is inspired by [Symfony](https://symfony.com/), which is enterp
 
 ```bash
 # (create a virtual environment)
-pip install flask-unchained[dev]
+pip install "flask-unchained[dev]"
 flask new project <your-project-folder-name> --prompt
 
 # (answer the questions and `cd` into the new directory)
@@ -168,10 +168,10 @@ Let's built it!
 
 ```bash
 # (create a virtualenv and activate it)
-pip install flask-unchained[dev,sqlalchemy] \
+pip install "flask-unchained[dev,sqlalchemy]" \
    && mkdir -p hello-flask-unchained/app && cd hello-flask-unchained \
-   && touch unchained_config.py && cd app \
-   && mkdir -p templates/site && touch templates/site/index.html \
+   && touch unchained_config.py && cd app && mkdir -p templates/site \
+   && touch templates/layout.html && touch templates/site/index.html \
    && touch __init__.py config.py forms.py models.py routes.py services.py views.py
 ```
 
@@ -412,7 +412,15 @@ routes = lambda: [
 
 ### Commands
 
-And run it:
+Generate and run database migrations:
+
+```bash
+flask db init
+flask db migrate -m 'create name submission model'
+flask db upgrade
+```
+
+And then start the development server:
 
 ```bash
 flask run

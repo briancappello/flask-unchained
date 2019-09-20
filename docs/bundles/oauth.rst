@@ -11,7 +11,7 @@ The OAuth Bundle depends on the Security Bundle, as well as a few third-party li
 
 .. code:: bash
 
-   pip install flask-unchained[oauth,security,sqlalchemy]
+   pip install "flask-unchained[oauth,security,sqlalchemy]"
 
 And enable the bundles in your ``unchained_config.py``:
 
