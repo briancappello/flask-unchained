@@ -39,6 +39,9 @@ The architecture is inspired by [Symfony](https://symfony.com/), which is enterp
    * [Application Structure and Project Layout](https://github.com/briancappello/flask-unchained#application-structure-and-project-layout)
    * [Bundles](https://github.com/briancappello/flask-unchained#bundles)
    * [Configuration](https://github.com/briancappello/flask-unchained#configuration)
+   * [Models](https://github.com/briancappello/flask-unchained#models)
+   * [Services](https://github.com/briancappello/flask-unchained#services)
+   * [Forms](https://github.com/briancappello/flask-unchained#forms)
    * [Views](https://github.com/briancappello/flask-unchained#views)
    * [Templates](https://github.com/briancappello/flask-unchained#templates)
    * [Routes](https://github.com/briancappello/flask-unchained#routes)
@@ -59,7 +62,9 @@ The architecture is inspired by [Symfony](https://symfony.com/), which is enterp
      - super-simple polymorphic model class inheritance
      - a unified API for creating, querying, updating and deleting models with the [ModelManager](https://sqlalchemy-unchained.readthedocs.io/en/latest/api.html#modelmanager) service base class
    - [Flask-Login](http://flask-login.readthedocs.io/) (user authentication and sessions management) and [Flask-Principal](https://pythonhosted.org/Flask-Principal/) (user authorization with permissions and roles)
-     - both session and token authentication are currently supported
+     - the Security Bundle is a refactored and cleaned up fork of [Flask-Security](https://pythonhosted.org/Flask-Security/)
+     - both session and token authentication are supported for HTML and JSON requests
+     - also works with [Flask-OAuthlib](https://flask-oauthlib.readthedocs.io/en/latest/)
      - includes optional support for registration (with optional required email confirmation before account activation)
      - optional change password and forgot password functionality
    - [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/) (SQLAlchemy model serialization, optional)
@@ -305,6 +310,9 @@ from . import models
 class NameSubmissionForm(ModelForm):
     class Meta:
         model = models.NameSubmission
+
+    # form fields are automatically added for columns (all excluding the primary key
+    # and the created_at and updated_at columns)
 ```
 
 ### Views
