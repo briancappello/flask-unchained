@@ -151,9 +151,7 @@ class _ControllerTemplateFileExtensionMetaOption(MetaOption):
 
 class _ControllerUrlPrefixMetaOption(MetaOption):
     """
-    The url prefix to use for all routes from this controller. Defaults to the class name,
-    with the suffixes ``Controller`` or ``View`` stripped, stopping after the first found
-    (if any). The resulting value is ``f'/{snake_case(pluralize(value))}'``.
+    The url prefix to use for all routes from this controller. Defaults to None.
     """
     def __init__(self):
         super().__init__('url_prefix', default=None, inherit=False)
@@ -179,6 +177,62 @@ class _ControllerMetaOptionsFactory(MetaOptionsFactory):
 class Controller(metaclass=_ControllerMetaclass):
     """
     Base class for class-based views in Flask Unchained.
+
+    Concrete controllers should subclass this and their public methods will used as
+    the views. By default view methods will be assigned routing defaults with the
+    HTTP method GET and paths as the kebab-cased method name. For example::
+
+        from flask_unchained import Controller, injectable, route, no_route
+        from flask_unchained.bundles.sqlalchemy import SessionManager
+
+        class SiteController(Controller):
+            class Meta:
+                abstract = False  # this is the default; no need to set explicitly
+                decorators = ()  # a list of decorators to apply to all view methods
+                                 # on the controller (defaults to an empty tuple)
+                template_folder_name = 'site'  # defaults to the snake-cased class name,
+                                               # minus any Controller/View suffix
+                template_file_extension = app.config.TEMPLATE_FILE_EXTENSION = '.html'
+                url_prefix = None  # optional url prefix to use for all routes
+
+            # dependency injection works automatically on controllers
+            session_manager: SessionManager = injectable
+
+            @route('/')  # change the default path of '/index' to '/'
+            def index():
+                return self.render('index')
+
+            # use the defaults, equivalent to @route('/about-us', methods=['GET'])
+            def about_us():
+                return self.render('about_us')
+
+            # change the path, HTTP methods, and the endpoint
+            @route('/contact', methods=['GET', 'POST'], endpoint='site_controller.contact')
+            def contact_us():
+                # ...
+                return self.render('contact.html.j2')  # use an explicit filename
+
+            @no_route
+            def public_utility_method():
+                return 'not a view'
+
+            def _protected_utility_method():
+                return 'not a view'
+
+    How do the calls to render know which template to use? They look in
+    ``Bundle.template_folder`` for a folder with the controller's
+    ``Meta.template_folder_name`` and a file with the passed name and
+    ``Meta.template_file_extension``. For example::
+
+        # your bundle root
+        ├── __init__.py
+        ├── templates
+        │   └── site
+        │       ├── about_us.html
+        │       ├── contact.html.j2
+        │       └── index.html
+        └── views
+            └── site_controller.py
     """
     _meta_options_factory_class = _ControllerMetaOptionsFactory
     _view_funcs = {}
@@ -202,6 +256,7 @@ class Controller(metaclass=_ControllerMetaclass):
 
         :param template_name: The template's name. Can either be a full path,
                               or a filename in the controller's template folder.
+                              (The file extension can be omitted.)
         :param ctx: Context variables to pass into the template.
         """
         if '.' not in template_name:
