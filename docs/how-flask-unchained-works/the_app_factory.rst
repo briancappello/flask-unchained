@@ -28,7 +28,7 @@ The :meth:`~flask_unchained.AppFactory().create_app` method does the following:
 
 1. It load's your project's ``unchained_config`` module and all of the :class:`~flask_unchained.Bundle` subclasses from those listed in your ``unchained_config.BUNDLES`` list.
 
-2. It initializes an application instance using `AppFactory.FLASK_APP_CLASS` (by default, :class:`~flask_unchained.FlaskUnchained`, which is only a minimally extended subclass of :class:`~flask.Flask`).
+2. It initializes an application instance using `AppFactory.APP_CLASS` (by default, :class:`~flask_unchained.FlaskUnchained`, which is only a minimally extended subclass of :class:`~flask.Flask`).
 
 3. For each bundle, it calls :meth:`~flask_unchained.Bundle.before_init_app`.
 

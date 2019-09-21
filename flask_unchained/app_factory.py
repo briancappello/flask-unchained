@@ -23,7 +23,7 @@ class AppFactory(metaclass=Singleton):
     .. _Application Factory Pattern: http://flask.pocoo.org/docs/1.0/patterns/appfactories/
     """
 
-    FLASK_APP_CLASS = FlaskUnchained
+    APP_CLASS = FlaskUnchained
 
     REQUIRED_BUNDLES = [
         'flask_unchained.bundles.babel',
@@ -33,10 +33,10 @@ class AppFactory(metaclass=Singleton):
     @classmethod
     def set_app_class(cls, flask_subclass: Type[FlaskUnchained]) -> None:
         """
-        Sets :attr:`FLASK_APP_CLASS` to the given subclass of
+        Sets :attr:`APP_CLASS` to the given subclass of
         :class:`~flask_unchained.FlaskUnchained`.
         """
-        cls.FLASK_APP_CLASS = flask_subclass
+        cls.APP_CLASS = flask_subclass
 
     @classmethod
     def _set_required_bundles(cls, required_bundles: List[str]) -> None:
@@ -50,7 +50,7 @@ class AppFactory(metaclass=Singleton):
                    ) -> FlaskUnchained:
         """
         Flask Unchained Application Factory. Returns an instance of
-        :attr:`FLASK_APP_CLASS` (by default, :class:`~flask_unchained.FlaskUnchained`).
+        :attr:`APP_CLASS` (by default, :class:`~flask_unchained.FlaskUnchained`).
 
         Example Usage::
 
@@ -118,7 +118,7 @@ class AppFactory(metaclass=Singleton):
                         ) -> FlaskUnchained:
         valid_flask_kwargs = {
             name for name, param
-            in inspect.signature(self.FLASK_APP_CLASS).parameters.items()
+            in inspect.signature(self.APP_CLASS).parameters.items()
             if name != 'import_name' and (
                     param.kind == param.POSITIONAL_OR_KEYWORD
                     or param.kind == param.KEYWORD_ONLY
@@ -128,7 +128,7 @@ class AppFactory(metaclass=Singleton):
             if hasattr(unchained_config, k.upper()):
                 flask_kwargs.setdefault(k, getattr(unchained_config, k.upper()))
 
-        return self.FLASK_APP_CLASS(app_import_name, **flask_kwargs)
+        return self.APP_CLASS(app_import_name, **flask_kwargs)
 
     @staticmethod
     def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]) -> ModuleType:

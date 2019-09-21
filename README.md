@@ -216,7 +216,7 @@ def folder_or_none(folder_name):
     folder = os.path.join(ROOT_PATH, folder_name)
     return folder if os.path.exists(folder) else None
 
-# upper-cased variables get passed as kwargs to `AppFactory.FLASK_APP_CLASS.__init__`
+# upper-cased variables get passed as kwargs to `AppFactory.APP_CLASS.__init__`
 # (by default, `:class:FlaskUnchained`, which has the same constructor as :class:`flask.Flask`)
 TEMPLATE_FOLDER = folder_or_none('templates')
 STATIC_FOLDER = folder_or_none('static')
