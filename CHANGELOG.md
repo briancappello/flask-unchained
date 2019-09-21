@@ -2,18 +2,29 @@
 
 ## v0.8.0 (unreleased)
 
-- move `Bundle` and `AppBundle` into the `flask_unchained.bundles` module
-- set up automatic dependency injection on commands
-- update `ConfigureAppHook` to load configs from every bundle in the hierarchy
+### Breaking Changes
+
+- require `marshmallow>=3.0`
 - require `sqlalchemy-unchained>=0.8`
+
+### Features
+
 - refactor `AppFactory` to support using a custom subclass of `flask.Flask` or `flask_unchained.FlaskUnchained` by setting `AppFactory.FLASK_APP_CLASS`
     - support passing all kwargs to it by setting the same names upper-cased in `unchained_config.py`
+- set up automatic dependency injection on commands
 - add `flask unchained config` command for listing the current config (optionally filtered by bundle)
 - add `flask unchained extensions` command for listing extensions discovered by the app
 - add `flask unchaiend services` command for listing services discovered by the app
 - add compatibility with pytest 5
-- upgrade to marshmallow 3.x
-- fix bug grouping routes by which bundle they're from
+
+### Bug Fixes
+
+- fix grouping routes by which bundle they're from
+- fix `ConfigureAppHook` to load configs from every bundle in the hierarchy
+
+### Internals
+
+- move `Bundle` and `AppBundle` into the `flask_unchained.bundles` module
 
 ## v0.7.9 (2019/05/19)
 
