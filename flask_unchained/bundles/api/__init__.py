@@ -5,7 +5,7 @@ from speaklater import _LazyString
 
 from .extensions import Api, Marshmallow, api, ma
 from .model_resource import ModelResource
-from .model_serializer import ModelSerializer, _Unmarshaller
+from .model_serializer import ModelSerializer
 
 
 class ApiBundle(Bundle):
@@ -42,13 +42,6 @@ class ApiBundle(Bundle):
     # the template folder gets set manually by the OpenAPI bp
     template_folder = None
 
-    def before_init_app(self, app: FlaskUnchained):
-        try:
-            from marshmallow import marshalling
-            setattr(marshalling, 'Unmarshaller', _Unmarshaller)
-        except ImportError:
-            return
-
     def after_init_app(self, app: FlaskUnchained):
         """
         Configure the JSON encoder for Flask to be able to serialize Enums,
@@ -81,7 +74,7 @@ class ApiBundle(Bundle):
                     model_name = obj.__class__.__name__
                     serializer_cls = api_bundle.serializers_by_model.get(model_name)
                     if serializer_cls:
-                        return serializer_cls().dump(obj).data
+                        return serializer_cls().dump(obj)
 
                 elif (obj and isinstance(obj, (list, tuple))
                         and isinstance(obj[0], BaseModel)):
@@ -90,7 +83,7 @@ class ApiBundle(Bundle):
                         model_name,
                         api_bundle.serializers_by_model.get(model_name))
                     if serializer_cls:
-                        return serializer_cls(many=True).dump(obj).data
+                        return serializer_cls(many=True).dump(obj)
 
                 return super().default(obj)
 

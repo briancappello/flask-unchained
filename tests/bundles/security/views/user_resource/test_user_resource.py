@@ -7,8 +7,8 @@ from flask_unchained.bundles.security import AnonymousUser, current_user
 NEW_USER_DATA = dict(username='new',
                      email='new@example.com',
                      password='password',
-                     first_name='new',
-                     last_name='user')
+                     firstName='new',
+                     lastName='user')
 
 
 @pytest.mark.usefixtures('user')

@@ -8,7 +8,7 @@ Install Dependencies
 
 .. code:: bash
 
-   pip install flask-unchained[session]
+   pip install "flask-unchained[session]"
 
 Enable the Session Bundle:
 

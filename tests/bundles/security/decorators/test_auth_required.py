@@ -163,7 +163,7 @@ class TestAuthRequired:
             @auth_required(role='ROLE_USER', roles=['ROLE_USER1'])
             def method():
                 raise MethodCalled
-        assert 'specify only one of `role` or `roles` kwargs' in str(e)
+        assert 'specify only one of `role` or `roles` kwargs' in str(e.value)
 
     def test_works_with_token_auth(self, client, user):
         client.login_as(user)

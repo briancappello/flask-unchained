@@ -27,7 +27,9 @@ setup(
         'flask_babelex>=0.9.3',
         'flask-wtf>=0.14.2',
         'py-meta-utils>=0.7.6',
+        'pyterminalsize>=0.1.0',
         'networkx>=2.1',
+        'werkzeug>=0.15.3',
     ],
     extras_require={
         'admin': [
@@ -35,10 +37,10 @@ setup(
             'sqlalchemy<1.3',
         ],
         'api': [
-            'apispec>=0.39.0',
+            'apispec>=3.0.0',
             'flask-marshmallow>=0.10.0',
-            'marshmallow>=2.19.2,<3.0',
-            'marshmallow-sqlalchemy>=0.16.2,<0.17',
+            'marshmallow>=3.0',
+            'marshmallow-sqlalchemy>=0.19',
         ],
         'celery': [
             'celery>=4.2.1',
@@ -50,8 +52,8 @@ setup(
             'IPython>=7.1.1',
             'm2r>=0.2.1',
             'mock>=2.0.0',
-            'pytest>=3.9.3',
-            'pytest-flask>=0.14.0',
+            'pytest>=4.6.5',
+            'pytest-flask>=0.15.0',
             'tox>=3.5.2',
         ],
         'docs': [

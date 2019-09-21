@@ -21,7 +21,7 @@ Create a new virtualenv and activate it:
 
    # create our virtualenv and install flask-unchained into it
    pipenv install flask-unchained
-   pipenv install --dev flask-unchained[dev]
+   pipenv install --dev "flask-unchained[dev]"
 
    # activate the virtualenv
    pipenv shell
@@ -34,7 +34,7 @@ Create a new virtualenv and activate it:
    mkvirtualenv flaskr-unchained
 
    # install flask-unchained
-   pip install flask-unchained[dev]
+   pip install "flask-unchained[dev]"
 
    # refresh the virtualenv so that pytest will work correctly
    deactivate && workon flaskr-unchained
@@ -48,7 +48,7 @@ Create a new virtualenv and activate it:
    . venv/bin/activate
 
    # install flask-unchained
-   pip install flask-unchained[dev]
+   pip install "flask-unchained[dev]"
 
    # refresh the virtualenv so that pytest will work correctly
    deactivate && . venv/bin/activate

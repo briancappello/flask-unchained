@@ -1,14 +1,14 @@
 Authentication and Authorization
 --------------------------------
 
-Flask Unchained currently has one officially supported bundle for securing your app. It's a heavily refactored fork of the `Flask Security <https://pythonhosted.org/Flask-Security/>`_ project, and includes support for session and token authentication. (All of the core security logic remains unchanged.) Adding support for JWT token authentication and OAuth 2.0 authorization are both on the roadmap, but are currently not yet implemented.
+Flask Unchained currently has one officially supported bundle for securing your app. It's a refactored and cleaned up fork of the `Flask Security <https://pythonhosted.org/Flask-Security/>`_ project, and includes support for session and token authentication. (All of the core security logic remains unchanged.) Adding support for JWT token authentication is on the roadmap, but isn't implemented yet.
 
 Install Security Bundle
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: bash
 
-   pip install flask-unchained[security]
+   pip install "flask-unchained[security]"
 
 Let's update our test fixtures configuration file to include the test fixtures provided by Flask Security Bundle:
 

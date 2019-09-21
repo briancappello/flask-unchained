@@ -37,21 +37,28 @@ class RegisterRoutesHook(AppFactoryHook):
                     key = f'{route._controller_cls.__name__}.{route.method_name}'
                     self.bundle.controller_endpoints[key].append(route)
 
-        bundle_names = [(
-            bundle.module_name,
-            [bundle_super.module_name
-             for bundle_super in bundle._iter_class_hierarchy(include_self=False)
-             if bundle_super._has_views()],
-        ) for bundle in app.unchained.bundles.values()]
+        bundle_module_names = []
+        for bundle in app.unchained.bundles.values():
+            hierarchy = [bundle_super.module_name
+                         for bundle_super in bundle._iter_class_hierarchy()
+                         if bundle_super._has_views()]
+            if hierarchy:
+                bundle_module_names.append((bundle.module_name, hierarchy))
 
+        # group routes by which bundle they belong to
         bundle_route_endpoints = set()
         for endpoint, routes in self.bundle.endpoints.items():
             for route in routes:
-                module_name = route.module_name
-                for top_level_bundle_name, hierarchy in bundle_names:
-                    for bundle_name in hierarchy:
-                        if module_name and module_name.startswith(bundle_name):
-                            self.bundle.bundle_routes[top_level_bundle_name].append(route)
+                if not route.module_name:
+                    continue
+
+                # FIXME would be nice for routes to know which bundle they're from...
+                for top_level_bundle_module_name, hierarchy in bundle_module_names:
+                    for bundle_module_name in hierarchy:
+                        if route.module_name.startswith(bundle_module_name):
+                            self.bundle.bundle_routes[
+                                top_level_bundle_module_name
+                            ].append(route)
                             bundle_route_endpoints.add(endpoint)
                             break
 

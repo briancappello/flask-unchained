@@ -18,7 +18,7 @@ class UserSerializer(ma.ModelSerializer):
 
     email = ma.Email(required=True)
     password = ma.String(required=True)
-    roles = ma.Nested('RoleSerializer', only='name', many=True)
+    roles = ma.Pluck('RoleSerializer', 'name', many=True)
 
     class Meta:
         model = User

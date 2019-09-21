@@ -1,5 +1,5 @@
 from flask_unchained import click
-import subprocess
+from pyterminalsize import get_terminal_size
 
 from typing import *
 
@@ -54,7 +54,7 @@ def print_table(column_names: IterableOfStrings,
             table_width += 2 + col_width
 
     # check if we can format the table horizontally
-    if table_width < get_terminal_width():
+    if table_width < get_terminal_size().columns:
         click.echo(header_template.format(*column_names))
         click.echo('-' * table_width)
 
@@ -78,16 +78,3 @@ def print_table(column_names: IterableOfStrings,
                 row_template = f'{{:>{max_label_width}s}}: {{:{types[i]}}}'
                 click.echo(row_template.format(label, row[i]))
             click.echo()
-
-
-def get_terminal_width():
-    try:
-        r = subprocess.run(['tput', 'cols'],
-                           stdout=subprocess.PIPE,
-                           stderr=subprocess.PIPE)
-    except:
-        pass
-    else:
-        if r.returncode == 0:
-            return int(r.stdout.decode('ascii').strip())
-    return 80

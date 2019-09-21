@@ -15,7 +15,7 @@ Install dependencies:
 
 .. code:: bash
 
-   pip install flask-unchained[celery] <broker-of-choice>
+   pip install "flask-unchained[celery]" <broker-of-choice>
 
 And enable the bundle in your ``unchained_config.py``:
 

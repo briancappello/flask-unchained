@@ -10,7 +10,7 @@ Install dependencies:
 
 .. code:: bash
 
-   pip install flask-unchained[api]
+   pip install "flask-unchained[api]"
 
 And enable the bundle in your ``unchained_config.py``:
 

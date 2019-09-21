@@ -176,7 +176,6 @@ class _ModelFormMetaclass(_FormMetaclass):
                                        field_args=Meta.field_args,
                                        db_session=db.session,
                                        converter=_ModelConverter())
-            # mcs_args.clsdict.update(new_clsdict)
             new_clsdict.update(mcs_args.clsdict)
             mcs_args.clsdict = new_clsdict
         return super().__new__(*mcs_args)

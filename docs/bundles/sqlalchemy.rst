@@ -19,7 +19,7 @@ Install dependencies:
 
 .. code:: bash
 
-   pip install flask-unchained[sqlalchemy]
+   pip install "flask-unchained[sqlalchemy]"
 
 And enable the bundle in your ``unchained_config.py``:
 

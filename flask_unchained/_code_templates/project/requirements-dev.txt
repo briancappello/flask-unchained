@@ -1,6 +1,6 @@
 -r requirements.txt
 
-IPython==7.1.1
-pytest==3.9.3
-pytest-flask==0.14.0
-factory_boy==2.11.1
+IPython==7.8.0
+pytest==5.1.2
+pytest-flask==0.15.0
+factory_boy==2.12.0

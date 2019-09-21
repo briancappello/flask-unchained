@@ -2,7 +2,7 @@ import importlib
 import inspect
 import pkgutil
 
-from types import FunctionType
+from types import FunctionType, ModuleType
 from typing import *
 
 from .bundles import AppBundle, Bundle
@@ -149,18 +149,20 @@ class AppFactoryHook:
             members.update(self._collect_from_package(module))
         return members
 
-    def _collect_from_package(self, module,
+    def _collect_from_package(self,
+                              module: ModuleType,
                               type_checker: Optional[FunctionType] = None,
                               ) -> Dict[str, Any]:
         """
         Discover objects passing :meth:`type_check` by walking through all the
-        child modules/packages in the given module (ie, do not require modules
+        child modules/packages in the given module (ie, do not require packages
         to import everything into their ``__init__.py`` for it to be discovered)
         """
         type_checker = type_checker or self.type_check
         members = dict(self._get_members(module, type_checker))
 
-        if pkgutil.get_loader(module).is_package(module.__name__):
+        # if the passed module is a package, also get members from child modules
+        if importlib.util.find_spec(module.__name__).submodule_search_locations:
             for loader, name, is_pkg in pkgutil.walk_packages(module.__path__):
                 child_module_name = f'{module.__package__}.{name}'
                 child_module = importlib.import_module(child_module_name)
@@ -170,7 +172,10 @@ class AppFactoryHook:
 
         return members
 
-    def _get_members(self, module, type_checker) -> List[Tuple[str, Any]]:
+    def _get_members(self,
+                     module: ModuleType,
+                     type_checker: FunctionType,
+                     ) -> List[Tuple[str, Any]]:
         for name, obj in inspect.getmembers(module, type_checker):
             # FIXME
             # currently, no hooks depend on this working correctly, however

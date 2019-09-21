@@ -96,8 +96,18 @@ def services():
     for name, svc in current_app.unchained.services.items():
         if not not hasattr(svc, '__name__') or not hasattr(svc, '__module__'):
             rows.append((name, str(svc), ''))
-            continue
-        rows.append((name,
-                     svc.__class__.__name__ if isinstance(svc, object) else svc.__name__,
-                     svc.__module__))
-    print_table(header, sorted(sorted(rows, key=lambda row: row[0]), key=lambda row: row[2]))
+        else:
+            rows.append((
+                name,
+                svc.__class__.__name__ if isinstance(svc, object) else svc.__name__,
+                svc.__module__
+            ))
+
+    # sort by name within (grouped by) location
+    print_table(
+        header,
+        sorted(
+            sorted(rows, key=lambda row: row[0]),
+            key=lambda row: row[2]
+        )
+    )

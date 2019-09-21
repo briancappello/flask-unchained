@@ -10,7 +10,7 @@ Install dependencies:
 
 .. code:: bash
 
-   pip install flask-unchained[mail]
+   pip install "flask-unchained[mail]"
 
 And enable the bundle in your ``unchained_config.py``:
 

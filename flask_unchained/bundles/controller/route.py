@@ -2,6 +2,7 @@ import inspect
 
 from flask_unchained.string_utils import snake_case
 from py_meta_utils import _missing
+from werkzeug.utils import cached_property
 
 from .utils import (join, method_name_to_url, rename_parent_resource_param_name,
                     controller_name, get_param_tuples)
@@ -149,7 +150,7 @@ class Route:
     def methods(self, methods):
         self._methods = methods
 
-    @property
+    @cached_property
     def module_name(self):
         """
         The module where this route's view function was defined.

@@ -11,7 +11,7 @@ def test_injectable():
 
     with pytest.raises(ServiceUsageError) as e:
         Foo()
-    assert 'Foo was initialized without the fail parameter' in str(e)
+    assert 'Foo was initialized without the fail parameter' in str(e.value)
 
 
 @pytest.mark.bundles(['tests._bundles.services_ext_bundle'])
@@ -108,7 +108,7 @@ class TestInject:
         with pytest.raises(ServiceUsageError) as e:
             unchained.services.pop('one_service')
             TwoService()
-        assert 'TwoService was initialized without the one_service' in str(e)
+        assert 'TwoService was initialized without the one_service' in str(e.value)
 
         one_service = OneService()
         two_service = TwoService(one_service)
@@ -117,7 +117,7 @@ class TestInject:
         with pytest.raises(ServiceUsageError) as e:
             unchained.services.pop('funky_service')
             WhyBoth()
-        assert 'WhyBoth was initialized without the funky_service' in str(e)
+        assert 'WhyBoth was initialized without the funky_service' in str(e.value)
 
 
 @pytest.mark.bundles(['tests._bundles.services_bundle'])
