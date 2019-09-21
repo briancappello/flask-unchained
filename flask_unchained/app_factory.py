@@ -117,16 +117,18 @@ class AppFactory(metaclass=Singleton):
                         **flask_kwargs,
                         ) -> FlaskUnchained:
         valid_flask_kwargs = {
-            name for name, param
-            in inspect.signature(self.APP_CLASS).parameters.items()
-            if name != 'import_name' and (
+            name for i, (name, param)
+            in enumerate(inspect.signature(self.APP_CLASS).parameters.items())
+            if i > 0 and (
                     param.kind == param.POSITIONAL_OR_KEYWORD
                     or param.kind == param.KEYWORD_ONLY
             )
         }
-        for k in valid_flask_kwargs:
-            if hasattr(unchained_config, k.upper()):
-                flask_kwargs.setdefault(k, getattr(unchained_config, k.upper()))
+        for kw in valid_flask_kwargs:
+            if hasattr(unchained_config, kw.upper()):
+                flask_kwargs.setdefault(kw, getattr(unchained_config, kw.upper()))
+            elif kw in {'static_folder', 'template_folder'}:
+                flask_kwargs.setdefault(kw, None)
 
         return self.APP_CLASS(app_import_name, **flask_kwargs)
 
