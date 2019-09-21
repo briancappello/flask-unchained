@@ -6,6 +6,8 @@
 
 - require `marshmallow>=3.0`
 - require `sqlalchemy-unchained>=0.8`
+- rename `PROJECT_ROOT` to `ROOT_PATH` for consistency with upstream `Flask`
+- `AppFactory` is now a `Singleton` that must be instantiated (ie change `AppFactory.create_app(env)` to `AppFactory().create_app(env)` in `wsgi.py`)
 
 ### Features
 
@@ -25,6 +27,7 @@
 ### Internals
 
 - move `Bundle` and `AppBundle` into the `flask_unchained.bundles` module
+- move `BundleBlueprint` into the `flask_unchained.bundles._blueprint` module
 
 ## v0.7.9 (2019/05/19)
 
