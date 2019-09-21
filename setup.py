@@ -37,10 +37,10 @@ setup(
             'sqlalchemy<1.3',
         ],
         'api': [
-            'apispec>=0.39.0',
+            'apispec>=3.0.0',
             'flask-marshmallow>=0.10.0',
-            'marshmallow>=2.19.2,<3.0',
-            'marshmallow-sqlalchemy>=0.16.2,<0.17',
+            'marshmallow>=3.0',
+            'marshmallow-sqlalchemy>=0.19',
         ],
         'celery': [
             'celery>=4.2.1',

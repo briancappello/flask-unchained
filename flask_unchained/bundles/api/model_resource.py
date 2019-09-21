@@ -19,11 +19,6 @@ from http import HTTPStatus
 from py_meta_utils import McsArgs, MetaOption, _missing
 from werkzeug.wrappers import Response
 
-try:
-    from marshmallow import MarshalResult
-except ImportError:
-    from py_meta_utils import OptionalClass as MarshalResult
-
 from .decorators import list_loader, patch_loader, put_loader, post_loader
 from .model_serializer import ModelSerializer
 from .utils import unpack
@@ -386,12 +381,10 @@ class ModelResource(Resource, metaclass=_ModelResourceMetaclass):
         if isinstance(rv, Response):
             return self.make_response(rv, code, headers)
 
-        if isinstance(rv, MarshalResult):
-            rv = rv.errors and rv.errors or rv.data
-        elif isinstance(rv, list) and rv and isinstance(rv[0], self.Meta.model):
-            rv = self.Meta.serializer_many.dump(rv).data
+        if isinstance(rv, list) and rv and isinstance(rv[0], self.Meta.model):
+            rv = self.Meta.serializer_many.dump(rv)
         elif isinstance(rv, self.Meta.model):
-            rv = self.Meta.serializer.dump(rv).data
+            rv = self.Meta.serializer.dump(rv)
 
         return self.make_response(rv, code, headers)
 

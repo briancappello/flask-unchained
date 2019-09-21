@@ -3,6 +3,11 @@ from http import HTTPStatus
 
 from flask import abort, request
 
+try:
+    from marshmallow import ValidationError
+except ImportError:
+    ValidationError = Exception
+
 
 def list_loader(*decorator_args, model):
     """
@@ -31,12 +36,19 @@ def patch_loader(*decorator_args, serializer):
     def wrapped(fn):
         @wraps(fn)
         def decorated(*args, **kwargs):
-            result = serializer.load(request.get_json(),
-                                     instance=kwargs.pop('instance'),
-                                     partial=True)
-            if not result.errors and not result.data.id:
+            errors = {}
+            try:
+                data = serializer.load(request.get_json(),
+                                       instance=kwargs.pop('instance'),
+                                       partial=True)
+            except ValidationError as e:
+                errors = e.normalized_messages()
+                data = e.valid_data
+
+            if not errors and not data.id:
                 abort(HTTPStatus.NOT_FOUND)
-            return fn(*result)
+
+            return fn(data, errors)
         return decorated
 
     if decorator_args and callable(decorator_args[0]):
@@ -53,11 +65,18 @@ def put_loader(*decorator_args, serializer):
     def wrapped(fn):
         @wraps(fn)
         def decorated(*args, **kwargs):
-            result = serializer.load(request.get_json(),
-                                     instance=kwargs.pop('instance'))
-            if not result.errors and not result.data.id:
+            errors = {}
+            try:
+                data = serializer.load(request.get_json(),
+                                       instance=kwargs.pop('instance'))
+            except ValidationError as e:
+                data = e.valid_data
+                errors = e.normalized_messages()
+
+            if not errors and not data.id:
                 abort(HTTPStatus.NOT_FOUND)
-            return fn(*result)
+
+            return fn(data, errors)
         return decorated
 
     if decorator_args and callable(decorator_args[0]):
@@ -74,7 +93,13 @@ def post_loader(*decorator_args, serializer):
     def wrapped(fn):
         @wraps(fn)
         def decorated(*args, **kwargs):
-            return fn(*serializer.load(request.get_json()))
+            errors = {}
+            try:
+                data = serializer.load(request.get_json())
+            except ValidationError as e:
+                errors = e.normalized_messages()
+                data = e.valid_data
+            return fn(data, errors)
         return decorated
 
     if decorator_args and callable(decorator_args[0]):

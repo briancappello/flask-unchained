@@ -10,6 +10,7 @@
 - add `flask unchained extensions` command for listing extensions discovered by the app
 - add `flask unchaiend services` command for listing services discovered by the app
 - add compatibility with pytest 5
+- upgrade to marshmallow 3.x
 - fix bug grouping routes by which bundle they're from
 
 ## v0.7.9 (2019/05/19)

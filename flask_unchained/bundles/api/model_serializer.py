@@ -1,6 +1,9 @@
+from types import FunctionType
+from typing import *
+
 from flask_unchained import unchained
 from flask_unchained.di import _set_up_class_dependency_injection
-from flask_unchained.string_utils import camel_case, title_case
+from flask_unchained.string_utils import camel_case, snake_case, title_case
 from py_meta_utils import McsArgs
 from speaklater import _LazyString
 
@@ -8,23 +11,20 @@ try:
     from flask_marshmallow.sqla import (
         ModelSchema as _BaseModelSerializer,
         SchemaOpts as _BaseModelSerializerOptionsClass)
+    from marshmallow.class_registry import _registry
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
-    from marshmallow.marshalling import Unmarshaller as _BaseUnmarshaller
     from marshmallow.schema import SchemaMeta as _BaseModelSerializerMetaclass
     from marshmallow_sqlalchemy.convert import ModelConverter as _BaseModelConverter
     from marshmallow_sqlalchemy.schema import (
         ModelSchemaMeta as _BaseModelSchemaMetaclass)
 except ImportError:
+    _registry = {}
     from py_meta_utils import OptionalClass as _BaseModelSerializer
     from py_meta_utils import OptionalClass as _BaseModelSerializerOptionsClass
     from py_meta_utils import OptionalMetaclass as _BaseModelSerializerMetaclass
     from py_meta_utils import OptionalClass as MarshmallowValidationError
-    from py_meta_utils import OptionalClass as _BaseUnmarshaller
     from py_meta_utils import OptionalClass as _BaseModelConverter
     from py_meta_utils import OptionalMetaclass as _BaseModelSchemaMetaclass
-
-
-READ_ONLY_FIELDS = {'slug', 'created_at', 'updated_at'}
 
 
 class _ModelConverter(_BaseModelConverter):
@@ -59,6 +59,7 @@ class _ModelConverter(_BaseModelConverter):
         base_fields = base_fields or {}
         for prop in model.__mapper__.iterate_properties:
             if self._should_exclude_field(prop, fields=fields, exclude=exclude):
+                result[prop.key] = None
                 continue
 
             attr_name = prop.key
@@ -87,7 +88,7 @@ class _ModelConverter(_BaseModelConverter):
         primary key, because there's no way to tell if we're generating fields
         for a create or an update).
         """
-        field = super().property2field(prop, instance, field_class, **kwargs)
+        field = super().property2field(prop, instance=instance, field_class=field_class, **kwargs)
         # when a column is not nullable, mark the field as required
         if hasattr(prop, 'columns'):
             col = prop.columns[0]
@@ -152,11 +153,17 @@ class _ModelSerializerMetaclass(_BaseModelSchemaMetaclass):
 
         return super().__new__(*mcs_args)
 
-    def __init__(cls, name, bases, clsdict):
-        cls._resolve_processors()
-        type.__init__(cls, name, bases, clsdict)
+    def __init__(cls, name, bases, attrs):
+        super().__init__(name, bases, attrs)
+        if name and cls.opts.register and name in _registry:
+            existing = _registry[name]
+            for klass in existing:
+                fullname = f'{klass.__module__}.{klass.__name__}'
+                _registry.pop(fullname, None)
+            fullname = f'{cls.__module__}.{cls.__name__}'
+            _registry[name] = _registry[fullname] = [cls]
 
-    # override marshmallow_sqlalchemy.SchemaMeta
+    # override marshmallow_sqlalchemy.SchemaMeta.get_declared_fields
     @classmethod
     def get_declared_fields(mcs, klass, cls_fields, inherited_fields, dict_cls):
         """
@@ -173,19 +180,6 @@ class _ModelSerializerMetaclass(_BaseModelSchemaMetaclass):
         return declared_fields
 
 
-class _Unmarshaller(_BaseUnmarshaller):
-    def deserialize(self, data, fields_dict, many=False, partial=False,
-                    dict_class=dict, index_errors=True, index=None):
-        # when data is None, which happens when a POST request was made with an
-        # empty body, convert it to an empty dict. works around an exception
-        # deep in marshmallow.schema.BaseSchema._invoke_field_validators where
-        # it expects data to be a dict
-        data = data or {}
-        return super().deserialize(data, fields_dict, many, partial,
-                                   dict_class, index_errors, index)
-    __call__ = deserialize
-
-
 class _ModelSerializerOptionsClass(_BaseModelSerializerOptionsClass):
     """
     Sets the default ``model_converter`` to :class:`_ModelConverter`.
@@ -194,6 +188,8 @@ class _ModelSerializerOptionsClass(_BaseModelSerializerOptionsClass):
         self._model = None
         super().__init__(meta, **kwargs)
         self.model_converter = getattr(meta, 'model_converter', _ModelConverter)
+        self.dump_key_fn = getattr(meta, 'dump_key_fn', camel_case)
+        self.load_key_fn = getattr(meta, 'load_key_fn', snake_case)
 
     @property
     def model(self):
@@ -207,14 +203,30 @@ class _ModelSerializerOptionsClass(_BaseModelSerializerOptionsClass):
         self._model = model
 
 
+def maybe_convert_keys(d: Any, key_fn: Optional[FunctionType] = None):
+    if isinstance(d, (list, tuple)):
+        return [maybe_convert_keys(el, key_fn) for el in d]
+    elif isinstance(d, dict):
+        rv = d.copy()
+        for k, v in d.items():
+            new_k = key_fn(k)
+            new_v = maybe_convert_keys(v, key_fn)
+            if k != new_k:
+                rv.pop(k)
+            rv[new_k] = new_v
+        return rv
+    return d
+
+
 class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass):
     """
     Base class for database model serializers. This is pretty much a stock
-    :class:`flask_marshmallow.sqla.ModelSchema`: it will automatically create
-    fields from the attached database Model, the only difference being that it
-    will automatically dump to (and load from) the camel-cased variants of the
-    field names. The other main difference is that serializers have dependency
-    injection set up automatically on their constructors.
+    :class:`flask_marshmallow.sqla.ModelSchema`, except:
+
+    - dependency injection is set up automatically on ModelSerializer
+    - when loading to update an existing instance, validate the primary keys are the same
+    - automatically make fields named ``slug``, ``model.Meta.created_at``, and
+      ``model.Meta.updated_at`` dump-only
 
     For example::
 
@@ -230,25 +242,16 @@ class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass)
         from marshmallow import Schema, fields
 
         class RoleSerializer(Schema):
-            id = fields.Integer()
+            id = fields.Integer(dump_only=True)
             name = fields.String()
             description = fields.String()
-            created_at = fields.DateTime(dump_to='createdAt',
-                                         load_from='createdAt')
-            updated_at = fields.DateTime(dump_to='updatedAt',
-                                         load_from='updatedAt')
-
-    Obviously you probably shouldn't be loading ``created_at`` or ``updated_at``
-    from JSON; it's just an example to show the automatic snake-to-camelcase
-    field naming conversion.
+            created_at = fields.DateTime(dump_only=True)
+            updated_at = fields.DateTime(dump_only=True)
     """
     __abstract__ = True
 
     OPTIONS_CLASS = _ModelSerializerOptionsClass
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._unmarshal = _Unmarshaller()
+    opts: _ModelSerializerOptionsClass = None  # set by the metaclass
 
     def is_create(self):
         """
@@ -257,7 +260,62 @@ class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass)
         """
         return self.context.get('is_create', False)
 
-    def handle_error(self, error, data):
+    def load(
+        self,
+        data: Mapping,
+        *,
+        many: bool = None,
+        partial: Union[bool, Sequence[str], Set[str]] = None,
+        unknown: str = None,
+        **kwargs,
+    ):
+        """Deserialize a dict to an object defined by this ModelSerializer's fields.
+
+        A :exc:`ValidationError <marshmallow.exceptions.ValidationError>` is raised
+        if invalid data is passed.
+
+        :param data: The data to deserialize.
+        :param many: Whether to deserialize `data` as a collection. If `None`, the
+            value for `self.many` is used.
+        :param partial: Whether to ignore missing fields and not require
+            any fields declared. Propagates down to ``Nested`` fields as well. If
+            its value is an iterable, only missing fields listed in that iterable
+            will be ignored. Use dot delimiters to specify nested fields.
+        :param unknown: Whether to exclude, include, or raise an error for unknown
+            fields in the data. Use `EXCLUDE`, `INCLUDE` or `RAISE`.
+            If `None`, the value for `self.unknown` is used.
+        :return: Deserialized data
+        """
+        # when data is None, which happens when a POST request was made with an
+        # empty body, convert it to an empty dict. makes validation errors work
+        # as expected
+        data = data or {}
+
+        # maybe convert all keys in data with the configured fn
+        data = maybe_convert_keys(data, self.opts.load_key_fn)
+        try:
+            return super().load(data, many=many, partial=partial, unknown=unknown,
+                                **kwargs)
+        except MarshmallowValidationError as e:
+            e.messages = maybe_convert_keys(e.messages, self.opts.dump_key_fn)
+            raise e
+
+    def dump(self, obj, *, many: bool = None):
+        """Serialize an object to native Python data types according to this
+        ModelSerializer's fields.
+
+        :param obj: The object to serialize.
+        :param many: Whether to serialize `obj` as a collection. If `None`, the value
+            for `self.many` is used.
+        :return: A dict of serialized data
+        :rtype: dict
+        """
+        data = super().dump(obj, many=many)
+
+        # maybe convert all keys in data with the configured fn
+        return maybe_convert_keys(data, self.opts.dump_key_fn)
+
+    def handle_error(self, error, data, **kwargs):
         """
         Customize the error messages for required/not-null validators with
         dynamically generated field names. This is definitely a little hacky (it
@@ -265,7 +323,7 @@ class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass)
         """
         required_messages = {'Missing data for required field.',
                              'Field may not be null.'}
-        for field_name in error.field_names:
+        for field_name in error.normalized_messages():
             for i, msg in enumerate(error.messages[field_name]):
                 if isinstance(msg, _LazyString):
                     msg = str(msg)
@@ -273,34 +331,33 @@ class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass)
                     label = title_case(field_name)
                     error.messages[field_name][i] = f'{label} is required.'
 
-    def _update_fields(self, obj=None, many=False):
+    def _init_fields(self):
         """
-        Overridden to automatically convert snake-cased field names to
-        camel-cased (when dumping) and to load camel-cased field names back
-        to their snake-cased counterparts
+        Overridden to:
+        - automatically validate ids (primary keys) are the same when updating objects.
+        - automatically convert slug, created_at, and updated_at to dump-only fields
         """
-        fields = super()._update_fields(obj, many)
-        new_fields = self.dict_class()
-        for name, field in fields.items():
-            if (field.dump_to is None
-                    and not name.startswith('_')
-                    and '_' in name):
-                camel_cased_name = camel_case(name)
-                field.dump_to = camel_cased_name
-                field.load_from = camel_cased_name
-            if name in READ_ONLY_FIELDS:
-                field.dump_only = True
-            new_fields[name] = field
+        super()._init_fields()
 
         # validate id
-        if 'id' in new_fields:
-            new_fields['id'].validators = [self.validate_id]
+        model_pk = self.Meta.model.Meta.pk
+        if model_pk in self.fields:
+            self.fields[model_pk].validators.append(self.validate_id)
 
-        self.fields = new_fields
-        return new_fields
+        read_only_fields = {
+            'slug',
+            self.Meta.model.Meta.created_at,
+            self.Meta.model.Meta.updated_at,
+        }
+        for name in read_only_fields:
+            if name in self.fields:
+                field = self.fields[name]
+                field.dump_only = True
+                self.dump_fields[name] = field
+                self.load_fields.pop(name, None)
 
     def validate_id(self, id):
-        if self.is_create() or int(id) == int(self.instance.id):
+        if self.is_create() or (self.instance and int(id) == int(self.instance.id)):
             return
         raise MarshmallowValidationError('ids do not match')
 
