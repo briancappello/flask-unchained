@@ -14,16 +14,16 @@ Flask Unchained is a (*work-in-progress*) **fully integrated, optional-batteries
 - **no integration headaches between supported libraries**; everything just works
 - absolutely **as little boilerplate as possible** (your focus should be on your app, not plumbing!)
 - out-of-the-box support for **testing** with `pytest`
-- **simple and consistent patterns for customizing, extending, and/or overriding almost everything** (e.g. configuration, views/controllers/resources, routes, templates, services, extensions, ...)
+- **simple and consistent patterns for customizing, extending, and/or overriding almost everything** (e.g. configuration, views/controllers/resources, routes, templates, models, serializers, services, extensions, ...)
    - your customizations are easily distributable as a standalone bundle (Python package), which itself then supports the same patterns for customization, ad infinitum.
 
 **How?**
 
-**Flask Unchained implements the Application Factory Pattern, utilizing a standardized (but configurable) way to organize "bundles" of code, such that they become easily distributable, reusable, and customizable across multiple independent projects.** All of the code within bundles is automatically discovered and registered with the app. You can think of bundles as an enhanced replacement for both Flask blueprints and extensions. Bundles are somewhat comparable to Django's "apps", but I think you'll find bundles are more powerful and flexible.
+**Flask Unchained implements the Application Factory Pattern, utilizing a standardized (but configurable) way to organize "bundles" of code (Python packages), such that they become easily distributable, reusable, and customizable across multiple independent projects.** Bundles are somewhat comparable to Django's "apps", but I think you'll find bundles are more powerful and flexible. All of the code within bundles is automatically discovered and registered with the app. You can think of bundles as an enhanced replacement for both Flask blueprints and extensions.
 
 The architecture is inspired by [Symfony](https://symfony.com/), which is enterprise-level awesome, aside from the fact that it isn't Python ;) If you've heard of [Laravel](https://laravel.com/), that framework is built on top of [the Symfony Components](https://symfony.com/components) - with Flask Unchained, the existing Flask/Python ecosystems constitute our "components".[*]
 
-[*] Don't like the default choices? Flask Unchained is almost completely customizable. The core architecture offers you the potential to use an entirely different stack of libraries, or swap out only certain components - the power to choose is yours.
+[*] Don't like the default choices? Flask Unchained is almost completely customizable. The core architecture offers you the potential to use an entirely different stack of libraries, or swap out only certain components - the power to choose is yours. (Bundles provide a means for integrating existing Flask extensions with Flask Unchained.)
 
 ## Useful Links
 

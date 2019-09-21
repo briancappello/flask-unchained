@@ -425,20 +425,7 @@ And let's fix our tests:
 
 
    class TestSiteController:
-       def test_index(self, client):
-           r = client.get('site_controller.index')
-           assert r.status_code == 200
-           assert r.html.count('Welcome to Flaskr Unchained!') == 1
-
-       def test_hello(self, client):
-           r = client.get('site_controller.hello')
-           assert r.status_code == 200
-           assert r.html.count('Hello World from Flaskr Unchained!') == 2
-
-       def test_hello_with_name_parameter(self, client):
-           r = client.get('site_controller.hello', name='User')
-           assert r.status_code == 200
-           assert r.html.count('Hello User from Flaskr Unchained!') == 2
+       # ...
 
        # add this method
        def test_hello_with_form_post(self, client):
