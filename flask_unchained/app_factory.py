@@ -3,6 +3,7 @@ import inspect
 import os
 import sys
 
+from types import FunctionType, ModuleType
 from typing import *
 
 from py_meta_utils import Singleton
@@ -33,7 +34,8 @@ class AppFactory(metaclass=Singleton):
                    env: Union[DEV, PROD, STAGING, TEST],
                    bundles: Optional[List[str]] = None,
                    _config_overrides: Optional[Dict[str, Any]] = None,
-                   **flask_kwargs) -> FlaskUnchained:
+                   **flask_kwargs,
+                   ) -> FlaskUnchained:
         """
         Flask Unchained Application Factory. Returns an instance of
         :attr:`FLASK_APP_CLASS` (by default, :class:`~flask_unchained.FlaskUnchained`).
@@ -74,7 +76,11 @@ class AppFactory(metaclass=Singleton):
 
         return app
 
-    def create_basic_app(self, bundles=None, unchained_config=None, _config_overrides=None):
+    def create_basic_app(self,
+                         bundles: List[Bundle] = None,
+                         unchained_config: Optional[ModuleType] = None,
+                         _config_overrides: Dict[str, Any] = None,
+                         ) -> FlaskUnchained:
         """
         Creates a "fake" app for use while developing
         """
@@ -113,7 +119,7 @@ class AppFactory(metaclass=Singleton):
         return self.FLASK_APP_CLASS(app_import_name, **flask_kwargs)
 
     @staticmethod
-    def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):
+    def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]) -> ModuleType:
         if not sys.path or sys.path[0] != os.getcwd():
             sys.path.insert(0, os.getcwd())
 
@@ -145,15 +151,15 @@ class AppFactory(metaclass=Singleton):
 
         bundles = []
         for bundle_package_name in bundle_package_names:
-            bundle = self.load_bundle(bundle_package_name, self.is_bundle)
-            bundles.append(bundle())
+            bundles.append(self.load_bundle(bundle_package_name))
 
         if not isinstance(bundles[-1], AppBundle):
             return None, bundles
         return bundles[-1], bundles
 
-    def load_bundle(self, bundle_package_name: str, type_checker):
-        type_checker = type_checker or self.is_bundle
+    def load_bundle(self,
+                    bundle_package_name: str,
+                    ) -> Union[AppBundle, Bundle]:
         for module_name in [f'{bundle_package_name}.bundle', bundle_package_name]:
             try:
                 module = importlib.import_module(module_name)
@@ -163,21 +169,24 @@ class AppFactory(metaclass=Singleton):
                 raise e
 
             try:
-                return inspect.getmembers(module, type_checker(module))[0][1]
+                bundle_class = inspect.getmembers(module, self.is_bundle(module))[0][1]
             except IndexError:
                 continue
+            else:
+                return bundle_class()
 
         raise BundleNotFoundError(
             f'Unable to find a Bundle subclass in the {bundle_package_name} bundle!'
             ' Please make sure this bundle is installed and that there is a Bundle'
             ' subclass in the packages\'s bundle module or its __init__.py file.')
 
-    def is_bundle(self, module):
+    def is_bundle(self, module: ModuleType) -> FunctionType:
         def _is_bundle(obj):
-            if not isinstance(obj, type):
-                return False
-            is_subclass = issubclass(obj, Bundle) and obj not in {AppBundle, Bundle}
-            return is_subclass and obj.__module__.startswith(module.__name__)
+            return (
+                isinstance(obj, type) and issubclass(obj, Bundle)
+                and obj not in {AppBundle, Bundle}
+                and obj.__module__.startswith(module.__name__)
+            )
         return _is_bundle
 
 
