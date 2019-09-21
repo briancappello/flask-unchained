@@ -30,6 +30,18 @@ class AppFactory(metaclass=Singleton):
         'flask_unchained.bundles.controller',
     ]
 
+    @classmethod
+    def set_app_class(cls, flask_subclass: Type[FlaskUnchained]) -> None:
+        """
+        Sets :attr:`FLASK_APP_CLASS` to the given subclass of
+        :class:`~flask_unchained.FlaskUnchained`.
+        """
+        cls.FLASK_APP_CLASS = flask_subclass
+
+    @classmethod
+    def _set_required_bundles(cls, required_bundles: List[str]) -> None:
+        cls.REQUIRED_BUNDLES = required_bundles
+
     def create_app(self,
                    env: Union[DEV, PROD, STAGING, TEST],
                    bundles: Optional[List[str]] = None,
