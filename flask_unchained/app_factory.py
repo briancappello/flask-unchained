@@ -22,6 +22,8 @@ class AppFactory(metaclass=Singleton):
     .. _Application Factory Pattern: http://flask.pocoo.org/docs/1.0/patterns/appfactories/
     """
 
+    FLASK_APP_CLASS = FlaskUnchained
+
     REQUIRED_BUNDLES = [
         'flask_unchained.bundles.babel',
         'flask_unchained.bundles.controller',
@@ -34,11 +36,11 @@ class AppFactory(metaclass=Singleton):
                    **flask_kwargs) -> FlaskUnchained:
         """
         Flask Unchained Application Factory. Returns an instance of
-        :class:`~flask_unchained.FlaskUnchained`.
+        :attr:`FLASK_APP_CLASS` (by default, :class:`~flask_unchained.FlaskUnchained`).
 
         Example Usage::
 
-            app = AppFactory().create_app(DEV)
+            app = AppFactory().create_app(PROD)
 
         :param env: Which environment the app should run in. Should be one of
                     "development", "production", "staging", or "test" (you can import
@@ -91,18 +93,24 @@ class AppFactory(metaclass=Singleton):
 
         return app
 
-    def instantiate_app(self, app_import_name, unchained_config, **flask_kwargs):
-        for k in ['TEMPLATE_FOLDER', 'STATIC_FOLDER', 'STATIC_URL_PATH']:
-            flask_kwargs.setdefault(k.lower(), getattr(unchained_config, k, None))
+    def instantiate_app(self,
+                        app_import_name: str,
+                        unchained_config: ModuleType,
+                        **flask_kwargs,
+                        ) -> FlaskUnchained:
+        valid_flask_kwargs = {
+            name for name, param
+            in inspect.signature(self.FLASK_APP_CLASS).parameters.items()
+            if name != 'import_name' and (
+                    param.kind == param.POSITIONAL_OR_KEYWORD
+                    or param.kind == param.KEYWORD_ONLY
+            )
+        }
+        for k in valid_flask_kwargs:
+            if hasattr(unchained_config, k.upper()):
+                flask_kwargs.setdefault(k, getattr(unchained_config, k.upper()))
 
-        app = FlaskUnchained(app_import_name, **flask_kwargs)
-
-        # Flask assumes the root_path is based on the app_import_name, but
-        # we want it to be the project root, not the app bundle root
-        app.root_path = os.path.dirname(app.root_path)
-        app.static_folder = flask_kwargs['static_folder']
-
-        return app
+        return self.FLASK_APP_CLASS(app_import_name, **flask_kwargs)
 
     @staticmethod
     def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]):

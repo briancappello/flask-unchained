@@ -35,7 +35,7 @@ class _AppRootDescriptor:
         return os.path.dirname(sys.modules[cls.__module__].__file__)
 
 
-class _ProjectRootDescriptor:
+class _RootPathDescriptor:
     def __get__(self, instance, cls):
         return os.path.abspath(os.path.join(cls.APP_ROOT, os.pardir))
 
@@ -71,7 +71,7 @@ class AppBundleConfig(BundleConfig):
     Root path of the app bundle. Determined automatically.
     """
 
-    PROJECT_ROOT: str = _ProjectRootDescriptor()
+    ROOT_PATH: str = _RootPathDescriptor()
     """
     Root path of the project. Determined automatically.
     """

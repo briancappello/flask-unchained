@@ -6,6 +6,8 @@
 - set up automatic dependency injection on commands
 - update `ConfigureAppHook` to load configs from every bundle in the hierarchy
 - require `sqlalchemy-unchained>=0.8`
+- refactor `AppFactory` to support using a custom subclass of `flask.Flask` or `flask_unchained.FlaskUnchained` by setting `AppFactory.FLASK_APP_CLASS`
+    - support passing all kwargs to it by setting the same names upper-cased in `unchained_config.py`
 - add `flask unchained config` command for listing the current config (optionally filtered by bundle)
 - add `flask unchained extensions` command for listing extensions discovered by the app
 - add `flask unchaiend services` command for listing services discovered by the app

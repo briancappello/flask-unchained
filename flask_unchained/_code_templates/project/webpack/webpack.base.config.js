@@ -4,11 +4,11 @@ const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
 
-const PROJECT_ROOT = path.resolve(__dirname)
-const ASSETS_ROOT = path.join(PROJECT_ROOT, 'assets')
+const ROOT_PATH = path.resolve(__dirname)
+const ASSETS_ROOT = path.join(ROOT_PATH, 'assets')
 const SCRIPTS_ROOT = path.join(ASSETS_ROOT, 'scripts')
 const STYLES_ROOT = path.join(ASSETS_ROOT, 'styles')
-const OUTPUT_PATH = path.join(PROJECT_ROOT, 'static', 'assets')
+const OUTPUT_PATH = path.join(ROOT_PATH, 'static', 'assets')
 
 process.traceDeprecation = true
 

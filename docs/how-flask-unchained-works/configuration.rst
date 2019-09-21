@@ -4,26 +4,27 @@ Configuration
 Configuring Flask Unchained
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You configure Flask Unchained by placing a file named ``unchained_config.py`` in your project's root folder. The purpose of ``unchained_config.py`` is to define which bundles to load and the keyword arguments passed to the :class:`~flask_unchained.FlaskUnchained` constructor (which takes the same arguments as the original :class:`~flask.Flask` constructor). It typically will look something like this (technically, only the ``BUNDLES`` list with your app bundle at a minimum is required)::
+You configure Flask Unchained by placing a file named ``unchained_config.py`` in your project's root folder. The purpose of ``unchained_config.py`` is to define which bundles to load and the keyword arguments passed to the :class:`~flask_unchained.FlaskUnchained` constructor (which takes the same arguments as the original :class:`~flask.Flask` constructor). It typically will look something like this (only ``ROOT_PATH`` and the ``BUNDLES`` list with your app bundle are required)::
 
    # your-project-root/unchained_config.py
 
    import os
 
-   PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+
+   ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
+
 
    def folder_or_none(folder_name):
-       folder = os.path.join(PROJECT_ROOT, folder_name)
-       if not os.path.exists(folder):
-           return None
-       return folder
+       folder = os.path.join(ROOT_PATH, folder_name)
+       return folder if os.path.exists(folder) else None
 
-   # these get passed to the :class:`FlaskUnchained` constructor
+
+   # upper-cased variables get passed as kwargs to the Flask constructor
    TEMPLATE_FOLDER = folder_or_none('templates')
    STATIC_FOLDER = folder_or_none('static')
    STATIC_URL_PATH = '/static' if STATIC_FOLDER else None
 
-   # the list of bundle modules to load (in dot-notation)
+   # the list of bundle modules to load (in dot-module-notation)
    BUNDLES = [
        'app',  # your app bundle *must* be last
    ]
