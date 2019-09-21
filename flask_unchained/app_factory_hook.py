@@ -79,7 +79,7 @@ class AppFactoryHook:
     imported from other places, like third-party code).
     """
 
-    def __init__(self, unchained: Unchained, bundle=None):
+    def __init__(self, unchained: Unchained, bundle: Optional[Bundle] = None):
         self.unchained = unchained
         """
         The :class:`~flask_unchained.Unchained` extension instance.
@@ -212,7 +212,7 @@ class AppFactoryHook:
         raise NotImplementedError
 
     @classmethod
-    def import_bundle_module(cls, bundle: Bundle):
+    def import_bundle_module(cls, bundle: Bundle) -> ModuleType:
         if cls.bundle_module_name is None:
             raise NotImplementedError('you must set the `bundle_module_name` '
                                       'class attribute on your hook to use '
@@ -229,7 +229,7 @@ class AppFactoryHook:
                        cls.bundle_override_module_name_attr,
                        cls.bundle_module_name)
 
-    def update_shell_context(self, ctx: dict):
+    def update_shell_context(self, ctx: Dict[str, Any]) -> None:
         """
         Implement to add objects to the cli shell context.
         """
