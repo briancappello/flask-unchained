@@ -20,7 +20,10 @@ class RegisterCommandsHook(AppFactoryHook):
 
     limit_discovery_to_local_declarations = False
 
-    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
+    def run_hook(self,
+                 app: FlaskUnchained,
+                 bundles: List[Bundle],
+                 ) -> Dict[str, Union[click.Command, click.Group]]:
         commands = {}
         for bundle in bundles:
             command_groups = self.get_bundle_command_groups(bundle)
@@ -34,14 +37,17 @@ class RegisterCommandsHook(AppFactoryHook):
             app.cli.add_command(command, name)
         return commands
 
-    def get_bundle_commands(self, bundle: Bundle, command_groups):
-        # when a command belongs to a group, we don't also want to register the command
+    def get_bundle_commands(self,
+                            bundle: Bundle,
+                            command_groups: Dict[str, click.Group],
+                            ) -> Dict[str, click.Command]:
+        # when a command belongs to a group, we don't also want to register the command.
         # therefore we collect all the command names belonging to groups, and use that
         # in our is_click_command type-checking fn below
         group_command_names = set(itertools.chain.from_iterable(
             g.commands.keys() for g in command_groups.values()))
 
-        def is_click_command(obj):
+        def is_click_command(obj: Any) -> bool:
             return self.is_click_command(obj) and obj.name not in group_command_names
 
         commands = {}
@@ -53,7 +59,7 @@ class RegisterCommandsHook(AppFactoryHook):
             commands.update(inherit_docstrings(new, commands))
         return commands
 
-    def get_bundle_command_groups(self, bundle: Bundle):
+    def get_bundle_command_groups(self, bundle: Bundle) -> Dict[str, click.Group]:
         command_groups = {}
         module_found = False
         for bundle in bundle._iter_class_hierarchy():
@@ -77,10 +83,10 @@ class RegisterCommandsHook(AppFactoryHook):
                 continue
         return groups
 
-    def is_click_command(self, obj) -> bool:
+    def is_click_command(self, obj: Any) -> bool:
         return isinstance(obj, click.Command) and not self.is_click_group(obj)
 
-    def is_click_group(self, obj) -> bool:
+    def is_click_group(self, obj: Any) -> bool:
         return isinstance(obj, click.Group)
 
 

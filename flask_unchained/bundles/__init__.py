@@ -1,6 +1,7 @@
 import importlib
 import os
 
+from types import FunctionType
 from typing import *
 
 from ..flask_unchained import FlaskUnchained
@@ -188,7 +189,7 @@ class Bundle(metaclass=_BundleMetaclass):
     ``/<bundle.name>/static``, otherwise ``None``.
     """
 
-    _deferred_functions = []
+    _deferred_functions: List[FunctionType] = []
     """
     Deferred functions to be registered with the
     :class:`~flask_unchained.bundles.BundleBlueprint` that gets created
@@ -198,7 +199,7 @@ class Bundle(metaclass=_BundleMetaclass):
     :class:`_DeferredBundleFunctions` instance it created for this bundle.
     """
 
-    def before_init_app(self, app: FlaskUnchained):
+    def before_init_app(self, app: FlaskUnchained) -> None:
         """
         Override this method to perform actions on the
         :class:`~flask_unchained.FlaskUnchained` app instance *before* the
@@ -206,7 +207,7 @@ class Bundle(metaclass=_BundleMetaclass):
         """
         pass
 
-    def after_init_app(self, app: FlaskUnchained):
+    def after_init_app(self, app: FlaskUnchained) -> None:
         """
         Override this method to perform actions on the
         :class:`~flask_unchained.FlaskUnchained` app instance *after* the
@@ -214,10 +215,10 @@ class Bundle(metaclass=_BundleMetaclass):
         """
         pass
 
-    def _iter_class_hierarchy(self, include_self=True, reverse_mro=True):
+    def _iter_class_hierarchy(self, include_self: bool = True, reverse_mro: bool = True):
         """
         Iterate over the bundle classes in the hierarchy. Yields base-most
-        super classes first (aka opposite of Method Resolution Order).
+        superclass instances first (aka opposite of Method Resolution Order).
 
         For internal use only.
 
@@ -232,7 +233,7 @@ class Bundle(metaclass=_BundleMetaclass):
                 else:
                     yield bundle()
 
-    def _has_views(self):
+    def _has_views(self) -> bool:
         """
         Returns True if any of the bundles in the hierarchy has a views module.
 
@@ -243,22 +244,21 @@ class Bundle(metaclass=_BundleMetaclass):
                 return True
         return False
 
-    def _has_views_module(self):
+    def _has_views_module(self) -> bool:
         views_module_name = getattr(self, 'views_module_name', 'views')
         return bool(safe_import_module(f'{self.module_name}.{views_module_name}'))
 
     @property
-    def _blueprint_name(self):
+    def _blueprint_name(self) -> str:
         if self._is_top_bundle() or not self._has_hierarchy_name_conflicts():
             return self.name
 
         for i, bundle in enumerate(self._iter_class_hierarchy()):
             if bundle.__class__ == self.__class__:
-                break
-        return f'{self.name}_{i}'
+                return f'{self.name}_{i}'
 
     @property
-    def _static_folders(self):
+    def _static_folders(self) -> List[str]:
         if not self._has_hierarchy_name_conflicts():
             return [self.static_folder] if self.static_folder else []
         elif not self._is_top_bundle():
@@ -267,10 +267,10 @@ class Bundle(metaclass=_BundleMetaclass):
         return [b.static_folder for b in self._iter_class_hierarchy(reverse_mro=False)
                 if b.static_folder and b.name == self.name]
 
-    def _is_top_bundle(self):
+    def _is_top_bundle(self) -> bool:
         return not self.__class__.__subclasses__()
 
-    def _has_hierarchy_name_conflicts(self):
+    def _has_hierarchy_name_conflicts(self) -> bool:
         top_bundle = self.__class__
         subclasses = top_bundle.__subclasses__()
         while subclasses:
@@ -291,7 +291,7 @@ class Bundle(metaclass=_BundleMetaclass):
 
         raise AttributeError(name)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (f'<{self.__class__.__name__} '
                 f'name={self.name!r} '
                 f'module={self.module_name!r}>')

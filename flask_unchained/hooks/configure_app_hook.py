@@ -90,7 +90,10 @@ class ConfigureAppHook(AppFactoryHook):
 
         return config
 
-    def _get_bundle_config(self, bundle, env):
+    def _get_bundle_config(self,
+                           bundle: Union[AppBundle, Bundle],
+                           env: Union[DEV, PROD, STAGING, TEST],
+                           ) -> flask.Config:
         bundle_config_module = self.import_bundle_module(bundle)
         base_config = getattr(bundle_config_module, BASE_CONFIG_CLASS, None)
         env_config = getattr(bundle_config_module, ENV_CONFIG_CLASSES[env], None)
