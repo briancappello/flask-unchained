@@ -4,8 +4,8 @@ from flask_unchained import AppFactoryHook
 
 class RegisterSessionModelHook(AppFactoryHook):
     """
-    If using the ``sqlalchemy`` ``SESSION_TYPE``, registers the ``Session`` model with
-    the SQLAlchemy Bundle.
+    If ``app.config.SESSION_TYPE == 'sqlalchemy'``, registers the ``Session``
+    model with the SQLAlchemy Bundle.
     """
 
     bundle_module_name = None
