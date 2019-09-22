@@ -5,7 +5,7 @@ from typing import *
 
 class RegisterBlueprintsHook(AppFactoryHook):
     """
-    Registers blueprints with the app.
+    Registers legacy Flask blueprints with the app.
     """
 
     bundle_module_name = 'views'
