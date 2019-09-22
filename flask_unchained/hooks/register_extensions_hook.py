@@ -20,28 +20,13 @@ class RegisterExtensionsHook(AppFactoryHook):
     bundle_module_name = 'extensions'
     name = 'extensions'
 
-    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]) -> None:
-        extensions = self.collect_from_bundles(bundles)
-        self.process_objects(app, self.get_extension_tuples(extensions))
-
     def process_objects(self,
                         app: FlaskUnchained,
-                        extension_tuples: List[ExtensionTuple],
+                        extensions: Dict[str, object],
                         ) -> None:
-        for ext in self.resolve_extension_order(extension_tuples):
+        for ext in self.resolve_extension_order(extensions):
             if ext.name not in self.unchained.extensions:
                 self.unchained.extensions[ext.name] = ext.extension
-
-    def get_extension_tuples(self, extensions: Dict[str, object],
-                             ) -> List[ExtensionTuple]:
-        extension_tuples = []
-        for name, extension in extensions.items():
-            dependencies = []
-            if isinstance(extension, (list, tuple)):
-                extension, dependencies = extension
-            extension_tuples.append(
-                ExtensionTuple(name, extension, dependencies))
-        return extension_tuples
 
     def collect_from_bundle(self, bundle: Bundle) -> Dict[str, object]:
         extensions = {}
@@ -50,13 +35,21 @@ class RegisterExtensionsHook(AppFactoryHook):
             extensions.update(getattr(module, 'EXTENSIONS', {}))
         return extensions
 
-    def update_shell_context(self, ctx: Dict[str, Any]):
+    def update_shell_context(self, ctx: Dict[str, Any]) -> None:
         ctx.update(self.unchained.extensions)
 
-    def resolve_extension_order(self, extensions: List[ExtensionTuple],
+    def resolve_extension_order(self,
+                                extensions: Dict[str, object],
                                 ) -> List[ExtensionTuple]:
+        extension_tuples = []
+        for name, extension in extensions.items():
+            dependencies = []
+            if isinstance(extension, (list, tuple)):
+                extension, dependencies = extension
+            extension_tuples.append(ExtensionTuple(name, extension, dependencies))
+
         dag = nx.DiGraph()
-        for ext in extensions:
+        for ext in extension_tuples:
             dag.add_node(ext.name, extension_tuple=ext)
             for dep_name in ext.dependencies:
                 dag.add_edge(ext.name, dep_name)

@@ -1,7 +1,7 @@
 import pytest
 
-from flask_unchained.hooks.init_extensions_hook import (
-    ExtensionTuple, InitExtensionsHook)
+from flask_unchained.hooks.init_extensions_hook import InitExtensionsHook
+from flask_unchained.hooks.register_extensions_hook import ExtensionTuple
 from flask_unchained.unchained import Unchained
 
 from .._bundles.myapp import MyAppBundle, myext
@@ -18,39 +18,35 @@ class TestRegisterExtensionsHook:
     def test_collect_from_bundle(self, hook: InitExtensionsHook):
         assert hook.collect_from_bundle(EmptyBundle()) == {}
 
-        vendor_extensions = hook.get_extension_tuples(
-            hook.collect_from_bundle(VendorBundle()))
+        vendor_extensions = hook.collect_from_bundle(VendorBundle())
         assert len(vendor_extensions) == 1
-        vendor_ext = vendor_extensions[0]
-        assert vendor_ext.name == 'awesome'
-        assert vendor_ext.extension == awesome
-        assert vendor_ext.dependencies == []
+        assert 'awesome' in vendor_extensions
+        vendor_ext = vendor_extensions['awesome']
+        assert vendor_ext == awesome
 
-        app_extensions = hook.get_extension_tuples(
-            hook.collect_from_bundle(MyAppBundle()))
+        app_extensions = hook.collect_from_bundle(MyAppBundle())
         assert len(app_extensions) == 1
-        vendor_ext = app_extensions[0]
-        assert vendor_ext.name == 'myext'
-        assert vendor_ext.extension == myext
-        assert vendor_ext.dependencies == ['awesome']
+        assert 'myext' in app_extensions
+        vendor_ext = app_extensions['myext']
+        assert vendor_ext == (myext, ['awesome'])
 
     def test_resolve_extension_order(self, hook: InitExtensionsHook):
-        exts = [
-            ExtensionTuple('four', None, []),
-            ExtensionTuple('three', None, ['four']),
-            ExtensionTuple('two', None, ['four']),
-            ExtensionTuple('one', None, ['two', 'three'])
-        ]
-        order = [ext.name for ext in hook.resolve_extension_order(exts)]
+        extensions = {
+            'one': (None, ['two', 'three']),
+            'two': (None, ['four']),
+            'three': (None, ['four']),
+            'four': None,
+        }
+        order = [ext.name for ext in hook.resolve_extension_order(extensions)]
         assert order == ['four', 'two', 'three', 'one']
 
     def test_resolve_broken_extension_order(self, hook: InitExtensionsHook):
-        exts = [
-            ExtensionTuple('one', None, ['two']),
-            ExtensionTuple('two', None, ['one']),
-        ]
+        extensions = {
+            'one': (None, ['two']),
+            'two': (None, ['one'])
+        }
         with pytest.raises(Exception) as e:
-            hook.resolve_extension_order(exts)
+            hook.resolve_extension_order(extensions)
         assert 'Circular dependency detected' in str(e.value)
 
     def test_process_objects(self, app, hook: InitExtensionsHook):
@@ -62,13 +58,13 @@ class TestRegisterExtensionsHook:
             def init_app(self, app):
                 self.app = app
 
-        exts = [
-            ExtensionTuple('four', FakeExt('four'), []),
-            ExtensionTuple('three', FakeExt('three'), ['four']),
-            ExtensionTuple('two', FakeExt('two'), ['four']),
-            ExtensionTuple('one', FakeExt('one'), ['two', 'three'])
-        ]
-        hook.process_objects(app, exts)
+        extensions = {
+            'one': (FakeExt('one'), ['two', 'three']),
+            'two': (FakeExt('two'), ['four']),
+            'three': (FakeExt('three'), ['four']),
+            'four': FakeExt('four'),
+        }
+        hook.process_objects(app, extensions)
 
         registered = list(hook.unchained.extensions.keys())
         assert registered == ['four', 'two', 'three', 'one']
@@ -80,9 +76,9 @@ class TestRegisterExtensionsHook:
         hook.run_hook(app, [EmptyBundle(), VendorBundle(), MyAppBundle()])
 
         registered = list(hook.unchained.extensions.keys())
-        exts = list(hook.unchained.extensions.values())
+        extensions = list(hook.unchained.extensions.values())
         assert registered == ['awesome', 'myext']
-        assert exts == [awesome, myext]
+        assert extensions == [awesome, myext]
         assert awesome.app == app
         assert myext.app == app
 
