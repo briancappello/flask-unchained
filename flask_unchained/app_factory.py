@@ -16,6 +16,14 @@ from .unchained import unchained
 from .utils import cwd_import
 
 
+def maybe_set_app_factory_from_env():
+    app_factory = os.getenv('FLASK_APP_FACTORY', None)
+    if app_factory:
+        module_name, class_name = app_factory.rsplit('.', 1)
+        app_factory_cls = getattr(cwd_import(module_name), class_name)
+        AppFactory.set_singleton_class(app_factory_cls)
+
+
 class AppFactory(metaclass=Singleton):
     """
     This class implements the `Application Factory Pattern`_ for Flask Unchained.
@@ -24,23 +32,15 @@ class AppFactory(metaclass=Singleton):
     """
 
     APP_CLASS = FlaskUnchained
+    """
+    Set :attr:`APP_CLASS` to use a custom subclass of
+    :class:`~flask_unchained.FlaskUnchained`.
+    """
 
     REQUIRED_BUNDLES = [
         'flask_unchained.bundles.babel',
         'flask_unchained.bundles.controller',
     ]
-
-    @classmethod
-    def set_app_class(cls, flask_subclass: Type[FlaskUnchained]) -> None:
-        """
-        Sets :attr:`APP_CLASS` to the given subclass of
-        :class:`~flask_unchained.FlaskUnchained`.
-        """
-        cls.APP_CLASS = flask_subclass
-
-    @classmethod
-    def _set_required_bundles(cls, required_bundles: List[str]) -> None:
-        cls.REQUIRED_BUNDLES = required_bundles
 
     def create_app(self,
                    env: Union[DEV, PROD, STAGING, TEST],
@@ -206,4 +206,5 @@ class AppFactory(metaclass=Singleton):
 
 __all__ = [
     'AppFactory',
+    'maybe_set_app_factory_from_env',
 ]

@@ -13,12 +13,10 @@ import time
 
 from flask.cli import with_appcontext  # alias this here
 from flask_unchained import AppFactory, click
+from flask_unchained.app_factory import maybe_set_app_factory_from_env
 from flask_unchained.constants import DEV, PROD, STAGING, TEST
 from flask_unchained.utils import get_boolean_env
 from traceback import format_exc
-
-from .click import GroupOverrideMixin
-from .utils import cwd_import
 
 
 ENV_ALIASES = {'dev': DEV, 'prod': PROD}
@@ -59,7 +57,7 @@ def cli_create_app(_):
         sys.exit(1)
 
 
-class AppGroupMixin(GroupOverrideMixin):
+class AppGroupMixin(click.GroupOverrideMixin):
     def group(self, *args, **kwargs):
         """
         A group allows a command to have subcommands attached.  This is the
@@ -161,12 +159,7 @@ def main():
     debug = get_boolean_env('FLASK_DEBUG', env not in PROD_ENVS)
     os.environ['FLASK_DEBUG'] = 'true' if debug else 'false'
 
-    app_factory = os.getenv('FLASK_APP_FACTORY', None)
-    if app_factory:
-        module_name, class_name = app_factory.rsplit('.', 1)
-        app_factory_cls = getattr(cwd_import(module_name), class_name)
-        AppFactory.set_singleton_class(app_factory_cls)
-
+    maybe_set_app_factory_from_env()
     if _should_create_basic_app(env):
         cli = _get_basic_cli()
     else:

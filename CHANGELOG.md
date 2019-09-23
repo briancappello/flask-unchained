@@ -12,7 +12,7 @@
 
 ### Features
 
-- refactor `AppFactory` to support using a custom subclass of `flask_unchained.FlaskUnchained` using `AppFactory.set_app_class`
+- refactor `AppFactory` to support using a custom subclass of `FlaskUnchained` using `AppFactory.APP_CLASS`
     - support passing all kwargs to it by setting the same names upper-cased in `unchained_config.py`
 - set up automatic dependency injection on commands
 - add `flask unchained config` command for listing the current config (optionally filtered by bundle)

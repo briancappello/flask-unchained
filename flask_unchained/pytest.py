@@ -14,7 +14,7 @@ from werkzeug.test import EnvironBuilder
 from werkzeug.utils import cached_property
 from _pytest.fixtures import FixtureLookupError
 
-from .app_factory import AppFactory
+from .app_factory import AppFactory, maybe_set_app_factory_from_env
 from .constants import TEST
 from .unchained import unchained
 
@@ -55,6 +55,7 @@ def app(request):
         options.update({k.upper(): v for k, v in kwargs.items()})
 
     try:
+        maybe_set_app_factory_from_env()
         app = AppFactory().create_app(TEST, _config_overrides=options)
     except ImportError:
         yield None
