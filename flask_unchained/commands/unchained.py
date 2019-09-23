@@ -1,11 +1,11 @@
 from flask_unchained import current_app
-from flask_unchained.cli import click, with_appcontext
+from flask_unchained.cli import cli, click
 
 from ..utils import format_docstring
 from .utils import print_table
 
 
-@click.group('unchained')
+@cli.group('unchained')
 def unchained_group():
     """
     Flask Unchained commands.
@@ -13,7 +13,6 @@ def unchained_group():
 
 
 @unchained_group.command()
-@with_appcontext
 def bundles():
     """
     List registered bundles.
@@ -27,7 +26,6 @@ def bundles():
 @unchained_group.command()
 @click.argument('bundle_name', nargs=1, required=False, default=None,
                 help='Only show options for a specific bundle.')
-@with_appcontext
 def config(bundle_name):
     """
     Show current app config (or optionally just the options for a specific bundle).
@@ -47,7 +45,6 @@ def config(bundle_name):
 
 
 @unchained_group.command()
-@with_appcontext
 def extensions():
     """
     List extensions.
@@ -92,7 +89,6 @@ def hooks(ctx):
 
 
 @unchained_group.command()
-@with_appcontext
 def services():
     """
     List services.
