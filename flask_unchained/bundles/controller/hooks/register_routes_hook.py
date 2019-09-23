@@ -34,10 +34,13 @@ class RegisterRoutesHook(AppFactoryHook):
 
     def process_objects(self, app: FlaskUnchained, routes: Iterable[Route]):
         for route in _reduce_routes(routes):
-            # FIXME maybe validate routes first? (eg for duplicates?)
-            # Flask doesn't complain; it will match the first route found,
-            # but maybe we should at least warn the user?
             if route.should_register(app):
+                if route.module_name and route in self.bundle.endpoints[route.endpoint]:
+                    import warnings
+                    warnings.warn(f'Duplicate route registration found: '
+                                  f'{str(route.full_rule)})')
+                    continue
+
                 self.bundle.endpoints[route.endpoint].append(route)
                 if route._controller_cls:
                     key = f'{route._controller_cls.__name__}.{route.method_name}'

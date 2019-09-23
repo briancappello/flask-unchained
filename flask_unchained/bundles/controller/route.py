@@ -221,8 +221,10 @@ class Route:
         return method_name_to_url(self.method_name)
 
     @property
-    def unique_member_param(self) -> str:
-        if self._unique_member_param:
+    def unique_member_param(self) -> Union[str, None]:
+        if not (self.is_member or self._is_member_method):
+            return None
+        elif self._unique_member_param:
             return self._unique_member_param
 
         ctrl_name = controller_name(self._controller_cls)
@@ -248,8 +250,28 @@ class Route:
             prefix = f'{prefix}.{self._controller_cls.__name__}'
         return f'{prefix}.{self.method_name}'
 
+    def __eq__(self, other):
+        return (self.blueprint == other.blueprint
+                and self.defaults == other.defaults
+                and self.endpoint == other.endpoint
+                and self.is_member == other.is_member
+                and self.methods == other.methods
+                and self.full_name == other.full_name
+                and self._controller_cls == other._controller_cls
+                and self.module_name == other.module_name
+                and self.only_if == other.only_if
+                and self.full_rule == other.full_rule
+                and self._member_param == other._member_param
+                and self.unique_member_param == other.unique_member_param)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __repr__(self):
         try:
-            return f'Route(endpoint={self.endpoint}, rule={self.rule})'
+            return (f'Route('
+                    f'endpoint={self.endpoint}, '
+                    f'rule={self.rule}, '
+                    f'methods={self.methods})')
         except:
-            return f'Route(endpoint={self.endpoint})'
+            return f'Route(endpoint={self.endpoint}, methods={self.methods})'
