@@ -276,12 +276,13 @@ class Controller(metaclass=_ControllerMetaclass):
         """
         Convenience method for returning redirect responses.
 
-        :param where: A URL, endpoint, or config key name to redirect to.
-        :param default: A URL, endpoint, or config key name to redirect to if
-                        ``where`` is invalid.
-        :param override: explicitly redirect to a URL, endpoint, or config key name
-                         (takes precedence over the ``next`` value in query strings
-                         or forms)
+        :param where: A method name from this controller, a URL, an endpoint, or
+                      a config key name to redirect to.
+        :param default: A method name from this controller, a URL, an endpoint, or
+                        a config key name to redirect to if ``where`` is invalid.
+        :param override: Explicitly redirect to a method name from this controller,
+                         a URL, an endpoint, or a config key name (takes precedence
+                         over the ``next`` value in query strings or forms)
         :param url_kwargs: the variable arguments of the URL rule
         :param _anchor: if provided this is added as anchor to the URL.
         :param _external: if set to ``True``, an absolute URL is generated. Server
