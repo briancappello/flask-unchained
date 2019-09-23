@@ -433,7 +433,7 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
         routes = {method_name: method_routes
                   for method_name, method_routes in routes.items()
                   if method_name in resource_cls.resource_methods}
-        for route in rules:
+        for route in _reduce_routes(rules):
             routes[route.method_name] = route
 
     yield from _normalize_controller_routes(routes.values(), resource_cls,
@@ -576,6 +576,7 @@ def _normalize_controller_routes(rules: Iterable[Route],
                                  ) -> RouteGenerator:
     for route in _reduce_routes(rules):
         route = route.copy()
+        route._controller_cls = controller_cls
         route._member_param = member_param
         route._unique_member_param = unique_member_param
         route.rule = route._make_rule(url_prefix, member_param=member_param)
