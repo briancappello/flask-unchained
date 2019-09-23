@@ -41,14 +41,14 @@ class YourBundle(AppBundle):
     celery_tasks_module_name = 'custom'  # before
     celery_tasks_module_names = ['custom']  # after
 
-    graphql_queries_module_name = 'custom'  # before
-    graphql_queries_module_names = ['custom']  # after
+    graphene_queries_module_name = 'custom'  # before
+    graphene_queries_module_names = ['custom']  # after
 
-    graphql_mutations_module_name = 'custom'  # before
-    graphql_mutations_module_names = ['custom']  # after
+    graphene_mutations_module_name = 'custom'  # before
+    graphene_mutations_module_names = ['custom']  # after
 
-    graphql_types_module_name = 'custom'  # before
-    graphql_types_module_names = ['custom']  # after
+    graphene_types_module_name = 'custom'  # before
+    graphene_types_module_names = ['custom']  # after
 ```
 
 ### Features
