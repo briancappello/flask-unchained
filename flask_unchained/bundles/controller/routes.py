@@ -509,7 +509,7 @@ def _inherit_route_options(parent: Route, child: Route):
         parent.is_member = child.is_member
     if parent._methods is _missing:
         parent.methods = child.methods
-    if parent._only_if is _missing:
+    if parent.only_if is _missing:
         parent.only_if = child.only_if
     parent.rule_options = {**child.rule_options, **parent.rule_options}
     return parent

@@ -1,9 +1,11 @@
+from py_meta_utils import _missing
+
 from .attr_constants import FN_ROUTES_ATTR, NO_ROUTES_ATTR
 from .route import Route
 
 
 def route(rule=None, blueprint=None, defaults=None, endpoint=None,
-          is_member=False, methods=None, only_if=None, **rule_options):
+          is_member=False, methods=None, only_if=_missing, **rule_options):
     """
     Decorator to set default route rules for a view function. The arguments this
     function accepts are very similar to Flask's :meth:`~flask.Flask.route`,

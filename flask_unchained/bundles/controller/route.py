@@ -36,14 +36,14 @@ class Route:
                  endpoint: Optional[str] = None,
                  is_member: bool = False,
                  methods: Optional[Union[List[str], Tuple[str, ...]]] = None,
-                 only_if: Optional[Union[bool, FunctionType]] = None,
+                 only_if: Optional[Union[bool, FunctionType]] = _missing,
                  **rule_options,
                  ) -> None:
         self._blueprint: Optional[Blueprint] = blueprint
         self._defaults: Dict[str, Any] = defaults or {}
         self._endpoint: str = endpoint
         self._methods: Optional[Union[List[str], Tuple[str, ...]]] = methods
-        self._only_if: Optional[Union[bool, FunctionType]] = only_if
+        self.only_if: Optional[Union[bool, FunctionType]] = only_if
         self._rule: str = rule
         self.rule_options: Dict[str, Any] = rule_options
         self.view_func: Union[str, FunctionType] = view_func
@@ -70,7 +70,7 @@ class Route:
         Determines whether or not this route should be registered with the app,
         based on :attr:`only_if`.
         """
-        if self.only_if is None:
+        if self.only_if in {None, _missing}:
             return True
         elif callable(self.only_if):
             return self.only_if(app)
@@ -173,20 +173,6 @@ class Route:
             rv = inspect.getmodule(self._controller_cls).__name__
             return rv
         return inspect.getmodule(self.view_func).__name__
-
-    @property
-    def only_if(self) -> Union[bool, FunctionType]:
-        """
-        A boolean or callable to determine whether or not this route should be
-        registered with the app. Defaults to ``True``.
-        """
-        if self._only_if is _missing:
-            return True
-        return self._only_if
-
-    @only_if.setter
-    def only_if(self, only_if: Union[bool, FunctionType]):
-        self._only_if = only_if
 
     @property
     def rule(self) -> str:

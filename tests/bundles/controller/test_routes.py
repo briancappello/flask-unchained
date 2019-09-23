@@ -8,6 +8,7 @@ from flask_unchained.bundles.controller.attr_constants import (
 from flask_unchained.bundles.controller.decorators import route as route_decorator
 from flask_unchained.bundles.controller.routes import (
     controller, func, include, resource, _normalize_args)
+from py_meta_utils import _missing
 
 
 bp = Blueprint('test', __name__)
@@ -163,7 +164,7 @@ class TestFunc:
         assert route.endpoint == 'tests.bundles.controller.test_routes.undecorated_view'
         assert route.defaults == {}
         assert route.methods == ['GET']
-        assert route.only_if is True
+        assert route.only_if is _missing
 
     def test_override_rule_options_with_undecorated_view(self):
         route = list(func('/a/<id>', undecorated_view, blueprint=bp,
@@ -186,7 +187,7 @@ class TestFunc:
         assert route.endpoint == 'tests.bundles.controller.test_routes.decorated_view'
         assert route.defaults == {}
         assert route.methods == ['GET']
-        assert route.only_if is None
+        assert route.only_if is _missing
 
     def test_override_rule_options_with_decorated_view(self):
         route = list(func('/b/<id>', decorated_view, blueprint=bp,
