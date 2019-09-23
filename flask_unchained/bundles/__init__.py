@@ -226,12 +226,12 @@ class Bundle(metaclass=_BundleMetaclass):
         :param reverse_mro: Pass False to yield bundles in Method Resolution Order.
         """
         supers = self.__class__.__mro__[(0 if include_self else 1):]
-        for bundle in (reversed(supers) if reverse_mro else supers):
-            if issubclass(bundle, Bundle) and bundle not in {AppBundle, Bundle}:
-                if bundle == self.__class__:
+        for bundle_cls in (reversed(supers) if reverse_mro else supers):
+            if issubclass(bundle_cls, Bundle) and bundle_cls not in {AppBundle, Bundle}:
+                if bundle_cls == self.__class__:
                     yield self
                 else:
-                    yield bundle()
+                    yield bundle_cls()
 
     def _has_views(self) -> bool:
         """
