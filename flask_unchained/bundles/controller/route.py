@@ -1,5 +1,9 @@
 import inspect
+from types import FunctionType
+from typing import *
 
+from flask import Blueprint
+from flask_unchained.flask_unchained import FlaskUnchained
 from flask_unchained.string_utils import snake_case
 from py_meta_utils import _missing
 from werkzeug.utils import cached_property
@@ -24,36 +28,44 @@ class Route:
     :class:`~flask_unchained.Resource` routes include that their view_func must be
     finalized from the outside using ``TheControllerClass.method_as_view``.
     """
-    def __init__(self, rule, view_func, blueprint=None, defaults=None,
-                 endpoint=None, is_member=False, methods=None, only_if=None,
-                 **rule_options):
-        self._blueprint = blueprint
-        self._defaults = defaults or {}
-        self._endpoint = endpoint
-        self._methods = methods
-        self._only_if = only_if
-        self._rule = rule
-        self.rule_options = rule_options
-        self.view_func = view_func
+    def __init__(self,
+                 rule: str,
+                 view_func: Union[str, FunctionType],
+                 blueprint: Optional[Blueprint] = None,
+                 defaults: Optional[Dict[str, Any]] = None,
+                 endpoint: Optional[str] = None,
+                 is_member: bool = False,
+                 methods: Optional[Union[List[str], Tuple[str, ...]]] = None,
+                 only_if: Optional[Union[bool, FunctionType]] = None,
+                 **rule_options,
+                 ) -> None:
+        self._blueprint: Optional[Blueprint] = blueprint
+        self._defaults: Dict[str, Any] = defaults or {}
+        self._endpoint: str = endpoint
+        self._methods: Optional[Union[List[str], Tuple[str, ...]]] = methods
+        self._only_if: Optional[Union[bool, FunctionType]] = only_if
+        self._rule: str = rule
+        self.rule_options: Dict[str, Any] = rule_options
+        self.view_func: Union[str, FunctionType] = view_func
 
         # private
         self._controller_cls = None
-        self._member_param = None
-        self._unique_member_param = None
+        self._member_param: Optional[str] = None
+        self._unique_member_param: Optional[str] = None
         self._parent_resource_cls = None
-        self._parent_member_param = None
+        self._parent_member_param: Optional[str] = None
 
-        self._is_member = is_member
+        self._is_member: bool = is_member
         """
         Whether or not this route should be a member method of the parent resource.
         """
 
-        self._is_member_method = False
+        self._is_member_method: bool = False
         """
         Whether or not this route is a member method of this route's resource class.
         """
 
-    def should_register(self, app):
+    def should_register(self, app: FlaskUnchained) -> bool:
         """
         Determines whether or not this route should be registered with the app,
         based on :attr:`only_if`.
@@ -65,29 +77,29 @@ class Route:
         return bool(self.only_if)
 
     @property
-    def blueprint(self):
+    def blueprint(self) -> Union[Blueprint, None]:
         if self._blueprint is _missing:
             return None
         return self._blueprint
 
     @blueprint.setter
-    def blueprint(self, blueprint):
+    def blueprint(self, blueprint: Blueprint):
         self._blueprint = blueprint
 
     @property
-    def bp_prefix(self):
+    def bp_prefix(self) -> Union[str, None]:
         if not self.blueprint:
             return None
         return self.blueprint.url_prefix
 
     @property
-    def bp_name(self):
+    def bp_name(self) -> Union[str, None]:
         if not self.blueprint:
             return None
         return self.blueprint.name
 
     @property
-    def defaults(self):
+    def defaults(self) -> Dict[str, Any]:
         """
         The URL defaults for this route.
         """
@@ -96,11 +108,11 @@ class Route:
         return self._defaults
 
     @defaults.setter
-    def defaults(self, defaults):
+    def defaults(self, defaults: Dict[str, Any]):
         self._defaults = defaults or {}
 
     @property
-    def endpoint(self):
+    def endpoint(self) -> str:
         """
         The endpoint for this route.
         """
@@ -114,11 +126,11 @@ class Route:
         return f'{self.view_func.__module__}.{self.method_name}'
 
     @endpoint.setter
-    def endpoint(self, endpoint):
+    def endpoint(self, endpoint: str):
         self._endpoint = endpoint
 
     @property
-    def is_member(self):
+    def is_member(self) -> bool:
         """
         Whether or not this route is for a resource member route.
         """
@@ -127,11 +139,11 @@ class Route:
         return self._is_member
 
     @is_member.setter
-    def is_member(self, is_member):
+    def is_member(self, is_member: bool):
         self._is_member = is_member
 
     @property
-    def method_name(self):
+    def method_name(self) -> str:
         """
         The string name of this route's view function.
         """
@@ -140,18 +152,18 @@ class Route:
         return self.view_func.__name__
 
     @property
-    def methods(self):
+    def methods(self) -> Union[List[str], Tuple[str, ...]]:
         """
         The HTTP methods supported by this route.
         """
         return getattr(self.view_func, 'methods', self._methods) or ['GET']
 
     @methods.setter
-    def methods(self, methods):
+    def methods(self, methods: Union[List[str], Tuple[str, ...]]):
         self._methods = methods
 
     @cached_property
-    def module_name(self):
+    def module_name(self) -> Union[str, None]:
         """
         The module where this route's view function was defined.
         """
@@ -163,7 +175,7 @@ class Route:
         return inspect.getmodule(self.view_func).__name__
 
     @property
-    def only_if(self):
+    def only_if(self) -> Union[bool, FunctionType]:
         """
         A boolean or callable to determine whether or not this route should be
         registered with the app. Defaults to ``True``.
@@ -173,11 +185,11 @@ class Route:
         return self._only_if
 
     @only_if.setter
-    def only_if(self, only_if):
+    def only_if(self, only_if: Union[bool, FunctionType]):
         self._only_if = only_if
 
     @property
-    def rule(self):
+    def rule(self) -> str:
         """
         The (partial) url rule for this route.
         """
@@ -187,19 +199,23 @@ class Route:
                                unique_member_param=self._unique_member_param)
 
     @rule.setter
-    def rule(self, rule):
+    def rule(self, rule: str):
         if rule is not None and not rule.startswith('/'):
             rule = '/' + rule
         self._rule = rule
 
     @property
-    def full_rule(self):
+    def full_rule(self) -> str:
         """
         The full url rule for this route, including any blueprint prefix.
         """
         return join(self.bp_prefix, self.rule, trailing_slash=self.rule.endswith('/'))
 
-    def _make_rule(self, url_prefix=None, member_param=None, unique_member_param=None):
+    def _make_rule(self,
+                   url_prefix: Optional[str] = None,
+                   member_param: Optional[str] = None,
+                   unique_member_param: Optional[str] = None,
+                   ) -> str:
         if member_param is not None:
             self._member_param = member_param
         if unique_member_param is not None:
@@ -219,7 +235,7 @@ class Route:
         return method_name_to_url(self.method_name)
 
     @property
-    def unique_member_param(self):
+    def unique_member_param(self) -> str:
         if self._unique_member_param:
             return self._unique_member_param
 
@@ -233,7 +249,7 @@ class Route:
         return new
 
     @property
-    def full_name(self):
+    def full_name(self) -> Union[str, None]:
         """
         The full name of this route's view function, including the module path
         and controller name, if any.
