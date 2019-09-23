@@ -6,7 +6,7 @@ from typing import *
 
 class RegisterGrapheneRootSchemaHook(AppFactoryHook):
     name = 'graphene_root_schema'
-    bundle_module_name = None
+    bundle_module_names = None
     run_after = ['graphene_queries', 'graphene_mutations']
 
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):

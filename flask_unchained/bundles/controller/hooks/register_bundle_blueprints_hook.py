@@ -11,8 +11,8 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
     Registers a bundle blueprint for each bundle with views and/or template/static folders.
     """
 
-    bundle_module_name = None
     name = 'bundle_blueprints'
+    bundle_module_names = None
     run_before = ['blueprints']
 
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):

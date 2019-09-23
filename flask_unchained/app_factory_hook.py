@@ -13,10 +13,12 @@ from .unchained import Unchained
 from .utils import safe_import_module
 
 
-class _BundleOverrideModuleNameAttrDescriptor:
+class _BundleOverrideModuleNamesAttrDescriptor:
     def __get__(self, instance, cls):
-        if cls.bundle_module_name:
-            return f'{cls.bundle_module_name}_module_name'.replace('.', '_')
+        if cls.require_exactly_one_bundle_module:
+            return f'{cls.bundle_module_name}_module_name'
+        elif cls.bundle_module_names:
+            return f'{cls.bundle_module_names[0]}_module_names'.replace('.', '_')
 
 
 class _HookNameDescriptor:
@@ -28,13 +30,13 @@ class AppFactoryHook:
     """
     Base class for hooks. It has one entry point, :meth:`run_hook`, which can be
     overridden to completely customize the behavior of the subclass. The default
-    behavior is to look for objects in :attr:`bundle_module_name` which pass the
+    behavior is to look for objects in :attr:`bundle_module_names` which pass the
     result of :meth:`type_check`. These objects are collected from all bundles
     into a dictionary with keys the result of :meth:`key_name`, starting from
     the base-most bundle, allowing bundle subclasses to override objects with
     the same name from earlier bundles.
 
-    Subclasses should implement at a minimum :attr:`bundle_module_name`,
+    Subclasses should implement at a minimum :attr:`bundle_module_names`,
     :meth:`process_objects`, and :meth:`type_check`. You may also need to set
     one or both of :attr:`run_before` or :attr:`run_after`. Also of interest,
     hooks can store objects on their bundle's instance, using :attr:`bundle`.
@@ -56,15 +58,29 @@ class AppFactoryHook:
     An optional list of hook names that this hook must run *after*.
     """
 
-    bundle_module_name: str = None
+    bundle_module_name: Optional[str] = None
     """
-    The default module name this hook will load from in bundles. Should be set to
-    ``None`` if your hook does not use that default functionality.
+    If :attr:`require_exactly_one_bundle_module` is True, only load from this
+    module name in bundles. Should be set to ``None`` if your hook does not use that
+    default functionality.
     """
 
-    bundle_override_module_name_attr: str = _BundleOverrideModuleNameAttrDescriptor()
+    bundle_module_names: Optional[List[str]] = None
     """
-    The attribute name that bundles can set on themselves to override the module
+    A list of the default module names this hook will load from in bundles. Should
+    be set to ``None`` if your hook does not use that default functionality (or
+    :attr:`require_exactly_one_bundle_module` is True).
+    """
+
+    require_exactly_one_bundle_module = False
+    """
+    Whether or not to require that there must be exactly one module name to load from
+    in bundles.
+    """
+
+    bundle_override_module_names_attr: str = _BundleOverrideModuleNamesAttrDescriptor()
+    """
+    The attribute name that bundles can set on themselves to override the module(s)
     this hook will load from for that bundle.
     """
 
@@ -143,10 +159,18 @@ class AppFactoryHook:
         hierarchy = ([bundle] if not self.discover_from_bundle_superclasses
                      else bundle._iter_class_hierarchy())
         for bundle in hierarchy:
-            module = self.import_bundle_module(bundle)
-            if not module:
-                continue
-            members.update(self._collect_from_package(module))
+            last_module = None
+            from_this_bundle = set()
+            for module in self.import_bundle_modules(bundle):
+                found = self._collect_from_package(module)
+                name_collisions = from_this_bundle & set(found.keys())
+                if name_collisions:
+                    raise Exception(f'Name conflict: The objects named '
+                                    f'{", ".join(name_collisions)} in {module.__name__} '
+                                    f'collide with those from {last_module.__name__}')
+                members.update(found)
+                last_module = module
+                from_this_bundle.update(found.keys())
         return members
 
     def _collect_from_package(self,
@@ -212,22 +236,40 @@ class AppFactoryHook:
         raise NotImplementedError
 
     @classmethod
-    def import_bundle_module(cls, bundle: Bundle) -> ModuleType:
-        if cls.bundle_module_name is None:
-            raise NotImplementedError('you must set the `bundle_module_name` '
-                                      'class attribute on your hook to use '
-                                      'this feature')
-        return safe_import_module(cls.get_module_name(bundle))
+    def import_bundle_modules(cls, bundle: Bundle) -> List[ModuleType]:
+        modules = [safe_import_module(module_name)
+                   for module_name in cls.get_module_names(bundle)]
+        return [m for m in modules if m]
 
     @classmethod
-    def get_module_name(cls, bundle: Bundle) -> str:
-        return f'{bundle.module_name}.{cls.get_bundle_module_name(bundle)}'
+    def get_module_names(cls, bundle: Bundle) -> List[str]:
+
+        return [f'{bundle.module_name}.{name}'
+                for name in cls.get_bundle_module_names(bundle)]
 
     @classmethod
-    def get_bundle_module_name(cls, bundle: Bundle) -> str:
-        return getattr(bundle,
-                       cls.bundle_override_module_name_attr,
-                       cls.bundle_module_name)
+    def get_bundle_module_names(cls, bundle: Bundle) -> List[str]:
+        if cls.require_exactly_one_bundle_module and cls.bundle_module_name is None:
+            raise RuntimeError(f'you must set the `bundle_module_name` class attribute '
+                               f'on {cls.__module__}.{cls.__name__} to use this feature.')
+        elif not cls.require_exactly_one_bundle_module and cls.bundle_module_names is None:
+            raise RuntimeError(f'you must set the `bundle_module_names` class attribute '
+                               f'on {cls.__module__}.{cls.__name__} to use this feature.')
+
+        default_bundle_module_names = (cls.bundle_module_name
+                                       if cls.require_exactly_one_bundle_module
+                                       else cls.bundle_module_names)
+        module_names = getattr(bundle,
+                               cls.bundle_override_module_names_attr,
+                               default_bundle_module_names)
+
+        if cls.require_exactly_one_bundle_module:
+            if not isinstance(module_names, str):
+                raise ValueError(f'The {cls.bundle_override_module_names_attr} attribute '
+                                 f'on {bundle.module_name}.{bundle.__class__.__name__} '
+                                 f'must be a string with exactly one module name.')
+            return [module_names]
+        return module_names
 
     def update_shell_context(self, ctx: Dict[str, Any]) -> None:
         """

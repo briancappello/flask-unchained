@@ -4,17 +4,59 @@
 
 ### Breaking Changes
 
-- require `marshmallow>=3.0`
+- require `marshmallow>=3.0` (if using the API bundle)
 - require `sqlalchemy-unchained>=0.8`
 - rename `PROJECT_ROOT` to `ROOT_PATH` for consistency with upstream `Flask`
 - `AppFactory` is now a `Singleton` that must be instantiated (ie change `AppFactory.create_app(env)` to `AppFactory().create_app(env)` in `wsgi.py`)
 - no longer automatically set up dependency injection on all the methods from classes (you can still decorate them manually with `unchained.inject()`, but the preferred approach is to use class attributes to define what inject into the class)
+- customizing bundle module locations changed:
+
+```python
+# before
+class YourBundle(AppBundle):
+    extensions_module_name = 'custom'  # before
+    extensions_module_names = ['custom']  # after
+
+    services_module_name = 'custom'  # before
+    services_module_names = ['custom']  # after
+
+    commands_module_name = 'custom'  # before
+    commands_module_names = ['custom']  # after
+
+    blueprints_module_name = 'custom'  # before
+    blueprints_module_names = ['custom']  # after
+
+    models_module_name = 'custom'  # before
+    models_module_names = ['custom']  # after
+
+    admins_module_name = 'custom'  # before
+    admins_module_names = ['custom']  # after
+
+    resources_module_name = 'custom'  # before
+    model_resources_module_names = ['custom']  # after
+
+    serializers_module_name = 'custom'  # before
+    serializers_module_names = ['custom']  # after
+
+    celery_tasks_module_name = 'custom'  # before
+    celery_tasks_module_names = ['custom']  # after
+
+    graphql_queries_module_name = 'custom'  # before
+    graphql_queries_module_names = ['custom']  # after
+
+    graphql_mutations_module_name = 'custom'  # before
+    graphql_mutations_module_names = ['custom']  # after
+
+    graphql_types_module_name = 'custom'  # before
+    graphql_types_module_names = ['custom']  # after
+```
 
 ### Features
 
 - refactor `AppFactory` to support using a custom subclass of `FlaskUnchained` using `AppFactory.APP_CLASS`
     - support passing all kwargs to it by setting the same names upper-cased in `unchained_config.py`
 - set up automatic dependency injection on commands
+- make it possible to define multiple modules a hook should load from
 - add `flask unchained config` command for listing the current config (optionally filtered by bundle)
 - add `flask unchained extensions` command for listing extensions discovered by the app
 - add `flask unchaiend services` command for listing services discovered by the app

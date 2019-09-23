@@ -24,6 +24,7 @@ class ConfigureAppHook(AppFactoryHook):
     Updates ``app.config`` with the settings from each bundle.
     """
 
+    name = 'configure_app'
     bundle_module_name = 'config'
     """
     By default, look for config classes in the ``config`` module of bundles.
@@ -31,8 +32,8 @@ class ConfigureAppHook(AppFactoryHook):
     Override by setting the ``config_module_name`` attribute on your bundle class.
     """
 
-    name = 'configure_app'
-    run_after = ['extensions']
+    require_exactly_one_bundle_module = True
+    run_after = ['register_extensions']
 
     def run_hook(self,
                  app: FlaskUnchained,
@@ -94,13 +95,17 @@ class ConfigureAppHook(AppFactoryHook):
                            bundle: Union[AppBundle, Bundle],
                            env: Union[DEV, PROD, STAGING, TEST],
                            ) -> flask.Config:
-        bundle_config_module = self.import_bundle_module(bundle)
+        bundle_config_modules = self.import_bundle_modules(bundle)
+        if not bundle_config_modules:
+            return flask.Config(None)
+
+        bundle_config_module = bundle_config_modules[0]
         base_config = getattr(bundle_config_module, BASE_CONFIG_CLASS, None)
         env_config = getattr(bundle_config_module, ENV_CONFIG_CLASSES[env], None)
 
         if isinstance(bundle, AppBundle):
             if not bundle_config_module:
-                module_name = self.get_bundle_module_name(bundle)
+                module_name = self.get_bundle_module_names(bundle)[0]
                 raise Exception(
                     f'Could not find the `{module_name}` module in your app bundle.')
 
@@ -108,7 +113,7 @@ class ConfigureAppHook(AppFactoryHook):
                 raise Exception(
                     f"Could not find an AppBundleConfig subclass named "
                     f"{BASE_CONFIG_CLASS} in your app bundle's "
-                    f"{self.get_module_name(bundle)} module.")
+                    f"{self.get_module_names(bundle)[0]} module.")
 
         merged = flask.Config(None)
         for config in [base_config, env_config]:

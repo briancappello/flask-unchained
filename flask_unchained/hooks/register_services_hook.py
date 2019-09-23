@@ -10,8 +10,8 @@ class RegisterServicesHook(AppFactoryHook):
     Registers services for dependency injection.
     """
 
-    bundle_module_name = 'services'
     name = 'services'
+    bundle_module_names = ['services']
     run_after = ['init_extensions']
 
     def process_objects(self,

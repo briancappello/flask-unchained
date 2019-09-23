@@ -6,7 +6,8 @@ from ..object_types import QueriesObjectType
 
 class RegisterGrapheneQueriesHook(AppFactoryHook):
     name = 'graphene_queries'
-    bundle_module_name = 'graphql.schema'
+    bundle_module_names = ['graphql.schema']
+    bundle_override_module_names_attr = 'graphene_queries_module_names'
     run_after = ['graphene_types']
 
     def process_objects(self,

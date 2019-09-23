@@ -4,7 +4,7 @@
 
 **What is it?**
 
-Flask Unchained is a (*work-in-progress*) **fully integrated, optional-batteries-included web framework built on top of Flask** and its extension ecosystem. Flask Unchained aims to be a fresh, modern take on building web apps and APIs with Flask - while trying to stay as true as possible to the spirit and API of Flask.
+Flask Unchained is a (*work-in-progress*) **fully integrated, optional-batteries-included web framework built on top of Flask and its extension ecosystem**. Flask Unchained aims to be a fresh, modern take on building web apps and APIs with Flask - while trying to stay as true as possible to the spirit and API of Flask.
 
 **Why?**
 
@@ -188,10 +188,12 @@ from flask_unchained import AppBundle, FlaskUnchained
 class App(AppBundle):
     # you only need to subclass AppBundle; everything below is optional. for example, these
     # attributes can be set to customize which bundle module to load from (defaults shown)
-    config_module_name = 'config'
-    models_module_name = 'models'
-    routes_module_name = 'routes'
-    services_module_name = 'services'
+    config_module_name = 'config'  # can only load configs from one module in bundles
+    routes_module_name = 'routes'  # can only load routes from one module in bundles
+    extensions_module_names = ['extensions']
+    models_module_names = ['models']
+    views_module_names = ['views']
+    services_module_name = ['services']
 
     # these two methods are optional callbacks which the app factory will call
     def before_init_app(self, app: FlaskUnchained):
@@ -216,8 +218,8 @@ def folder_or_none(folder_name):
     folder = os.path.join(ROOT_PATH, folder_name)
     return folder if os.path.exists(folder) else None
 
-# upper-cased variables get passed as kwargs to `AppFactory.APP_CLASS.__init__`
-# (by default, `:class:FlaskUnchained`, which has the same constructor as :class:`flask.Flask`)
+# upper-cased variables get passed as kwargs to `AppFactory.APP_CLASS` constructor
+# (by default, `:class:FlaskUnchained`, which has the same signature as :class:`Flask`)
 TEMPLATE_FOLDER = folder_or_none('templates')
 STATIC_FOLDER = folder_or_none('static')
 STATIC_URL_PATH = '/static' if STATIC_FOLDER else None
@@ -407,7 +409,7 @@ from .views import SiteController
 
 
 routes = lambda: [
-    controller(SiteController),
+    controller('/', SiteController),
 ]
 ```
 

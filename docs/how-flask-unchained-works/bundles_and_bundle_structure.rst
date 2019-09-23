@@ -40,20 +40,19 @@ As far as determining the directory structure for the rest of the bundle goes, i
 .. code:: bash
 
    flask unchained hooks
-   Hook Name                    Default Bundle Module  Bundle Module Override Attr  Description
-   ----------------------------------------------------------------------------------------------------------------------------------------------
-   run_hooks_hook               hooks                  hooks_module_name            An internal hook to discover and run all the other hooks.
-   extensions                   extensions             extensions_module_name       Registers extensions found in bundles with the current app.
-   configure_app                config                 config_module_name           Updates app.config with the default settings of each bundle.
-   init_extensions              extensions             extensions_module_name       Initializes extensions found in bundles with the current app.
-   services                     services               services_module_name         Registers services for dependency injection.
-   extension_services           (None)                 (None)                       Injects services into extensions.
-   commands                     commands               commands_module_name         Adds commands and command groups from bundles.
-   routes                       routes                 routes_module_name           Registers routes.
-   bundle_blueprints            (None)                 (None)                       Registers a blueprint with each bundle's routes and template folder.
-   blueprints                   views                  views_module_name            Registers blueprints.
+   Hook Name                  Default Bundle Modules  Bundle Modules Override Attr  Description
+   ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+   register_extensions        extensions              extensions_module_names       Registers extensions found in bundles with the ``unchained`` extension.
+   configure_app              config                  config_module_name            Updates ``app.config`` with the settings from each bundle.
+   init_extensions            extensions              extensions_module_names       Initializes extensions found in bundles with the current app.
+   services                   services                services_module_names         Registers services for dependency injection.
+   inject_extension_services  (None)                  (None)                        Injects services into extensions.
+   commands                   commands                commands_module_names         Registers commands and command groups from bundles.
+   routes                     routes                  routes_module_name            Registers routes.
+   bundle_blueprints          (None)                  (None)                        Registers a bundle blueprint for each bundle with views and/or template/static folders.
+   blueprints                 views                   blueprints_module_names       Registers legacy Flask blueprints with the app.
 
-In the second column, ``Default Bundle Module``, are the default module names for bundles. The third column, ``Bundle Module Override Attr``, is a list of attribute names that you can set on your :class:`~flask_unchained.Bundle` subclass to customize the respective module the hook will load from. For example:
+In the second column, ``Default Bundle Modules``, are the default module names for bundles. The third column, ``Bundle Modules Override Attr``, is a list of attribute names that you can set on your :class:`~flask_unchained.Bundle` subclass to customize the respective module the hook will load from. For example:
 
 .. code:: python
 
@@ -62,9 +61,10 @@ In the second column, ``Default Bundle Module``, are the default module names fo
    from flask_unchained import Bundle
 
    class YourBundle(Bundle):
-       commands_module_name = 'cli'
-       config_module_name = 'settings'
-       views_module_name = 'controllers'
+       commands_module_names = ['cli']
+       config_module_name = 'settings'  # can only load configs from one module in bundles
+       routes_module_name = 'urls'  # can only load routes from one module in bundles
+       views_module_names = ['controllers', 'views']
 
 Extending and Overriding Bundles
 --------------------------------

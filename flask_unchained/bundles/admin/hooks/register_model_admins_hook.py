@@ -8,9 +8,9 @@ class RegisterModelAdminsHook(AppFactoryHook):
     Registers ModelAdmins.
     """
 
-    bundle_module_name = 'admins'
     name = 'admins'
-    run_after = ['bundle_template_folders', 'extensions', 'models']
+    bundle_module_names = ['admins']
+    run_after = ['bundle_template_folders', 'register_extensions', 'models']
     run_before = ['init_extensions']
 
     def process_objects(self, app, objects):

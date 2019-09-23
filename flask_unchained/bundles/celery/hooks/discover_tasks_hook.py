@@ -7,8 +7,8 @@ class DiscoverTasksHook(AppFactoryHook):
     Discovers celery tasks.
     """
     name = 'celery_tasks'
-    bundle_module_name = 'tasks'
-    bundle_override_module_name_attr = 'celery_tasks_module_name'
+    bundle_module_names = ['tasks']
+    bundle_override_module_names_attr = 'celery_tasks_module_names'
     run_after = ['init_extensions']
 
     def process_objects(self, app: FlaskUnchained, objects: Dict[str, Any]):

@@ -72,7 +72,7 @@ Configuration settings get loaded (by the :class:`~flask_unchained.hooks.Configu
 Bundle Configuration
 ^^^^^^^^^^^^^^^^^^^^
 
-Configuring standard bundles is almost the same, the only differences being:
+Configuring standard bundles is almost the same as for the app bundle, the only differences being:
 
 1) Configuration is entirely optional for standard bundles
 2) When a bundle does need to set configuration options, it should subclass :class:`~flask_unchained.BundleConfig`::

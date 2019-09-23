@@ -9,9 +9,9 @@ class InitExtensionsHook(RegisterExtensionsHook):
     Initializes extensions found in bundles with the current app.
     """
 
-    bundle_module_name = 'extensions'
     name = 'init_extensions'
-    run_after = ['extensions']
+    bundle_module_names = ['extensions']
+    run_after = ['register_extensions']
 
     def process_objects(self,
                         app: FlaskUnchained,

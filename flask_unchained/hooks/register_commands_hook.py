@@ -14,9 +14,9 @@ class RegisterCommandsHook(AppFactoryHook):
     Registers commands and command groups from bundles.
     """
 
-    bundle_module_name = 'commands'
     name = 'commands'
-    run_after = ['extension_services']
+    bundle_module_names = ['commands']
+    run_after = ['inject_extension_services']
 
     limit_discovery_to_local_declarations = False
 
@@ -52,23 +52,20 @@ class RegisterCommandsHook(AppFactoryHook):
 
         commands = {}
         for bundle in bundle._iter_class_hierarchy():
-            module = self.import_bundle_module(bundle)
-            if not module:
-                continue
-            new = self._collect_from_package(module, is_click_command)
-            commands.update(inherit_docstrings(new, commands))
+            for module in self.import_bundle_modules(bundle):
+                new = self._collect_from_package(module, is_click_command)
+                commands.update(inherit_docstrings(new, commands))
         return commands
 
     def get_bundle_command_groups(self, bundle: Bundle) -> Dict[str, click.Group]:
         command_groups = {}
         module_found = False
         for bundle in bundle._iter_class_hierarchy():
-            module = self.import_bundle_module(bundle)
-            if not module:
-                continue
-            module_found = True
-            from_pkg = self._collect_from_package(module, self.is_click_group)
-            command_groups.update(from_pkg)
+            for module in self.import_bundle_modules(bundle):
+                module_found = True
+                command_groups.update(
+                    self._collect_from_package(module, self.is_click_group)
+                )
 
         groups = {}
         for name in getattr(bundle, 'command_group_names', [bundle.name]):

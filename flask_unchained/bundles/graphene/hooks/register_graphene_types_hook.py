@@ -6,7 +6,8 @@ from ..object_types import SQLAlchemyObjectType
 
 class RegisterGrapheneTypesHook(AppFactoryHook):
     name = 'graphene_types'
-    bundle_module_name = 'graphql.types'
+    bundle_module_names = ['graphql.types']
+    bundle_override_module_names_attr = 'graphene_types_module_names'
     run_after = ['models', 'services']
 
     def process_objects(self,

@@ -8,7 +8,7 @@ class RegisterSessionModelHook(AppFactoryHook):
     model with the SQLAlchemy Bundle.
     """
 
-    bundle_module_name = None
+    bundle_module_names = None
     name = 'register_session_model'
     run_after = ['init_extensions', 'models']
 

@@ -6,7 +6,8 @@ from ..object_types import MutationsObjectType
 
 class RegisterGrapheneMutationsHook(AppFactoryHook):
     name = 'graphene_mutations'
-    bundle_module_name = 'graphql.schema'
+    bundle_module_names = ['graphql.schema']
+    bundle_override_module_names_attr = 'graphene_mutations_module_names'
     run_after = ['graphene_types']
 
     def process_objects(self,

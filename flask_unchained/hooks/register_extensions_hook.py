@@ -17,8 +17,8 @@ class RegisterExtensionsHook(AppFactoryHook):
     Registers extensions found in bundles with the ``unchained`` extension.
     """
 
-    bundle_module_name = 'extensions'
-    name = 'extensions'
+    name = 'register_extensions'
+    bundle_module_names = ['extensions']
 
     def process_objects(self,
                         app: FlaskUnchained,
@@ -31,8 +31,8 @@ class RegisterExtensionsHook(AppFactoryHook):
     def collect_from_bundle(self, bundle: Bundle) -> Dict[str, object]:
         extensions = {}
         for bundle in bundle._iter_class_hierarchy():
-            module = self.import_bundle_module(bundle)
-            extensions.update(getattr(module, 'EXTENSIONS', {}))
+            for module in self.import_bundle_modules(bundle):
+                extensions.update(getattr(module, 'EXTENSIONS', {}))
         return extensions
 
     def update_shell_context(self, ctx: Dict[str, Any]) -> None:

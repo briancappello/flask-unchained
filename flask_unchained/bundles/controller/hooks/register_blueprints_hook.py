@@ -8,9 +8,9 @@ class RegisterBlueprintsHook(AppFactoryHook):
     Registers legacy Flask blueprints with the app.
     """
 
-    bundle_module_name = 'views'
-    bundle_override_module_name_attr = 'blueprints_module_name'
     name = 'blueprints'
+    bundle_module_names = ['views']
+    bundle_override_module_names_attr = 'blueprints_module_names'
     run_after = ['bundle_blueprints']
 
     limit_discovery_to_local_declarations = False

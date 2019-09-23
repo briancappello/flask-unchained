@@ -15,15 +15,21 @@ class RegisterRoutesHook(AppFactoryHook):
     Registers routes.
     """
 
-    bundle_module_name = 'routes'
     name = 'routes'
+    bundle_module_name = 'routes'
+    require_exactly_one_bundle_module = True
     run_before = ['blueprints', 'bundle_blueprints']
 
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         app_bundle = bundles[-1]
-        routes_module = self.import_bundle_module(app_bundle)
-        routes = (self.get_explicit_routes(app_bundle) if routes_module
-                  else self.collect_from_bundle(app_bundle))
+
+        try:
+            self.import_bundle_modules(app_bundle)[0]
+        except IndexError:
+            routes = self.collect_from_bundle(app_bundle)
+        else:
+            routes = self.get_explicit_routes(app_bundle)
+
         self.process_objects(app, routes)
 
     def process_objects(self, app: FlaskUnchained, routes: Iterable[Route]):
@@ -77,11 +83,11 @@ class RegisterRoutesHook(AppFactoryHook):
                              **route.rule_options)
 
     def get_explicit_routes(self, bundle: Bundle):
-        routes_module = self.import_bundle_module(bundle)
+        routes_module = self.import_bundle_modules(bundle)[0]
         try:
             return getattr(routes_module, 'routes')()
         except AttributeError:
-            module_name = self.get_module_name(bundle)
+            module_name = self.get_module_names(bundle)
             raise AttributeError(f'Could not find a variable named `routes` '
                                  f'in the {module_name} module!')
 
@@ -89,18 +95,19 @@ class RegisterRoutesHook(AppFactoryHook):
         if not bundle._has_views():
             return ()
 
-        bundle_views_module_name = getattr(bundle, 'views_module_name', 'views')
-        views_module_name = f'{bundle.module_name}.{bundle_views_module_name}'
-        views_module = importlib.import_module(views_module_name)
+        bundle_views_module_names = getattr(bundle, 'views_module_names', ['views'])
+        for bundle_views_module_name in bundle_views_module_names:
+            views_module_name = f'{bundle.module_name}.{bundle_views_module_name}'
+            views_module = importlib.import_module(views_module_name)
 
-        for _, obj in inspect.getmembers(views_module, self.type_check):
-            if hasattr(obj, FN_ROUTES_ATTR):
-                yield getattr(obj, FN_ROUTES_ATTR)
-            else:
-                routes = getattr(obj, CONTROLLER_ROUTES_ATTR).values()
-                yield from _normalize_controller_routes(routes, obj)
+            for _, obj in inspect.getmembers(views_module, self.type_check):
+                if hasattr(obj, FN_ROUTES_ATTR):
+                    yield getattr(obj, FN_ROUTES_ATTR)
+                else:
+                    routes = getattr(obj, CONTROLLER_ROUTES_ATTR).values()
+                    yield from _normalize_controller_routes(routes, obj)
 
-        yield from include(views_module_name)
+            yield from include(views_module_name)
 
     def type_check(self, obj):
         is_controller = hasattr(obj, CONTROLLER_ROUTES_ATTR)

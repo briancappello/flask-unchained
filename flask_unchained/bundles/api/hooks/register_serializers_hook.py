@@ -16,8 +16,8 @@ class RegisterSerializersHook(AppFactoryHook):
     Registers serializers.
     """
 
-    bundle_module_name = 'serializers'
     name = 'serializers'
+    bundle_module_names = ['serializers']
     run_after = ['models']
 
     def process_objects(self, app: Flask, objects):

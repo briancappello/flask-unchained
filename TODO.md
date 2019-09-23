@@ -46,7 +46,6 @@ lower priority
 --------------
 * admin bundle could also use some improvement
    - honestly i haven't spent much time looking too deeply into flask-admin, and am kind of leaning towards investigating building something around React-Admin
-* it should probably be possible to define multiple modules a hook should load from
 
 
 bucket list [help wanted]

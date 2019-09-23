@@ -12,8 +12,8 @@ class InjectServicesIntoExtensionsHook(AppFactoryHook):
     Injects services into extensions.
     """
 
-    bundle_module_name = None
-    name = 'extension_services'
+    name = 'inject_extension_services'
+    bundle_module_names = None
     run_after = ['init_extensions', 'services']
 
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]) -> None:

@@ -24,4 +24,4 @@ class TestConfigureAppHook:
         assert app.config.VENDOR_KEY2 == 'vendor_key2'
 
     def test_the_app_bundle_config_module_is_named_config(self, hook: ConfigureAppHook):
-        assert hook.get_module_name(MyAppBundle()) == 'tests._bundles.myapp.config'
+        assert hook.get_bundle_module_names(MyAppBundle()) == ['config']

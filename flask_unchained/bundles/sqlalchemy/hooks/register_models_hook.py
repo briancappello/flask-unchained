@@ -13,9 +13,9 @@ class RegisterModelsHook(AppFactoryHook):
     Discovers models.
     """
 
-    bundle_module_name = 'models'
     name = 'models'
-    run_after = ['extensions']
+    bundle_module_names = ['models']
+    run_after = ['register_extensions']
     run_before = ['configure_app', 'init_extensions', 'services']
 
     def process_objects(self, app: FlaskUnchained, _):
@@ -35,8 +35,9 @@ class RegisterModelsHook(AppFactoryHook):
     def update_shell_context(self, ctx: dict):
         ctx.update(self.bundle.models)
 
-    def import_bundle_module(self, bundle):
-        module_name = self.get_module_name(bundle)
-        if self.unchained.env == TEST and module_name in sys.modules:
-            del sys.modules[module_name]
-        return super().import_bundle_module(bundle)
+    def import_bundle_modules(self, bundle):
+        module_names = self.get_module_names(bundle)
+        for module_name in module_names:
+            if self.unchained.env == TEST and module_name in sys.modules:
+                del sys.modules[module_name]
+        return super().import_bundle_modules(bundle)

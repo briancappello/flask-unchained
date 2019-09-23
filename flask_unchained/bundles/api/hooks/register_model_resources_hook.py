@@ -8,9 +8,9 @@ class RegisterModelResourcesHook(AppFactoryHook):
     Registers ModelResources and configures Serializers on them.
     """
 
-    bundle_module_name = 'views'
-    bundle_override_module_name_attr = 'resources_module_name'
-    name = 'resources'
+    name = 'model_resources'
+    bundle_module_names = ['views']
+    bundle_override_module_names_attr = 'model_resources_module_names'
     run_after = ['models', 'serializers']
 
     def process_objects(self, app, objects):

@@ -17,7 +17,7 @@ class RunHooksHook(AppFactoryHook):
     An internal hook to discover and run all the other hooks.
     """
 
-    bundle_module_name = 'hooks'
+    bundle_module_names = ['hooks']
 
     def run_hook(self,
                  app: FlaskUnchained,
