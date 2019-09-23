@@ -171,21 +171,18 @@ class Unchained:
             def my_function(not_injected, some_service: SomeService = injectable):
                 # do stuff
 
-            # or declare injectables explicitly
+            # or declare injectables explicitly (makes the ``injectable`` default optional)
             @unchained.inject('some_service')
             def my_function(not_injected, some_service: SomeService):
                 # do stuff
 
-            # use it on a class to set up injection on everything
+            # use it on a class to set up attribute injection (and the constructor)
             @unchained.inject()
             class MyClass:
                 some_service: SomeService = injectable
 
                 def __init__(self, another_service: AnotherService = injectable):
                     self.another_service = another_service
-
-                def a_method(self, yet_another_service = injectable):
-                    yet_another_service.do_stuff()
         """
         used_without_parenthesis = len(args) and callable(args[0])
         has_explicit_args = len(args) and all(isinstance(x, str) for x in args)
@@ -207,11 +204,14 @@ class Unchained:
                 if not cls:
                     return fn
 
+            if cls and hasattr(cls, '__di_name__'):
+                return cls
+
             sig = inspect.signature(fn)
 
             # create a new function wrapping the original to inject params
             @functools.wraps(fn)
-            def new_fn(*fn_args, **fn_kwargs):
+            def dependency_injector(*fn_args, **fn_kwargs):
                 # figure out which params we need to inject (we don't want to
                 # interfere with any params the user has passed manually)
                 bound_args = sig.bind_partial(*fn_args, **fn_kwargs)
@@ -220,7 +220,8 @@ class Unchained:
                 need = required.difference(have)
                 to_inject = (args if has_explicit_args
                              else set([k for k, v in sig.parameters.items()
-                                       if v.default == injectable]))
+                                       if isinstance(v.default, str)
+                                       and v.default == injectable]))
 
                 # try to inject needed params from extensions or services
                 for param_name in to_inject:
@@ -236,19 +237,19 @@ class Unchained:
                 bound_args.apply_defaults()
                 for k, v in bound_args.arguments.items():
                     if isinstance(v, str) and v == injectable:
-                        di_name = new_fn.__di_name__
+                        di_name = dependency_injector.__di_name__
                         is_constructor = ('.' not in di_name
                                           and di_name != di_name.lower())
                         action = 'initialized' if is_constructor else 'called'
-                        msg = f'{di_name} was {action} without the ' \
-                              f'{k} parameter. Please supply it manually, or '\
-                               'make sure it gets injected.'
-                        raise ServiceUsageError(msg)
+                        raise ServiceUsageError(
+                            f'{di_name} was {action} without the {k} parameter. '
+                            f'Please supply it manually, or make sure it gets injected.'
+                        )
 
                 if cls and not getattr(cls, _DI_AUTOMATICALLY_HANDLED, False):
                     cls_attrs_to_inject = getattr(cls, _INJECT_CLS_ATTRS, [])
                     for attr, value in vars(cls).items():
-                        if value == injectable:
+                        if isinstance(value, str) and value == injectable:
                             cls_attrs_to_inject.append(attr)
 
                     if cls_attrs_to_inject:
@@ -257,20 +258,14 @@ class Unchained:
 
                 return fn(*bound_args.args, **bound_args.kwargs)
 
-            new_fn.__signature__ = sig
-            new_fn.__di_name__ = getattr(fn, '__di_name__', fn.__name__)
+            dependency_injector.__signature__ = sig
+            dependency_injector.__di_name__ = getattr(fn, '__di_name__', fn.__name__)
 
             if cls:
-                cls.__init__ = new_fn
+                cls.__init__ = dependency_injector
                 cls.__signature__ = sig
-                for attr, meth in vars(cls).items():
-                    if (attr.startswith('__')
-                            or not callable(meth)
-                            or hasattr(meth, '__signature__')):
-                        continue
-                    setattr(cls, attr, self.inject()(meth))
                 return cls
-            return new_fn
+            return dependency_injector
 
         if used_without_parenthesis:
             return wrapper(args[0])

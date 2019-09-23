@@ -25,6 +25,7 @@ class TwoService(BaseTwo):
         super().__init__(*args, **kwargs)
 
 
+# this is silly and you shouldn't do this. (but it should work regardless)
 @unchained.inject()
 class FunkyService(BaseFunky):
     """

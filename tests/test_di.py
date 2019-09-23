@@ -122,22 +122,6 @@ class TestInject:
 
 @pytest.mark.bundles(['tests._bundles.services_bundle'])
 class TestInjectClassMethods:
-    def test_with_automatic_di(self):
-        from tests._bundles.services_bundle.services import (
-            InjectableMethods, OneService, TwoService)
-
-        hm = InjectableMethods()
-        assert hm.one_service == 'constructor_default'
-        assert hm.two_service == 'constructor_default'
-
-        hm.one()
-        assert isinstance(hm.one_service, OneService)
-        assert hm.two_service == 'constructor_default'
-
-        hm.two()
-        assert isinstance(hm.one_service, OneService)
-        assert isinstance(hm.two_service, TwoService)
-
     def test_with_manually_decorated_class(self):
         from tests._bundles.services_bundle.services import (
             NotAutomaticInjectableMethods, OneService, TwoService)
@@ -147,12 +131,12 @@ class TestInjectClassMethods:
         assert hm.two_service == 'constructor_default'
 
         hm.one()
-        assert isinstance(hm.one_service, OneService)
+        assert hm.one_service == injectable
         assert hm.two_service == 'constructor_default'
 
         hm.two()
-        assert isinstance(hm.one_service, OneService)
-        assert isinstance(hm.two_service, TwoService)
+        assert hm.one_service == injectable
+        assert hm.two_service == injectable
 
 
 class TestInjectedClassAttributes:

@@ -75,7 +75,8 @@ def _inject_cls_attrs(_wrapped_fn=None, _call_super_for_cls: Optional[str] = Non
 def _set_up_class_dependency_injection(mcs_args: McsArgs):
     mcs_args.clsdict[_DI_AUTOMATICALLY_HANDLED] = True
 
-    cls_attrs_to_inject = [k for k, v in mcs_args.clsdict.items() if v == injectable]
+    cls_attrs_to_inject = [k for k, v in mcs_args.clsdict.items()
+                           if isinstance(v, str) and v == injectable]
     try:
         mcs_args.clsdict[_INJECT_CLS_ATTRS] = \
             cls_attrs_to_inject + mcs_args.getattr(_INJECT_CLS_ATTRS, [])
@@ -99,13 +100,13 @@ def _set_up_class_dependency_injection(mcs_args: McsArgs):
                                         else _inject_cls_attrs(_wrapped_fn=init))
         mcs_args.clsdict['__signature__'] = init.__signature__
 
-    for attr, value in mcs_args.clsdict.items():
-        if isinstance(value, FunctionType):
-            if not attr.startswith('__') and not hasattr(value, '__signature__'):
-                from .unchained import unchained
-                mcs_args.clsdict[attr] = unchained.inject()(value)
-            value.__di_name__ = (mcs_args.name if value.__name__ == '__init__'
-                                 else f'{mcs_args.name}.{value.__name__}')
+    # when the user has wrapped a method with unchained.inject(), add our
+    # class name to the __di_name__ (which typically will be the fn name)
+    for name, method in mcs_args.clsdict.items():
+        if (name != '__init__'
+                and isinstance(method, FunctionType)
+                and hasattr(method, '__di_name__')):
+            setattr(method, '__di_name__', f'{mcs_args.name}.{method.__di_name__}')
 
 
 class _ServiceMetaOptionsFactory(MetaOptionsFactory):
