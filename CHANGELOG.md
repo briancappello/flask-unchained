@@ -61,6 +61,7 @@ class YourBundle(AppBundle):
 - add `flask unchained extensions` command for listing extensions discovered by the app
 - add `flask unchaiend services` command for listing services discovered by the app
 - add compatibility with pytest 5
+- alias `flask.abort` (`werkzeug.utils.abort`) as `flask_unchained.abort`
 
 ### Bug Fixes
 
