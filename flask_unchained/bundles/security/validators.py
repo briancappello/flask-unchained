@@ -5,6 +5,8 @@ from flask_unchained import lazy_gettext as _
 from wtforms.validators import HostnameValidation
 
 
+# FIXME move into the SQLAlchemy bundle; the only thing security-bundle-specific
+# that needs changing is the translation message
 class EmailValidator(BaseValidator):
     """
     Validates an email address. Note that this uses a very primitive regular
