@@ -155,10 +155,9 @@ class _ModelSerializerMetaclass(_BaseModelSchemaMetaclass):
 
     def __init__(cls, name, bases, attrs):
         super().__init__(name, bases, attrs)
-        if name and cls.opts.register and name in _registry:
-            existing = _registry[name]
-            for klass in existing:
-                fullname = f'{klass.__module__}.{klass.__name__}'
+        if name and cls.opts and cls.opts.register and name in _registry:
+            for existing_cls in _registry[name]:
+                fullname = f'{existing_cls.__module__}.{existing_cls.__name__}'
                 _registry.pop(fullname, None)
             fullname = f'{cls.__module__}.{cls.__name__}'
             _registry[name] = _registry[fullname] = [cls]
