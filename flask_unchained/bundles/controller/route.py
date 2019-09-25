@@ -247,6 +247,7 @@ class Route:
 
         prefix = self.view_func.__module__
         if self._controller_cls:
+            prefix = self._controller_cls.__module__
             prefix = f'{prefix}.{self._controller_cls.__name__}'
         return f'{prefix}.{self.method_name}'
 
