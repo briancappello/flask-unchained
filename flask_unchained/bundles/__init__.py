@@ -29,6 +29,11 @@ class _BundleModuleNameDescriptor:
         return _normalize_module_name(cls.__module__)
 
 
+class _BundleIsSingleModuleDescriptor:
+    def __get__(self, instance, cls):
+        return not importlib.util.find_spec(cls.module_name).submodule_search_locations
+
+
 class _BundleFolderDescriptor:
     def __get__(self, instance, cls):
         module = importlib.import_module(cls.module_name)
@@ -151,6 +156,11 @@ class Bundle(metaclass=_BundleMetaclass):
     Base class for bundles.
     """
 
+    is_single_module: bool = _BundleIsSingleModuleDescriptor()
+    """
+    Whether or not the bundle is a single module (Python file). Automatically determined.
+    """
+
     module_name: str = _BundleModuleNameDescriptor()
     """
     Top-level module name of the bundle (dot notation). Automatically determined.
@@ -239,6 +249,9 @@ class Bundle(metaclass=_BundleMetaclass):
 
         For internal use only.
         """
+        if self.is_single_module and isinstance(self, AppBundle):
+            return True
+
         for bundle in self._iter_class_hierarchy():
             if bundle._has_views_module():
                 return True
@@ -302,7 +315,6 @@ class AppBundle(Bundle):
     Like :class:`Bundle`, except used to specify your bundle is the top-most
     application bundle.
     """
-    pass
 
 
 __all__ = [

@@ -248,12 +248,17 @@ class AppFactoryHook:
 
     @classmethod
     def get_module_names(cls, bundle: Bundle) -> List[str]:
-
-        return [f'{bundle.module_name}.{name}'
+        if bundle.is_single_module:
+            return [bundle.module_name]
+        return [bundle.module_name if name == '__init__' else f'{bundle.module_name}.{name}'
                 for name in cls.get_bundle_module_names(bundle)]
 
     @classmethod
     def get_bundle_module_names(cls, bundle: Bundle) -> List[str]:
+        if bundle.is_single_module:
+            return [bundle.module_name]
+
+        # check to make sure the hook is configured correctly
         if cls.require_exactly_one_bundle_module and cls.bundle_module_name is None:
             raise RuntimeError(f'you must set the `bundle_module_name` class attribute '
                                f'on {cls.__module__}.{cls.__name__} to use this feature.')
@@ -268,6 +273,7 @@ class AppFactoryHook:
                                cls.bundle_override_module_names_attr,
                                default_bundle_module_names)
 
+        # check to make sure the user's bundle override module names attribute is correct
         if cls.require_exactly_one_bundle_module:
             if not isinstance(module_names, str):
                 raise ValueError(f'The {cls.bundle_override_module_names_attr} attribute '

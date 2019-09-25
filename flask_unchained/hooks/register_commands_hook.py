@@ -72,7 +72,7 @@ class RegisterCommandsHook(AppFactoryHook):
             try:
                 groups[name] = command_groups[name]
             except KeyError as e:
-                if module_found:
+                if module_found and not bundle.is_single_module:
                     warn(f'WARNING: Found a commands module for the {bundle.name} '
                          f'bundle, but there was no command group named {e.args[0]}'
                          f' in it. Either create one, or customize the bundle\'s '

@@ -29,7 +29,12 @@ class RegisterRoutesHook(AppFactoryHook):
         except IndexError:
             routes = self.collect_from_bundle(app_bundle)
         else:
-            routes = self.get_explicit_routes(app_bundle)
+            try:
+                routes = self.get_explicit_routes(app_bundle)
+            except AttributeError as e:
+                if not app_bundle.is_single_module:
+                    raise e
+                routes = self.collect_from_bundle(app_bundle)
 
         self.process_objects(app, routes)
 
@@ -90,7 +95,7 @@ class RegisterRoutesHook(AppFactoryHook):
         try:
             return getattr(routes_module, 'routes')()
         except AttributeError:
-            module_name = self.get_module_names(bundle)
+            module_name = self.get_module_names(bundle)[0]
             raise AttributeError(f'Could not find a variable named `routes` '
                                  f'in the {module_name} module!')
 
@@ -100,7 +105,8 @@ class RegisterRoutesHook(AppFactoryHook):
 
         bundle_views_module_names = getattr(bundle, 'views_module_names', ['views'])
         for bundle_views_module_name in bundle_views_module_names:
-            views_module_name = f'{bundle.module_name}.{bundle_views_module_name}'
+            views_module_name = (bundle.module_name if bundle.is_single_module
+                                 else f'{bundle.module_name}.{bundle_views_module_name}')
             views_module = importlib.import_module(views_module_name)
 
             for _, obj in inspect.getmembers(views_module, self.type_check):
@@ -110,7 +116,10 @@ class RegisterRoutesHook(AppFactoryHook):
                     routes = getattr(obj, CONTROLLER_ROUTES_ATTR).values()
                     yield from _normalize_controller_routes(routes, obj)
 
-            yield from include(views_module_name)
+            try:
+                yield from include(views_module_name)
+            except AttributeError:
+                return ()
 
     def type_check(self, obj):
         if isinstance(obj, LocalProxy):

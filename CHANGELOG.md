@@ -70,16 +70,21 @@ class YourBundle(AppBundle):
 
 ### Features
 
-- refactor `AppFactory` to support using a custom subclass of `FlaskUnchained` using `AppFactory.APP_CLASS`
-    - support passing all kwargs to it by setting the same names upper-cased in `unchained_config.py`
+- refactor `AppFactory`
+    - support using a custom subclass of `AppFactory`
+    - support using a custom subclass of `FlaskUnchained` using `AppFactory.APP_CLASS`
+    - support passing all kwargs to `FlaskUnchained` by setting the same names upper-cased in `unchained_config.py`
+    - support automatic defaults for the Flask app kwargs `root_path`, `template_folder`, `static_folder`, and `static_url_path`
+    - support using a custom module name for `unchained_config` by setting the `UNCHAINED_CONFIG` environment variable
+    - support single-file (single module) app bundles
 - set up automatic dependency injection on commands
 - make it possible to define multiple modules a hook should load from
 - add `flask unchained config` command for listing the current config (optionally filtered by bundle)
 - add `flask unchained extensions` command for listing extensions discovered by the app
 - add `flask unchaiend services` command for listing services discovered by the app
 - add compatibility with pytest 5
-- support automatic defaults for the Flask app kwargs `template_folder`, `static_folder`, and `static_url_path`
 - alias `flask.abort` (`werkzeug.utils.abort`) as `flask_unchained.abort`
+- alias `flask_wtf.csrf.generate_csrf` as `flask_unchained.generate_csrf`
 
 ### Bug Fixes
 
