@@ -1,5 +1,6 @@
-from flask_unchained import CREATE, GET, PATCH, injectable
+from flask_unchained import injectable
 from flask_unchained.bundles.api import ModelResource
+from flask_unchained.bundles.controller.constants import CREATE, GET, PATCH
 
 from ..decorators import anonymous_user_required, auth_required_same_user
 from ..models import User

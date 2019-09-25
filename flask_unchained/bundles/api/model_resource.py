@@ -4,8 +4,8 @@ from flask import jsonify, make_response
 from flask_unchained import Resource, route, param_converter, unchained, injectable
 from flask_unchained.bundles.controller.attr_constants import (
     CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR)
-from flask_unchained import (
-    ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,
+from flask_unchained.bundles.controller.constants import (
+    ALL_RESOURCE_METHODS, RESOURCE_INDEX_METHODS, RESOURCE_MEMBER_METHODS,
     CREATE, DELETE, GET, LIST, PATCH, PUT)
 from flask_unchained.bundles.controller.resource import (
     _ResourceMetaclass, _ResourceMetaOptionsFactory)
@@ -34,7 +34,7 @@ class _ModelResourceMetaclass(_ResourceMetaclass):
         routes = {}
         include_methods = set(cls.Meta.include_methods)
         exclude_methods = set(cls.Meta.exclude_methods)
-        for method_name in ALL_METHODS:
+        for method_name in ALL_RESOURCE_METHODS:
             if (method_name in exclude_methods
                     or method_name not in include_methods):
                 continue
@@ -43,7 +43,7 @@ class _ModelResourceMetaclass(_ResourceMetaclass):
             if not route:
                 route = Route(None, mcs_args.getattr(method_name))
 
-            if method_name in INDEX_METHODS:
+            if method_name in RESOURCE_INDEX_METHODS:
                 rule = '/'
             else:
                 rule = cls.Meta.member_param
@@ -115,15 +115,15 @@ class _ModelResourceIncludeMethodsMetaOption(MetaOption):
         if value is not _missing:
             return value
 
-        return ALL_METHODS
+        return ALL_RESOURCE_METHODS
 
     def check_value(self, value, mcs_args: McsArgs):
         if not value:
             return
 
-        assert all(x in ALL_METHODS for x in value), \
+        assert all(x in ALL_RESOURCE_METHODS for x in value), \
             f'Invalid values for the {self.name} meta option. The valid values ' \
-            f'are ' + ', '.join(ALL_METHODS)
+            f'are ' + ', '.join(ALL_RESOURCE_METHODS)
 
 
 class _ModelResourceExcludeMethodsMetaOption(MetaOption):
@@ -137,9 +137,9 @@ class _ModelResourceExcludeMethodsMetaOption(MetaOption):
         if not value:
             return
 
-        assert all(x in ALL_METHODS for x in value), \
+        assert all(x in ALL_RESOURCE_METHODS for x in value), \
             f'Invalid values for the {self.name} meta option. The valid values ' \
-            f'are ' + ', '.join(ALL_METHODS)
+            f'are ' + ', '.join(ALL_RESOURCE_METHODS)
 
 
 class _ModelResourceIncludeDecoratorsMetaOption(MetaOption):
@@ -176,15 +176,15 @@ class _ModelResourceIncludeDecoratorsMetaOption(MetaOption):
         if value is not _missing:
             return value
 
-        return ALL_METHODS
+        return ALL_RESOURCE_METHODS
 
     def check_value(self, value, mcs_args: McsArgs):
         if not value:
             return
 
-        assert all(x in ALL_METHODS for x in value), \
+        assert all(x in ALL_RESOURCE_METHODS for x in value), \
             f'Invalid values for the {self.name} meta option. The valid values ' \
-            f'are ' + ', '.join(ALL_METHODS)
+            f'are ' + ', '.join(ALL_RESOURCE_METHODS)
 
 
 class _ModelResourceExcludeDecoratorsMetaOption(MetaOption):
@@ -199,9 +199,9 @@ class _ModelResourceExcludeDecoratorsMetaOption(MetaOption):
         if not value:
             return
 
-        assert all(x in ALL_METHODS for x in value), \
+        assert all(x in ALL_RESOURCE_METHODS for x in value), \
             f'Invalid values for the {self.name} meta option. The valid values ' \
-            f'are ' + ', '.join(ALL_METHODS)
+            f'are ' + ', '.join(ALL_RESOURCE_METHODS)
 
 
 class _ModelResourceMethodDecoratorsMetaOption(MetaOption):
@@ -275,7 +275,7 @@ class ModelResource(Resource, metaclass=_ModelResourceMetaclass):
 
     @classmethod
     def methods(cls):
-        for method in ALL_METHODS:
+        for method in ALL_RESOURCE_METHODS:
             if (method in cls.Meta.exclude_methods
                     or method not in cls.Meta.include_methods):
                 continue
@@ -401,7 +401,7 @@ class ModelResource(Resource, metaclass=_ModelResourceMetaclass):
 
     def get_decorators(self, method_name):
         decorators = super().get_decorators(method_name).copy()
-        if method_name not in ALL_METHODS:
+        if method_name not in ALL_RESOURCE_METHODS:
             return decorators
 
         if isinstance(self.Meta.method_decorators, dict):
@@ -415,7 +415,7 @@ class ModelResource(Resource, metaclass=_ModelResourceMetaclass):
 
         if method_name == LIST:
             decorators.append(partial(list_loader, model=self.Meta.model))
-        elif method_name in MEMBER_METHODS:
+        elif method_name in RESOURCE_MEMBER_METHODS:
             param_name = get_param_tuples(self.Meta.member_param)[0][1]
             kw_name = 'instance'  # needed by the patch/put loaders
             # for get/delete, allow subclasses to rename view fn args

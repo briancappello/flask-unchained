@@ -10,6 +10,7 @@
 - `AppFactory` is now a `Singleton` that must be instantiated (ie change `AppFactory.create_app(env)` to `AppFactory().create_app(env)` in `wsgi.py`)
 - no longer automatically set up dependency injection on all the methods from classes (you can still decorate them manually with `unchained.inject()`, but the preferred approach is to use class attributes to define what inject into the class)
 - default endpoint name for view functions is now just the function name
+- rename Resource method name constants to reduce confusion with HTTP method names
 - customizing bundle module locations changed:
 
 ```python

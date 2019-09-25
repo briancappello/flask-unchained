@@ -2,8 +2,9 @@ from collections import defaultdict
 from flask_unchained import Bundle, FlaskUnchained
 from typing import *
 
-from .constants import (ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,
-                        CREATE, DELETE, GET, LIST, PATCH, PUT)
+from .constants import (
+    ALL_RESOURCE_METHODS, RESOURCE_INDEX_METHODS, RESOURCE_MEMBER_METHODS,
+    CREATE, DELETE, GET, LIST, PATCH, PUT)
 from .controller import Controller
 from .decorators import no_route, route
 from .resource import Resource

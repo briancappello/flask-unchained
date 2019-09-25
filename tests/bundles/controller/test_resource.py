@@ -1,6 +1,6 @@
 from flask_unchained.bundles.controller import Resource, route
 from flask_unchained.bundles.controller.attr_constants import CONTROLLER_ROUTES_ATTR
-from flask_unchained.bundles.controller.constants import ALL_METHODS
+from flask_unchained.bundles.controller.constants import ALL_RESOURCE_METHODS
 from flask_unchained.bundles.controller.utils import join
 
 
@@ -42,7 +42,7 @@ class TestResource:
         assert FooResource.Meta.member_param == '<string:slug>'
 
     def test_method_as_view_assigns_correct_http_methods(self):
-        for method_name in ALL_METHODS:
+        for method_name in ALL_RESOURCE_METHODS:
             view = DefaultResource.method_as_view(method_name)
             assert view.methods == DefaultResource.resource_methods[method_name]
 

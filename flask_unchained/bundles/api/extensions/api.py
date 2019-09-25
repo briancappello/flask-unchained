@@ -5,7 +5,8 @@ except ImportError:
     __location_map__ = defaultdict(None)
 
 from flask_unchained import FlaskUnchained, unchained
-from flask_unchained import CREATE, DELETE, GET, LIST, PATCH, PUT
+from flask_unchained.bundles.controller.constants import (
+    CREATE, DELETE, GET, LIST, PATCH, PUT)
 from flask_unchained.string_utils import title_case, pluralize
 
 from ..apispec import APISpec

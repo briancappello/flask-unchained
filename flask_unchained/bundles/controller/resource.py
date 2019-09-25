@@ -2,7 +2,7 @@ from flask_unchained.string_utils import pluralize
 from py_meta_utils import McsArgs, MetaOption, _missing
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
-from .constants import ALL_METHODS, INDEX_METHODS
+from .constants import ALL_RESOURCE_METHODS, RESOURCE_INDEX_METHODS
 from .constants import CREATE, DELETE, GET, LIST, PATCH, PUT
 from .controller import (Controller, _ControllerMetaclass, _ControllerMetaOptionsFactory,
                          _ControllerUrlPrefixMetaOption, _get_remove_suffixes)
@@ -28,12 +28,12 @@ class _ResourceMetaclass(_ControllerMetaclass):
             return cls
 
         controller_routes = getattr(cls, CONTROLLER_ROUTES_ATTR)
-        for method_name in ALL_METHODS:
+        for method_name in ALL_RESOURCE_METHODS:
             if not clsdict.get(method_name):
                 continue
             route = controller_routes.get(method_name)[0]
             rule = None
-            if method_name in INDEX_METHODS:
+            if method_name in RESOURCE_INDEX_METHODS:
                 rule = '/'
             else:
                 route._is_member_method = True
