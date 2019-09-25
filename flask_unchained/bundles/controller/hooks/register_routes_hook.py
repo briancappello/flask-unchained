@@ -4,6 +4,7 @@ import itertools
 
 from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
 from typing import *
+from werkzeug.local import LocalProxy
 
 from ..attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
 from ..route import Route
@@ -112,6 +113,8 @@ class RegisterRoutesHook(AppFactoryHook):
             yield from include(views_module_name)
 
     def type_check(self, obj):
+        if isinstance(obj, LocalProxy):
+            return False
         is_controller = hasattr(obj, CONTROLLER_ROUTES_ATTR)
         is_view_fn = hasattr(obj, FN_ROUTES_ATTR)
         return is_controller or is_view_fn

@@ -4,6 +4,7 @@ import pkgutil
 
 from types import FunctionType, ModuleType
 from typing import *
+from werkzeug.local import LocalProxy
 
 from .bundles import AppBundle, Bundle
 from .exceptions import NameCollisionError
@@ -182,15 +183,19 @@ class AppFactoryHook:
         child modules/packages in the given module (ie, do not require packages
         to import everything into their ``__init__.py`` for it to be discovered)
         """
-        type_checker = type_checker or self.type_check
-        members = dict(self._get_members(module, type_checker))
+        def type_check_wrapper(obj):
+            if isinstance(obj, LocalProxy):
+                return False
+            return (type_checker or self.type_check)(obj)
+
+        members = dict(self._get_members(module, type_check_wrapper))
 
         # if the passed module is a package, also get members from child modules
         if importlib.util.find_spec(module.__name__).submodule_search_locations:
             for loader, name, is_pkg in pkgutil.walk_packages(module.__path__):
                 child_module_name = f'{module.__package__}.{name}'
                 child_module = importlib.import_module(child_module_name)
-                for key, obj in self._get_members(child_module, type_checker):
+                for key, obj in self._get_members(child_module, type_check_wrapper):
                     if key not in members:
                         members[key] = obj
 
