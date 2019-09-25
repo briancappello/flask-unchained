@@ -13,6 +13,7 @@ __version__ = '0.7.9'
 # aliases
 from flask import current_app, g, request, session, _app_ctx_stack, _request_ctx_stack
 from flask import render_template, render_template_string
+from flask_wtf.csrf import generate_csrf
 from werkzeug.exceptions import abort
 
 from . import _compat

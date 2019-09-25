@@ -2,7 +2,7 @@ import flask
 
 from typing import *
 
-from ..config import AppBundleConfig, BundleConfig
+from ..config import BundleConfig
 from ..app_factory_hook import AppFactoryHook
 from ..bundles import Bundle, AppBundle
 from ..constants import DEV, PROD, STAGING, TEST
@@ -79,16 +79,11 @@ class ConfigureAppHook(AppFactoryHook):
                           env: Union[DEV, PROD, STAGING, TEST],
                           ) -> flask.Config:
         if isinstance(bundle, AppBundle):
-            config = self._get_bundle_config(bundle, env)
-        else:
-            config = flask.Config(None)
-            for bundle_ in bundle._iter_class_hierarchy():
-                config.update(self._get_bundle_config(bundle_, env))
+            return self._get_bundle_config(bundle, env)
 
-        if isinstance(bundle, AppBundle) and 'SECRET_KEY' not in config:
-            raise Exception(f"The `SECRET_KEY` config option is required. Please "
-                            f"set it in your app bundle's {BASE_CONFIG_CLASS} class.")
-
+        config = flask.Config(None)
+        for bundle_ in bundle._iter_class_hierarchy():
+            config.update(self._get_bundle_config(bundle_, env))
         return config
 
     def _get_bundle_config(self,
@@ -103,21 +98,8 @@ class ConfigureAppHook(AppFactoryHook):
         base_config = getattr(bundle_config_module, BASE_CONFIG_CLASS, None)
         env_config = getattr(bundle_config_module, ENV_CONFIG_CLASSES[env], None)
 
-        if isinstance(bundle, AppBundle):
-            if not bundle_config_module:
-                module_name = self.get_bundle_module_names(bundle)[0]
-                raise Exception(
-                    f'Could not find the `{module_name}` module in your app bundle.')
-
-            if not base_config or not issubclass(base_config, AppBundleConfig):
-                raise Exception(
-                    f"Could not find an AppBundleConfig subclass named "
-                    f"{BASE_CONFIG_CLASS} in your app bundle's "
-                    f"{self.get_module_names(bundle)[0]} module.")
-
         merged = flask.Config(None)
         for config in [base_config, env_config]:
             if config:
                 merged.from_object(config)
-
         return merged

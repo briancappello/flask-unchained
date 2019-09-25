@@ -12,6 +12,20 @@
 - default endpoint name for view functions is now just the function name
 - rename Resource method name constants to reduce confusion with HTTP method names
 - remove `AppBundleConfig.ROOT_PATH` and `AppBundleConfig.APP_ROOT` as they didn't always work correctly (use `BundleConfig.current_app.root_path` instead)
+- CSRF protection is no longer enabled by default. To re-enable it:
+
+```python
+from flask_unchained import AppBundle, FlaskUnchained, generate_csrf
+
+class YourAppBundle(AppBundle):
+    def after_init_app(self, app: FlaskUnchained) -> None:
+        @app.after_request
+        def set_csrf_token_cookie(response):
+            if response:
+                response.set_cookie('csrf_token', generate_csrf())
+            return response
+```
+
 - customizing bundle module locations changed:
 
 ```python

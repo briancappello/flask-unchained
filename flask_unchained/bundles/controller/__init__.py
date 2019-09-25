@@ -55,20 +55,6 @@ class ControllerBundle(Bundle):
         for name in ['string', 'str']:
             app.url_map.converters[name] = StringConverter
 
-    def after_init_app(self, app: FlaskUnchained):
-        """
-        Configure an after request hook to set the ``csrf_token`` in the cookie.
-        """
-
-        from flask_wtf.csrf import generate_csrf
-
-        # send CSRF token in the cookie
-        @app.after_request
-        def set_csrf_cookie(response):
-            if response:
-                response.set_cookie('csrf_token', generate_csrf())
-            return response
-
 
 __all__ = [
     'ControllerBundle',
