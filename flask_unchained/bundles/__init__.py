@@ -7,7 +7,6 @@ from typing import *
 from ..flask_unchained import FlaskUnchained
 from ..string_utils import right_replace, slugify, snake_case
 from ..unchained import unchained
-from ..utils import safe_import_module
 
 
 def _normalize_module_name(module_name):
@@ -253,14 +252,11 @@ class Bundle(metaclass=_BundleMetaclass):
         if self.is_single_module and isinstance(self, AppBundle):
             return True
 
+        from ..hooks.views_hook import ViewsHook
         for bundle in self._iter_class_hierarchy():
-            if bundle._has_views_module():
+            if ViewsHook.import_bundle_modules(bundle):
                 return True
         return False
-
-    def _has_views_module(self) -> bool:
-        views_module_name = getattr(self, 'views_module_name', 'views')
-        return bool(safe_import_module(f'{self.module_name}.{views_module_name}'))
 
     @property
     def _blueprint_name(self) -> str:

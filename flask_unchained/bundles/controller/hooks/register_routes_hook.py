@@ -103,12 +103,8 @@ class RegisterRoutesHook(AppFactoryHook):
         if not bundle._has_views():
             return ()
 
-        bundle_views_module_names = getattr(bundle, 'views_module_names', ['views'])
-        for bundle_views_module_name in bundle_views_module_names:
-            views_module_name = (bundle.module_name if bundle.is_single_module
-                                 else f'{bundle.module_name}.{bundle_views_module_name}')
-            views_module = importlib.import_module(views_module_name)
-
+        from flask_unchained.hooks.views_hook import ViewsHook
+        for views_module in ViewsHook.import_bundle_modules(bundle):
             for _, obj in inspect.getmembers(views_module, self.type_check):
                 if hasattr(obj, FN_ROUTES_ATTR):
                     yield getattr(obj, FN_ROUTES_ATTR)
@@ -117,7 +113,7 @@ class RegisterRoutesHook(AppFactoryHook):
                     yield from _normalize_controller_routes(routes, obj)
 
             try:
-                yield from include(views_module_name)
+                yield from include(views_module.__name__)
             except AttributeError:
                 return ()
 

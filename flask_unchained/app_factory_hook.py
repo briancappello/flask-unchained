@@ -107,14 +107,14 @@ class AppFactoryHook:
         The :class:`~flask_unchained.Bundle` instance this hook is from (if any).
         """
 
-    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
+    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]) -> None:
         """
         Hook entry point. Override to disable standard behavior of iterating
         over bundles to discover objects and processing them.
         """
         self.process_objects(app, self.collect_from_bundles(bundles))
 
-    def process_objects(self, app: FlaskUnchained, objects: Dict[str, Any]):
+    def process_objects(self, app: FlaskUnchained, objects: Dict[str, Any]) -> None:
         """
         Implement to do stuff with discovered objects (eg, registering them with
         the app instance).
