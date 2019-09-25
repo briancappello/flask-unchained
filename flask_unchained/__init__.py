@@ -10,6 +10,10 @@
 
 __version__ = '0.7.9'
 
+# aliases
+from flask import current_app, g, request, session, _app_ctx_stack, _request_ctx_stack
+from flask import render_template, render_template_string
+from werkzeug.exceptions import abort
 
 from . import _compat
 from .app_factory import AppFactory
@@ -21,20 +25,10 @@ from .decorators import param_converter
 from .di import BaseService, injectable
 from .flask_unchained import FlaskUnchained
 from .forms import FlaskForm
+from .routes import (controller, resource, func, include, prefix,
+                     delete, get, patch, post, put, rule)
 from .unchained import Unchained, unchained
 from .utils import get_boolean_env
+from .views import Controller, Resource, route, no_route, redirect, url_for
 
 from .bundles.babel import gettext, ngettext, lazy_gettext, lazy_ngettext
-from .bundles.controller.constants import (ALL_METHODS, INDEX_METHODS, MEMBER_METHODS,
-                                           CREATE, DELETE, GET, LIST, PATCH, PUT)
-from .bundles.controller.controller import Controller
-from .bundles.controller.decorators import route, no_route
-from .bundles.controller.resource import Resource
-from .bundles.controller.routes import (
-    controller, delete, func, get, include, patch, post, prefix, put, resource, rule)
-from .bundles.controller.utils import redirect, url_for
-
-
-# aliases
-from flask import current_app, g, request, session, _app_ctx_stack, _request_ctx_stack
-from werkzeug.exceptions import abort
