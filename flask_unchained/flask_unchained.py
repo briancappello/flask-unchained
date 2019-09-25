@@ -70,6 +70,12 @@ class FlaskUnchained(Flask):
         return super().add_url_rule(rule, endpoint, view_func,
                                     provide_automatic_options, **options)
 
+    def __str__(self):
+        return f"<FlaskUnchained module={self.import_name!r}>"
+
+    def __repr__(self):
+        return self.__str__()
+
 
 __all__ = [
     'FlaskUnchained',
