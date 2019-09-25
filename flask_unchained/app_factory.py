@@ -133,7 +133,7 @@ class AppFactory(metaclass=Singleton):
 
         root_path = getattr(unchained_config, 'ROOT_PATH', None)
         if not root_path and bundle and bundle.is_single_module:
-            root_path = bundle.folder
+            root_path = bundle.root_path
 
         def root_folder_or_none(folder_name):
             if not root_path:

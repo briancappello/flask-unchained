@@ -26,7 +26,7 @@ To create a new bundle, create a new package and subclass :class:`~flask_unchain
      - Top-level module name of the bundle (dot notation). Automatically determined.
    * - name
      - Name of the bundle. Defaults to the snake cased class name.
-   * - folder
+   * - root_path
      - Root directory path of the bundle's package. Automatically determined.
    * - template_folder
      - Root directory path of the bundle's template folder. By default, if there exists a folder named ``templates`` in the bundle package, it will be used, otherwise ``None``.

@@ -34,7 +34,7 @@ class _BundleIsSingleModuleDescriptor:
         return not importlib.util.find_spec(cls.module_name).submodule_search_locations
 
 
-class _BundleFolderDescriptor:
+class _BundleRootPathDescriptor:
     def __get__(self, instance, cls):
         module = importlib.import_module(cls.module_name)
         return os.path.dirname(module.__file__)
@@ -50,7 +50,7 @@ class _BundleNameDescriptor:
 class _BundleStaticFolderDescriptor:
     def __get__(self, instance, cls):
         if not hasattr(instance, '_static_folder'):
-            instance._static_folder = os.path.join(instance.folder, 'static')
+            instance._static_folder = os.path.join(instance.root_path, 'static')
             if not os.path.exists(instance._static_folder):
                 instance._static_folder = None
         return instance._static_folder
@@ -65,7 +65,7 @@ class _BundleStaticUrlPathDescriptor:
 class _BundleTemplateFolderDescriptor:
     def __get__(self, instance, cls):
         if not hasattr(instance, '_template_folder'):
-            instance._template_folder = os.path.join(instance.folder, 'templates')
+            instance._template_folder = os.path.join(instance.root_path, 'templates')
             if not os.path.exists(instance._template_folder):
                 instance._template_folder = None
         return instance._template_folder
@@ -173,7 +173,7 @@ class Bundle(metaclass=_BundleMetaclass):
     name.
     """
 
-    folder: str = _BundleFolderDescriptor()
+    root_path: str = _BundleRootPathDescriptor()
     """
     Root directory path of the bundle's package. Automatically determined.
     """
@@ -182,14 +182,14 @@ class Bundle(metaclass=_BundleMetaclass):
     """
     Root directory path of the bundle's template folder. By default, if there exists
     a folder named ``templates`` in the bundle package
-    :attr:`~flask_unchained.Bundle.folder`, it will be used, otherwise ``None``.
+    :attr:`~flask_unchained.Bundle.root_path`, it will be used, otherwise ``None``.
     """
 
     static_folder: Optional[str] = _BundleStaticFolderDescriptor()
     """
     Root directory path of the bundle's static assets folder. By default, if there exists
     a folder named ``static`` in the bundle package
-    :attr:`~flask_unchained.Bundle.folder`, it will be used, otherwise ``None``.
+    :attr:`~flask_unchained.Bundle.root_path`, it will be used, otherwise ``None``.
     """
 
     static_url_path: Optional[str] = _BundleStaticUrlPathDescriptor()

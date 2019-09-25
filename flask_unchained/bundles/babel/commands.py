@@ -75,8 +75,8 @@ def _get_babel_cfg():
     bundle = list(current_app.unchained.bundles.values())[-1]
     babel_cfg = None
     if isinstance(bundle, AppBundle):
-        babel_cfg = os.path.join(os.path.dirname(bundle.folder), 'babel.cfg')
-    bundle_babel_cfg = os.path.join(bundle.folder, 'babel.cfg')
+        babel_cfg = os.path.join(os.path.dirname(bundle.root_path), 'babel.cfg')
+    bundle_babel_cfg = os.path.join(bundle.root_path, 'babel.cfg')
     if babel_cfg and os.path.exists(babel_cfg):
         return babel_cfg
     elif os.path.exists(bundle_babel_cfg):
@@ -92,7 +92,7 @@ def _get_translations_dir():
     bundle = list(current_app.unchained.bundles.values())[-1]
     is_user_app = isinstance(bundle, AppBundle)
 
-    root_dir = os.path.dirname(bundle.folder) if is_user_app else bundle.folder
+    root_dir = os.path.dirname(bundle.root_path) if is_user_app else bundle.root_path
     translations_dir = os.path.join(root_dir, 'translations')
     if not os.path.exists(translations_dir):
         os.makedirs(translations_dir, exist_ok=True)

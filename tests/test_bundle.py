@@ -37,8 +37,8 @@ class TestBundleDescriptors:
 
     def test_folder_descriptor(self):
         cwd = os.getcwd()
-        assert MyAppBundle.folder == cwd + '/tests/_bundles/myapp'
-        assert VendorBundle.folder == cwd + '/tests/_bundles/vendor_bundle'
+        assert MyAppBundle.root_path == cwd + '/tests/_bundles/myapp'
+        assert VendorBundle.root_path == cwd + '/tests/_bundles/vendor_bundle'
 
     def test_static_folder_descriptor(self):
         cwd = os.getcwd()
@@ -68,7 +68,7 @@ class TestBundleDescriptorsWithInheritance:
 
     def test_folder(self):
         cwd = os.getcwd()
-        assert OverrideVendorBundle.folder == \
+        assert OverrideVendorBundle.root_path == \
                cwd + '/tests/_bundles/override_vendor_bundle'
 
     def test_name(self):
