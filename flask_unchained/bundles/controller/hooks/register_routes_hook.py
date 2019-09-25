@@ -37,8 +37,7 @@ class RegisterRoutesHook(AppFactoryHook):
             if route.should_register(app):
                 if route.module_name and route in self.bundle.endpoints[route.endpoint]:
                     import warnings
-                    warnings.warn(f'Duplicate route registration found: '
-                                  f'{str(route.full_rule)})')
+                    warnings.warn(f'Duplicate route found: {route}')
                     continue
 
                 self.bundle.endpoints[route.endpoint].append(route)

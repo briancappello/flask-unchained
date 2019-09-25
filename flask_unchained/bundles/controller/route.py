@@ -268,10 +268,10 @@ class Route:
         return not self.__eq__(other)
 
     def __repr__(self):
+        props = [prop for prop in ['full_name', 'endpoint', 'methods', 'defaults']
+                 if getattr(self, prop)]
         try:
-            return (f'Route('
-                    f'endpoint={self.endpoint}, '
-                    f'rule={self.rule}, '
-                    f'methods={self.methods})')
+            self.rule and props.insert(0, 'rule')
         except:
-            return f'Route(endpoint={self.endpoint}, methods={self.methods})'
+            pass
+        return f"Route({', '.join(f'{k}={repr(getattr(self, k))}' for k in props)})"
