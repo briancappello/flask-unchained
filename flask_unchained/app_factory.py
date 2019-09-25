@@ -178,7 +178,7 @@ class AppFactory(metaclass=Singleton):
             try:
                 module = importlib.import_module(module_name)
             except ImportError as e:
-                if str(e) == f"No module named '{module_name}'":
+                if f"No module named '{module_name}'" in str(e):
                     continue
                 raise e
 
