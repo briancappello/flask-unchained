@@ -79,6 +79,7 @@ class YourBundle(AppBundle):
 - move `Bundle` and `AppBundle` into the `flask_unchained.bundles` module
 - move `BundleBlueprint` into the `flask_unchained.bundles._blueprint` module
 - warn when identical routes are registered
+- make `AppFactory` methods `load_bundles`, `load_bundle` and `is_bundle` classmethods
 
 ## v0.7.9 (2019/05/19)
 

@@ -152,11 +152,12 @@ class AppFactory(metaclass=Singleton):
             e.msg = msg
             raise e
 
-    def load_bundles(self,
+    @classmethod
+    def load_bundles(cls,
                      bundle_package_names: Optional[List[str]] = None,
                      ) -> Tuple[Union[None, AppBundle], List[Bundle]]:
         bundle_package_names = bundle_package_names or []
-        for b in self.REQUIRED_BUNDLES:
+        for b in cls.REQUIRED_BUNDLES:
             if b not in bundle_package_names:
                 bundle_package_names.insert(0, b)
 
@@ -165,15 +166,14 @@ class AppFactory(metaclass=Singleton):
 
         bundles = []
         for bundle_package_name in bundle_package_names:
-            bundles.append(self.load_bundle(bundle_package_name))
+            bundles.append(cls.load_bundle(bundle_package_name))
 
         if not isinstance(bundles[-1], AppBundle):
             return None, bundles
         return bundles[-1], bundles
 
-    def load_bundle(self,
-                    bundle_package_name: str,
-                    ) -> Union[AppBundle, Bundle]:
+    @classmethod
+    def load_bundle(cls, bundle_package_name: str) -> Union[AppBundle, Bundle]:
         for module_name in [f'{bundle_package_name}.bundle', bundle_package_name]:
             try:
                 module = importlib.import_module(module_name)
@@ -194,7 +194,8 @@ class AppFactory(metaclass=Singleton):
             ' Please make sure this bundle is installed and that there is a Bundle'
             ' subclass in the packages\'s bundle module or its __init__.py file.')
 
-    def is_bundle(self, module: ModuleType) -> FunctionType:
+    @classmethod
+    def is_bundle(cls, module: ModuleType) -> FunctionType:
         def _is_bundle(obj):
             return (
                 isinstance(obj, type) and issubclass(obj, Bundle)
