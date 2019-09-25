@@ -36,8 +36,8 @@ class RegisterModelsHook(AppFactoryHook):
         ctx.update(self.bundle.models)
 
     def import_bundle_modules(self, bundle):
-        module_names = self.get_module_names(bundle)
-        for module_name in module_names:
-            if self.unchained.env == TEST and module_name in sys.modules:
-                del sys.modules[module_name]
+        if self.unchained.env == TEST:
+            for module_name in self.get_module_names(bundle):
+                if module_name in sys.modules:
+                    del sys.modules[module_name]
         return super().import_bundle_modules(bundle)
