@@ -67,7 +67,6 @@ class YourBundle(AppBundle):
 
 - fix grouping routes by which bundle they're from
 - fix `ConfigureAppHook` to load configs from every bundle in the hierarchy
-- if `flask_unchained.bundles.controller` is explicitly listed in `unchained_config`, make sure it gets loaded first
 - fix passing explicit rule overrides to `routes.resource`
 
 ### Internals

@@ -156,18 +156,9 @@ class AppFactory(metaclass=Singleton):
                      bundle_package_names: Optional[List[str]] = None,
                      ) -> Tuple[Union[None, AppBundle], List[Bundle]]:
         bundle_package_names = bundle_package_names or []
-        controller_bundle = 'flask_unchained.bundles.controller'
-        explicit_controller_bundle = False
         for b in self.REQUIRED_BUNDLES:
             if b not in bundle_package_names:
                 bundle_package_names.insert(0, b)
-            elif b == controller_bundle:
-                explicit_controller_bundle = True
-
-        # controller bundle must be first
-        if explicit_controller_bundle:
-            bundle_package_names.pop(bundle_package_names.index(controller_bundle))
-            bundle_package_names.insert(0, controller_bundle)
 
         if not bundle_package_names:
             return None, []
