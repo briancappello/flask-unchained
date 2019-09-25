@@ -6,6 +6,7 @@ from typing import *
 
 from ..flask_unchained import FlaskUnchained
 from ..string_utils import right_replace, slugify, snake_case
+from ..unchained import unchained
 from ..utils import safe_import_module
 
 
@@ -310,7 +311,13 @@ class Bundle(metaclass=_BundleMetaclass):
                 f'module={self.module_name!r}>')
 
 
-class AppBundle(Bundle):
+class _AppBundleMetaclass(_BundleMetaclass):
+    def __init__(cls, name, bases, clsdict):
+        super().__init__(name, bases, clsdict)
+        unchained._app_bundle_cls = cls
+
+
+class AppBundle(Bundle, metaclass=_AppBundleMetaclass):
     """
     Like :class:`Bundle`, except used to specify your bundle is the top-most
     application bundle.

@@ -134,7 +134,7 @@ class _ModelSerializerMetaclass(_BaseModelSchemaMetaclass):
         if model_missing:
             raise AttributeError(f'{name} is missing the ``class Meta`` model attribute')
 
-        model = None
+        model = meta.model
         try:
             model = unchained.sqlalchemy_bundle.models[meta.model.__name__]
         except AttributeError as e:

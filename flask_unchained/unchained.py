@@ -45,6 +45,7 @@ class Unchained:
         self.services = AttrDict()
 
         self._app = None
+        self._app_bundle_cls = None
         self._deferred_functions = []
         self._initialized = False
         self._models_initialized = False

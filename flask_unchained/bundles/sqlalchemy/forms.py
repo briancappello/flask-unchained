@@ -163,10 +163,16 @@ class _ModelFormMetaclass(_FormMetaclass):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         Meta = process_factory_meta_options(mcs_args, ModelFormMetaOptionsFactory)
         mcs_args.clsdict['Meta'] = type('Meta', (), Meta._to_clsdict())
-        if not Meta.abstract and unchained._models_initialized:
+        if not Meta.abstract and (
+                unchained._models_initialized
+                or unchained._app_bundle_cls.is_single_module
+        ):
             try:
                 Meta.model = unchained.sqlalchemy_bundle.models[Meta.model.__name__]
-            except KeyError:
+            except (
+                KeyError,        # models not initialized yet
+                AttributeError,  # unchained not initialized yet
+            ):
                 pass
             new_clsdict = model_fields(Meta.model,
                                        only=Meta.only,
