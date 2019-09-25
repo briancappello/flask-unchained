@@ -40,6 +40,7 @@
 - default endpoint name for view functions is now just the function name
 - rename Resource method name constants to reduce confusion with HTTP method names
 - remove `AppBundleConfig.ROOT_PATH` and `AppBundleConfig.APP_ROOT` as they didn't always work correctly (use `BundleConfig.current_app.root_path` instead)
+- moved `flask_unchained.commands.utils.print_table` to `flask_unchained.cli.print_table`
 - CSRF protection is no longer enabled by default. To re-enable it:
 
 ```python

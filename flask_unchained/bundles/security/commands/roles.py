@@ -1,6 +1,5 @@
 from flask_unchained import unchained
-from flask_unchained.cli import cli, click
-from flask_unchained.commands.utils import print_table
+from flask_unchained.cli import cli, click, print_table
 
 from .utils import _query_to_role
 from ..services import RoleManager

@@ -2,12 +2,10 @@
 import inspect
 
 from flask_unchained import current_app
-from flask_unchained.cli import click, with_appcontext
+from flask_unchained.cli import click, with_appcontext, print_table
 from typing import *
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 from werkzeug.routing import Rule
-
-from .utils import print_table
 
 
 @click.command()

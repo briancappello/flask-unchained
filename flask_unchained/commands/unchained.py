@@ -1,8 +1,7 @@
 from flask_unchained import current_app
-from flask_unchained.cli import cli, click
+from flask_unchained.cli import cli, click, print_table
 
 from ..utils import format_docstring
-from .utils import print_table
 
 
 @cli.group('unchained')
