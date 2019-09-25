@@ -31,14 +31,14 @@ class RegisterModelResourcesHook(AppFactoryHook):
 
         if resource_cls.Meta.serializer is None:
             resource_cls.Meta.serializer = serializer_cls()
+
         if resource_cls.Meta.serializer_many is None:
             resource_cls.Meta.serializer_many = self.bundle.many_by_model.get(
                 model_name, serializer_cls)(many=True)
+
         if resource_cls.Meta.serializer_create is None:
-            serializer = self.bundle.create_by_model.get(
-                model_name, serializer_cls)()
-            serializer.context['is_create'] = True
-            resource_cls.Meta.serializer_create = serializer
+            resource_cls.Meta.serializer_create = self.bundle.create_by_model.get(
+                model_name, serializer_cls)(context=dict(is_create=True))
 
     def type_check(self, obj):
         if not isinstance(obj, type):
