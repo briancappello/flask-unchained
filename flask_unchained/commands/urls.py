@@ -45,6 +45,9 @@ def url(url: str, method: str):
 def urls(order_by: Optional[str] = None):
     """List all URLs registered with the app."""
     url_rules: List[Rule] = current_app.url_map._rules
+    if not url_rules:
+        click.echo("No routes found.")
+        return
 
     # sort the rules. by default they're sorted by priority,
     # ie in the order they were registered with the app

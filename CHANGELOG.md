@@ -73,6 +73,7 @@ class YourBundle(AppBundle):
 - fix passing explicit rule overrides to `routes.resource`
 - fix automatic endpoint names for resource routes
 - fix using default url rule from view function when no explicit rule passed to `func`
+- fix `flask urls` command when no URLs found
 - make sure hooks don't resolve local proxies
 
 ### Internals
