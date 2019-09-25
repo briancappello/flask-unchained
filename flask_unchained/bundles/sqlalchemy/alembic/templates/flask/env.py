@@ -7,7 +7,7 @@ from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 
 # make sure the migrations versions directory exists
-versions_dir = os.path.join(current_app.config.ROOT_PATH,
+versions_dir = os.path.join(current_app.root_path,
                             current_app.config.ALEMBIC['script_location'],
                             'versions')
 os.makedirs(versions_dir, exist_ok=True)

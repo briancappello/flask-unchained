@@ -11,6 +11,7 @@
 - no longer automatically set up dependency injection on all the methods from classes (you can still decorate them manually with `unchained.inject()`, but the preferred approach is to use class attributes to define what inject into the class)
 - default endpoint name for view functions is now just the function name
 - rename Resource method name constants to reduce confusion with HTTP method names
+- remove `AppBundleConfig.ROOT_PATH` and `AppBundleConfig.APP_ROOT` as they didn't always work correctly (use `BundleConfig.current_app.root_path` instead)
 - customizing bundle module locations changed:
 
 ```python

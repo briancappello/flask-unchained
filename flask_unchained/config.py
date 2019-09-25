@@ -1,19 +1,16 @@
-import os
-import sys
-
 from py_meta_utils import OptionalClass
 
 from .utils import get_boolean_env
 
 
-class _CurrentAppMetaclass(type):
+class _BundleConfigMetaclass(type):
     current_app = OptionalClass()
 
     def _set_current_app(cls, app):
         cls.current_app = app
 
 
-class BundleConfig(metaclass=_CurrentAppMetaclass):
+class BundleConfig(metaclass=_BundleConfigMetaclass):
     """
     Base class for bundle configs. Allows access to the app-under-construction
     as it's currently configured from the order bundles were declared in
@@ -28,16 +25,6 @@ class BundleConfig(metaclass=_CurrentAppMetaclass):
         class Config(BundleConfig):
             SHOULD_PRETTY_PRINT_JSON = BundleConfig.current_app.config.DEBUG
     """
-
-
-class _AppRootDescriptor:
-    def __get__(self, instance, cls):
-        return os.path.dirname(sys.modules[cls.__module__].__file__)
-
-
-class _RootPathDescriptor:
-    def __get__(self, instance, cls):
-        return os.path.abspath(os.path.join(cls.APP_ROOT, os.pardir))
 
 
 class AppBundleConfig(BundleConfig):
@@ -64,16 +51,6 @@ class AppBundleConfig(BundleConfig):
 
         class TestConfig(Config):
             pass
-    """
-
-    APP_ROOT: str = _AppRootDescriptor()
-    """
-    Root path of the app bundle. Determined automatically.
-    """
-
-    ROOT_PATH: str = _RootPathDescriptor()
-    """
-    Root path of the project. Determined automatically.
     """
 
 
