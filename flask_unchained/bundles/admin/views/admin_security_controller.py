@@ -10,4 +10,4 @@ class AdminSecurityController(SecurityController):
     customize the template folder to use admin-specific templates.
     """
     class Meta:
-        template_folder_name = 'admin'
+        templates_folder_name = 'admin'

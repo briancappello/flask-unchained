@@ -115,7 +115,7 @@ class _ControllerTemplateFolderNameMetaOption(MetaOption):
     after the first one is found (if any). It then gets converted to snake-case.
     """
     def __init__(self):
-        super().__init__('template_folder_name', default=_missing, inherit=False)
+        super().__init__('templates_folder_name', default=_missing, inherit=False)
 
     def get_value(self, meta, base_classes_meta, mcs_args: McsArgs):
         value = super().get_value(meta, base_classes_meta, mcs_args)
@@ -190,7 +190,7 @@ class Controller(metaclass=_ControllerMetaclass):
                 abstract = False  # this is the default; no need to set explicitly
                 decorators = ()  # a list of decorators to apply to all view methods
                                  # on the controller (defaults to an empty tuple)
-                template_folder_name = 'site'  # defaults to the snake-cased class name,
+                templates_folder_name = 'site'  # defaults to the snake-cased class name,
                                                # minus any Controller/View suffix
                 template_file_extension = app.config.TEMPLATE_FILE_EXTENSION = '.html'
                 url_prefix = None  # optional url prefix to use for all routes
@@ -221,7 +221,7 @@ class Controller(metaclass=_ControllerMetaclass):
 
     How do the calls to render know which template to use? They look in
     ``Bundle.template_folder`` for a folder with the controller's
-    ``Meta.template_folder_name`` and a file with the passed name and
+    ``Meta.templates_folder_name`` and a file with the passed name and
     ``Meta.template_file_extension``. For example::
 
         # your bundle root
@@ -263,8 +263,8 @@ class Controller(metaclass=_ControllerMetaclass):
             template_file_extension = (self.Meta.template_file_extension
                                        or app.config.TEMPLATE_FILE_EXTENSION)
             template_name = f'{template_name}{template_file_extension}'
-        if self.Meta.template_folder_name and os.sep not in template_name:
-            template_name = os.path.join(self.Meta.template_folder_name,
+        if self.Meta.templates_folder_name and os.sep not in template_name:
+            template_name = os.path.join(self.Meta.templates_folder_name,
                                          template_name)
         return render_template(template_name, **ctx)
 

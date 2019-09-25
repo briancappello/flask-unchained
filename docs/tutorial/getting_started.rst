@@ -307,7 +307,7 @@ You can also set it manually to customize the folder the controller will look fo
 
    class SiteController(Controller):
        class Meta:
-           template_folder_name = 'site'
+           templates_folder_name = 'site'
 
 The template's code itself is about as simple as it gets, with a tiny bit of styling thrown in:
 
