@@ -127,10 +127,28 @@ class AppFactory(metaclass=Singleton):
         for kw in valid_flask_kwargs:
             if hasattr(unchained_config, kw.upper()):
                 flask_kwargs.setdefault(kw, getattr(unchained_config, kw.upper()))
-            elif kw in {'static_folder', 'template_folder'}:
-                flask_kwargs.setdefault(kw, None)
 
-        return self.APP_CLASS(app_import_name, **flask_kwargs)
+        root_path = getattr(unchained_config, 'ROOT_PATH', None)
+
+        def root_folder_or_none(folder_name):
+            if not root_path:
+                return None
+            folder = os.path.join(root_path, folder_name)
+            return folder if os.path.isdir(folder) else None
+
+        if 'template_folder' not in flask_kwargs:
+            flask_kwargs.setdefault('template_folder', root_folder_or_none('templates'))
+
+        if 'static_folder' not in flask_kwargs:
+            flask_kwargs.setdefault('static_folder', root_folder_or_none('static'))
+
+        if flask_kwargs['static_folder'] and not flask_kwargs.get('static_url_path', None):
+            flask_kwargs['static_url_path'] = '/static'
+
+        app_import_name = (bundle.module_name.split('.')[0] if bundle
+                           else (app_import_name_or_bundle or 'tests'))
+        app = self.APP_CLASS(app_import_name, **flask_kwargs)
+        return app
 
     @staticmethod
     def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]) -> ModuleType:
