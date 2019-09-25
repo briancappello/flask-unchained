@@ -161,7 +161,7 @@ class TestFunc:
         assert route.view_func == undecorated_view
         assert route.rule == '/undecorated-view'
         assert route.blueprint is None
-        assert route.endpoint == 'tests.bundles.controller.test_routes.undecorated_view'
+        assert route.endpoint == 'undecorated_view'
         assert route.defaults == {}
         assert route.methods == ['GET']
         assert route.only_if is _missing
@@ -184,7 +184,7 @@ class TestFunc:
         assert route.view_func == decorated_view
         assert route.rule == '/decorated-view'
         assert route.blueprint is None
-        assert route.endpoint == 'tests.bundles.controller.test_routes.decorated_view'
+        assert route.endpoint == 'decorated_view'
         assert route.defaults == {}
         assert route.methods == ['GET']
         assert route.only_if is _missing
@@ -217,7 +217,7 @@ class TestFunc:
 
     def test_it_makes_new_route_if_decorated_with_multiple_other_routes(self):
         route = list(func(multi_route_view))[0]
-        assert route.endpoint == 'tests.bundles.controller.test_routes.multi_route_view'
+        assert route.endpoint == 'multi_route_view'
 
     def test_it_reuses_route_if_url_matches_a_decorated_route(self):
         route = list(func('/first', multi_route_view, methods=['PUT']))[0]

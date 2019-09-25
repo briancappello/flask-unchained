@@ -123,7 +123,7 @@ class Route:
             return endpoint if not self.bp_name else f'{self.bp_name}.{endpoint}'
         elif self.bp_name:
             return f'{self.bp_name}.{self.method_name}'
-        return f'{self.view_func.__module__}.{self.method_name}'
+        return self.method_name
 
     @endpoint.setter
     def endpoint(self, endpoint: str):
