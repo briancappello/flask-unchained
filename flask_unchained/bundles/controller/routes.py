@@ -143,12 +143,7 @@ def func(rule_or_view_func: Union[str, Callable],
     :param rule_options: Keyword arguments that ultimately end up getting passed on to
                          :class:`~werkzeug.routing.Rule`
     """
-    rule, view_func = _normalize_args(
-        rule_or_view_func, view_func, _is_view_func)
-
-    route = Route(rule, view_func, blueprint=blueprint, defaults=defaults,
-                  endpoint=endpoint, methods=methods, only_if=only_if,
-                  **rule_options)
+    rule, view_func = _normalize_args(rule_or_view_func, view_func, _is_view_func)
 
     existing_routes = getattr(view_func, FN_ROUTES_ATTR, [])
     if len(existing_routes) == 1:
@@ -158,6 +153,12 @@ def func(rule_or_view_func: Union[str, Callable],
         lookup_rule = (rule if isinstance(rule, str)
                        else method_name_to_url(view_func.__name__))
         existing_route = routes_by_rule.get(lookup_rule, None)
+
+    route = Route(rule or (existing_route.rule if existing_route
+                           else method_name_to_url(view_func.__name__)),
+                  view_func, blueprint=blueprint, defaults=defaults,
+                  endpoint=endpoint, methods=methods, only_if=only_if,
+                  **rule_options)
 
     if not existing_route:
         yield route

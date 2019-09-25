@@ -70,6 +70,7 @@ class YourBundle(AppBundle):
 - fix `ConfigureAppHook` to load configs from every bundle in the hierarchy
 - fix passing explicit rule overrides to `routes.resource`
 - fix automatic endpoint names for resource routes
+- fix using default url rule from view function when no explicit rule passed to `func`
 - make sure hooks don't resolve local proxies
 
 ### Internals
