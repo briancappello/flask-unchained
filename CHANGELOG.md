@@ -4,15 +4,15 @@
 
 ### Features
 
-- refactor `AppFactory`
-    - support using a custom subclass of `AppFactory`
+- :fire: major improvements to `AppFactory` and `AppFactoryHook`s :fire:
     - support using a custom subclass of `FlaskUnchained` using `AppFactory.APP_CLASS`
-    - support passing all kwargs to `FlaskUnchained` by setting the same names upper-cased in `unchained_config.py`
+    - support using a custom subclass of `AppFactory`
+    - support passing all kwargs to `Flask` by setting the same names upper-cased in `unchained_config`
     - support automatic defaults for the Flask app kwargs `root_path`, `template_folder`, `static_folder`, and `static_url_path`
     - support using a custom module name for `unchained_config` by setting the `UNCHAINED_CONFIG` environment variable
-    - support single-file (single module) app bundles
-- set up automatic dependency injection on commands
-- make it possible to define multiple modules a hook should load from
+    - :fire: support single-file app bundles :fire: (just export the app bundle as `UNCHAINED_CONFIG`)
+    - make it possible to define multiple modules hooks should load from (excluding config and routes, as those only make sense to live inside a single module within bundles)
+- set up automatic dependency injection on commands (use `from flask_unchained.cli import cli, click` and define command groups for your commands using `@cli.group()`)
 - add `flask unchained config` command for listing the current config (optionally filtered by bundle)
 - add `flask unchained extensions` command for listing extensions discovered by the app
 - add `flask unchaiend services` command for listing services discovered by the app
