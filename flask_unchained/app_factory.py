@@ -59,8 +59,8 @@ class AppFactory(metaclass=Singleton):
         :param env: Which environment the app should run in. Should be one of
                     "development", "production", "staging", or "test" (you can import
                     them: ``from flask_unchained import DEV, PROD, STAGING, TEST``)
-        :param bundles: An optional list of bundle modules names to use (mainly
-                        useful for testing)
+        :param bundles: An optional list of bundle modules names to use. Overrides
+                        ``unchained_config.BUNDLES`` (mainly useful for testing).
         :param flask_kwargs: keyword argument overrides for the :class:`FlaskUnchained`
                              constructor
         :param _config_overrides: a dictionary of config option overrides; meant for
