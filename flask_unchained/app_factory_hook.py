@@ -266,15 +266,16 @@ class AppFactoryHook:
             raise RuntimeError(f'you must set the `bundle_module_names` class attribute '
                                f'on {cls.__module__}.{cls.__name__} to use this feature.')
 
-        default_bundle_module_names = (cls.bundle_module_name
-                                       if cls.require_exactly_one_bundle_module
-                                       else cls.bundle_module_names)
-        module_names = getattr(bundle,
-                               cls.bundle_override_module_names_attr,
-                               default_bundle_module_names)
+        module_names = getattr(bundle, cls.bundle_override_module_names_attr, None)
+        if module_names is None:
+            module_names = (bundle.default_load_from_module_name
+                            if bundle.default_load_from_module_name
+                            else (cls.bundle_module_name
+                                  if cls.require_exactly_one_bundle_module
+                                  else cls.bundle_module_names))
 
         # check to make sure the user's bundle override module names attribute is correct
-        if cls.require_exactly_one_bundle_module:
+        if cls.require_exactly_one_bundle_module or isinstance(module_names, str):
             if not isinstance(module_names, str):
                 raise ValueError(f'The {cls.bundle_override_module_names_attr} attribute '
                                  f'on {bundle.module_name}.{bundle.__class__.__name__} '

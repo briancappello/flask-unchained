@@ -12,6 +12,7 @@
     - support using a custom module name for `unchained_config` by setting the `UNCHAINED_CONFIG` environment variable
     - :fire: support single-file app bundles :fire: (just export the app bundle as `UNCHAINED_CONFIG`)
     - make it possible to define multiple modules hooks should load from (excluding config and routes, as those only make sense to live inside a single module within bundles)
+        - very experimental: add `Bundle.default_load_from_module_name` to ease migration from single-file app bundles to individual modules for different types (ie grouped by base class)
 - set up automatic dependency injection on commands (use `from flask_unchained.cli import cli, click` and define command groups for your commands using `@cli.group()`)
 - add `flask unchained config` command for listing the current config (optionally filtered by bundle)
 - add `flask unchained extensions` command for listing extensions discovered by the app

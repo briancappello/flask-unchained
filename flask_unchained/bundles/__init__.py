@@ -161,6 +161,14 @@ class Bundle(metaclass=_BundleMetaclass):
     Whether or not the bundle is a single module (Python file). Automatically determined.
     """
 
+    default_load_from_module_name: str = None
+    """
+    **!! WARNING: EXPERIMENTAL (may cause mysterious exceptions to be thrown) !!**
+
+    The default module name for hooks to load from. Set hooks' bundle module override
+    attributes for the modules you want in separate files.
+    """
+
     module_name: str = _BundleModuleNameDescriptor()
     """
     Top-level module name of the bundle (dot notation). Automatically determined.
