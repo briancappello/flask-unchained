@@ -19,6 +19,7 @@
 - add compatibility with pytest 5
 - alias `flask.abort` (`werkzeug.utils.abort`) as `flask_unchained.abort`
 - alias `flask_wtf.csrf.generate_csrf` as `flask_unchained.generate_csrf`
+- alias `flask.Request` and `flask.Response` into `flask_unchained`
 
 ### Bug Fixes
 

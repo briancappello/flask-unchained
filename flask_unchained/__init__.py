@@ -13,6 +13,7 @@ __version__ = '0.7.9'
 # aliases
 from flask import current_app, g, request, session, _app_ctx_stack, _request_ctx_stack
 from flask import render_template, render_template_string
+from flask import Request, Response
 from flask_wtf.csrf import generate_csrf
 from werkzeug.exceptions import abort
 
@@ -32,4 +33,5 @@ from .unchained import Unchained, unchained
 from .utils import get_boolean_env
 from .views import Controller, Resource, route, no_route, redirect, url_for
 
+# must be last
 from .bundles.babel import gettext, ngettext, lazy_gettext, lazy_ngettext
