@@ -158,7 +158,7 @@ class GroupOverrideMixin:
                                             Defaults to False.
         """
         return super().command(
-            *args, cls=kwargs.pop('cls', Command) or click.Command, **kwargs)
+            *args, cls=kwargs.pop('cls', Command) or Command, **kwargs)
 
     def collect_usage_pieces(self, ctx):
         if self.chain:
