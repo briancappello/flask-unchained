@@ -47,7 +47,7 @@ third.__module__ = 'something.else.third'
 
 class TestControllerAttributes:
     def test_auto_attributes(self):
-        assert DefaultController.Meta.templates_folder_name == 'default'
+        assert DefaultController.Meta.template_folder == 'default'
         assert DefaultController.Meta.template_file_extension is None
         assert DefaultController.Meta.url_prefix is None
         assert DefaultController.Meta.decorators is None
@@ -55,10 +55,10 @@ class TestControllerAttributes:
     def test_custom_template_folder(self):
         class FooController(Controller):
             class Meta:
-                templates_folder_name = 'defaults'
+                template_folder = 'defaults'
 
         assert FooController.Meta.url_prefix is None
-        assert FooController.Meta.templates_folder_name == 'defaults'
+        assert FooController.Meta.template_folder == 'defaults'
         assert FooController.Meta.template_file_extension is None
 
     def test_custom_template_extension(self):
@@ -158,7 +158,7 @@ class TestControllerAttributes:
     def test_render_with_custom_controller_template_attrs(self, templates):
         class FooController(Controller):
             class Meta:
-                templates_folder_name = 'foobar'
+                template_folder = 'foobar'
                 template_file_extension = '.html.j2'
 
         controller = FooController()
@@ -171,7 +171,7 @@ class TestControllerAttributes:
     def test_render_with_full_filename(self, templates):
         class FooController(Controller):
             class Meta:
-                templates_folder_name = 'foobar'
+                template_folder = 'foobar'
 
         controller = FooController()
         resp = controller.render('index.html.j2', some_ctx_var='hi')
