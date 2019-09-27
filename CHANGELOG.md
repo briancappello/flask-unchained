@@ -36,7 +36,7 @@
 - require `sqlalchemy-unchained>=0.8`
 - rename `PROJECT_ROOT` to `ROOT_PATH` for consistency with upstream `Flask`
 - rename `Bundle.folder` to `Bundle.root_path` for consistency with `Flask`
-- rename `Controller.Meta.template_folder_name` to `templates_folder_name`
+- rename `Controller.Meta.template_folder_name` to `Controller.Meta.template_folder` for consistency with `Flask`
 - `AppFactory` is now a `Singleton` that must be instantiated (ie change `AppFactory.create_app(env)` to `AppFactory().create_app(env)` in `wsgi.py`)
 - no longer automatically set up dependency injection on all the methods from classes (you can still decorate them manually with `unchained.inject()`, but the preferred approach is to use class attributes to define what inject into the class)
 - default endpoint name for view functions is now just the function name

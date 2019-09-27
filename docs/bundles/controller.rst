@@ -173,7 +173,7 @@ Controllers have a few meta options that you can use to customize their behavior
        class Meta:
            abstract: bool = False                         # default is False
            decorators: List[callable] = ()                # default is an empty tuple
-           templates_folder_name: str = 'sites'            # see explanation below
+           template_folder: str = 'site'                  # see explanation below
            template_file_extension: Optional[str] = None  # default is None
            url_prefix = Optional[str] = None              # default is None
 
@@ -189,15 +189,15 @@ Controllers have a few meta options that you can use to customize their behavior
    * - decorators
      - A list of decorators to apply to all views in this controller.
      - ()
-   * - templates_folder_name
+   * - template_folder
      - The name of the folder containing the templates for this controller's views.
-     - Defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). It then gets converted to snake-case.
+     - Defaults to the snake-cased class name (with the ``Controller`` or ``View`` suffixes stripped).
    * - template_file_extension
      - The filename extension to use for templates for this controller's views.
      - Defaults to your app config's ``TEMPLATE_FILE_EXTENSION`` setting, and overrides it if set.
    * - url_prefix
      - The url prefix to use for all routes from this controller.
-     - Defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). The resulting value is ``f'/{snake_case(pluralize(value))}'``.
+     - Defaults to ``'/'`` (aka no prefix).
 
 Overriding Controllers
 ######################
@@ -322,7 +322,7 @@ Resources have a few extra meta options on top of those that Controller includes
            abstract: bool = False                         # default is False
            decorators: List[callable] = ()                # default is an empty tuple
            member_param: String = '<int:id>'
-           unique_member_parm: String = f'<{member_param_type}:{controller_name(cls)}_{member_param_name}>'
+           unique_member_parm: String = f'<{int}:{controller_name}_{member_param_name}>'
            url_prefix = Optional[str] = None              # default is None
 
 .. list-table::
@@ -336,7 +336,7 @@ Resources have a few extra meta options on top of those that Controller includes
      - ``<int:id>``
    * - :attr:`~flask_unchained.Resource.Meta.unique_member_param`
      - The url parameter rule to use for the special member methods (``get``, ``patch``, ``put``, and ``delete``) of this resource when :attr:`~flask_unchained.Resource.Meta.member_param` conflicts with a subresource's :attr:`~flask_unchained.Resource.Meta.member_param`.
-     - ``f'<{member_param_type}:{controller_name(cls)}_{member_param_name}>'``
+     - ``f'<{int}:{controller_name}_{member_param_name}>'``
 
 Overriding Resources
 ####################
@@ -350,7 +350,7 @@ Flask Unchained uses the `Jinja <http://jinja.pocoo.org/docs/>`_ templating lang
 
 By default bundles are configured to use a ``templates`` subfolder. This is configurable by setting :attr:`flask_unchained.Bundle.template_folder` to a custom path.
 
-Controllers each have their own template folder within ``Bundle.template_folder``. It defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). It then gets converted to snake-case. Or you can set it manually with :attr:`flask_unchained.Controller.Meta.templates_folder_name`.
+Controllers each have their own template folder within ``Bundle.template_folder``. It defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). It then gets converted to snake-case. Or you can set it manually with :attr:`flask_unchained.Controller.Meta.template_folder`.
 
 The default file extension used for templates is configured by setting ``TEMPLATE_FILE_EXTENSION``. It defaults to ``.html``, and is also configurable on a per-controller basis by setting :attr:`flask_unchained.Controller.Meta.template_file_extension`.
 
