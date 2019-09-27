@@ -392,8 +392,7 @@ class Controller(metaclass=_ControllerMetaclass):
         original_view_func = view_func
         for decorator in reversed(decorators):
             view_func = decorator(view_func)
-        functools.update_wrapper(view_func, original_view_func)
-        return view_func
+        return functools.wraps(original_view_func)(view_func)
 
 
 __all__ = [
