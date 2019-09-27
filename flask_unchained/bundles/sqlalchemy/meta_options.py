@@ -15,7 +15,7 @@ class ModelMetaOption(MetaOption):
     def get_value(self, Meta: Type[object], base_classes_meta, mcs_args: McsArgs):
         value = super().get_value(Meta, base_classes_meta, mcs_args)
         if value and unchained._models_initialized:
-            value = unchained.sqlalchemy_bundle.models[value.__name__]
+            value = unchained.sqlalchemy_bundle.models.get(value.__name__, value)
         return value
 
     def check_value(self, value, mcs_args: McsArgs):
