@@ -78,9 +78,10 @@ def cwd_import(module_name):
         sys.path.insert(0, os.getcwd())
 
     module = import_module(module_name)
-    expected_path = os.path.join(os.getcwd(), module_name.replace('.', os.sep) + '.py')
-    if module.__file__ != expected_path:
-        raise ImportError
+    expected_path = os.path.join(os.getcwd(), module_name.replace('.', os.sep))
+    expected_paths = [f'{expected_path}.py', f'{expected_path}/__init__.py']
+    if module.__file__ not in expected_paths:
+        raise ImportError(f'expected {expected_paths[0]}, got {module.__file__}')
     return module
 
 
