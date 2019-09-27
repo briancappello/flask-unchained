@@ -25,7 +25,7 @@ def param_converter(*decorator_args, **decorator_kwargs):
 
     For example::
 
-        @bp.route('/users/<int:user_id>/posts/<int:id>')
+        @route('/users/<int:user_id>/posts/<int:id>')
         @param_converter(user_id=User, id=Post)
         def show_post(user, post):
             # the param converter does the database lookups:
@@ -34,7 +34,7 @@ def param_converter(*decorator_args, **decorator_kwargs):
             # and calls the decorated action: show_post(user, post)
 
         # or to customize the argument names passed to the action:
-        @bp.route('/users/<int:user_id>/posts/<int:post_id>')
+        @route('/users/<int:user_id>/posts/<int:post_id>')
         @param_converter(user_id={'user_arg_name': User},
                          post_id={'post_arg_name': Post})
         def show_post(user_arg_name, post_arg_name):
