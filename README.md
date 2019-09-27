@@ -1,16 +1,12 @@
 # Flask Unchained
 
-## Useful Links
-
-* [Read the Docs](https://flask-unchained.readthedocs.io/en/latest/)
-* [Fork it on GitHub](https://github.com/briancappello/flask-unchained)
-* [Releases on PyPI](https://pypi.org/project/Flask-Unchained/)
-
 ## The best way to build Flask apps
 
-Flask Unchained is a **fully integrated, optional-batteries-included web framework for Flask and its extension ecosystem** (implemented as a stock Flask extension). Flask Unchained aims to be a fresh, modern take on building web apps and/or GraphQL/RESTful APIs with Flask and SQLAlchemy - while trying to stay as true as possible to the spirit and API of Flask. (And without hiding any of the power of SQLAlchemy, while simultaneously making it quicker and easier to use.) The classic hello world app is just as simple as stock Flask's:
+Flask Unchained is **a Flask extension that implements a pluggable application factory turning Flask and its extension ecosystem into a completely integrated "opt-in" full-stack web framework**. Flask Unchained stays true to the API, concepts, and minimalist spirit of Flask, while also enabling you to rapidly build large/complex web apps and/or GraphQL/REST APIs with Flask.
 
-### Flask Unchained Hello World
+### Hello World
+
+The classic hello world app is just as simple as stock Flask's:
 
 ```python
 # hello-flask-unchained/app.py
@@ -25,46 +21,46 @@ def index():
     return '<h1>Hello World from Flask Unchained!</h1>'
 
 def test_index(client):
-    r = client.get('index')  # endpoint name of a view: @route defaults it to the fn name 
+    r = client.get('index')
     assert r.status_code == 200
     assert r.html.count('Hello World from Flask Unchained!') == 1
 ```
 
 #### Install Flask Unchained and run it:
 
-```bash
-cd hello-flask-unchained
-# create a virtual environment and activate it (other ways work too, eg pipenv)
-mkvirtualenv -p /path/to/python3.6 hello-flask-unchained
+Everything just works right out of the box:
 
-# install Flask Unchained and dependencies
+```bash
+# create a virtual environment and activate it (other ways work too, eg pipenv)
+cd hello-flask-unchained
+mkvirtualenv -p /path/to/python3.6+ hello-flask-unchained
+
+# install Flask Unchained
 pip install "flask-unchained[dev]"
 
-# set the module name of unchained_config
-export UNCHAINED_CONFIG="app"
+# start the development server at http://localhost:5000
+UNCHAINED_CONFIG="app" flask run
 
 # run tests (NOTE: you may need to deactivate and reactivate your virtual env first)
-pytest app.py
-
-# start the development server (at http://localhost:5000 by default)
-flask run
+UNCHAINED_CONFIG="app" pytest app.py
 ```
 
-In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)` to get the actual app instance. With the `flask` and `pytest` commands, it happens automatically.
+In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)`. With the `flask` and `pytest` commands, that happens automatically for you.
+
+## Useful Links
+
+* [Read the Docs](https://flask-unchained.readthedocs.io/en/latest/)
+* [Fork it on GitHub](https://github.com/briancappello/flask-unchained)
+* [Releases on PyPI](https://pypi.org/project/Flask-Unchained/)
 
 ## Table of Contents
 
-* [Useful Links](https://github.com/briancappello/flask-unchained#useful-links)
-* [The best way to build Flask apps](https://github.com/briancappello/flask-unchained#the-best-way-to-build-flask-apps)
-* [Flask Unchained Hello World](https://github.com/briancappello/flask-unchained#flask-unchained-hello-world)
-    - [Install Flask Unchained](https://github.com/briancappello/flask-unchained#install-flask-unchained-and-run-it)
-* [Introduction / Features](https://github.com/briancappello/flask-unchained#introduction-features)
-    - [Acknowledgements](https://github.com/briancappello/flask-unchained#acknowledgements)
+* [Introduction / Features](https://github.com/briancappello/flask-unchained#introduction--features)
 * [A small Contact Us app with SQLAlchemy, HTML forms, and a RESTful API](https://github.com/briancappello/flask-unchained#a-small-contact-us-app-with-sqlalchemy-html-forms-and-a-restful-api)
 * [Building big, complex apps](https://github.com/briancappello/flask-unchained#building-big-complex-apps)
 * [Contributing](https://github.com/briancappello/flask-unchained#contributing)
 * [License](https://github.com/briancappello/flask-unchained#license)
-* [Footnotes](https://github.com/briancappello/flask-unchained#footnotes)
+* [Acknowledgements](https://github.com/briancappello/flask-unchained#acknowledgements)
 
 ## Introduction / Features
 
@@ -72,39 +68,31 @@ In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)` t
 - designed to be **easy to start with and even easier to quickly build big, complex apps**
 - **clean, flexible and declarative application structure that encourages good design patterns** (no circular imports!)
 - **no integration headaches between supported "bundles"**: everything *should* just work (please file issues if not!)
-- absolutely **as little boilerplate as possible**: your focus should be on building and designing your app, not plumbing!
+- absolutely **as little boilerplate as possible**: your focus should be on building your app, not plumbing!
 - out-of-the-box support for **testing** with `pytest` and `factory_boy`
-- declarative routing (registered app routes can be decoupled from the defaults decorated on views)
-- dependency injection of services and extensions (into just about whatever you want)
+- **declarative routing** (routes registered with the app are decoupled from the defaults decorated on views)
+- **dependency injection** of services and extensions (into just about whatever you want)
 - **simple and consistent patterns for customizing, extending, and/or overriding bundles and almost everything in them** (e.g. configuration, views/controllers/resources, routes, templates, models, serializers, services, extensions, ...)
    - your customizations are easily distributable as a standalone bundle (Python package), which itself then supports the same patterns for customization, ad infinitum.
 
-Flask Unchained includes a stock Flask extension named `Unchained`, a set of associated patterns/classes that implement a pluggable application factory pattern you can hook into and/or override parts of, and a set of mostly optional sub-packages ("bundles") integrating some of the most popular Flask extensions. **Bundles are similar to Django's "apps", but I think you'll find bundles are more powerful and extensible.** They're an enhanced replacement for stock Flask `Blueprint`s, and with the app factory providing ways for bundles to customize the Flask app instance as it's booting up and/or register things with the app, bundles are also used to integrate stock Flask extensions and Python libraries with both Flask as well as other bundles. Some of the included (mostly optional) bundles:
+Flask Unchained includes a stock Flask extension named `unchained`, a set of associated patterns/classes that implement a pluggable application factory pattern you can hook into and/or override parts of, and a set of mostly optional sub-packages ("bundles") integrating some of the most popular Flask extensions. **Bundles are similar to Django's "apps", but I think you'll find bundles are more powerful and extensible.** They're an enhanced replacement for stock Flask's `Blueprint`, and with the app factory providing ways for bundles to customize the Flask app instance as it's booting up and/or register things with the app, bundles are also used to integrate stock Flask extensions and Python libraries with Flask Unchained and its other bundles. Some highlights from the (mostly optional) included bundles:
 
 | Bundle | Integrations | Comments |
 | ------ | ------------ | -------- |
-| SQLAlchemy Bundle | [SQLAlchemy](https://www.sqlalchemy.org/) and via [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/), [Alembic](https://alembic.sqlalchemy.org/en/latest/) | SQL Database ORM & Migrations. All "sugar" (`class Meta` options) are optional; you can just copy your models over, change the base class and imports to use this bundle, and your models should work just like that. (Please file issues if not!) |
-| Security Bundle | [Flask-Login](http://flask-login.readthedocs.io/) and [Flask-Principal](https://pythonhosted.org/Flask-Principal/) | The security bundle is a refactored a cleaned up fork of [Flask-Security](https://pythonhosted.org/Flask-Security/). (The core/encryption code is all unchanged, and while things have moved around some, if you're familiar with Flask Security you'll find your way around in no time.) |
+| Controller Bundle | Integrates views, controllers, resources and their routes with Flask. Always enabled. | This bundle "makes" all the other bundles blueprints (conceptually). Bundles implement the same public API as `Blueprint` (accessed via the `unchained` extension instance). All the views within bundles are automatically assigned to a `Blueprint` for their bundle. You as an end user don't ever actually interact with blueprints in Flask Unchained. (Although they will still work in your app bundle to ease porting views.) |
+| SQLAlchemy Bundle | [SQLAlchemy](https://www.sqlalchemy.org/) and via [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/), [Alembic](https://alembic.sqlalchemy.org/en/latest/) | SQL Database ORM & Migrations. Possibly the best ORM on the planet. |
+| Security Bundle | [Flask-Login](http://flask-login.readthedocs.io/) and [Flask-Principal](https://pythonhosted.org/Flask-Principal/) | Supports HTML and JSON endpoints for login/logout (session and token authentication), and optionally, registration (with optional email confirmation) and change/forgot password functionality. |
 | Session Bundle | [Flask-Session](https://pythonhosted.org/Flask-Session/) | Server-side sessions, should be uses when utilizing the Security Bundle. |
-| API Bundle | [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/), [APISpec](https://github.com/marshmallow-code/apispec) and [ReDoc](https://github.com/Rebilly/ReDoc) | Heavily inspired by [Flask-smorest](https://github.com/marshmallow-code/flask-smorest) [*The API bundle is a WIP. However, it already works well for not-too-custom use cases.*] |
+| API Bundle | [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/), [APISpec](https://github.com/marshmallow-code/apispec) and [ReDoc](https://github.com/Rebilly/ReDoc) | RESTful API framework integrating SQLAlchemy and Marshmallow with the controller bundle. Inspired by [Flask-smorest](https://github.com/marshmallow-code/flask-smorest). [*The API Bundle as a whole, but especially the integration with APISpec/ReDoc, is a WIP. However, it already works well for not-too-custom use cases.*] |
 | Graphene Bundle | [Flask-GraphQL](https://github.com/graphql-python/flask-graphql) and [Graphene](https://docs.graphene-python.org/en/latest/) | Integrates Graphene with SQLAlchemy |
-| Controller Bundle | Integrates views, controllers, resources and their routes with Flask. Always enabled. | This bundle "makes" all the other bundles blueprints (conceptually). When accessed via the `unchained` extension instance by name, bundles implement the same public API as `Blueprint`. All the views within bundles are automatically assigned to a `Blueprint` for their bundle. You as an end user don't ever actually interact with `Blueprint` in Flask Unchained. (Although they will still work in your app bundle to ease porting views.) |
 | Celery Bundle | [Celery](http://docs.celeryproject.org/en/latest/index.html) | Distributed Task Queue |
 | Babel Bundle | [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) | Translations / Internationalization support (always enabled, but optional to use) |
 
-The app factory from Flask Unchained does all the hard work of actually spinning up the app for you. First it instantiates the Flask app instance. Next it discovers all of the code from your specified bundles (allowing bundles to subclass other bundles to customize/override classes/templates/etc from their base bundle(s)), and automatically registers your configured bundles and code with the app.
+The app factory from Flask Unchained does all the hard work of actually spinning up the app for you. First it instantiates the Flask app instance. Next it discovers all of the code from your specified bundles (allowing bundles to subclass other bundles to customize/override classes/templates from their base bundles), and automatically registers your configured bundles and code with the app.
 
-**In short: When you write app code with Flask Unchained, you're still just running stock Flask under the hood. All you need to do to make it work is to follow a few consistent design patterns and folder/naming conventions, write mostly object oriented Python, and that's it. Productivity at its finest.**
+**In short: When you write app code with Flask Unchained, you're still just running stock Flask under the hood.** To make everything work you just follow a few consistent design patterns and folder/naming conventions, write mostly object oriented Python, and that's it. Productivity at its finest.
 
 NOTE: Some bundles are still a work-in-progress. Parts of the documentation need improvement or are missing. **Some of the code is still alpha-quality. It works for me, but there are undoubtedly bugs lurking, especially around the edges, and some parts of the API are potentially subject to change.** (The core architecture is solid at this point and I hope, API-stable. Even so, there are no guarantees; this whole project is still in alpha!)
-
-## Acknowledgements
-
-> The architecture and "developer experience" of how Flask Unchained and its bundles work is inspired by the [Symfony Framework](https://symfony.com/), which is enterprise-level awesome, aside from the fact that it isn't Python ;) (Symfony is itself inspired by the [Spring Framework](https://spring.io/).) If you're familiar with Symfony/Spring, I hope you'll find my take on them both Pythonic and much more simple. Convention over configuration (with the option for customization when you need it) remains a cornerstone of Flask Unchained.
->
-> I would also like give a shout out to [factory_boy](https://factoryboy.readthedocs.io/en/latest/), where I discovered [in its source code](https://github.com/FactoryBoy/factory_boy/blob/master/factory/base.py) one of the [metaprogramming patterns](https://github.com/briancappello/py-meta-utils#py-meta-utils) that helps make Flask Unchained so flexible and powerful. It's used throughout Flask Unchained, but notably in the [SQLAlchemy Bundle](https://flask-unchained.readthedocs.io/en/latest/bundles/sqlalchemy.html#usage) (to make all the [`class Meta` options](https://github.com/briancappello/sqlalchemy-unchained#included-meta-options) work). SQLAlchemy Unchained takes inspiration from both Django ORM's [`class Meta` options](https://docs.djangoproject.com/en/2.2/ref/models/options/) and Doctrine (arguably the best PHP ORM)'s [EntityManager](https://www.doctrine-project.org/api/orm/latest/Doctrine/ORM/EntityManager.html).
->
-> In truth, I have learned an absolutely incredible amount from the entire Flask ecosystem while building Flask Unchained. It's an incredible community, and I hope you enjoy my effort to give back. If you have any feedback or are interested in hacking on Flask Unchained itself, your input would be greatly appreciated! Let's take this baby to the moon.
 
 ## A small Contact Us app with SQLAlchemy, HTML forms, and a RESTful API 
 
@@ -155,7 +143,7 @@ BUNDLES = [
     'app',  # your app bundle *must* be last (and only one bundle listed may subclass AppBundle)
 ]
 
-# a kwarg for the FlaskUnchained constructor (a very minimally extended subclass of Flask)
+# a kwarg for the Flask constructor
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))  # determined automatically, optional
 
 class Config(AppBundleConfig):
@@ -165,12 +153,13 @@ class DevConfig(Config):  # other env-configs are ProdConfig, StagingConfig and 
     EXPLAIN_TEMPLATE_LOADING = False  # for when you need to debug what's going on
     WTF_CSRF_ENABLED = False  # makes testing the API endpoints with eg CURL easier
     
-    # by default the SQLAlchemy bundle uses `ROOT_PATH/db/<env>.sqlite` just like this:
+    # by default the SQLAlchemy bundle uses `ROOT_PATH/db/<env>.sqlite`, just like this:
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(ROOT_PATH, 'db', 'dev.sqlite')}"
 
 class App(AppBundle):
     command_group_names = ['app']  # the default is the app bundle's class name snake_cased
 
+    # implement before_init_app to do stuff immediately after the app's instantiation
     # after_init_app is run by the app factory immediately before create_app returns
     def after_init_app(self, app: FlaskUnchained) -> None:
         @app.after_request
@@ -178,8 +167,6 @@ class App(AppBundle):
             if response:
                 response.set_cookie('csrf_token', generate_csrf())
             return response
-    # implement before_init_app to do stuff immediately after the app's instantiation.
-    # in the middle, app factory hooks run: their job is to register everything with the app
 
 class ContactSubmission(db.Model):
     # `class Meta` is optional on models (defaults shown)
@@ -203,10 +190,9 @@ class ContactSubmissionManager(ModelManager):
 class ContactSubmissionForm(ModelForm):
     class Meta:
         model = ContactSubmission
-    # name, email, message fields added automatically (or implement them yourself to override)
     submit = fields.SubmitField()
 
-# Controller is like flask.View, except it supports multiple views and dependency injection
+# Controller is like flask.View, but supports dependency injection and multiple view methods
 class SiteController(Controller):
     # get the app's instance of ContactSubmissionManager injected into us
     contact_submission_manager: ContactSubmissionManager = injectable
@@ -215,16 +201,16 @@ class SiteController(Controller):
     class Meta:
         # default URL prefix for all controllers is '/' (aka no prefix)
         url_prefix = '/'  # applies to all routes on the controller class
-        template_folder = 'site'  # (snake_cased class name minus controller suffix)
+        template_folder = 'site'  # snake_cased class name minus any "controller" suffix
 
-    # index is automatically assigned a route equivalent to:
+    # routing defaults are added for all undecorated pubic methods on concrete subclasses of Controller
+    # so index is automatically assigned a route equivalent to:
     # @route('/index', endpoint='site_controller.index', methods=['GET'])
-    # (routing defaults are added for all undecorated pubic methods on concrete subclasses of Controller)
     def index(self):
         return self.render('index')  # renders site/index.html, as determined by:
-        # f'{Meta.template_folder}/{arg}.{Meta.template_file_extension}'
+                                     # f'{Meta.template_folder}/{arg}.{Meta.template_file_extension}'
 
-    # URL rule defaults to kebab-cased function/method name when omitted, '/say-hello' here
+    # URL rule defaults to kebab-cased function name when omitted, '/say-hello' here
     @route(methods=['GET', 'POST'])
     def say_hello(self):
         form = ContactSubmissionForm(request.form)
@@ -239,20 +225,20 @@ class SiteController(Controller):
         return self.render('say_hello', form=form)
 
     @route('/contact/thanks')
-    @param_converter(id=ContactSubmission)  # converts the `id` query param to a ContactSubmission instance (or 404s)
+    @param_converter(id=ContactSubmission)  # converts `id` query param to a ContactSubmission model (or 404s)
     def contact_thanks(self, contact_submission: ContactSubmission = None):
         if not contact_submission:
             abort(HTTPStatus.NOT_FOUND)
         return self.render('contact_thanks', contact_submission=contact_submission)
 
-class ContactSubmissionSerializer(ModelSerializer):  # a marshmallow Schema subclass
+class ContactSubmissionSerializer(ModelSerializer):  # a marshmallow.Schema subclass
     class Meta:
         model = ContactSubmission
 
-# ModelResource is a subclass of flask_unchained.Resource, which itself subclasses Controller
-class ContactSubmissionResource(ModelResource):
+class ContactSubmissionResource(ModelResource):  # a RESTful API Resource (extends Controller)
     class Meta:
         model = ContactSubmission
+
         # the following Meta options are all optional: (defaults shown)
         url_prefix = '/contact-submissions'  # model class name pluralized and kebab-cased
         member_param = '<int:id>'
@@ -267,20 +253,20 @@ class ContactSubmissionResource(ModelResource):
         serializer_create = ContactSubmissionSerializer(context=dict(is_create=True))
         serializer_many = ContactSubmissionSerializer(many=True)
 
-# declarative routing decouples routes from their view functions
+# enable explicit/declarative routing
 routes = lambda: [
-    # to use the default routes as decorated on the views (and default Meta.url_prefix):
+    # to use the default routes as decorated on the views:
     # controller(SiteController),
 
     # or to override the defaults:
-    controller(SiteController, rules=[
+    controller('/', SiteController, rules=[
         get('/', SiteController.index),  # kwargs not overridden get inherited from defaults, eg
-        rule('/say-hi', SiteController.say_hello),  # this stays methods=['GET', 'POST']
-        get('/thanks', SiteController.contact_thanks),  # `get()` forces methods=['GET']
+        rule('/say-hi', SiteController.say_hello),  # this stays methods=['GET', 'POST'] while
+        get('/thanks', SiteController.contact_thanks),  # using `get()` forces methods=['GET']
     ]),
 
     prefix('/api/v1', [
-        # these three registrations are all equivalent
+        # all three of these registrations are equivalent
         # resource(ContactSubmissionResource),
         # resource('/contact-submissions', ContactSubmissionResource, member_param='<int:id>'),
         resource('/contact-submissions',
@@ -297,7 +283,6 @@ routes = lambda: [
     ]),
 ]
 
-# click group names should match declared `AppBundle.command_group_names` above
 @cli.group()
 def app():
     """App bundle commands"""
@@ -322,10 +307,10 @@ You can list the routes that are registered with Flask:
 
 ```bash
 $ flask urls
-Method(s)  Rule                               Endpoint                         View                                    Options
--------------------------------------------------------------------------------------------------------------------------------------
-      GET  /                                  site_controller.index            hello :: SiteController.index           strict_slashes
-GET, POST  /say-hi                            site_controller.hello_world      hello :: SiteController.hello_world     strict_slashes
+Method(s)  Rule                               Endpoint                            View                                       Options
+-------------------------------------------------------------------------------------------------------------------------------------------
+      GET  /                                  site_controller.index               hello :: SiteController.index              strict_slashes
+GET, POST  /say-hi                            site_controller.hello_world         hello :: SiteController.hello_world        strict_slashes
      POST  /api/v1/name-submissions/          contact_submission_resource.create  hello :: ContactSubmissionResource.create  strict_slashes
       GET  /api/v1/name-submissions/          contact_submission_resource.list    hello :: ContactSubmissionResource.list    strict_slashes
     PATCH  /api/v1/name-submissions/<int:id>  contact_submission_resource.patch   hello :: ContactSubmissionResource.patch   strict_slashes
@@ -470,7 +455,7 @@ class App(AppBundle):
 
 **WARNING**: Things work very reliably when the app bundle is a single file, and when everything of the same type (same base class) in bundles is grouped into separate modules/sub-packages. However, you are *probably likely* to hit edge-cases when splitting things up piece-meal. I just haven't played around with it much so it's uncharted territory. The exceptions thrown will have to do with the import order of things, but the error messages will be opaque and appear to have nothing to do with that. Without a solid grasp of Python metaprogramming or the internals of Flask Unchained, they are of the very hard to debug magical type. (My code worked before. All I did was move things around. It's still valid Python. And now it's blowing up!? That kind of "fun" stuff.)
 
-In this example, by moving `SiteController` into its own module, `ContactSubmissionForm` *must also* live in its own module (or in the same module as the views). (This restriction only applies to subclasses of `ModelForm`; regular `FlaskForm`s can live anywhere.)
+In this example, by moving `SiteController` into its own module, `ContactSubmissionForm` *must also* live in its own module (or in the same module as the views). (This restriction only applies to subclasses of `ModelForm`; regular `FlaskForm` subclasses can live anywhere.)
 
 To figure out which things have app factory hooks that allow customizing the module locations, run `flask unchained hooks`:
 
@@ -536,7 +521,7 @@ A larger application structure might look about like this:
 └── unchained_config.py # the Flask Unchained config
 ```
 
-To learn how to build such an app, check out the [official tutorial](https://flask-unchained.readthedocs.io/en/latest/tutorial/index.html). The tutorial is still a work-in-progress, but is none-the-less currently the best source of "high level" documentation on Flask Unchained. Most of the APIs are documented as well, but it can sometimes be hard to grasp the big picture only using their docs. In the end like always, the best source of truth is the source code itself. You can also check out [Flask Unchained React SPA](https://github.com/briancappello/flask-unchained-react-spa) for a working example of a non-trivial RESTful API built with Flask Unchained and SQLAlchemy.
+To learn how to build such an app, check out the [official tutorial](https://flask-unchained.readthedocs.io/en/latest/tutorial/index.html). (The tutorial is still a work-in-progress, but is none-the-less currently the best source of "high level" documentation on Flask Unchained.) Most of the APIs are documented as well, but in the end like always, the best source of truth is usually the source code itself. You can also check out [Flask Unchained React SPA](https://github.com/briancappello/flask-unchained-react-spa) for a working example of a non-trivial RESTful API built with Flask Unchained and SQLAlchemy.
 
 ## Contributing
 
@@ -546,8 +531,10 @@ Contributions are more than welcome! This is a big project with a lot of differe
 
 MIT
 
-## Footnotes
+## Acknowledgements
 
-Flask Unchained is essentially the culmination of my journey learning web development in Python with Flask. I already knew Python well enough when I started, but specifically web development, I really only knew how to do in PHP. But after 2 years with the elephant I'd had enough. Back then I had *just* enough experience with Django to know that I wasn't in love with it, and so Flask it was.
+The architecture and "developer experience" of how Flask Unchained and its bundles work is inspired by the [Symfony Framework](https://symfony.com/), which is enterprise-level awesome, aside from the fact that it isn't Python ;) (Symfony is itself inspired by the [Spring Framework](https://spring.io/).) If you're familiar with Symfony/Spring, I hope you'll find my take on them both Pythonic and much more simple. Convention over configuration (with the option for customization when you need it) remains a cornerstone of Flask Unchained.
 
-There's nothing too crazy going on here as far as full stack web frameworks go. This is just my honest attempt at making Flask "opt-in full stack" out of the box. (Not that I had the slightest clue what I was getting into when I started down this path [3+ years ago](https://github.com/briancappello/flask-react-spa/commit/a3d51afe70f245400b90e4d553d8803baed38aa4#diff-158b9e98f24719b14939e0e70270acc3) - or that it would even work once I decided to try turning that project from a boilerplate into this framework.)
+I would also like give a shout out to [factory_boy](https://factoryboy.readthedocs.io/en/latest/), where I discovered [in its source code](https://github.com/FactoryBoy/factory_boy/blob/master/factory/base.py) one of the [metaprogramming patterns](https://github.com/briancappello/py-meta-utils#py-meta-utils) that helps make Flask Unchained so flexible and powerful. It's used throughout Flask Unchained, but notably in the [SQLAlchemy Bundle](https://flask-unchained.readthedocs.io/en/latest/bundles/sqlalchemy.html#usage) (to make all the [`class Meta` options](https://github.com/briancappello/sqlalchemy-unchained#included-meta-options) work). SQLAlchemy Unchained takes inspiration from both Django ORM's [`class Meta` options](https://docs.djangoproject.com/en/2.2/ref/models/options/) and Doctrine (arguably the best PHP ORM)'s [EntityManager](https://www.doctrine-project.org/api/orm/latest/Doctrine/ORM/EntityManager.html).
+
+In truth, I have learned an absolutely incredible amount from the entire Flask ecosystem while building Flask Unchained. It's an incredible community, and I hope you enjoy my effort to give back. If you have any feedback or are interested in hacking on Flask Unchained itself, your input would be greatly appreciated! Let's take this baby to the moon.
