@@ -10,6 +10,9 @@
 
 __version__ = '0.7.9'
 
+# must be first
+from . import _compat
+
 # aliases
 from flask import current_app, g, request, session, _app_ctx_stack, _request_ctx_stack
 from flask import render_template, render_template_string
@@ -17,7 +20,6 @@ from flask import Request, Response
 from flask_wtf.csrf import generate_csrf
 from werkzeug.exceptions import abort
 
-from . import _compat
 from .app_factory import AppFactory
 from .app_factory_hook import AppFactoryHook
 from .config import AppBundleConfig, BundleConfig
