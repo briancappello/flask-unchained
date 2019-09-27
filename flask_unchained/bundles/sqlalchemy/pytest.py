@@ -2,9 +2,11 @@ import factory
 import pytest
 
 from flask_unchained import unchained, injectable
+from sqlalchemy_unchained import _ModelRegistry
 
-# must import the model registry here so the right one gets used
 from .model_registry import UnchainedModelRegistry
+from .services import SessionManager
+_ModelRegistry.set_singleton_class(UnchainedModelRegistry)
 
 
 @pytest.fixture(autouse=True, scope='session')
@@ -37,7 +39,8 @@ class ModelFactory(factory.Factory):
 
     @classmethod
     @unchained.inject('session_manager')
-    def _create(cls, model_class, session_manager=injectable, *args, **kwargs):
+    def _create(cls, model_class, session_manager: SessionManager = injectable,
+                *args, **kwargs):
         # make sure we get the correct mapped class
         model_class = unchained.sqlalchemy_bundle.models[model_class.__name__]
 

@@ -3,14 +3,6 @@ from flask.cli import with_appcontext
 from flask_migrate.cli import db
 from flask_unchained import click, unchained
 
-maybe_fixtures_command = db.command
-try:
-    from py_yaml_fixtures import FixturesLoader
-    from py_yaml_fixtures.factories.sqlalchemy import SQLAlchemyModelFactory
-except ImportError:
-    # disable the import-fixtures command if py_yaml_fixtures isn't installed
-    maybe_fixtures_command = lambda *a, **kw: lambda fn: None
-
 from .extensions import SQLAlchemyUnchained, migrate
 
 db_ext: SQLAlchemyUnchained = unchained.get_local_proxy('db')
