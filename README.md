@@ -28,7 +28,9 @@ def test_index(client):
 
 #### Install Flask Unchained and run it:
 
-Everything just works right out of the box:
+**NOTE:** The README assumes v0.8 of Flask Unchained, which is not yet released to PyPI. (install from master with `pip install "git+https://github.com/briancappello/flask-unchained.git@master#egg=flask-unchained[dev]"`)
+
+Everything works right out of the box:
 
 ```bash
 # create a virtual environment and activate it (other ways work too, eg pipenv)
@@ -92,7 +94,7 @@ The app factory from Flask Unchained does all the hard work of actually spinning
 
 **In short: When you write app code with Flask Unchained, you're still just running stock Flask under the hood.** To make everything work you just follow a few consistent design patterns and folder/naming conventions, write mostly object oriented Python, and that's it. Productivity at its finest.
 
-NOTE: Some bundles are still a work-in-progress. Parts of the documentation need improvement or are missing. **Some of the code is still alpha-quality. It works for me, but there are undoubtedly bugs lurking, especially around the edges, and some parts of the API are potentially subject to change.** (The core architecture is solid at this point and I hope, API-stable. Even so, there are no guarantees; this whole project is still in alpha!)
+**NOTE:** Some bundles are still a work-in-progress. Parts of the documentation need improvement or are missing. **Some of the code is still alpha-quality. It works for me, but there are undoubtedly bugs lurking, especially around the edges, and some parts of the API are potentially subject to change.** (The core architecture is solid at this point and I hope, API-stable. Even so, there are no guarantees; this whole project is still in alpha!)
 
 ## A small Contact Us app with SQLAlchemy, HTML forms, and a RESTful API 
 
