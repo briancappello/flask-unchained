@@ -34,13 +34,13 @@
 ### Breaking Changes
 
 - require `marshmallow>=3.0` (if using the API bundle)
-- require `sqlalchemy-unchained>=0.8`
+- require `sqlalchemy-unchained>=0.8` (if using the SQLAlchemy bundle)
 - rename `PROJECT_ROOT` to `ROOT_PATH` for consistency with upstream `Flask`
 - rename `Bundle.folder` to `Bundle.root_path` for consistency with `Flask`
 - rename `Controller.Meta.template_folder_name` to `Controller.Meta.template_folder` for consistency with `Flask`
 - `AppFactory` is now a `Singleton` that must be instantiated (ie change `AppFactory.create_app(env)` to `AppFactory().create_app(env)` in `wsgi.py`)
 - no longer automatically set up dependency injection on all the methods from classes (you can still decorate them manually with `unchained.inject()`, but the preferred approach is to use class attributes to define what inject into the class)
-- default endpoint name for view functions is now just the function name
+- default endpoint name for simple view functions is now just the function name
 - rename Resource method name constants to reduce confusion with HTTP method names
 - remove `AppBundleConfig.ROOT_PATH` and `AppBundleConfig.APP_ROOT` as they didn't always work correctly (use `BundleConfig.current_app.root_path` instead)
 - moved `flask_unchained.commands.utils.print_table` to `flask_unchained.cli.print_table`
