@@ -58,7 +58,7 @@ In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)`. 
 ## Table of Contents
 
 * [Introduction / Features](https://github.com/briancappello/flask-unchained#introduction--features)
-* [A small Contact Us app with SQLAlchemy, HTML forms, and a RESTful API](https://github.com/briancappello/flask-unchained#a-small-contact-us-app-with-sqlalchemy-html-forms-and-a-restful-api)
+* [A Contact Us app with SQLAlchemy, HTML forms, and a RESTful API](https://github.com/briancappello/flask-unchained#a-contact-us-app-with-sqlalchemy-html-forms-and-a-restful-api)
 * [Building big, complex apps](https://github.com/briancappello/flask-unchained#building-big-complex-apps)
 * [Contributing](https://github.com/briancappello/flask-unchained#contributing)
 * [License](https://github.com/briancappello/flask-unchained#license)
@@ -71,7 +71,7 @@ In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)`. 
 - **clean, flexible and declarative application structure that encourages good design patterns** (no circular imports!)
 - **no integration headaches between supported "bundles"**: everything *should* just work (please file issues if not!)
 - absolutely **as little boilerplate as possible**: your focus should be on building your app, not plumbing!
-- out-of-the-box support for **testing** with `pytest` and `factory_boy`
+- **out-of-the-box support for testing with `pytest` and `factory_boy`**
 - **declarative routing** (routes registered with the app are decoupled from the defaults decorated on views)
 - **dependency injection** of services and extensions (into just about whatever you want)
 - **simple and consistent patterns for customizing, extending, and/or overriding bundles and almost everything in them** (e.g. configuration, views/controllers/resources, routes, templates, models, serializers, services, extensions, ...)
@@ -81,22 +81,24 @@ Flask Unchained includes a stock Flask extension named `unchained`, a set of ass
 
 | Bundle | Integrations | Comments |
 | ------ | ------------ | -------- |
-| Controller Bundle | Integrates views, controllers, resources and their routes with Flask. Always enabled. | This bundle "makes" all the other bundles blueprints (conceptually). Bundles implement the same public API as `Blueprint` (accessed via the `unchained` extension instance). All the views within bundles are automatically assigned to a `Blueprint` for their bundle. You as an end user don't ever actually interact with blueprints in Flask Unchained. (Although they will still work in your app bundle to ease porting views.) |
+| Controller Bundle | Integrates views, controllers, resources and their routes with Flask. Also integrates the [CSRFProtect](https://flask-wtf.readthedocs.io/en/stable/csrf.html) extension from [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/index.html). The controller bundle is always enabled. | This bundle "makes" all the other bundles blueprints (conceptually). Bundles implement the same public API as `Blueprint` (accessed via the `unchained` extension instance). All the views within bundles are automatically assigned to a `Blueprint` for their bundle. You as an end user don't ever actually interact with blueprints in Flask Unchained. (Although they will still work in your app bundle to ease porting views.) |
 | SQLAlchemy Bundle | [SQLAlchemy](https://www.sqlalchemy.org/) and via [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/), [Alembic](https://alembic.sqlalchemy.org/en/latest/) | SQL Database ORM & Migrations. Possibly the best ORM on the planet. |
 | Security Bundle | [Flask-Login](http://flask-login.readthedocs.io/) and [Flask-Principal](https://pythonhosted.org/Flask-Principal/) | Supports HTML and JSON endpoints for login/logout (session and token authentication), and optionally, registration (with optional email confirmation) and change/forgot password functionality. |
+| OAuth Bundle | [Flask-OAuthlib](https://flask-oauthlib.readthedocs.io/en/latest/) | OAuth providers are included for Amazon, GitHub, and GitLab. You can also add your own. |
 | Session Bundle | [Flask-Session](https://pythonhosted.org/Flask-Session/) | Server-side sessions, should be uses when utilizing the Security Bundle. |
-| API Bundle | [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/), [APISpec](https://github.com/marshmallow-code/apispec) and [ReDoc](https://github.com/Rebilly/ReDoc) | RESTful API framework integrating SQLAlchemy and Marshmallow with the controller bundle. Inspired by [Flask-smorest](https://github.com/marshmallow-code/flask-smorest). [*The API Bundle as a whole, but especially the integration with APISpec/ReDoc, is a WIP. However, it already works well for not-too-custom use cases.*] |
+| API Bundle | [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/), [APISpec](https://github.com/marshmallow-code/apispec) and [ReDoc](https://github.com/Rebilly/ReDoc) | RESTful API framework integrating SQLAlchemy and Marshmallow with the controller bundle. Inspired by [Flask-smorest](https://github.com/marshmallow-code/flask-smorest). [*The API Bundle as a whole, but especially the integration with APISpec/ReDoc, is a WIP. That said, it already works well for not-too-custom use cases.*] |
 | Graphene Bundle | [Flask-GraphQL](https://github.com/graphql-python/flask-graphql) and [Graphene](https://docs.graphene-python.org/en/latest/) | Integrates Graphene with SQLAlchemy |
 | Celery Bundle | [Celery](http://docs.celeryproject.org/en/latest/index.html) | Distributed Task Queue |
-| Babel Bundle | [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) | Translations / Internationalization support (always enabled, but optional to use) |
+| Babel Bundle | [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) | Translations / Internationalization support (always enabled, but optional) |
+| Admin Bundle | [Flask Admin](https://flask-admin.readthedocs.io/en/latest/) | The very basics work. But this bundle needs a lot of work if it's going to compete with Django's admin. (Which has its own laundry list of issues, but I digress.) |
 
 The app factory from Flask Unchained does all the hard work of actually spinning up the app for you. First it instantiates the Flask app instance. Next it discovers all of the code from your specified bundles (allowing bundles to subclass other bundles to customize/override classes/templates from their base bundles), and automatically registers your configured bundles and code with the app.
 
-**In short: When you write app code with Flask Unchained, you're still just running stock Flask under the hood.** To make everything work you just follow a few consistent design patterns and folder/naming conventions, write mostly object oriented Python, and that's it. Productivity at its finest.
+**In short: When you write app code for Flask Unchained, once the app factory has booted your application up, you're just running stock Flask from there on out.** To make everything work you just follow a few consistent design patterns and folder/naming conventions, write mostly object oriented Python, and that's it. Productivity at its finest with some of the best libraries Python has to offer at your back.
 
 **NOTE:** Some bundles are still a work-in-progress. Parts of the documentation need improvement or are missing. **Some of the code is still alpha-quality. It works for me, but there are undoubtedly bugs lurking, especially around the edges, and some parts of the API are potentially subject to change.** (The core architecture is solid at this point and I hope, API-stable. Even so, there are no guarantees; this whole project is still in alpha!)
 
-## A small Contact Us app with SQLAlchemy, HTML forms, and a RESTful API 
+## A Contact Us app with SQLAlchemy, HTML forms, and a RESTful API
 
 First create a directory structure to work with:
 
