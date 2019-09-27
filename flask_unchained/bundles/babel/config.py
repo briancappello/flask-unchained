@@ -1,6 +1,6 @@
 from flask_babelex import Domain
 from flask_unchained import BundleConfig
-from werkzeug import ImmutableDict
+from werkzeug.datastructures import ImmutableDict
 
 
 class Config(BundleConfig):
