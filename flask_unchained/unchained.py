@@ -29,11 +29,17 @@ class _DeferredBundleFunctionsStore:
 
 class Unchained:
     """
-    The `Unchained` extension. Responsible for loading bundles, keeping references
-    to all of the various discovered bundles and classes, and for doing dependency
-    injection::
+    The `Unchained` extension. Responsible for initializing the app by loading all
+    the things from bundles, keeping references to all of the various discovered
+    bundles and things inside them, and for doing dependency injection. To get access
+    to the ``unchained`` extension instance::
 
         from flask_unchained import unchained
+
+    Also acts as a replacement for some of the public API of :class:`flask.Flask`.
+    (The part that allows registering url rules, functions to run for handling errors,
+    functions to run during the normal request response cycle, and methods for setting
+    up the Jinja templating environment.)
     """
 
     def __init__(self, env: Optional[Union[DEV, PROD, STAGING, TEST]] = None):
@@ -60,7 +66,7 @@ class Unchained:
 
         *Before* the app has been initialized (ie at import time), we don't
         actually know what bundles the user has configured, and therefore we
-        need to make a compromise: *any* unrecognized attribute assess before
+        need to make a compromise: *any* unrecognized attribute access before
         the app has been initialized is assumed to be a valid bundle name, and
         so we return a :class:`~flask_unchained.bundle._DeferredBundleFunctions`
         instance that allows registering deferred functions (as a replacement
@@ -177,7 +183,7 @@ class Unchained:
             def my_function(not_injected, some_service: SomeService):
                 # do stuff
 
-            # use it on a class to set up attribute injection (and the constructor)
+            # use it on a class to set up class attributes injection (and the constructor)
             @unchained.inject()
             class MyClass:
                 some_service: SomeService = injectable
@@ -250,7 +256,9 @@ class Unchained:
                 if cls and not getattr(cls, _DI_AUTOMATICALLY_HANDLED, False):
                     cls_attrs_to_inject = getattr(cls, _INJECT_CLS_ATTRS, [])
                     for attr, value in vars(cls).items():
-                        if isinstance(value, str) and value == injectable:
+                        if (isinstance(value, str)
+                                and value == injectable
+                                and attr not in cls_attrs_to_inject):
                             cls_attrs_to_inject.append(attr)
 
                     if cls_attrs_to_inject:

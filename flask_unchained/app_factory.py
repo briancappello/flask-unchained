@@ -94,7 +94,7 @@ class AppFactory(metaclass=Singleton):
                          _config_overrides: Dict[str, Any] = None,
                          ) -> FlaskUnchained:
         """
-        Creates a "fake" app for use while developing
+        Creates a "fake" app for use while developing stand-alone bundles
         """
         bundles = bundles or []
         name = bundles[-1] if bundles else 'basic_app'
@@ -116,6 +116,18 @@ class AppFactory(metaclass=Singleton):
                         unchained_config: ModuleType,
                         **flask_kwargs,
                         ) -> FlaskUnchained:
+        """
+        Instantiates the :attr:`APP_CLASS` instance. (By default,
+        :class:`~flask_unchained.FlaskUnchained`)
+
+        :param app_import_name_or_bundle: Either pass an explicit app import name,
+                                          an app bundle instance, or None (an alias
+                                          for 'tests')
+        :param unchained_config: The ``unchained_config`` module.
+        :param flask_kwargs: Any explicit kwargs to pass to the constructor. Overrides
+                             settings from ``unchained_config``.
+        :return: The FlaskUnchained app instance
+        """
         bundle = (app_import_name_or_bundle
                   if isinstance(app_import_name_or_bundle, Bundle) else None)
 

@@ -168,9 +168,8 @@ class Bundle(metaclass=_BundleMetaclass):
 
     name: str = _BundleNameDescriptor()
     """
-    Name of the bundle. Defaults to the snake cased class name, unless it's your app
-    bundle, in which case we strip off the "Bundle" suffix from the snake cased class
-    name.
+    Name of the bundle. Defaults to the snake_cased class name, unless it's your app
+    bundle, in which case we also strip off the "bundle" suffix (if any).
     """
 
     root_path: str = _BundleRootPathDescriptor()

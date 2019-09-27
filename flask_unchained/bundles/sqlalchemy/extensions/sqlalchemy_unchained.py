@@ -14,7 +14,7 @@ from ..model_registry import UnchainedModelRegistry  # required so the correct o
 
 class SQLAlchemyUnchained(BaseSQLAlchemy):
     """
-    The `SQLAlchemy` extension::
+    The `SQLAlchemyUnchained` extension::
 
         from flask_unchained.bundles.sqlalchemy import db
     """

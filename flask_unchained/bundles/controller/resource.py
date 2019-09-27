@@ -47,10 +47,9 @@ class _ResourceMetaclass(_ControllerMetaclass):
 
 class _ResourceUrlPrefixMetaOption(MetaOption):
     """
-    The url prefix to use for all routes from this resource. Defaults to the class name,
-    with the suffixes ``Resource``, ``MethodView``, ``Controller``, or ``View`` stripped,
-    stopping after the first one found (if any). The resulting value is
-    ``f'/{snake_case(pluralize(value))}'``.
+    The url prefix to use for all routes from this resource. Defaults to the
+    pluralized and snake-cased class name with the ``Resource``, ``MethodView``,
+    ``Controller``, and ``View`` suffixes stripped.
     """
     def __init__(self):
         super().__init__('url_prefix', default=_missing, inherit=False)
@@ -105,6 +104,9 @@ class _ResourceUniqueMemberParamMetaOption(MetaOption):
     """
     def __init__(self):
         super().__init__('unique_member_param', default=None, inherit=False)
+
+    # def get_value(...)
+    # NOTE: the logic for the default value lives in `Route.unique_member_param`
 
     def check_value(self, value, mcs_args: McsArgs):
         if mcs_args.is_abstract or value is None:
