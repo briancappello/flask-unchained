@@ -18,7 +18,7 @@
 - add `flask unchained extensions` command for listing extensions discovered by the app
 - add `flask unchaiend services` command for listing services discovered by the app
 - add compatibility with pytest 5
-- alias `flask.abort` (`werkzeug.utils.abort`) as `flask_unchained.abort`
+- alias `flask.abort` (`werkzeug.exceptions.abort`) as `flask_unchained.abort`
 - alias `flask_wtf.csrf.generate_csrf` as `flask_unchained.generate_csrf`
 - alias `flask.Request` and `flask.Response` into `flask_unchained`
 
