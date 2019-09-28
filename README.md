@@ -142,8 +142,8 @@ And the code:
 import os
 from http import HTTPStatus
 from flask_unchained import AppBundle, AppBundleConfig, FlaskUnchained, Response
-from flask_unchained import Controller, abort, param_converter, request, route
-from flask_unchained import injectable, generate_csrf, render_template_string
+from flask_unchained import Controller, param_converter, request, route
+from flask_unchained import injectable, generate_csrf
 from flask_unchained.cli import cli, click, print_table
 from flask_unchained.forms import fields
 from flask_unchained.routes import (controller, resource, func, include, prefix,
@@ -238,13 +238,11 @@ class SiteController(Controller):
                 commit=True,
             )
             return self.redirect('contact_thanks', id=contact_submission.id)
-        return self.render('say_hello', form=form)
+        return self.render('say_hello', form=form)  # renders site/say_hello.html
 
-    @route('/contact/thanks')
-    @param_converter(id=ContactSubmission)  # converts `id` query param to a ContactSubmission model (or 404s)
-    def contact_thanks(self, contact_submission: ContactSubmission = None):
-        if not contact_submission:
-            abort(HTTPStatus.NOT_FOUND)
+    @route('/contact/thanks/<int:id>')
+    @param_converter(id=ContactSubmission)  # converts `id` url param to a ContactSubmission model (or 404s)
+    def contact_thanks(self, contact_submission: ContactSubmission):
         return self.render('contact_thanks', contact_submission=contact_submission)
 
 class ContactSubmissionSerializer(ModelSerializer):  # a marshmallow.Schema subclass
@@ -278,7 +276,7 @@ routes = lambda: [
     controller('/', SiteController, rules=[
         get('/', SiteController.index),  # kwargs not overridden get inherited from defaults, eg
         rule('/say-hi', SiteController.say_hello),  # this stays methods=['GET', 'POST'] while
-        get('/thanks', SiteController.contact_thanks),  # using `get()` forces methods=['GET']
+        get('/thanks/<int:id>', SiteController.contact_thanks),  # using `get()` forces ['GET']
     ]),
 
     prefix('/api/v1', [
