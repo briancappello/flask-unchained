@@ -507,24 +507,24 @@ To figure out which things have app factory hooks that allow customizing the mod
 
 ```bash
 $ flask unchained hooks
-Hook Name                  Default Bundle Module(s)  Bundle Module(s) Override Attr  Description                                                                            
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-register_extensions        extensions                extensions_module_names         Registers extensions found in bundles with the ``unchained`` extension.                
-models                     models                    models_module_names             Discovers models.                                                                      
-configure_app              config                    config_module_name              Updates ``app.config`` with the settings from each bundle.                             
-init_extensions            extensions                extensions_module_names         Initializes extensions found in bundles with the current app.                          
-services                   services                  services_module_names           Registers services for dependency injection.                                           
-inject_extension_services  (None)                    (None)                          Injects services into extensions.                                                      
-commands                   commands                  commands_module_names           Registers commands and command groups from bundles.                                    
-routes                     routes                    routes_module_name              Registers routes.                                                                      
-bundle_blueprints          (None)                    (None)                          Registers a bundle blueprint for each bundle with views and/or template/static folders.
-blueprints                 views                     blueprints_module_names         Registers legacy Flask blueprints with the app.                                        
-views                      views                     views_module_names              Allows configuring bundle views modules.                                               
-serializers                serializers               serializers_module_names        Registers serializers.                                                                 
-model_resources            views                     model_resources_module_names    Registers ModelResources and configures Serializers on them.
+Hook Name                  Default Bundle Module(s)  Bundle Module(s) Override Attr       Description
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+register_extensions        extensions                extensions_module_names              Registers extensions found in bundles with the ``unchained`` extension.
+models                     models, forms             models_and_model_forms_module_names  Discovers models and model forms.
+configure_app              config                    config_module_name                   Updates ``app.config`` with the settings from each bundle.
+init_extensions            extensions                extensions_module_names              Initializes extensions found in bundles with the current app.
+services                   services                  services_module_names                Registers services for dependency injection.
+inject_extension_services  (None)                    (None)                               Injects services into extensions.
+commands                   commands                  commands_module_names                Registers commands and command groups from bundles.
+routes                     routes                    routes_module_name                   Registers routes.
+bundle_blueprints          (None)                    (None)                               Registers a bundle blueprint for each bundle with views and/or template/static folders.
+blueprints                 views                     blueprints_module_names              Registers legacy Flask blueprints with the app.
+views                      views                     views_module_names                   Allows configuring bundle views modules.
+serializers                serializers               serializers_module_names             Registers serializers.
+model_resources            views                     model_resources_module_names         Registers ModelResources and configures Serializers on them.
 ```
 
-Hooks come from both Flask Unchained and your configured list of bundles. Therefore, the output of this command varies by which bundles you're using. The output is sorted by the order the hooks run in, top being the first to run.
+Hooks come from both Flask Unchained and your `unchained_config.BUNDLES` list. Therefore, the output of this command varies by which bundles you're using. The output is sorted by the order the hooks run in, top being the first to run.
 
 ## Building big, complex apps
 

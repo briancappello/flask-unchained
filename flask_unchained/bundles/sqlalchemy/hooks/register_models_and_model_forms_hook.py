@@ -17,6 +17,7 @@ class RegisterModelsAndModelFormsHook(AppFactoryHook):
 
     name = 'models'
     bundle_module_names = ['models', 'forms']
+    bundle_override_module_names_attr = 'models_and_model_forms_module_names'
     run_after = ['register_extensions']
     run_before = ['configure_app', 'init_extensions', 'services']
 
