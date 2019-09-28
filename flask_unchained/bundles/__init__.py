@@ -49,6 +49,8 @@ class _BundleNameDescriptor:
 
 class _BundleStaticFolderDescriptor:
     def __get__(self, instance, cls):
+        if cls.is_single_module and issubclass(cls, AppBundle):
+            return None  # this would be the same as the top-level static folder registered with Flask
         if not hasattr(instance, '_static_folder'):
             instance._static_folder = os.path.join(instance.root_path, 'static')
             if not os.path.exists(instance._static_folder):
