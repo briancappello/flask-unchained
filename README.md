@@ -10,7 +10,7 @@
 >
 > **Flask Unchained is designed to make Flask better than Django *at everything*, from the smallest single-file apps to micro-services to giant monolithic apps.** Of course I may be *just a bit* biased, but I've worked with Django by day for the past year, and while it is good - great even - I still think Flask with SQLAlchemy is decidedly even more powerful and flexible.
 >
-> It sure wasn't easy figuring out how to get everything working together to make Flask Unchained a reality - or that it would even be possible - but as it turns out, there is indeed a clean, powerful, flexible, and yet surprisingly simple-to-reason-about way to take Flask to the next level. **What Flask Unchained needs most is your feedback, experimentation, bug reports, and/or code contributions!**
+> It sure wasn't easy figuring out how to get everything working together to make Flask Unchained a reality - or that it would even be possible - but as it turns out, there is indeed a clean, powerful, flexible, and yet surprisingly simple-to-reason-about way to truly take Flask to the next level. **What Flask Unchained needs most is your feedback, experimentation, bug reports, and/or code contributions!**
 
 ### Hello Flask Unchained
 
@@ -62,7 +62,7 @@ In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)`. 
 * [Useful Links](https://github.com/briancappello/flask-unchained#useful-links)
 * [Introduction / Features](https://github.com/briancappello/flask-unchained#introduction--features)
     - [Included Bundles](https://github.com/briancappello/flask-unchained#included-bundles)
-* [A Contact Us app with SQLAlchemy, HTML forms, and a RESTful API](https://github.com/briancappello/flask-unchained#a-contact-us-app-with-sqlalchemy-html-forms-and-a-restful-api)
+* [A "Contact Us" App with SQLAlchemy, HTML forms, and a RESTful API](https://github.com/briancappello/flask-unchained#a-contact-us-app-with-sqlalchemy-html-forms-and-a-restful-api)
 * [Building big, complex apps](https://github.com/briancappello/flask-unchained#building-big-complex-apps)
 * [Contributing](https://github.com/briancappello/flask-unchained#contributing)
 * [License](https://github.com/briancappello/flask-unchained#license)
@@ -96,9 +96,9 @@ Flask Unchained includes a stock Flask extension `Unchained`, that together with
 | Controller Bundle | Integrates views, controllers, resources and their routes with Flask. Also integrates the [CSRFProtect](https://flask-wtf.readthedocs.io/en/stable/csrf.html) extension from [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/index.html). The controller bundle is always enabled. | This bundle makes all the other bundles blueprints (conceptually). All the views within bundles are automatically assigned to a `Blueprint` for their bundle, and bundles implement the same public API as `Blueprint` (accessed via the `unchained` extension instance). You as an end user don't ever actually interact with blueprints in Flask Unchained. (Although they will still work in your app bundle to ease porting views.) |
 | SQLAlchemy Bundle | [SQLAlchemy](https://www.sqlalchemy.org/) and via [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/), [Alembic](https://alembic.sqlalchemy.org/en/latest/) | SQL Database ORM & Migrations. Possibly the best ORM on the planet. |
 | Security Bundle | [Flask-Login](http://flask-login.readthedocs.io/) and [Flask-Principal](https://pythonhosted.org/Flask-Principal/) | Supports HTML and JSON endpoints for login/logout (session and token authentication), and optionally, registration (with optional email confirmation), and change/forgot password functionality. |
-| OAuth Bundle | [Flask-OAuthlib](https://flask-oauthlib.readthedocs.io/en/latest/) | OAuth providers are included for Amazon, GitHub, and GitLab. You can also add your own. |
-| Session Bundle | [Flask-Session](https://pythonhosted.org/Flask-Session/) | Server-side sessions, should be uses when utilizing the Security Bundle. |
-| API Bundle | [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/), [APISpec](https://github.com/marshmallow-code/apispec) and [ReDoc](https://github.com/Rebilly/ReDoc) | RESTful API framework integrating SQLAlchemy and Marshmallow with the controller bundle. Inspired by [Flask-smorest](https://github.com/marshmallow-code/flask-smorest). [*The API Bundle as a whole, but especially the integration with APISpec/ReDoc, is a WIP. That said, RESTful JSON APIs already work quite well.*] |
+| OAuth Bundle | [Flask-OAuthlib](https://flask-oauthlib.readthedocs.io/en/latest/) | OAuth providers are included for Amazon, GitHub, and GitLab. You can also add your own. Integrated with the Security Bundle. |
+| Session Bundle | [Flask-Session](https://pythonhosted.org/Flask-Session/) | Server-side sessions, should be used when utilizing the Security Bundle. |
+| API Bundle | [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/), [APISpec](https://github.com/marshmallow-code/apispec) and [ReDoc](https://github.com/Rebilly/ReDoc) | RESTful API framework integrating SQLAlchemy and Marshmallow with the Controller Bundle. Inspired by [Flask-smorest](https://github.com/marshmallow-code/flask-smorest). [*The API Bundle as a whole, but especially the integration with APISpec/ReDoc, is a WIP. That said, JSON APIs already work quite well.*] |
 | Graphene Bundle | [Flask-GraphQL](https://github.com/graphql-python/flask-graphql) and [Graphene](https://docs.graphene-python.org/en/latest/) | Integrates Graphene with SQLAlchemy |
 | Celery Bundle | [Celery](http://docs.celeryproject.org/en/latest/index.html) | Distributed Task Queue (for running asynchronous/long-running jobs in the background) |
 | Babel Bundle | [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) | Translations / Internationalization support (always enabled, optional) |
@@ -108,9 +108,9 @@ The app factory from Flask Unchained does all the hard work of actually spinning
 
 **In short: When you write app code for Flask Unchained, you just follow a few consistent design patterns and folder/naming conventions, write mostly object oriented Python, and that's it.** Productivity at its finest with some of the best libraries Python has to offer at your back.
 
-**NOTE:** Some bundles are still a work-in-progress. Parts of the documentation need improvement or are missing. (What would you like to know how to do but that isn't obvious? Raise an issue!) **Some of the code is still alpha-quality. It works for me, but there are undoubtedly bugs lurking, especially around the edges, and some parts of the API are potentially subject to change.**
+**NOTE:** Some bundles are still a work-in-progress. **Parts of the documentation need improvement or are missing.** (What would you like to know how to do but that isn't obvious? Raise an issue!) **Some of the code is still alpha-quality. It works for me, but there are undoubtedly bugs lurking, especially around the edges, and some parts of the API are potentially subject to change.**
 
-## A Contact Us app with SQLAlchemy, HTML forms, and a RESTful API
+## A "Contact Us" App with SQLAlchemy, HTML forms, and a REST API
 
 First create a directory structure to work with:
 
@@ -253,7 +253,7 @@ class ContactSubmissionSerializer(ModelSerializer):  # a marshmallow.Schema subc
     class Meta:
         model = ContactSubmission
 
-class ContactSubmissionResource(ModelResource):  # a RESTful API Resource (extends Controller)
+class ContactSubmissionResource(ModelResource):  # a REST API Resource (extends Controller)
     class Meta:
         model = ContactSubmission
 
@@ -564,7 +564,7 @@ A larger application structure might look about like this:
 └── unchained_config.py # the Flask Unchained config
 ```
 
-To learn how to build such an app, check out the [official tutorial](https://flask-unchained.readthedocs.io/en/latest/tutorial/index.html). (The tutorial is still a work-in-progress, but is none-the-less currently the best source of "high level" documentation on Flask Unchained.) Most of the APIs are documented as well, but in the end like always, the best source of truth is usually the source code itself. You can also check out [Flask Unchained React SPA](https://github.com/briancappello/flask-unchained-react-spa) for a working example of a non-trivial RESTful API built with Flask Unchained and SQLAlchemy.
+To learn how to build such an app, check out the [official tutorial](https://flask-unchained.readthedocs.io/en/latest/tutorial/index.html). (**NOTE:** The tutorial is still a work-in-progress, but is none-the-less currently the best source of "high level" documentation on Flask Unchained.) Most of the APIs are documented as well, but in the end like always, the best source of truth is usually the source code itself. You can also check out [Flask Unchained React SPA](https://github.com/briancappello/flask-unchained-react-spa) for a working example of a (somewhat) bigger REST API built with Flask Unchained and SQLAlchemy.
 
 ## Contributing
 
