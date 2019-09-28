@@ -14,7 +14,7 @@ EXPECTED_RESULTS = [
     ('user_resource.put', '/users/<int:id>', ['PUT']),
     ('user_resource.patch', '/users/<int:id>', ['PATCH']),
     ('user_resource.delete', '/users/<int:id>', ['DELETE']),
-    ('user_resource.foobar', '/users/foobar', ['GET']),  # FIXME?
+    ('user_resource.foobar', '/users/foobar', ['GET']),
     ('role_resource.list', '/users/<int:user_id>/roles/', ['GET']),
     ('role_resource.create', '/users/<int:user_id>/roles/', ['POST']),
     ('role_resource.get', '/users/<int:user_id>/roles/<int:id>', ['GET']),
@@ -42,7 +42,7 @@ EXPECTED_DEEP_RESULTS = [
     ('user_resource.put', '/app/pre/users/<int:id>', ['PUT']),
     ('user_resource.patch', '/app/pre/users/<int:id>', ['PATCH']),
     ('user_resource.delete', '/app/pre/users/<int:id>', ['DELETE']),
-    ('user_resource.foobar', '/app/pre/users/foobar', ['GET']),  # FIXME?
+    ('user_resource.foobar', '/app/pre/users/foobar', ['GET']),
     ('role_resource.list', '/app/pre/users/<int:user_id>/roles/', ['GET']),
     ('role_resource.create', '/app/pre/users/<int:user_id>/roles/', ['POST']),
     ('role_resource.get', '/app/pre/users/<int:user_id>/roles/<int:id>', ['GET']),
