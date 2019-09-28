@@ -429,13 +429,13 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
     unique_member_param = unique_member_param or resource_cls.Meta.unique_member_param
     url_prefix = url_prefix or resource_cls.Meta.url_prefix
 
-    routes = getattr(resource_cls, CONTROLLER_ROUTES_ATTR)
+    existing_routes = getattr(resource_cls, CONTROLLER_ROUTES_ATTR)
+    routes = existing_routes
     if rules is not None:
-        routes = {method_name: method_routes
-                  for method_name, method_routes in routes.items()
-                  if method_name in resource_cls.resource_methods}
-        for route in _reduce_routes(rules):
-            routes[route.method_name] = route
+        routes = {route.method_name: route for route in _reduce_routes(rules)}
+        for method_name, method_route in existing_routes.items():
+            if method_name not in routes and method_name in resource_cls.resource_methods:
+                routes[method_name] = method_route
 
     yield from _normalize_controller_routes(routes.values(), resource_cls,
                                             url_prefix=url_prefix,
