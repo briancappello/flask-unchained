@@ -1,8 +1,8 @@
 # Flask Unchained
 
-## A Flask extension to make Flask better than Django
+## The best way to build Flask apps
 
-**Flask Unchained is a fully integrated, optional-batteries-included web framework for Flask.** Out of the box, it's as minimal as Flask itself. But Flask Unchained apps can also pick and choose "bundles" to enable that integrate Flask extensions: **bundles are just like Django's "apps", except I think you'll find bundles are even more powerful and extensible**.
+**Flask Unchained is a fully integrated, optional-batteries-included web framework for Flask and its extension ecosystem.** Out of the box, it's as minimal as Flask itself. But Flask Unchained apps can also pick and choose "bundles" to enable that integrate Flask extensions: **bundles are just like Django's "apps", except I think you'll find bundles are even more powerful and extensible**. Flask Unchained aims to stay true to the spirit and API of Flask itself, while also enabling you to rapidly building large and complex web apps and GraphQL/REST APIs with Flask.
 
 > The architecture and "developer experience" of how Flask Unchained and its bundles work is inspired by the [Symfony Framework](https://symfony.com/), which is enterprise-level awesome, aside from the fact that it isn't Python ;)
 

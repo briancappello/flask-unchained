@@ -2,7 +2,7 @@
     flask_unchained
     ---------------
 
-    A Flask extension to make Flask better than Django
+    The best way to build Flask apps
 
     :copyright: Copyright © 2018 Brian Cappello
     :license: MIT, see LICENSE for more details
