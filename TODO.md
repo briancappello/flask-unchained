@@ -8,18 +8,23 @@ api bundle
 
 security bundle
 ---------------
-* implement GraphQL support
+* implement GraphQL support (integrate with Graphene Bundle)
 * implement support for JWT tokens (and maybe PASETO tokens too?)
 
 
 oauth bundle
 ------------
-* switch over from deprecated Flask-OAuthlib to https://github.com/lepture/authlib
+* switch over from deprecated Flask-OAuthlib to [authlib](https://github.com/lepture/authlib)
 
 
 mail bundle
 -----------
 * add extensible/pluggable support for API-based mail providers, eg SendGrid, MailGun, ...
+
+
+dotenv files
+------------
+* [flask-dotenv](https://github.com/grauwoelfchen/flask-dotenv/) perhaps?
 
 
 logging
@@ -36,6 +41,7 @@ documentation
 
 dependency injection
 --------------------
+* make dependency injection of optional extensions/services work everywhere (currently it only works on the constructor of services)
 * should services be lazily instantiated on an as-needed basis?
 * maybe make the `injectable` default parameter value optional if the type annotation is recognized as a registered service or extension?
 
@@ -63,6 +69,6 @@ bucket list
    - AWS
    - GCP
 * frontend app templates
-   - React
+   - React (perhaps [react-boilerplate](https://github.com/react-boilerplate/react-boilerplate)?)
    - Angular
    - Vue
