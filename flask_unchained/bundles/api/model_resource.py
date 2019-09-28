@@ -2,13 +2,14 @@ import inspect
 
 from flask import jsonify, make_response
 from flask_unchained import Resource, route, param_converter, unchained, injectable
+from flask_unchained.string_utils import kebab_case, pluralize
 from flask_unchained.bundles.controller.attr_constants import (
     CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR)
 from flask_unchained.bundles.controller.constants import (
     ALL_RESOURCE_METHODS, RESOURCE_INDEX_METHODS, RESOURCE_MEMBER_METHODS,
     CREATE, DELETE, GET, LIST, PATCH, PUT)
 from flask_unchained.bundles.controller.resource import (
-    _ResourceMetaclass, _ResourceMetaOptionsFactory)
+    _ResourceMetaclass, _ResourceMetaOptionsFactory, _ResourceUrlPrefixMetaOption)
 from flask_unchained.bundles.controller.route import Route
 from flask_unchained.bundles.controller.utils import get_param_tuples
 from flask_unchained.bundles.sqlalchemy import SessionManager
@@ -230,10 +231,37 @@ class _ModelResourceMethodDecoratorsMetaOption(MetaOption):
                     f'the {method_name} key'
 
 
+class _ModelResourceUrlPrefixMetaOption(MetaOption):
+    """
+    The url prefix to use for all routes from this resource. Defaults to the
+    pluralized and snake-cased model class name.
+    """
+    def __init__(self):
+        super().__init__('url_prefix', default=_missing, inherit=False)
+
+    def get_value(self, meta, base_classes_meta, mcs_args: McsArgs):
+        value = super().get_value(meta, base_classes_meta, mcs_args)
+        if (value is not _missing
+                or mcs_args.Meta.abstract
+                or not mcs_args.Meta.model):
+            return value
+
+        return '/' + pluralize(kebab_case(mcs_args.Meta.model.__name__))
+
+    def check_value(self, value, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert isinstance(value, str), \
+            f'The {self.name} meta option must be a string'
+
+
 class _ModelResourceMetaOptionsFactory(_ResourceMetaOptionsFactory):
     _allowed_properties = ['model']
-    _options = _ResourceMetaOptionsFactory._options + [
+    _options = [option for option in _ResourceMetaOptionsFactory._options
+                if not issubclass(option, _ResourceUrlPrefixMetaOption)] + [
         _ModelResourceModelMetaOption,
+        _ModelResourceUrlPrefixMetaOption,  # must come after the model meta option
         _ModelResourceSerializerMetaOption,
         _ModelResourceSerializerCreateMetaOption,
         _ModelResourceSerializerManyMetaOption,

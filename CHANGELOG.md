@@ -32,6 +32,7 @@
 - fix using default url rule from view function when no explicit rule passed to `func`
 - fix `flask urls` command when no URLs found
 - make sure hooks don't resolve local proxies
+- fix `ModelResource.Meta.url_prefix` to use `Meta.model.__name__` instead of the resource's class name
 
 ### Breaking Changes
 
