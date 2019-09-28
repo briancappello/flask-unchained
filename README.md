@@ -324,16 +324,18 @@ You can list the routes that are registered with Flask:
 
 ```bash
 $ flask urls
-Method(s)  Rule                               Endpoint                            View                                       Options
--------------------------------------------------------------------------------------------------------------------------------------------
-      GET  /                                  site_controller.index               hello :: SiteController.index              strict_slashes
-GET, POST  /say-hi                            site_controller.hello_world         hello :: SiteController.hello_world        strict_slashes
-     POST  /api/v1/name-submissions/          contact_submission_resource.create  hello :: ContactSubmissionResource.create  strict_slashes
-      GET  /api/v1/name-submissions/          contact_submission_resource.list    hello :: ContactSubmissionResource.list    strict_slashes
-    PATCH  /api/v1/name-submissions/<int:id>  contact_submission_resource.patch   hello :: ContactSubmissionResource.patch   strict_slashes
-      PUT  /api/v1/name-submissions/<int:id>  contact_submission_resource.put     hello :: ContactSubmissionResource.put     strict_slashes
-      GET  /api/v1/name-submissions/<int:id>  contact_submission_resource.get     hello :: ContactSubmissionResource.get     strict_slashes
-   DELETE  /api/v1/name-submissions/<int:id>  contact_submission_resource.delete  hello :: ContactSubmissionResource.delete  strict_slashes
+Method(s)  Rule                                  Endpoint                            View                                        Options       
+-----------------------------------------------------------------------------------------------------------------------------------------------
+      GET  /static/<path:filename>               static                              flask.helpers :: send_static_file           strict_slashes
+      GET  /                                     site_controller.index               app :: SiteController.index                 strict_slashes
+GET, POST  /say-hi                               site_controller.say_hello           app :: SiteController.say_hello             strict_slashes
+      GET  /thanks                               site_controller.contact_thanks      app :: SiteController.contact_thanks        strict_slashes
+      GET  /api/v1/contact-submissions/          contact_submission_resource.list    app :: ContactSubmissionResource.list       strict_slashes
+     POST  /api/v1/contact-submissions/          contact_submission_resource.create  app :: ContactSubmissionResource.create     strict_slashes
+      GET  /api/v1/contact-submissions/<int:id>  contact_submission_resource.get     app :: ContactSubmissionResource.get        strict_slashes
+   DELETE  /api/v1/contact-submissions/<int:id>  contact_submission_resource.delete  app :: ContactSubmissionResource.delete     strict_slashes
+    PATCH  /api/v1/contact-submissions/<int:id>  contact_submission_resource.patch   app :: ContactSubmissionResource.patch      strict_slashes
+      PUT  /api/v1/contact-submissions/<int:id>  contact_submission_resource.put     app :: ContactSubmissionResource.put        strict_slashes
 ```
 
 Let's add the code for our styles and templates before firing up the dev server:
