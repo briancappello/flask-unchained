@@ -4,13 +4,13 @@
 
 **Flask Unchained implements a pluggable application factory turning Flask and its extension ecosystem into a completely integrated "opt-in" full-stack web framework.** Flask Unchained uses "bundles" to make extensions work right out-of-the-box: **bundles are just like Django's "apps", except I think you'll find bundles are even more powerful and extensible**.
 
-> **With the release of v0.8, Flask Unchained is no longer just a "toy project".** :fire:Yes, it's still in alpha and ***may set your servers on fire***,:fire: but this release marks the 3 year anniversary of the [first public commit](https://github.com/briancappello/flask-react-spa/commit/a3d51afe70f245400b90e4d553d8803baed38aa4#diff-158b9e98f24719b14939e0e70270acc3) of Flask Unchained's true birthplace, [Flask React SPA](https://github.com/briancappello/flask-react-spa). (Flask Unchained as a standalone library grew out of that boilerplate [about 2 year ago](https://github.com/briancappello/flask-unchained/commit/19d604c829b798f2730b05dbfc65d3fa1bd76d85).)
+> **With the release of v0.8, Flask Unchained is no longer just a "toy project".** :fire:Yes, it's still in alpha and ***may set your servers on fire***:fire:, but this release marks the 3 year anniversary of the [first public commit](https://github.com/briancappello/flask-react-spa/commit/a3d51afe70f245400b90e4d553d8803baed38aa4#diff-158b9e98f24719b14939e0e70270acc3) of Flask Unchained's true birthplace, [Flask React SPA](https://github.com/briancappello/flask-react-spa). (Flask Unchained as a standalone library grew out of that boilerplate [about 2 year ago](https://github.com/briancappello/flask-unchained/commit/19d604c829b798f2730b05dbfc65d3fa1bd76d85).)
 >
 > Point being, the architecture that makes this all work has had a pretty decent vetting by now. **The core API, and especially the concepts/abstractions it uses, are solid.** (Thanks in large part to standing on the shoulders of giants; see [acknowledgements](https://github.com/briancappello/flask-unchained#acknowledgements).)
 >
-> **Flask Unchained is designed to make Flask better than Django *at everything*, from the smallest single-file apps to micro-services to giant monolithic apps.** Of course I may be *just a bit* biased, but I've worked with Django by day for the past year, and while it is good - great even - I still think Flask with SQLAlchemy is decidedly even more powerful and flexible.
+> **Flask Unchained is designed to make Flask better than Django *at everything*, from the smallest single-file apps to micro-services to giant monolithic apps.** (Not that it's *entirely* there yet.) And of course I may be *just a little bit* biased, but I've been working with Django by day for the past year, and while it is good - great even - I still think Flask with SQLAlchemy and company is decidedly *even more* powerful, flexible, and most of all enjoyable to work with. (Not that *you* have to use SQLAlchemy if you don't want to; **almost everything about Flask Unchained is completely customizable**.)
 >
-> It sure wasn't easy figuring out how to get everything working together to make Flask Unchained a reality - or that it would even be possible - but as it turns out, there is indeed a clean, powerful, flexible, and yet surprisingly simple-to-reason-about way to truly take Flask to the next level. **What Flask Unchained needs most is your feedback, experimentation, bug reports, and/or code contributions!**
+> It took a fair amount of trial and error before I finally figured out how to get everything working together nicely to make Flask Unchained a reality - but **as it turns out, there is indeed a clean, powerfully extensible, and (I hope you'll find) surprisingly simple-to-reason-about way to truly take Flask to the next level**. What Flask Unchained needs most is your feedback, experimentation, bug reports, and more bundles integrating 3rd party extensions! (And of course core contributions are more than welcome too!)
 
 ### Hello Flask Unchained
 
@@ -38,8 +38,6 @@ def test_index(client):
 
 **NOTE:** The README assumes v0.8 of Flask Unchained, which is not yet released to PyPI. (install from master with `pip install "git+https://github.com/briancappello/flask-unchained.git@master#egg=flask-unchained[dev]"`)
 
-Everything should just work right out of the box:
-
 ```bash
 # create a virtual environment and activate it (other ways work too, eg pipenv)
 cd hello-flask-unchained
@@ -62,7 +60,7 @@ In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)`. 
 * [Useful Links](https://github.com/briancappello/flask-unchained#useful-links)
 * [Introduction / Features](https://github.com/briancappello/flask-unchained#introduction--features)
     - [Included Bundles](https://github.com/briancappello/flask-unchained#included-bundles)
-* [A "Contact Us" App with SQLAlchemy, HTML forms, and a RESTful API](https://github.com/briancappello/flask-unchained#a-contact-us-app-with-sqlalchemy-html-forms-and-a-restful-api)
+* [A "Contact Us" App with SQLAlchemy, HTML forms, and a RESTful API](https://github.com/briancappello/flask-unchained#a-contact-us-app-with-sqlalchemy-html-forms-and-a-rest-api)
 * [Building big, complex apps](https://github.com/briancappello/flask-unchained#building-big-complex-apps)
 * [Contributing](https://github.com/briancappello/flask-unchained#contributing)
 * [License](https://github.com/briancappello/flask-unchained#license)
@@ -102,6 +100,7 @@ Flask Unchained includes a stock Flask extension `Unchained`, that together with
 | Graphene Bundle | [Flask-GraphQL](https://github.com/graphql-python/flask-graphql) and [Graphene](https://docs.graphene-python.org/en/latest/) | Integrates Graphene with SQLAlchemy |
 | Celery Bundle | [Celery](http://docs.celeryproject.org/en/latest/index.html) | Distributed Task Queue (for running asynchronous/long-running jobs in the background) |
 | Babel Bundle | [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) | Translations / Internationalization support (always enabled, optional) |
+| Mail Bundle | [Flask-Mail](https://pythonhosted.org/flask-mail/) | Flask Mail uses SMTP to send emails. But you can easily configure a custom `MAIL_SEND_FN` to send emails using an API service such as SendGrid or MailGun. |
 | Admin Bundle | [Flask Admin](https://flask-admin.readthedocs.io/en/latest/) | The very basics work. But this bundle needs a lot of work if it's going to compete with Django's admin. (Which itself has its own laundry list of issues, but I digress.) |
 
 The app factory from Flask Unchained does all the hard work of actually spinning up the app for you. First it instantiates the Flask app instance. Next it discovers all of the code from your specified bundles (allowing bundles to subclass other bundles to customize/override classes/templates from their base bundles), and automatically registers your configured bundles and code with the app.
@@ -450,6 +449,8 @@ We could just have easily split this up into separate modules within an app bund
 ```
 /home/user/dev/hello-flask-unchained
 ├── unchained_config.py  # Flask kwargs and the BUNDLES list live here
+├── static
+│   └── styles.css
 ├── templates  # top-level templates is always searched first for matches
 │   └── layout.html
 └── app  # the "app" Python package is still our bundle's module name  
