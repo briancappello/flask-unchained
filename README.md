@@ -1,8 +1,8 @@
 # Flask Unchained
 
-## The best way to build Flask apps
+## A Flask extension to make Flask better than Django
 
-Flask Unchained is **a Flask extension that implements a pluggable application factory turning Flask and its extension ecosystem into a completely integrated "opt-in" full-stack web framework.** Flask Unchained uses "bundles" to make extensions work right out-of-the-box: **bundles are just like Django's "apps", except I think you'll find bundles are even more powerful and extensible**.
+**Flask Unchained implements a pluggable application factory turning Flask and its extension ecosystem into a completely integrated "opt-in" full-stack web framework.** Flask Unchained uses "bundles" to make extensions work right out-of-the-box: **bundles are just like Django's "apps", except I think you'll find bundles are even more powerful and extensible**.
 
 > **With the release of v0.8, Flask Unchained is no longer just a "toy project".** :fire:Yes, it's still in alpha and *may set your servers on fire*:fire:, but this release marks the 3 year anniversary of the [first public commit](https://github.com/briancappello/flask-react-spa/commit/a3d51afe70f245400b90e4d553d8803baed38aa4#diff-158b9e98f24719b14939e0e70270acc3) Flask Unchained's true birthplace, [Flask React SPA](https://github.com/briancappello/flask-react-spa). (Flask Unchained as a standalone library grew out of that boilerplate [about 2 year ago](https://github.com/briancappello/flask-unchained/commit/19d604c829b798f2730b05dbfc65d3fa1bd76d85).)
 >
