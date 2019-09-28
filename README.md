@@ -74,7 +74,7 @@ In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)`. 
 
 ## Introduction / Features
 
-Flask Unchained includes a stock Flask extension called simply `Unchained`, that together with the `AppFactory`, `AppFactoryHook`, and `Bundle` base classes implements a pluggable application factory you can hook into to customize the Flask app instance as it's booting up and/or register things with the app. Flask Unchained also includes a set of (mostly optional) bundles integrating some of the most popular Flask extensions. **Bundles are an enhanced replacement for stock Flask blueprints, and also provide a way to integrate Flask extensions and Python libraries with Flask and Flask Unchained**.
+Flask Unchained includes a stock Flask extension called simply `Unchained`, that together with the `AppFactory`, `AppFactoryHook`, and `Bundle` base classes implements a pluggable application factory you can hook into to customize the Flask app instance as it's booting up and/or register things with the app. Flask Unchained also includes a set of (mostly optional) bundles integrating some of the most popular Flask extensions.
 
 - **Python 3.6+**
 - designed to be **easy to start with and even easier to quickly grow your app**
