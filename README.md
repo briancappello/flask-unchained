@@ -4,13 +4,13 @@
 
 **Flask Unchained implements a pluggable application factory turning Flask and its extension ecosystem into a completely integrated "opt-in" full-stack web framework.** Flask Unchained uses "bundles" to make extensions work right out-of-the-box: **bundles are just like Django's "apps", except I think you'll find bundles are even more powerful and extensible**.
 
-> **With the release of v0.8, Flask Unchained is no longer just a "toy project".** :fire:Yes, it's still in alpha and ***may set your servers on fire***:fire:, but this release marks the 3 year anniversary of the [first public commit](https://github.com/briancappello/flask-react-spa/commit/a3d51afe70f245400b90e4d553d8803baed38aa4#diff-158b9e98f24719b14939e0e70270acc3) of Flask Unchained's true birthplace, [Flask React SPA](https://github.com/briancappello/flask-react-spa). (Flask Unchained as a standalone library grew out of that boilerplate [about 2 year ago](https://github.com/briancappello/flask-unchained/commit/19d604c829b798f2730b05dbfc65d3fa1bd76d85).)
+> **With the release of v0.8, Flask Unchained is no longer "just an experiment."** This thing works. :fire:Yes, it's still in alpha and ***may set your servers on fire***:fire:, but this release marks the 3 year anniversary of the [first public commit](https://github.com/briancappello/flask-react-spa/commit/a3d51afe70f245400b90e4d553d8803baed38aa4#diff-158b9e98f24719b14939e0e70270acc3) of Flask Unchained's true birthplace, [Flask React SPA](https://github.com/briancappello/flask-react-spa). (Flask Unchained as a standalone library grew out of that boilerplate [about 2 year ago](https://github.com/briancappello/flask-unchained/commit/19d604c829b798f2730b05dbfc65d3fa1bd76d85).)
 >
 > Point being, the architecture that makes this all work has had a pretty decent vetting by now. **The core API, and especially the concepts/abstractions it uses, are solid.** (Thanks in large part to standing on the shoulders of giants; see [acknowledgements](https://github.com/briancappello/flask-unchained#acknowledgements).)
 >
-> **Flask Unchained is designed to make Flask better than Django *at everything*, from the smallest single-file apps to micro-services to giant monolithic apps.** (Not that it's *entirely* there yet.) And of course I may be *just a little bit* biased, but I've been working with Django by day for the past year, and while it is good - great even - I still think Flask with SQLAlchemy and company is decidedly *even more* powerful, flexible, and most of all enjoyable to work with. (Not that *you* have to use SQLAlchemy if you don't want to; **almost everything about Flask Unchained is completely customizable**.)
+> **Flask Unchained is designed to make Flask better than Django *at everything*, from the smallest single-file apps to micro-services to giant monoliths.** (Not that it's *entirely* there yet.) And of course I may be *just a little bit* biased, but I've been working with Django by day for the past year, and while it is good - great even - I still think Flask with SQLAlchemy and company is decidedly *even more* powerful, flexible, and most of all enjoyable to work with. (Not that *you* have to use SQLAlchemy if you don't want to; **almost everything about Flask Unchained is completely customizable**.)
 >
-> It took a fair amount of trial and error before I finally figured out how to get everything working together nicely to make Flask Unchained a reality - but **as it turns out, there is indeed a clean, powerfully extensible, and (I hope you'll find) surprisingly simple-to-reason-about way to truly take Flask to the next level**. What Flask Unchained needs most is your feedback, experimentation, bug reports, and more bundles integrating 3rd party extensions! (And of course core contributions are more than welcome too!)
+> It took a fair amount of trial and error before I finally figured out how to get everything working together nicely and make Flask Unchained a reality - but **as it turns out, there is indeed a clean and (I hope you'll find) surprisingly simple-to-reason-about way to truly take Flask to the next level**.
 
 ### Hello Flask Unchained
 
@@ -174,10 +174,9 @@ class DevConfig(Config):  # other env-configs are ProdConfig, StagingConfig and 
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(ROOT_PATH, 'db', 'dev.sqlite')}"
 
 class App(AppBundle):
-    command_group_names = ['app']  # the default is the app bundle's class name snake_cased
+    def before_init_app(self, app: FlaskUnchained) -> None:
+        pass
 
-    # implement before_init_app to do stuff immediately after the app's instantiation
-    # after_init_app is run by the app factory immediately before create_app returns
     def after_init_app(self, app: FlaskUnchained) -> None:
         @app.after_request
         def set_csrf_token_cookie(response: Response):
@@ -300,6 +299,8 @@ routes = lambda: [
     ]),
 ]
 
+# command group name should be the same as the snake_cased app bundle's class name
+# or, you can set `command_group_names = ['whatever']` on your `AppBundle` subclass
 @cli.group()
 def app():
     """App bundle commands"""
