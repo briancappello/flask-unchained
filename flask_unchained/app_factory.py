@@ -239,7 +239,7 @@ class AppFactory(metaclass=Singleton):
         raise BundleNotFoundError(
             f'Unable to find a Bundle subclass in the {bundle_package_name} bundle!'
             ' Please make sure this bundle is installed and that there is a Bundle'
-            ' subclass in the packages\'s bundle module or its __init__.py file.')
+            ' subclass in the packages\'s __init__.py (or bundle.py) file.')
 
     @classmethod
     def is_bundle(cls, module: ModuleType) -> FunctionType:

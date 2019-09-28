@@ -20,6 +20,11 @@ class _BundleOverrideModuleNamesAttrDescriptor:
             return f'{cls.bundle_module_name}_module_name'
         elif cls.bundle_module_names:
             return f'{cls.bundle_module_names[0]}_module_names'.replace('.', '_')
+        elif cls.bundle_module_name:
+            raise RuntimeError(
+                f'To use `bundle_module_name` on {cls.__name__}, you must also set '
+                f'`{cls.__name__}.require_exactly_one_bundle_module = True`')
+        return None
 
 
 class _HookNameDescriptor:
@@ -82,7 +87,16 @@ class AppFactoryHook:
     bundle_override_module_names_attr: str = _BundleOverrideModuleNamesAttrDescriptor()
     """
     The attribute name that bundles can set on themselves to override the module(s)
-    this hook will load from for that bundle.
+    this hook will load from for that bundle. The defaults are as follows:
+
+    If :attr:`require_exactly_one_bundle_module` and :attr:`bundle_module_name` are set,
+    use f'{<the set bundle module name>}_module_name'.
+
+    Otherwise if :attr:`bundle_module_names` is set, we use the same f-string, just with
+    the first module name listed in :attr:`bundle_module_names`.
+
+    If neither of :attr:`bundle_module_name` or :attr:`bundle_module_names` is set, then
+    this will be ``None``.
     """
 
     discover_from_bundle_superclasses: bool = True
@@ -217,7 +231,7 @@ class AppFactoryHook:
             # it's ever needed:
             #
             # https://stackoverflow.com/questions/14413025/how-can-i-find-out-where-an-object-has-been-instantiated#14413108
-            if isinstance(obj, type):
+            if isinstance(obj, (type, FunctionType)):
                 is_local_declaration = obj.__module__.startswith(module.__name__)
             else:
                 is_local_declaration = False
