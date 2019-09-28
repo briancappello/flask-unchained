@@ -1,6 +1,7 @@
 from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
-from flask_unchained.bundles._blueprint import BundleBlueprint
 from typing import *
+
+from ..bundle_blueprint import BundleBlueprint
 
 # FIXME test template resolution order when this is used in combination with
 # RegisterBlueprintsHook
@@ -17,10 +18,10 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
 
     def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
         for bundle_ in reversed(bundles):
-            for bundle in bundle_._iter_class_hierarchy(reverse_mro=False):
+            for bundle in bundle_._iter_class_hierarchy(mro=True):
                 if (bundle.template_folder
                         or bundle._static_folders
-                        or bundle._has_views()):
+                        or bundle._has_views):
                     bp = BundleBlueprint(bundle)
                     for route in self.bundle.bundle_routes.get(bundle.module_name, []):
                         bp.add_url_rule(route.full_rule,

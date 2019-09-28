@@ -17,14 +17,109 @@ from .utils import AttrDict
 
 
 class _DeferredBundleFunctionsStore:
+    """
+    An intermediary store that lives on :class:`~flask_unchained.Unchained` to
+    return an instance of :class:`~flask_unchained.DeferredBundleFunctions` for
+    each bundle name lookup on us (implements a dict-like readonly interface).
+    """
     def __init__(self):
         self._bundles = {}
 
     def __getitem__(self, bundle_name):
         if bundle_name not in self._bundles:
-            from .bundles import _DeferredBundleFunctions
-            self._bundles[bundle_name] = _DeferredBundleFunctions()
+            self._bundles[bundle_name] = DeferredBundleFunctions()
         return self._bundles[bundle_name]
+
+
+class DeferredBundleFunctions:
+    """
+    The public interface for replacing Blueprints with Bundles. Must be accessed
+    via the :class:`flask_unchained.Unchained` extension instance, eg::
+
+       from flask_unchained import Bundle, unchained
+
+       class Foobar(Bundle):
+           name = 'not_foobar'
+
+       unchained.not_foobar.before_request() (or any other method on this class)
+    """
+
+    def __init__(self):
+        self._deferred_functions = []
+
+    def _defer(self, fn):
+        self._deferred_functions.append(fn)
+
+    def before_request(self, fn):
+        """
+        Like :meth:`flask.Blueprint.before_request` but for a bundle. This function
+        is only executed before each request that is handled by a view function
+        of that bundle.
+        """
+        self._defer(lambda bp: bp.before_request(fn))
+        return fn
+
+    def after_request(self, fn):
+        """
+        Like :meth:`flask.Blueprint.after_request` but for a bundle. This function
+        is only executed after each request that is handled by a function of
+        that bundle.
+        """
+        self._defer(lambda bp: bp.after_request(fn))
+        return fn
+
+    def teardown_request(self, fn):
+        """
+        Like :meth:`flask.Blueprint.teardown_request` but for a bundle. This
+        function is only executed when tearing down requests handled by a
+        function of that bundle.  Teardown request functions are executed
+        when the request context is popped, even when no actual request was
+        performed.
+        """
+        self._defer(lambda bp: bp.teardown_request(fn))
+        return fn
+
+    def context_processor(self, fn):
+        """
+        Like :meth:`flask.Blueprint.context_processor` but for a bundle. This
+        function is only executed for requests handled by a bundle.
+        """
+        self._defer(lambda bp: bp.context_processor(fn))
+        return fn
+
+    def url_defaults(self, fn):
+        """
+        Callback function for URL defaults for this bundle. It's called
+        with the endpoint and values and should update the values passed
+        in place.
+        """
+        self._defer(lambda bp: bp.url_defaults(fn))
+        return fn
+
+    def url_value_preprocessor(self, fn):
+        """
+        Registers a function as URL value preprocessor for this
+        bundle. It's called before the view functions are called and
+        can modify the url values provided.
+        """
+        self._defer(lambda bp: bp.url_value_preprocessor(fn))
+        return fn
+
+    def errorhandler(self, code_or_exception):
+        """
+        Registers an error handler that becomes active for this bundle
+        only.  Please be aware that routing does not happen local to a
+        bundle so an error handler for 404 usually is not handled by
+        a bundle unless it is caused inside a view function.  Another
+        special case is the 500 internal server error which is always looked
+        up from the application.
+
+        Otherwise works as the :meth:`flask.Blueprint.errorhandler` decorator.
+        """
+        def decorator(fn):
+            self._defer(lambda bp: bp.register_error_handler(code_or_exception, fn))
+            return fn
+        return decorator
 
 
 class Unchained:
@@ -44,7 +139,7 @@ class Unchained:
 
     def __init__(self, env: Optional[Union[DEV, PROD, STAGING, TEST]] = None):
         self.bundles = AttrDict()
-        self._bundles = _DeferredBundleFunctionsStore()
+        self._deferred_bundle_functions = _DeferredBundleFunctionsStore()
         self.babel_bundle = None
         self.env = env
         self.extensions = AttrDict()
@@ -68,7 +163,7 @@ class Unchained:
         actually know what bundles the user has configured, and therefore we
         need to make a compromise: *any* unrecognized attribute access before
         the app has been initialized is assumed to be a valid bundle name, and
-        so we return a :class:`~flask_unchained.bundle._DeferredBundleFunctions`
+        so we return a :class:`~flask_unchained.bundle.DeferredBundleFunctions`
         instance that allows registering deferred functions (as a replacement
         for that part of the public Blueprint API).
 
@@ -79,7 +174,7 @@ class Unchained:
         if name in self.bundles:
             return self.bundles[name]
         elif not self._initialized:
-            return self._bundles[name]
+            return self._deferred_bundle_functions[name]
         raise AttributeError(name)
 
     def init_app(self,
@@ -102,7 +197,8 @@ class Unchained:
 
         bundles = bundles or []
         for b in bundles:
-            b._deferred_functions = self._bundles[b.name]._deferred_functions
+            b._deferred_functions = \
+                self._deferred_bundle_functions[b.name]._deferred_functions
         self.bundles = AttrDict({b.name: b for b in bundles})
         self.babel_bundle = self.bundles.get('babel_bundle', None)
 
@@ -632,7 +728,7 @@ class Unchained:
         This method is for use by tests only!
         """
         self.bundles = AttrDict()
-        self._bundles = _DeferredBundleFunctionsStore()
+        self._deferred_bundle_functions = _DeferredBundleFunctionsStore()
         self.babel_bundle = None
         self.env = None
         self.extensions = AttrDict()

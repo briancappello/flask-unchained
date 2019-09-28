@@ -71,86 +71,6 @@ class _BundleTemplateFolderDescriptor:
         return instance._template_folder
 
 
-class _DeferredBundleFunctions:
-    """
-    The public interface for replacing Blueprints with Bundles.
-    """
-
-    def __init__(self):
-        self._deferred_functions = []
-
-    def _defer(self, fn):
-        self._deferred_functions.append(fn)
-
-    def before_request(self, fn):
-        """
-        Like :meth:`flask.Blueprint.before_request` but for a bundle. This function
-        is only executed before each request that is handled by a view function
-        of that bundle.
-        """
-        self._defer(lambda bp: bp.before_request(fn))
-
-    def after_request(self, fn):
-        """
-        Like :meth:`flask.Blueprint.after_request` but for a bundle. This function
-        is only executed after each request that is handled by a function of
-        that bundle.
-        """
-        self._defer(lambda bp: bp.after_request(fn))
-
-    def teardown_request(self, fn):
-        """
-        Like :meth:`flask.Blueprint.teardown_request` but for a bundle. This
-        function is only executed when tearing down requests handled by a
-        function of that bundle.  Teardown request functions are executed
-        when the request context is popped, even when no actual request was
-        performed.
-        """
-        self._defer(lambda bp: bp.teardown_request(fn))
-
-    def context_processor(self, fn):
-        """
-        Like :meth:`flask.Blueprint.context_processor` but for a bundle. This
-        function is only executed for requests handled by a bundle.
-        """
-        self._defer(lambda bp: bp.context_processor(fn))
-        return fn
-
-    def url_defaults(self, fn):
-        """
-        Callback function for URL defaults for this bundle. It's called
-        with the endpoint and values and should update the values passed
-        in place.
-        """
-        self._defer(lambda bp: bp.url_defaults(fn))
-        return fn
-
-    def url_value_preprocessor(self, fn):
-        """
-        Registers a function as URL value preprocessor for this
-        bundle. It's called before the view functions are called and
-        can modify the url values provided.
-        """
-        self._defer(lambda bp: bp.url_value_preprocessor(fn))
-        return fn
-
-    def errorhandler(self, code_or_exception):
-        """
-        Registers an error handler that becomes active for this bundle
-        only.  Please be aware that routing does not happen local to a
-        bundle so an error handler for 404 usually is not handled by
-        a bundle unless it is caused inside a view function.  Another
-        special case is the 500 internal server error which is always looked
-        up from the application.
-
-        Otherwise works as the :meth:`flask.Blueprint.errorhandler` decorator.
-        """
-        def decorator(fn):
-            self._defer(lambda bp: bp.register_error_handler(code_or_exception, fn))
-            return fn
-        return decorator
-
-
 class Bundle(metaclass=_BundleMetaclass):
     """
     Base class for bundles.
@@ -209,11 +129,11 @@ class Bundle(metaclass=_BundleMetaclass):
     _deferred_functions: List[FunctionType] = []
     """
     Deferred functions to be registered with the
-    :class:`~flask_unchained.bundles.BundleBlueprint` that gets created
-    for this bundle.
+    :class:`~flask_unchained.bundles.controller.bundle_blueprint.BundleBlueprint`
+    that gets created for this bundle.
 
     The :class:`~flask_unchained.Unchained` extension copies these values from the
-    :class:`_DeferredBundleFunctions` instance it created for this bundle.
+    :class:`DeferredBundleFunctions` instance it created for this bundle.
     """
 
     def before_init_app(self, app: FlaskUnchained) -> None:
@@ -232,7 +152,7 @@ class Bundle(metaclass=_BundleMetaclass):
         """
         pass
 
-    def _iter_class_hierarchy(self, include_self: bool = True, reverse_mro: bool = True):
+    def _iter_class_hierarchy(self, include_self: bool = True, mro: bool = False):
         """
         Iterate over the bundle classes in the hierarchy. Yields base-most
         superclass instances first (aka opposite of Method Resolution Order).
@@ -240,16 +160,17 @@ class Bundle(metaclass=_BundleMetaclass):
         For internal use only.
 
         :param include_self: Whether or not to yield the top-level bundle.
-        :param reverse_mro: Pass False to yield bundles in Method Resolution Order.
+        :param mro: Pass True to yield bundles in Method Resolution Order.
         """
         supers = self.__class__.__mro__[(0 if include_self else 1):]
-        for bundle_cls in (reversed(supers) if reverse_mro else supers):
-            if issubclass(bundle_cls, Bundle) and bundle_cls not in {AppBundle, Bundle}:
+        for bundle_cls in (supers if mro else reversed(supers)):
+            if bundle_cls not in {object, AppBundle, Bundle}:
                 if bundle_cls == self.__class__:
                     yield self
                 else:
                     yield bundle_cls()
 
+    @property
     def _has_views(self) -> bool:
         """
         Returns True if any of the bundles in the hierarchy has a views module.
@@ -267,7 +188,12 @@ class Bundle(metaclass=_BundleMetaclass):
 
     @property
     def _blueprint_name(self) -> str:
-        if self._is_top_bundle() or not self._has_hierarchy_name_conflicts():
+        """
+        Get the name to use for the blueprint for this bundle.
+
+        For internal use only.
+        """
+        if self._is_top_bundle or not self._has_hierarchy_name_conflicts:
             return self.name
 
         for i, bundle in enumerate(self._iter_class_hierarchy()):
@@ -276,18 +202,35 @@ class Bundle(metaclass=_BundleMetaclass):
 
     @property
     def _static_folders(self) -> List[str]:
-        if not self._has_hierarchy_name_conflicts():
+        """
+        Get the list of static folders for this bundle.
+
+        For internal use only.
+        """
+        if not self._has_hierarchy_name_conflicts:
             return [self.static_folder] if self.static_folder else []
-        elif not self._is_top_bundle():
+        elif not self._is_top_bundle:
             return []
 
-        return [b.static_folder for b in self._iter_class_hierarchy(reverse_mro=False)
+        return [b.static_folder for b in self._iter_class_hierarchy(mro=True)
                 if b.static_folder and b.name == self.name]
 
+    @property
     def _is_top_bundle(self) -> bool:
+        """
+        Whether or not this bundle is the top-most bundle in the hierarchy.
+
+        For internal use only.
+        """
         return not self.__class__.__subclasses__()
 
+    @property
     def _has_hierarchy_name_conflicts(self) -> bool:
+        """
+        Whether or not there are any name conflicts between bundles in the hierarchy.
+
+        For internal use only.
+        """
         top_bundle = self.__class__
         subclasses = top_bundle.__subclasses__()
         while subclasses:
@@ -315,6 +258,10 @@ class Bundle(metaclass=_BundleMetaclass):
 
 
 class _AppBundleMetaclass(_BundleMetaclass):
+    """
+    Metaclass for :class:`AppBundle` to automatically set the user's subclass
+    on the :class:`~flask_unchained.Unchained` extension instance.
+    """
     def __init__(cls, name, bases, clsdict):
         super().__init__(name, bases, clsdict)
         unchained._app_bundle_cls = cls

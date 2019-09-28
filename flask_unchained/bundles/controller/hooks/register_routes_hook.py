@@ -51,15 +51,17 @@ class RegisterRoutesHook(AppFactoryHook):
                     key = f'{route._controller_cls.__name__}.{route.method_name}'
                     self.bundle.controller_endpoints[key].append(route)
 
-        bundle_module_names = []
+        # build up a list of bundles with views:
+        bundle_module_names = []  # [tuple(top_bundle_module_name, hierarchy_module_names)]
         for bundle in app.unchained.bundles.values():
             hierarchy = [bundle_super.module_name
                          for bundle_super in bundle._iter_class_hierarchy()
-                         if bundle_super._has_views()]
+                         if bundle_super._has_views]
             if hierarchy:
                 bundle_module_names.append((bundle.module_name, hierarchy))
 
-        # group routes by which bundle they belong to
+        # for each route, figure out which bundle hierarchy it's from, and assign the
+        # route to the top bundle for that hierarchy
         bundle_route_endpoints = set()
         for endpoint, routes in self.bundle.endpoints.items():
             for route in routes:
@@ -76,12 +78,15 @@ class RegisterRoutesHook(AppFactoryHook):
                             bundle_route_endpoints.add(endpoint)
                             break
 
+        # get all the remaining routes not belonging to a bundle
         self.bundle.other_routes = itertools.chain.from_iterable([
             routes for endpoint, routes
             in self.bundle.endpoints.items()
             if endpoint not in bundle_route_endpoints
         ])
 
+        # we register non-bundle routes with the app here, and
+        # the RegisterBundleBlueprintsHook registers the bundle routes
         for route in self.bundle.other_routes:
             app.add_url_rule(route.full_rule,
                              defaults=route.defaults,
@@ -100,7 +105,7 @@ class RegisterRoutesHook(AppFactoryHook):
                                  f'in the {module_name} module!')
 
     def collect_from_bundle(self, bundle: Bundle):
-        if not bundle._has_views():
+        if not bundle._has_views:
             return ()
 
         from flask_unchained.hooks.views_hook import ViewsHook

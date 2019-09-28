@@ -99,15 +99,15 @@ class TestBundle:
         assert len(hierarchy) == 1
         assert isinstance(hierarchy[0], VendorBundle)
 
-        hierarchy = list(OverrideVendorBundle()._iter_class_hierarchy(reverse_mro=False))
+        hierarchy = list(OverrideVendorBundle()._iter_class_hierarchy(mro=True))
         assert len(hierarchy) == 2
         assert isinstance(hierarchy[0], OverrideVendorBundle)
         assert isinstance(hierarchy[1], VendorBundle)
 
     def test__has_views(self):
-        assert MyAppBundle()._has_views() is False
-        assert VendorBundle()._has_views() is True
-        assert OverrideVendorBundle()._has_views() is True
+        assert MyAppBundle()._has_views is False
+        assert VendorBundle()._has_views is True
+        assert OverrideVendorBundle()._has_views is True
 
     def test_blueprint_name(self):
         assert MyAppBundle()._blueprint_name == 'my_app'
