@@ -2,15 +2,9 @@
 
 ## A Flask extension to make Flask better than Django
 
-**Flask Unchained implements a pluggable application factory turning Flask and its extension ecosystem into a completely integrated "opt-in" full-stack web framework.** Flask Unchained uses "bundles" to make extensions work right out-of-the-box: **bundles are just like Django's "apps", except I think you'll find bundles are even more powerful and extensible**.
+**Flask Unchained is a fully integrated, optional-batteries-included web framework for Flask.** Out of the box, it's as minimal as Flask itself. But Flask Unchained apps can also pick and choose "bundles" to enable that integrate Flask extensions: **bundles are just like Django's "apps", except I think you'll find bundles are even more powerful and extensible**.
 
-> **With the release of v0.8, Flask Unchained is no longer "just an experiment."** This thing works. :fire:Yes, it's still in alpha and ***may set your servers on fire***:fire:, but this release marks the 3 year anniversary of the [first public commit](https://github.com/briancappello/flask-react-spa/commit/a3d51afe70f245400b90e4d553d8803baed38aa4#diff-158b9e98f24719b14939e0e70270acc3) of Flask Unchained's true birthplace, [Flask React SPA](https://github.com/briancappello/flask-react-spa). (Flask Unchained as a standalone library grew out of that boilerplate [about 2 year ago](https://github.com/briancappello/flask-unchained/commit/19d604c829b798f2730b05dbfc65d3fa1bd76d85).)
->
-> Point being, the architecture that makes this all work has had a pretty decent vetting by now. **The core API, and especially the concepts/abstractions it uses, are solid.** (Thanks in large part to standing on the shoulders of giants; see [acknowledgements](https://github.com/briancappello/flask-unchained#acknowledgements).)
->
-> **Flask Unchained is designed to make Flask better than Django *at everything*, from the smallest single-file apps to micro-services to giant monoliths.** (Not that it's *entirely* there yet.) And of course I may be *just a little bit* biased, but I've been working with Django by day for the past year, and while it is good - great even - I still think Flask with SQLAlchemy and company is decidedly *even more* powerful, flexible, and most of all enjoyable to work with. (Not that *you* have to use SQLAlchemy if you don't want to; **almost everything about Flask Unchained is completely customizable**.)
->
-> It took a fair amount of trial and error before I finally figured out how to get everything working together nicely and make Flask Unchained a reality - but **as it turns out, there is indeed a clean and (I hope you'll find) surprisingly simple-to-reason-about way to truly take Flask to the next level**.
+> The architecture and "developer experience" of how Flask Unchained and its bundles work is inspired by the [Symfony Framework](https://symfony.com/), which is enterprise-level awesome, aside from the fact that it isn't Python ;)
 
 ### Hello Flask Unchained
 
@@ -53,7 +47,7 @@ UNCHAINED_CONFIG="app" flask run
 UNCHAINED_CONFIG="app" pytest app.py
 ```
 
-In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)`. With the `flask` and `pytest` commands, that happens automatically for you.
+Notice that you never actually instantiated the `Flask` app instance yourself. In Flask Unchained, you don't need to! Flask Unchained knows how to do that for you, no matter how complex your code ends up getting. (Technically, in production, you do still need to create the app yourself. But it's just one line of code: `app = flask_unchained.AppFactory().create_app(PROD)`.)
 
 ## Table of Contents
 
@@ -73,8 +67,6 @@ In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)`. 
 * [Releases on PyPI](https://pypi.org/project/Flask-Unchained/)
 
 ## Introduction / Features
-
-Flask Unchained includes a stock Flask extension called simply `Unchained`, that together with the `AppFactory`, `AppFactoryHook`, and `Bundle` base classes implements a pluggable application factory you can hook into to customize the Flask app instance as it's booting up and/or register things with the app. Flask Unchained also includes a set of (mostly optional) bundles integrating some of the most popular Flask extensions.
 
 - **Python 3.6+**
 - designed to be **easy to start with and even easier to quickly grow your app**
@@ -102,10 +94,6 @@ Flask Unchained includes a stock Flask extension called simply `Unchained`, that
 | Babel Bundle | [Flask-BabelEx](https://pythonhosted.org/Flask-BabelEx/) | Translations / Internationalization support (always enabled, optional) |
 | Mail Bundle | [Flask-Mail](https://pythonhosted.org/flask-mail/) | Flask Mail uses SMTP to send emails. But you can easily configure a custom `MAIL_SEND_FN` to send emails using an API service such as SendGrid or MailGun. |
 | Admin Bundle | [Flask Admin](https://flask-admin.readthedocs.io/en/latest/) | The very basics work. But this bundle needs a lot of work if it's going to compete with Django's admin. (Which itself has its own laundry list of issues, but I digress.) |
-
-The app factory from Flask Unchained does all the hard work of actually spinning up the app for you. First it instantiates the Flask app instance. Next it discovers all of the code from your specified bundles (allowing bundles to subclass other bundles to customize/override classes/templates from their base bundles), and automatically registers your configured bundles and code with the app.
-
-**In short: When you write app code for Flask Unchained, you just follow a few consistent design patterns and folder/naming conventions, write mostly object oriented Python, and that's it.** Productivity at its finest with some of the best libraries Python has to offer at your back.
 
 **NOTE:** Some bundles are still a work-in-progress. **Parts of the documentation need improvement or are missing.** (What would you like to know how to do but that isn't obvious? Raise an issue!) **Some of the code is still alpha-quality. It works for me, but there are undoubtedly bugs lurking, especially around the edges, and some parts of the API are potentially subject to change.**
 
@@ -527,6 +515,8 @@ Hooks come from both Flask Unchained and your `unchained_config.BUNDLES` list. T
 
 ## Building big, complex apps
 
+Flask Unchained includes a stock Flask extension called simply `Unchained`, that together with the `AppFactory`, `AppFactoryHook`, and `Bundle` base classes implements a pluggable application factory you can hook into to customize the Flask app instance as it's booting up and/or register things with the app.
+
 A larger application structure might look about like this:
 
 ```
@@ -578,8 +568,6 @@ MIT
 
 ## Acknowledgements
 
-The architecture and "developer experience" of how Flask Unchained and its bundles work is inspired by the [Symfony Framework](https://symfony.com/), which is enterprise-level awesome, aside from the fact that it isn't Python ;) (Symfony is itself inspired by the [Spring Framework](https://spring.io/).) If you're familiar with Symfony/Spring, I hope you'll find my take on them both Pythonic and much more simple. Convention over configuration (with the option for customization when you need it) remains a cornerstone of Flask Unchained.
-
-I would also like give a shout out to [factory_boy](https://factoryboy.readthedocs.io/en/latest/), where I discovered [in its source code](https://github.com/FactoryBoy/factory_boy/blob/master/factory/base.py) one of the [metaprogramming patterns](https://github.com/briancappello/py-meta-utils#py-meta-utils) that helps make Flask Unchained so flexible and powerful. It's used throughout Flask Unchained, but notably in the [SQLAlchemy Bundle](https://flask-unchained.readthedocs.io/en/latest/bundles/sqlalchemy.html#usage) (to make all the [`class Meta` options](https://github.com/briancappello/sqlalchemy-unchained#included-meta-options) work). SQLAlchemy Unchained's optional "sugar" (`Meta` options) take inspiration from Django ORM's [`class Meta` options](https://docs.djangoproject.com/en/2.2/ref/models/options/), while the `SessionManager` and `ModelManager` services are inspired by Doctrine's (arguably the best PHP ORM)'s [EntityManager](https://www.doctrine-project.org/api/orm/latest/Doctrine/ORM/EntityManager.html).
+I would like to give a shout out to [factory_boy](https://factoryboy.readthedocs.io/en/latest/), where I discovered [in its source code](https://github.com/FactoryBoy/factory_boy/blob/master/factory/base.py) one of the [metaprogramming patterns](https://github.com/briancappello/py-meta-utils#py-meta-utils) that helps make Flask Unchained so flexible and powerful. It's used throughout Flask Unchained, but notably in the [SQLAlchemy Bundle](https://flask-unchained.readthedocs.io/en/latest/bundles/sqlalchemy.html#usage) (to make all the [`class Meta` options](https://github.com/briancappello/sqlalchemy-unchained#included-meta-options) work). SQLAlchemy Unchained's optional "sugar" (`Meta` options) take inspiration from Django ORM's [`class Meta` options](https://docs.djangoproject.com/en/2.2/ref/models/options/), while the `SessionManager` and `ModelManager` services are inspired by Doctrine's (arguably the best PHP ORM)'s [EntityManager](https://www.doctrine-project.org/api/orm/latest/Doctrine/ORM/EntityManager.html).
 
 I have learned an absolutely incredible amount from the entire Flask ecosystem while building Flask Unchained. It's an incredible community, and I would love to see it continue growing. If you have any feedback or are interested in hacking on Flask Unchained itself, your input would be greatly appreciated!
