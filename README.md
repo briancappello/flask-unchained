@@ -74,6 +74,8 @@ In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)`. 
 
 ## Introduction / Features
 
+Flask Unchained includes a stock Flask extension called simply `Unchained`, that together with the `AppFactory`, `AppFactoryHook`, and `Bundle` base classes implements a pluggable application factory you can hook into to customize the Flask app instance as it's booting up and/or register things with the app. Flask Unchained also includes a set of (mostly optional) bundles integrating some of the most popular Flask extensions. **Bundles are an enhanced replacement for stock Flask blueprints, and also provide a way to integrate Flask extensions and Python libraries with Flask and Flask Unchained**.
+
 - **Python 3.6+**
 - designed to be **easy to start with and even easier to quickly grow your app**
 - **clean, flexible and declarative application structure that encourages good design patterns** (no circular imports!)
@@ -83,9 +85,7 @@ In production you'd call `app = flask_unchained.AppFactory().create_app(PROD)`. 
 - **declarative routing** (routes registered with the app are decoupled from the defaults decorated on views)
 - **dependency injection of services and extensions** (into just about whatever you want)
 - **simple and consistent patterns for customizing, extending, and/or overriding bundles and everything in them** (e.g. configuration, views/controllers/resources, routes, templates, models, serializers, services, extensions, ...)
-   - your customizations are easily distributable as a standalone bundle (Python package), which itself then supports the same patterns for customization, ad infinitum.
-
-Flask Unchained includes a stock Flask extension `Unchained`, that together with the `AppFactory` and `AppFactoryHook` base classes implements a pluggable app factory you can hook into and/or override parts of. Flask Unchained also includes a set of mostly optional bundles integrating some of the most popular Flask extensions. **Bundles are an enhanced replacement for stock Flask's `Blueprint`**, and with the app factory providing ways for bundles to customize the Flask app instance as it's booting up and/or register things with the app, **bundles are also used to integrate stock Flask extensions and Python libraries with Flask and Flask Unchained**.
+   - your customizations are easily distributable as a standalone bundle (Python package), which itself then supports the same patterns for customization, ad infinitum
 
 ### Included Bundles
 
