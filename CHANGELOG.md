@@ -22,6 +22,10 @@
 - alias `flask_wtf.csrf.generate_csrf` as `flask_unchained.generate_csrf`
 - alias `flask.Request` and `flask.Response` into `flask_unchained`
 
+### General Improvements
+
+- document the rest of SQLAlchemy's config options
+
 ### Bug Fixes
 
 - fix grouping routes by which bundle they're from

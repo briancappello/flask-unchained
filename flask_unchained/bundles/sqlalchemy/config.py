@@ -1,3 +1,5 @@
+import os
+
 from flask_unchained import BundleConfig
 
 from .alembic.migrations import render_migration_item
@@ -8,10 +10,12 @@ class Config(BundleConfig):
     The default configuration options for the SQLAlchemy Bundle.
     """
 
-    db_file = 'db/dev.sqlite'  # relative path to ROOT_PATH/db/dev.sqlite
+    db_file = os.path.join(BundleConfig.current_app.root_path, 'db',
+                           f'{BundleConfig.current_app.env}.sqlite')
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{db_file}'
     """
-    The database URI that should be used for the connection. See the
+    The database URI that should be used for the connection. Defaults to using SQLite
+    with the database file stored at ``ROOT_PATH/db/<env>.sqlite``. See the
     `SQLAlchemy Dialects documentation <https://docs.sqlalchemy.org/en/latest/dialects/>`_
     for more info.
     """
@@ -33,9 +37,8 @@ class Config(BundleConfig):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     """
     If set to ``True``, Flask-SQLAlchemy will track modifications of objects and emit
-    signals. The default is ``None``, which enables tracking but issues a warning that
-    it will be disabled by default in the future. This requires extra memory and should
-    be disabled if not needed.
+    signals. The default is ``False``. This requires extra memory and should be
+    disabled if not needed.
     """
 
     SQLALCHEMY_RECORD_QUERIES = None
@@ -93,18 +96,35 @@ class Config(BundleConfig):
     """
 
     SQLALCHEMY_COMMIT_ON_TEARDOWN = False
-
-    PY_YAML_FIXTURES_DIR = 'db/fixtures'
+    """
+    Whether or not to automatically commit on app context teardown. Defaults to False.
+    """
 
     ALEMBIC = {
         'script_location': 'db/migrations',
     }
+    """
+    Used to set the directory where migrations are stored. `ALEMBIC` should be set to
+    a dictionary, using the key `script_location` to set the directory. Defaults to
+    ``ROOT_PATH/db/migrations``.
+    """
 
     ALEMBIC_CONTEXT = {
         'render_item': render_migration_item,
         'template_args': {'migration_variables': []},
     }
+    """
+    Extra kwargs to pass to the constructor of the Flask-Migrate extension. If you
+    need to change this, make sure to merge the defaults with your settings!
+    """
 
 
 class TestConfig(Config):
+    """
+    Default configuration options for testing.
+    """
+
     SQLALCHEMY_DATABASE_URI = 'sqlite://'  # :memory:
+    """
+    The database URI to use for testing. Defaults to SQLite in memory.
+    """
