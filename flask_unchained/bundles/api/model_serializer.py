@@ -11,6 +11,7 @@ try:
     from flask_marshmallow.sqla import (
         ModelSchema as _BaseModelSerializer,
         SchemaOpts as _BaseModelSerializerOptionsClass)
+    from marshmallow.fields import Field
     from marshmallow.class_registry import _registry
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
     from marshmallow.schema import SchemaMeta as _BaseModelSerializerMetaclass
@@ -25,6 +26,8 @@ except ImportError:
     from py_meta_utils import OptionalClass as MarshmallowValidationError
     from py_meta_utils import OptionalClass as _BaseModelConverter
     from py_meta_utils import OptionalMetaclass as _BaseModelSchemaMetaclass
+
+from .config import Config
 
 
 class _ModelConverter(_BaseModelConverter):
@@ -147,6 +150,13 @@ class _ModelSerializerMetaclass(_BaseModelSchemaMetaclass):
             pass
 
         meta_dict = dict(meta.__dict__)
+
+        additional_fields = meta_dict.pop('additional', None)
+        if additional_fields:
+            fields = [name for name, field in clsdict.items()
+                      if isinstance(field, Field)]
+            meta_dict['fields'] = fields + list(additional_fields)
+
         meta_dict.pop('model', None)
         clsdict['Meta'] = type('Meta', (_ModelSerializerMeta,), meta_dict)
         clsdict['Meta'].model = model
@@ -187,8 +197,8 @@ class _ModelSerializerOptionsClass(_BaseModelSerializerOptionsClass):
         self._model = None
         super().__init__(meta, **kwargs)
         self.model_converter = getattr(meta, 'model_converter', _ModelConverter)
-        self.dump_key_fn = getattr(meta, 'dump_key_fn', camel_case)
-        self.load_key_fn = getattr(meta, 'load_key_fn', snake_case)
+        self.dump_key_fn = getattr(meta, 'dump_key_fn', Config.DUMP_KEY_FN)
+        self.load_key_fn = getattr(meta, 'load_key_fn', Config.LOAD_KEY_FN)
 
     @property
     def model(self):
@@ -202,19 +212,27 @@ class _ModelSerializerOptionsClass(_BaseModelSerializerOptionsClass):
         self._model = model
 
 
-def maybe_convert_keys(d: Any, key_fn: Optional[FunctionType] = None):
-    if isinstance(d, (list, tuple)):
-        return [maybe_convert_keys(el, key_fn) for el in d]
-    elif isinstance(d, dict):
-        rv = d.copy()
-        for k, v in d.items():
+def maybe_convert_keys(data: Any,
+                       key_fn: Optional[FunctionType] = None,
+                       fields: Tuple[str] = (),
+                       many: bool = False,
+                       ) -> Any:
+    if not key_fn or not fields:
+        return data
+
+    if many:
+        return [maybe_convert_keys(el, key_fn, fields, many=False) for el in data]
+    elif isinstance(data, dict):
+        rv = data.copy()
+        for k, v in data.items():
             new_k = key_fn(k)
-            new_v = maybe_convert_keys(v, key_fn)
+            if k not in fields and new_k not in fields:
+                continue
             if k != new_k:
                 rv.pop(k)
-            rv[new_k] = new_v
+            rv[new_k] = v
         return rv
-    return d
+    return data
 
 
 class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass):
@@ -291,12 +309,22 @@ class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass)
         data = data or {}
 
         # maybe convert all keys in data with the configured fn
-        data = maybe_convert_keys(data, self.opts.load_key_fn)
+        data = maybe_convert_keys(
+            data,
+            self.opts.load_key_fn,
+            self.opts.fields or set(self.declared_fields.keys()),
+            many=many,
+        )
         try:
             return super().load(data, many=many, partial=partial, unknown=unknown,
                                 **kwargs)
         except MarshmallowValidationError as e:
-            e.messages = maybe_convert_keys(e.messages, self.opts.dump_key_fn)
+            e.messages = maybe_convert_keys(
+                e.messages,
+                self.opts.dump_key_fn,
+                self.opts.fields or set(self.declared_fields.keys()),
+                many=False,
+            )
             raise e
 
     def dump(self, obj, *, many: bool = None):
@@ -312,7 +340,12 @@ class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass)
         data = super().dump(obj, many=many)
 
         # maybe convert all keys in data with the configured fn
-        return maybe_convert_keys(data, self.opts.dump_key_fn)
+        return maybe_convert_keys(
+            data,
+            self.opts.dump_key_fn,
+            fields=self.opts.fields or set(self.declared_fields.keys()),
+            many=many,
+        )
 
     def handle_error(self, error, data, **kwargs):
         """
@@ -338,27 +371,19 @@ class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass)
         """
         super()._init_fields()
 
-        # validate id
-        model_pk = self.Meta.model.Meta.pk
-        if model_pk in self.fields:
-            self.fields[model_pk].validators.append(self.validate_id)
-
-        read_only_fields = {
+        read_only_fields = {field for field in {
+            self.Meta.model.Meta.pk,
             'slug',
             self.Meta.model.Meta.created_at,
             self.Meta.model.Meta.updated_at,
-        }
+        } if field is not None}
+
         for name in read_only_fields:
             if name in self.fields:
                 field = self.fields[name]
                 field.dump_only = True
                 self.dump_fields[name] = field
                 self.load_fields.pop(name, None)
-
-    def validate_id(self, id):
-        if self.is_create() or (self.instance and int(id) == int(self.instance.id)):
-            return
-        raise MarshmallowValidationError('ids do not match')
 
 
 __all__ = [

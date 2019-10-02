@@ -1,4 +1,5 @@
 from flask_unchained import BundleConfig
+from flask_unchained.string_utils import camel_case, snake_case
 
 
 class Config(BundleConfig):
@@ -19,3 +20,6 @@ class Config(BundleConfig):
     API_DESCRIPTION = None
 
     API_APISPEC_PLUGINS = None
+
+    DUMP_KEY_FN = camel_case
+    LOAD_KEY_FN = snake_case
