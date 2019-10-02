@@ -14,5 +14,4 @@ class SecurityBundle(Bundle):
     The :class:`~flask_unchained.Bundle` subclass for the Security Bundle.
     """
 
-    blueprint_names = []
     command_group_names = ['users', 'roles']
