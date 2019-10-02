@@ -52,9 +52,9 @@ def cli_create_app(_):
     # create_app, which IMO isn't so awesome. so this gets around that.
     env = os.getenv('FLASK_ENV')
 
-    if _should_create_basic_app(env):
-        return AppFactory().create_basic_app()
     try:
+        if _should_create_basic_app(env):
+            return AppFactory().create_basic_app()
         return AppFactory().create_app(env)
     except:
         print(format_exc())
