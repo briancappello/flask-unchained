@@ -23,7 +23,7 @@ setup(
     install_requires=[
         'blinker>=1.4',
         'click>=7.0',
-        'flask>=1.0.2',
+        'flask>=1.1.1',
         'flask_babelex>=0.9.3',
         'flask-wtf>=0.14.2',
         'py-meta-utils>=0.7.6',
@@ -91,7 +91,7 @@ setup(
         'sqlalchemy': [
             'flask-migrate>=2.2.1',
             'flask-sqlalchemy-unchained>=0.7.3',
-            'sqlalchemy-unchained>=0.8.0',
+            'sqlalchemy-unchained>=0.9.1',
         ],
     },
 

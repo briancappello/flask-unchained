@@ -75,3 +75,6 @@ class UnchainedModelRegistry(_ModelRegistry):
                 related_attr = other_side_relationships[model_name]
                 if hasattr(related_model, related_attr):
                     return True
+
+
+_ModelRegistry.set_singleton_class(UnchainedModelRegistry)

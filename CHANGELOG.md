@@ -83,7 +83,7 @@ class YourBundle(AppBundle):
     blueprints_module_names = ['custom']  # after
 
     models_module_name = 'custom'  # before
-    models_and_model_forms_module_names = ['custom']  # after
+    models_module_names = ['custom']  # after
 
     admins_module_name = 'custom'  # before
     admins_module_names = ['custom']  # after

@@ -4,14 +4,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql.naming import (ConventionDict, _get_convention,
                                    conv as converted_name)
 from sqlalchemy_unchained import (DeclarativeMeta, BaseValidator, Required,
-                                  ValidationError, ValidationErrors, _ModelRegistry)
+                                  ValidationError, ValidationErrors)
 
 from .. import sqla
 from ..base_model import BaseModel
 from ..services import SessionManager
 
-from ..model_registry import UnchainedModelRegistry
-_ModelRegistry.set_singleton_class(UnchainedModelRegistry)
+from ..model_registry import UnchainedModelRegistry  # required import
 
 
 class SQLAlchemyUnchained(BaseSQLAlchemy):

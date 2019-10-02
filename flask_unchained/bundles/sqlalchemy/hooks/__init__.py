@@ -1,1 +1,1 @@
-from .register_models_and_model_forms_hook import RegisterModelsAndModelFormsHook
+from .register_models_hook import RegisterModelsHook

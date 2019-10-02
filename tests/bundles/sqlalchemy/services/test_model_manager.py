@@ -130,5 +130,4 @@ class TestModelManager:
         foo2 = foo_manager.create(name='two')
         foo_manager.commit()
 
-        ones = [foo1, foo_1]
-        assert foo_manager.filter_by(name='one') == ones
+        assert foo_manager.filter_by(name='one').all() == [foo1, foo_1]

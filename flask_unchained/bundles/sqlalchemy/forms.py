@@ -163,6 +163,29 @@ class _ModelFormMetaclass(_FormMetaclass):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         Meta = process_factory_meta_options(mcs_args, ModelFormMetaOptionsFactory)
         mcs_args.clsdict['Meta'] = type('Meta', (), Meta._to_clsdict())
+        if not Meta.abstract and (
+                unchained._models_initialized
+                or unchained._app_bundle_cls.is_single_module
+        ):
+            try:
+                Meta.model = unchained.sqlalchemy_bundle.models[Meta.model.__name__]
+            except (
+                KeyError,        # models not initialized yet
+                AttributeError,  # unchained not initialized yet
+            ) as e:
+                if (isinstance(e, AttributeError)
+                        and not unchained._app_bundle_cls.is_single_module):
+                    raise e
+            new_clsdict = model_fields(Meta.model,
+                                       only=Meta.only,
+                                       exclude=Meta.exclude,
+                                       exclude_fk=Meta.exclude_fk,
+                                       exclude_pk=Meta.exclude_pk,
+                                       field_args=Meta.field_args,
+                                       db_session=db.session,
+                                       converter=_ModelConverter())
+            new_clsdict.update(mcs_args.clsdict)  # user-declared fields take precedence
+            mcs_args.clsdict = new_clsdict
         return super().__new__(*mcs_args)
 
     def __call__(self, *args, **kwargs):

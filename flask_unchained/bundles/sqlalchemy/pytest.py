@@ -2,11 +2,9 @@ import factory
 import pytest
 
 from flask_unchained import unchained, injectable
-from sqlalchemy_unchained import _ModelRegistry
 
-from .model_registry import UnchainedModelRegistry
+from .model_registry import UnchainedModelRegistry  # required import
 from .services import SessionManager
-_ModelRegistry.set_singleton_class(UnchainedModelRegistry)
 
 
 @pytest.fixture(autouse=True, scope='session')
