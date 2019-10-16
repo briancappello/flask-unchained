@@ -1,7 +1,6 @@
 api bundle
 ----------
 * finish integrating OpenAPI/APISpec
-* add support for `Accept` headers (ie supporting response types other than json)
 * add support for ETags
 * probably room for many more improvements, it's a big domain...
 

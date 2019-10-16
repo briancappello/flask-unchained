@@ -21,6 +21,7 @@
 - alias `flask.abort` (`werkzeug.exceptions.abort`) as `flask_unchained.abort`
 - alias `flask_wtf.csrf.generate_csrf` as `flask_unchained.generate_csrf`
 - alias `flask.Request` and `flask.Response` into `flask_unchained`
+- support `Accept` headers for handling responses in the API bundle
 
 ### General Improvements
 
