@@ -28,7 +28,7 @@ class Webpack:
                 from warnings import warn
                 warn('If you want HMR to work, you need to set '
                      'WEBPACK_ASSETS_HOST to point to your webpack-dev-server '
-                     'address (http://localhost:3333 by default)')
+                     'address (http://localhost:3000 by default)')
 
         app.add_template_global(self.style_tag)
         app.add_template_global(self.script_tag)
