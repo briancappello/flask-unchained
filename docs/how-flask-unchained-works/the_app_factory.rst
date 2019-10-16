@@ -99,11 +99,11 @@ First subclass :class:`~flask_unchained.AppFactory`:
    class CustomAppFactory(AppFactory):
        # your awesome stuffs
 
-And then set the ``FLASK_APP_FACTORY`` environment variable to ``"dotted.module.name.ClassName"``:
+And then set the ``UNCHAINED_APP_FACTORY`` environment variable to ``"dotted.module.name.ClassName"``:
 
 .. code:: bash
 
-   export FLASK_APP_FACTORY="app.CustomAppFactory"
+   export UNCHAINED_APP_FACTORY="app.CustomAppFactory"
 
 And lastly for production:
 
