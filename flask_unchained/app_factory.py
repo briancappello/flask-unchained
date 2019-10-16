@@ -17,7 +17,7 @@ from .utils import cwd_import
 
 
 def maybe_set_app_factory_from_env():
-    app_factory = os.getenv('FLASK_APP_FACTORY', None)
+    app_factory = os.getenv('UNCHAINED_APP_FACTORY', None)
     if app_factory:
         module_name, class_name = app_factory.rsplit('.', 1)
         app_factory_cls = getattr(cwd_import(module_name), class_name)
@@ -65,7 +65,7 @@ class AppFactory(metaclass=Singleton):
                              constructor
         :param _config_overrides: a dictionary of config option overrides; meant for
                                   test fixtures.
-        :return: The :class:`~flask_unchained.FlaskUnchained` application instance
+        :return: The configured and initialized :attr:`APP_CLASS` application instance
         """
         unchained_config = self.load_unchained_config(env)
         app_bundle, bundles = self.load_bundles(
@@ -94,7 +94,7 @@ class AppFactory(metaclass=Singleton):
                          _config_overrides: Dict[str, Any] = None,
                          ) -> FlaskUnchained:
         """
-        Creates a "fake" app for use while developing stand-alone bundles
+        Creates a "fake" app for use while developing stand-alone bundles.
         """
         bundles = bundles or []
         name = bundles[-1] if bundles else 'basic_app'
@@ -114,7 +114,7 @@ class AppFactory(metaclass=Singleton):
     def instantiate_app(self,
                         app_import_name_or_bundle: Union[str, Bundle, None],
                         unchained_config: ModuleType,
-                        **flask_kwargs,
+                        **app_kwargs,
                         ) -> FlaskUnchained:
         """
         Instantiates the :attr:`APP_CLASS` instance. (By default,
@@ -124,14 +124,14 @@ class AppFactory(metaclass=Singleton):
                                           an app bundle instance, or None (an alias
                                           for 'tests')
         :param unchained_config: The ``unchained_config`` module.
-        :param flask_kwargs: Any explicit kwargs to pass to the constructor. Overrides
-                             settings from ``unchained_config``.
-        :return: The FlaskUnchained app instance
+        :param app_kwargs: Any explicit kwargs to pass to the :attr:`APP_CLASS`
+                           constructor. Overrides settings from ``unchained_config``.
+        :return: A new instance of :attr:`APP_CLASS`
         """
         bundle = (app_import_name_or_bundle
                   if isinstance(app_import_name_or_bundle, Bundle) else None)
 
-        valid_flask_kwargs = {
+        valid_app_kwargs = {
             name for i, (name, param)
             in enumerate(inspect.signature(self.APP_CLASS).parameters.items())
             if i > 0 and (
@@ -139,9 +139,10 @@ class AppFactory(metaclass=Singleton):
                     or param.kind == param.KEYWORD_ONLY
             )
         }
-        for kw in valid_flask_kwargs:
-            if hasattr(unchained_config, kw.upper()):
-                flask_kwargs.setdefault(kw, getattr(unchained_config, kw.upper()))
+        for kw in valid_app_kwargs:
+            config_key = kw.upper()
+            if hasattr(unchained_config, config_key):
+                app_kwargs.setdefault(kw, getattr(unchained_config, config_key))
 
         root_path = getattr(unchained_config, 'ROOT_PATH', None)
         if not root_path and bundle and bundle.is_single_module:
@@ -153,24 +154,24 @@ class AppFactory(metaclass=Singleton):
             folder = os.path.join(root_path, folder_name)
             return folder if os.path.isdir(folder) else None
 
-        if 'template_folder' not in flask_kwargs:
-            flask_kwargs.setdefault('template_folder', root_folder_or_none('templates'))
+        if 'template_folder' not in app_kwargs:
+            app_kwargs.setdefault('template_folder', root_folder_or_none('templates'))
 
-        if 'static_folder' not in flask_kwargs:
-            flask_kwargs.setdefault('static_folder', root_folder_or_none('static'))
+        if 'static_folder' not in app_kwargs:
+            app_kwargs.setdefault('static_folder', root_folder_or_none('static'))
 
-        if flask_kwargs['static_folder'] and not flask_kwargs.get('static_url_path', None):
-            flask_kwargs['static_url_path'] = '/static'
+        if app_kwargs['static_folder'] and not app_kwargs.get('static_url_path'):
+            app_kwargs.setdefault('static_url_path', '/static')
 
         app_import_name = (bundle.module_name.split('.')[0] if bundle
                            else (app_import_name_or_bundle or 'tests'))
-        app = self.APP_CLASS(app_import_name, **flask_kwargs)
+        app = self.APP_CLASS(app_import_name, **app_kwargs)
 
         if not root_path and bundle and not bundle.is_single_module:
             # Flask assumes the root_path is based on the app_import_name, but
             # we want it to be the project root, not the app bundle root
             app.root_path = os.path.dirname(app.root_path)
-            app.static_folder = flask_kwargs['static_folder']
+            app.static_folder = app_kwargs['static_folder']
 
         return app
 
