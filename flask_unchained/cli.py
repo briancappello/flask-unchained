@@ -54,7 +54,7 @@ def cli_create_app(_):
 
     try:
         if _should_create_basic_app(env):
-            return AppFactory().create_basic_app()
+            return AppFactory()._create_basic_app()
         return AppFactory().create_app(env)
     except:
         print(format_exc())

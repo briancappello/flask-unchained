@@ -45,8 +45,9 @@ class AppFactory(metaclass=Singleton):
     def create_app(self,
                    env: Union[DEV, PROD, STAGING, TEST],
                    bundles: Optional[List[str]] = None,
+                   *,
                    _config_overrides: Optional[Dict[str, Any]] = None,
-                   **flask_kwargs,
+                   **app_kwargs,
                    ) -> FlaskUnchained:
         """
         Flask Unchained Application Factory. Returns an instance of
@@ -61,8 +62,8 @@ class AppFactory(metaclass=Singleton):
                     them: ``from flask_unchained import DEV, PROD, STAGING, TEST``)
         :param bundles: An optional list of bundle modules names to use. Overrides
                         ``unchained_config.BUNDLES`` (mainly useful for testing).
-        :param flask_kwargs: keyword argument overrides for the :class:`FlaskUnchained`
-                             constructor
+        :param app_kwargs: keyword argument overrides for the :attr:`APP_CLASS`
+                           constructor
         :param _config_overrides: a dictionary of config option overrides; meant for
                                   test fixtures.
         :return: The configured and initialized :attr:`APP_CLASS` application instance
@@ -73,64 +74,12 @@ class AppFactory(metaclass=Singleton):
             unchained_config=unchained_config,
         )
 
+        # this is for developing standalone bundles (as opposed to regular apps)
         if app_bundle is None and env != TEST:
-            return self.create_basic_app(bundles, unchained_config, _config_overrides=_config_overrides)
+            app_kwargs['template_folder'] = os.path.join(
+                os.path.dirname(__file__), 'templates')
 
-        app = self.instantiate_app(app_bundle, unchained_config, **flask_kwargs)
-
-        for bundle in bundles:
-            bundle.before_init_app(app)
-
-        unchained.init_app(app, env, bundles, _config_overrides=_config_overrides)
-
-        for bundle in bundles:
-            bundle.after_init_app(app)
-
-        return app
-
-    def create_basic_app(self,
-                         bundles: List[Bundle] = None,
-                         unchained_config: Optional[ModuleType] = None,
-                         _config_overrides: Dict[str, Any] = None,
-                         ) -> FlaskUnchained:
-        """
-        Creates a "fake" app for use while developing stand-alone bundles.
-        """
-        bundles = bundles or []
-        name = bundles[-1] if bundles else 'basic_app'
-        app = self.instantiate_app(name, unchained_config, template_folder=os.path.join(
-            os.path.dirname(__file__), 'templates'))
-
-        for bundle in bundles:
-            bundle.before_init_app(app)
-
-        unchained.init_app(app, DEV, bundles, _config_overrides=_config_overrides)
-
-        for bundle in bundles:
-            bundle.after_init_app(app)
-
-        return app
-
-    def instantiate_app(self,
-                        app_import_name_or_bundle: Union[str, Bundle, None],
-                        unchained_config: ModuleType,
-                        **app_kwargs,
-                        ) -> FlaskUnchained:
-        """
-        Instantiates the :attr:`APP_CLASS` instance. (By default,
-        :class:`~flask_unchained.FlaskUnchained`)
-
-        :param app_import_name_or_bundle: Either pass an explicit app import name,
-                                          an app bundle instance, or None (an alias
-                                          for 'tests')
-        :param unchained_config: The ``unchained_config`` module.
-        :param app_kwargs: Any explicit kwargs to pass to the :attr:`APP_CLASS`
-                           constructor. Overrides settings from ``unchained_config``.
-        :return: A new instance of :attr:`APP_CLASS`
-        """
-        bundle = (app_import_name_or_bundle
-                  if isinstance(app_import_name_or_bundle, Bundle) else None)
-
+        # set kwargs to pass to Flask from the unchained_config
         valid_app_kwargs = {
             name for i, (name, param)
             in enumerate(inspect.signature(self.APP_CLASS).parameters.items())
@@ -144,9 +93,10 @@ class AppFactory(metaclass=Singleton):
             if hasattr(unchained_config, config_key):
                 app_kwargs.setdefault(kw, getattr(unchained_config, config_key))
 
-        root_path = getattr(unchained_config, 'ROOT_PATH', None)
-        if not root_path and bundle and bundle.is_single_module:
-            root_path = bundle.root_path
+        # set up the root static/templates folders (if any)
+        root_path = app_kwargs.get('root_path')
+        if not root_path and bundles and bundles[-1].is_single_module:
+            root_path = bundles[-1].root_path
 
         def root_folder_or_none(folder_name):
             if not root_path:
@@ -163,15 +113,25 @@ class AppFactory(metaclass=Singleton):
         if app_kwargs['static_folder'] and not app_kwargs.get('static_url_path'):
             app_kwargs.setdefault('static_url_path', '/static')
 
-        app_import_name = (bundle.module_name.split('.')[0] if bundle
-                           else (app_import_name_or_bundle or 'tests'))
+        # instantiate the app
+        app_import_name = (bundles[-1].module_name.split('.')[0] if bundles
+                           else ('tests' if env == TEST else 'dev_app'))
         app = self.APP_CLASS(app_import_name, **app_kwargs)
 
-        if not root_path and bundle and not bundle.is_single_module:
+        # and boot up Flask Unchained
+        if not root_path and bundles and not bundles[-1].is_single_module:
             # Flask assumes the root_path is based on the app_import_name, but
             # we want it to be the project root, not the app bundle root
             app.root_path = os.path.dirname(app.root_path)
             app.static_folder = app_kwargs['static_folder']
+
+        for bundle in bundles:
+            bundle.before_init_app(app)
+
+        unchained.init_app(app, env, bundles, _config_overrides=_config_overrides)
+
+        for bundle in bundles:
+            bundle.after_init_app(app)
 
         return app
 
