@@ -121,13 +121,6 @@ class AppFactory(metaclass=Singleton):
                            else ('tests' if env == TEST else 'dev_app'))
         app = self.APP_CLASS(app_import_name, **app_kwargs)
 
-        # and boot up Flask Unchained
-        if not root_path and bundles and not bundles[-1].is_single_module:
-            # Flask assumes the root_path is based on the app_import_name, but
-            # we want it to be the project root, not the app bundle root
-            app.root_path = os.path.dirname(app.root_path)
-            app.static_folder = app_kwargs['static_folder']
-
         for bundle in bundles:
             bundle.before_init_app(app)
 
