@@ -19,3 +19,8 @@ class Config(BundleConfig):
     """
     The default file extension to use for templates.
     """
+
+    WTF_CSRF_ENABLED = False
+    """
+    Whether or not to enable CSRF protection.
+    """

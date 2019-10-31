@@ -55,10 +55,14 @@
 - CSRF protection is no longer enabled by default. To re-enable it:
 
 ```python
-from flask_unchained import AppBundle, FlaskUnchained, generate_csrf
+from flask_unchained import AppBundle, AppBundleConfig, generate_csrf
+
+class YourAppConfig(AppBundleConfig):
+    WTF_CSRF_ENABLED = True
+    SECRET_KEY = 'some-secret-key'
 
 class YourAppBundle(AppBundle):
-    def after_init_app(self, app: FlaskUnchained) -> None:
+    def after_init_app(self, app) -> None:
         @app.after_request
         def set_csrf_token_cookie(response):
             if response:
