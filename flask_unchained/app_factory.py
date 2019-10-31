@@ -95,8 +95,11 @@ class AppFactory(metaclass=Singleton):
 
         # set up the root static/templates folders (if any)
         root_path = app_kwargs.get('root_path')
-        if not root_path and bundles and bundles[-1].is_single_module:
+        if not root_path and bundles:
             root_path = bundles[-1].root_path
+            if not bundles[-1].is_single_module:
+                root_path = os.path.dirname(root_path)
+            app_kwargs['root_path'] = root_path
 
         def root_folder_or_none(folder_name):
             if not root_path:
