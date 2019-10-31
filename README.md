@@ -96,6 +96,8 @@ class TestSiteController:
 
 You can run it like so:
 
+**NOTE:** The README assumes v0.8 of Flask Unchained, which is not yet released to PyPI. (install from master with `pip install "git+https://github.com/briancappello/flask-unchained.git@master#egg=flask-unchained[dev]"`)
+
 ```bash
 pip install flask-unchained[dev]
 export UNCHAINED_CONFIG="app"
