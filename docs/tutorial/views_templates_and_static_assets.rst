@@ -1,21 +1,23 @@
 Templates and Static Assets
 ---------------------------
 
-Our site looks pretty weak as it stands. Let's add Bootstrap and a landing page to spruce things up a bit. We'll also add a form to the hello view, so that we can customize the name that gets displayed. In order to share as much code as possible between templates, it's best practice to abstract away the boilerplate into ``templates/layout.html``. But first, we need to download a few assets for Bootstrap:
+Our site looks pretty weak as it stands. Let's add Bootstrap and a landing page to spruce things up a bit. In order to share as much code as possible between templates, it's best practice to abstract away the boilerplate into ``templates/layout.html``. But first, we need to download a few assets for Bootstrap:
 
 .. code:: bash
 
-   wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js -O static/bootstrap-v4.1.2.min.js \
+   mkdir -p static templates \
+     && wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js -O static/bootstrap-v4.1.2.min.js \
      && wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css -O static/bootstrap-v4.1.2.min.css \
      && wget https://code.jquery.com/jquery-3.3.1.slim.min.js -O static/jquery-v3.3.1.slim.min.js \
      && wget https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js -O static/popper-v1.14.3.min.js \
      && touch templates/layout.html templates/_navbar.html templates/_flashes.html
 
-We're placing these assets in the project root ``static`` and ``templates`` folders. If you'll recall, we configured these directories in our ``unchained_config.py`` file earlier. (Note that if just created either of these directories, then you may need to restart the flask development server for these new assets to be picked up by it.)
+We're placing these assets in the project root ``static`` and ``templates`` folders. These directories are the standard locations :class:`flask.Flask` expects, so they will be automatically picked up. (Note however that if just created either of these directories, then you will need to restart the development server for these new assets to be picked up by it.)
 
 Layout Template
 ^^^^^^^^^^^^^^^
-Just like Flask, Flask Unchained uses the Jinja2 templating engine. If you're unfamiliar with what anything below is doing, I recommend checking out the `official Jinja2 documentation <jinja.pocoo.org/docs/>`_. It's excellent.
+
+Just like vanilla Flask, Flask Unchained uses the Jinja2 templating engine. If you're unfamiliar with what anything below is doing, I recommend checking out the `official Jinja2 documentation <jinja.pocoo.org/docs/>`_. It's excellent.
 
 Now let's write our ``templates/layout.html`` file:
 
@@ -29,7 +31,7 @@ Now let's write our ``templates/layout.html`` file:
        <meta charset="utf-8">
        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-       <title>{% block title %}Flaskr Unchained{% endblock %}</title>
+       <title>{% block title %}Hello Flask Unchained!{% endblock %}</title>
 
        {% block stylesheets %}
          <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-v4.1.2.min.css') }}">
@@ -64,7 +66,7 @@ Now let's write our ``templates/layout.html`` file:
      </body>
    </html>
 
-And also the included ``templates/_navbar.html`` and ``templates/_flashes.html`` files:
+And also the included ``templates/_navbar.html`` and ``templates/_flashes.html`` templates:
 
 .. code:: html+jinja
 
@@ -84,7 +86,7 @@ And also the included ``templates/_navbar.html`` and ``templates/_flashes.html``
 
    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
      <a class="navbar-brand" href="{{ url_for('site_controller.index') }}">
-       Flaskr Unchained
+       Hello Flask Unchained
      </a>
      <button type="button"
              class="navbar-toggler"
@@ -103,17 +105,7 @@ And also the included ``templates/_navbar.html`` and ``templates/_flashes.html``
      </div>
    </nav>
 
-The ``nav_link`` macro perhaps deserves some explanation. This is a small utility function that renders a navigation item in the bootstrap navbar. We do this to make our code more DRY, because every navigation link needs to contain logic to determine whether or not it is the currently active view. The ``{% if endpoint is active %}`` bit is special - Flask Unchained actually adds the ``active`` template test to make this easier. Its definition looks like this:
-
-.. code:: python
-
-   from flask_unchained import unchained, request
-
-   @unchained.template_test(name='active')
-   def is_active(endpoint):
-       return request.endpoint == endpoint
-
-Pretty simple, but this little bit of code makes our template code much more readable.
+The ``nav_link`` macro perhaps deserves some explanation. This is a small utility function that renders a navigation item in the bootstrap navbar. We do this to make our code more DRY, because every navigation link needs to contain logic to determine whether or not it is the currently active view. The ``{% if endpoint is active %}`` bit is special - Flask Unchained adds the ``active`` template test by default to make this easier.
 
 .. code:: html+jinja
 
@@ -144,12 +136,12 @@ And now let's update our ``app/templates/site/index.html`` template to use our n
 
    {% extends 'layout.html' %}
 
-   {% block title %}Hello World from Flaskr Unchained!{% endblock %}
+   {% block title %}Hello World!{% endblock %}
 
    {% block content %}
      <div class="row">
        <div class="col">
-         <h1>Hello World from Flaskr Unchained!</h1>
+         <h1>Hello World!</h1>
        </div>
      </div>
    {% endblock %}
@@ -161,11 +153,11 @@ Tests should still pass...
    pytest
    =================================== test session starts ====================================
    platform linux -- Python 3.6.6, pytest-3.6.4, py-1.5.4, pluggy-0.7.1
-   rootdir: /home/user/dev/flaskr-unchained, inifile:
-   plugins: flask-0.10.0, Flask-Unchained-0.5.1
+   rootdir: /home/user/dev/hello-flask-unchained, inifile:
+   plugins: flask-0.10.0, Flask-Unchained-0.8.0
    collected 1 item
 
-   tests/app/test_views.py .                                                [100%]
+   tests/app/test_views.py .                                                             [100%]
 
    ================================= 1 passed in 0.10 seconds =================================
 
@@ -188,7 +180,7 @@ If you take a look at how our new template looks, it's pretty good, but the ``h1
       && mv static/*.min.* static/vendor \
       && touch static/main.css
 
-Let's update our layout template to reference the changed locations of the vendor assets, and our new ``main.css`` stylesheet:
+Let's update the ``stylesheets`` and ``javascripts`` blocks in our layout template to reference the changed locations of the vendor assets, and our new ``main.css`` stylesheet:
 
 .. code:: html+jinja
 
@@ -227,7 +219,7 @@ Let's commit our changes:
 Adding a Landing Page
 ^^^^^^^^^^^^^^^^^^^^^
 
-OK, let's refactor our views so we have a landing page and a separate page for the hello view. We're also going to introduce :meth:`flask_unchained.decorators.param_converter` here so that we can make the name (optionally) customizable via the query string:
+OK, let's refactor our views so we have a landing page and a separate page for the hello view. We're also going to introduce :meth:`flask_unchained.decorators.param_converter` here so that we can (optionally) customizable the name we're saying hello to via the query string:
 
 .. code:: python
 
@@ -247,7 +239,7 @@ OK, let's refactor our views so we have a landing page and a separate page for t
            name = name or 'World'
            return self.render('hello', name=name)
 
-The ``param_converter`` converts arguments passed in via the query string to arguments that get passed to the decorated view function. It can make sure you get the right type via a callable, or as we'll cover later, it can even convert unique identifiers from the URL directly into database models. But that's getting ahead of ourselves.
+The ``param_converter`` converts arguments passed in via the query string to arguments that get passed to the decorated view function. It can make sure you get the right type via a callable (like here), or as we'll cover later, it can even convert unique identifiers from the URL directly into database models. But that's getting ahead of ourselves.
 
 Now that we've added another view/route, our templates need some work again. Let's update the navbar, move our existing ``index.html`` template to ``hello.html`` (adding support for the ``name`` template context variable), and lastly add a new ``index.html`` template for the landing page.
 
@@ -266,12 +258,12 @@ Now that we've added another view/route, our templates need some work again. Let
 
    {% extends 'layout.html' %}
 
-   {% block title %}Hello {{ name }} from Flaskr Unchained!{% endblock %}
+   {% block title %}Hello {{ name }}!{% endblock %}
 
    {% block content %}
      <div class="row">
        <div class="col">
-         <h1>Hello {{ name }} from Flaskr Unchained!</h1>
+         <h1>Hello {{ name }}!</h1>
        </div>
      </div>
    {% endblock %}
@@ -282,20 +274,16 @@ Now that we've added another view/route, our templates need some work again. Let
 
    {% extends 'layout.html' %}
 
-   {% block header %}
-     <header>
-       {% block navbar %}{{ super() }}{% endblock %}
-       <div class="jumbotron">
-         <div class="container">
-           <div class="row">
-             <div class="col">
-               <h1 class="display-3">Welcome to Flaskr Unchained!</h1>
-               <p>(Definitely the most awesome portfolio manager on the planet.)</p>
-             </div>
+   {% block body %}
+     <div class="jumbotron">
+       <div class="container">
+         <div class="row">
+           <div class="col">
+             <h1 class="display-3">Hello Flask Unchained!</h1>
            </div>
          </div>
        </div>
-     </header>
+     </div>
    {% endblock %}
 
 We need to update our tests:
@@ -305,20 +293,25 @@ We need to update our tests:
    # tests/app/test_views.py
 
    class TestSiteController:
-       def test_index(self, client):
+       def test_index(self, client, templates):
            r = client.get('site_controller.index')
            assert r.status_code == 200
-           assert r.html.count('Welcome to Flaskr Unchained!') == 1
+           assert templates[0].template.name == 'site/index.html'
+           assert r.html.count('Hello Flask Unchained!') == 2
 
-       def test_hello(self, client):
+       def test_hello(self, client, templates):
            r = client.get('site_controller.hello')
            assert r.status_code == 200
-           assert r.html.count('Hello World from Flaskr Unchained!') == 2
+           assert templates[0].template.name == 'site/hello.html'
+           assert r.html.count('Hello World!') == 2
 
-       def test_hello_with_name_parameter(self, client):
+       def test_hello_with_name_parameter(self, client, templates):
            r = client.get('site_controller.hello', name='User')
            assert r.status_code == 200
-           assert r.html.count('Hello User from Flaskr Unchained!') == 2
+           assert templates[0].template.name == 'site/hello.html'
+           assert r.html.count('Hello User!') == 2
+
+A couple things to note here. Most obviously, we added another view, and therefore need to add methods to test it. Also of note is the ``templates`` pytest fixture, which we're using to verify the correct template got rendered for each of the views.
 
 Let's make sure they pass:
 
@@ -327,11 +320,11 @@ Let's make sure they pass:
    pytest
    =================================== test session starts ===================================
    platform linux -- Python 3.6.6, pytest-3.6.4, py-1.5.4, pluggy-0.7.1
-   rootdir: /home/user/dev/flaskr-unchained, inifile:
-   plugins: flask-0.10.0, Flask-Unchained-0.5.1
+   rootdir: /home/user/dev/hello-flask-unchained, inifile:
+   plugins: flask-0.10.0, Flask-Unchained-0.8.0
    collected 3 items
 
-   tests/app/test_views.py ...                                             [100%]
+   tests/app/test_views.py ...                                                          [100%]
 
    ================================ 3 passed in 0.17 seconds =================================
 
@@ -341,7 +334,7 @@ Cool. You guessed it, time to make a commit!
 
    git add .
    git status
-   git commit -m 'add landing page'
+   git commit -m 'add landing page, parameterize hello view to accept a name'
 
 Adding a Form to the Hello View
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -356,12 +349,12 @@ Let's update our hello template:
 
    {% extends 'layout.html' %}
 
-   {% block title %}Hello {{ name }} from Flaskr Unchained!{% endblock %}
+   {% block title %}Hello {{ name }}!{% endblock %}
 
    {% block content %}
      <div class="row">
        <div class="col">
-         <h1>Hello {{ name }} from Flaskr Unchained!</h1>
+         <h1>Hello {{ name }}!</h1>
 
          <h2>Enter your name:</h2>
          <form name="hello_form" action="{{ url_for('site_controller.hello') }}" method="POST">
@@ -386,14 +379,11 @@ And the corresponding view code:
 
    # app/views.py
 
-   from flask_unchained import Controller, route, request, param_converter
-
+   # import request from flask_unchained
+   from flask_unchained import Controller, request, route, param_converter
 
    class SiteController(Controller):
-       @route('/')
-       def index(self):
-           return self.render('index')
-
+       # and update the code for our hello view
        @route('/hello', methods=['GET', 'POST'])
        @param_converter(name=str)
        def hello(self, name=None):
@@ -421,21 +411,22 @@ And let's fix our tests:
 
    # tests/app/test_views.py
 
-   from flask_unchained import url_for  # add this import statement
-
+   # add this import
+   from flask_unchained import url_for
 
    class TestSiteController:
-       # ...
-
-       # add this method
-       def test_hello_with_form_post(self, client):
+       # and add this method
+       def test_hello_with_form_post(self, client, templates):
            r = client.post('site_controller.hello', data=dict(name='User'))
            assert r.status_code == 302
            assert r.path == url_for('site_controller.hello')
 
            r = client.follow_redirects(r)
            assert r.status_code == 200
-           assert r.html.count('Hello User from Flaskr Unchained!') == 2
+           assert r.html.count('Hello User!') == 2
+
+           # note: when request is a POST, the templates fixture only works after redirecting
+           assert templates[0].template.name == 'site/hello.html'
 
 Make sure they pass,
 
@@ -444,11 +435,11 @@ Make sure they pass,
    pytest
    ================================== test session starts ===================================
    platform linux -- Python 3.6.6, pytest-3.7.1, py-1.5.4, pluggy-0.7.1
-   rootdir: /home/user/dev/flaskr-unchained, inifile:
-   plugins: flask-0.10.0, Flask-Unchained-0.5.1
+   rootdir: /home/user/dev/hello-flask-unchained, inifile:
+   plugins: flask-0.10.0, Flask-Unchained-0.8.0
    collected 4 items
 
-   tests/app/test_views.py ....                                           [100%]
+   tests/app/test_views.py ....                                                        [100%]
 
    ================================ 4 passed in 0.16 seconds ================================
 
@@ -487,7 +478,7 @@ The updated view code:
 
    # app/views.py
 
-   from flask_unchained import Controller, route, request, param_converter
+   from flask_unchained import Controller, request, route, param_converter
 
    from .forms import HelloForm
 
@@ -515,12 +506,12 @@ And the updated template:
 
    {% from '_macros.html' import render_form %}
 
-   {% block title %}Hello {{ name }} from Flaskr Unchained!{% endblock %}
+   {% block title %}Hello {{ name }}!{% endblock %}
 
    {% block content %}
      <div class="row">
        <div class="col">
-         <h1>Hello {{ name }} from Flaskr Unchained!</h1>
+         <h1>Hello {{ name }}!</h1>
 
          <h2>Enter your name:</h2>
          {{ render_form(hello_form, endpoint='site_controller.hello') }}
@@ -605,56 +596,24 @@ As usual, let's update our tests and make sure they pass:
 
    # tests/app/test_views.py
 
-   from flask_unchained import url_for
-
-
    class TestSiteController:
-       def test_index(self, client, templates):
-           r = client.get('site_controller.index')
-           assert r.status_code == 200
-           assert templates[0].template.name == 'site/index.html'
-           assert r.html.count('Welcome to Flaskr Unchained!') == 1
-
-       def test_hello(self, client, templates):
-           r = client.get('site_controller.hello')
-           assert r.status_code == 200
-           assert templates[0].template.name == 'site/hello.html'
-           assert r.html.count('Hello World from Flaskr Unchained!') == 2
-
-       def test_hello_with_name_parameter(self, client, templates):
-           r = client.get('site_controller.hello', name='User')
-           assert r.status_code == 200
-           assert templates[0].template.name == 'site/hello.html'
-           assert r.html.count('Hello User from Flaskr Unchained!') == 2
-
-       def test_hello_with_form_post(self, client, templates):
-           r = client.post('site_controller.hello', data=dict(name='User'))
-           assert r.status_code == 302
-           assert r.path == url_for('site_controller.hello')
-
-           r = client.follow_redirects(r)
-           assert r.status_code == 200
-           assert templates[0].template.name == 'site/hello.html'
-           assert r.html.count('Hello User from Flaskr Unchained!') == 2
-
+       # add this method
        def test_hello_errors_with_empty_form_post(self, client, templates):
            r = client.post('site_controller.hello')
            assert r.status_code == 200
            assert templates[0].template.name == 'site/hello.html'
            assert r.html.count('Name is required.') == 1
 
-One thing to note here, is we've added the ``templates`` fixture to each test to verify the correct template got rendered by the controller view.
-
 .. code:: bash
 
    pytest
    ================================== test session starts ===================================
    platform linux -- Python 3.6.6, pytest-3.7.1, py-1.5.4, pluggy-0.7.1
-   rootdir: /home/user/dev/flaskr-unchained, inifile:
-   plugins: flask-0.10.0, Flask-Unchained-0.5.1
+   rootdir: /home/user/dev/hello-flask-unchained, inifile:
+   plugins: flask-0.10.0, Flask-Unchained-0.8.0
    collected 5 items
 
-   tests/app/test_views.py .....                                         [100%]
+   tests/app/test_views.py .....                                                       [100%]
 
    ================================ 5 passed in 0.19 seconds ================================
 
@@ -665,5 +624,54 @@ Once your tests are passing, it's time to make commit:
    git add .
    git status
    git commit -m 'refactor hello form to use flask-wtf'
+
+Enabling CSRF Protection
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, CSRF protection is disabled. However, any time you're using forms or have enabled authentication (covered later), you should also enable CSRF protection. There are two requirements:
+
+The first is to update our configuration:
+
+.. code:: bash
+
+   touch app/config.py
+
+.. code:: python
+
+   # app/config.py
+
+   from flask_unchained import AppBundleConfig
+
+   class Config(AppBundleConfig):
+       SECRET_KEY = 'some-secret-key'
+       WTF_CSRF_ENABLED = True
+
+   class TestConfig(Config):
+       WTF_CSRF_ENABLED = False
+
+And secondly, we need to actually send the CSRF token in the cookie with every response:
+
+.. code:: python
+
+   # app/__init__.py
+
+   from flask_unchained import AppBundle, generate_csrf
+
+   class App(AppBundle):
+       def after_init_app(self, app) -> None:
+           @app.after_request
+           def set_csrf_token_cookie(response):
+               if response:
+                   response.set_cookie('csrf_token', generate_csrf())
+               return response
+
+
+Tests should still pass, so it's time to make commit:
+
+.. code:: bash
+
+   git add .
+   git status
+   git commit -m 'enable CSRF protection'
 
 Cool. Let's move on to :doc:`db` in preparation for installing the Security Bundle.

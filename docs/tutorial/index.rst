@@ -8,7 +8,7 @@ Tutorial
     :maxdepth: 2
 
     getting_started
-    templates_and_static_assets
+    views_templates_and_static_assets
     db
     session
     security
