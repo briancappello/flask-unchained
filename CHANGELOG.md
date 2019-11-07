@@ -57,9 +57,12 @@
 ```python
 from flask_unchained import AppBundle, AppBundleConfig, generate_csrf
 
-class YourAppConfig(AppBundleConfig):
-    WTF_CSRF_ENABLED = True
+class Config(AppBundleConfig):
     SECRET_KEY = 'some-secret-key'
+    WTF_CSRF_ENABLED = True
+
+class TestConfig(Config):
+    WTF_CSRF_ENABLED = False
 
 class YourAppBundle(AppBundle):
     def after_init_app(self, app) -> None:

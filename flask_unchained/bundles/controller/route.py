@@ -247,8 +247,9 @@ class Route:
 
         prefix = self.view_func.__module__
         if self._controller_cls:
-            prefix = self._controller_cls.__module__
-            prefix = f'{prefix}.{self._controller_cls.__name__}'
+            module_name = self._controller_cls.__module__
+            class_name = self._controller_cls.__name__
+            prefix = f'{module_name}.{class_name}'
         return f'{prefix}.{self.method_name}'
 
     def __eq__(self, other):

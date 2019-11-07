@@ -157,7 +157,7 @@ class Bundle(metaclass=_BundleMetaclass):
     def _iter_class_hierarchy(self, include_self: bool = True, mro: bool = False):
         """
         Iterate over the bundle classes in the hierarchy. Yields base-most
-        superclass instances first (aka opposite of Method Resolution Order).
+        instances first (aka opposite of Method Resolution Order).
 
         For internal use only.
 

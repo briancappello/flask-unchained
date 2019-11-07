@@ -39,9 +39,9 @@ class DeferredBundleFunctions:
        from flask_unchained import Bundle, unchained
 
        class Foobar(Bundle):
-           name = 'not_foobar'
+           name = 'foobar'
 
-       unchained.not_foobar.before_request() (or any other method on this class)
+       unchained.foobar.before_request() (or any other method on DeferredBundleFunctions)
     """
 
     def __init__(self):

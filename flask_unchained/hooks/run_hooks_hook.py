@@ -24,7 +24,7 @@ class RunHooksHook(AppFactoryHook):
                  bundles: List[Bundle],
                  _config_overrides: Optional[Dict[str, Any]] = None,
                  ) -> None:
-        from flask_unchained.hooks.configure_app_hook import ConfigureAppHook
+        from .configure_app_hook import ConfigureAppHook
 
         for hook in self.collect_from_bundles(bundles):
             if isinstance(hook, ConfigureAppHook):

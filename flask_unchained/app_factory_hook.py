@@ -288,18 +288,18 @@ class AppFactoryHook:
                                   if cls.require_exactly_one_bundle_module
                                   else cls.bundle_module_names))
 
-        # check to make sure the user's bundle override module names attribute is correct
+        # check to make sure the user's bundle override module name(s) attribute is correct
         if cls.require_exactly_one_bundle_module or isinstance(module_names, str):
             if not isinstance(module_names, str):
                 raise ValueError(f'The {cls.bundle_override_module_names_attr} attribute '
                                  f'on {bundle.module_name}.{bundle.__class__.__name__} '
-                                 f'must be a string with exactly one module name.')
+                                 f'must be a string for exactly one module name.')
             return [module_names]
         return module_names
 
     def update_shell_context(self, ctx: Dict[str, Any]) -> None:
         """
-        Implement to add objects to the cli shell context.
+        Implement to add objects to the CLI shell context.
         """
         pass
 

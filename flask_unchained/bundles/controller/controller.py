@@ -224,12 +224,27 @@ class Controller(metaclass=_ControllerMetaclass):
     ``Meta.template_folder`` and a file with the passed name and
     ``Meta.template_file_extension``. For example::
 
+        class SiteController(Controller):
+            # these defaults are automatically determined, unless you override them
+            class Meta:
+                template_folder = 'site'  # snake_cased class name (minus Controller suffix)
+                template_file_extension = '.html'  # from Config.TEMPLATE_FILE_EXTENSION
+
+            def about_us():
+                return self.render('about_us')  # site/about_us.html
+
+            def contact():
+                return self.render('contact')  # site/contact.html
+
+            def index():
+                return self.render('index')  # site/index.html
+
         # your bundle root
         ├── __init__.py
         ├── templates
         │   └── site
         │       ├── about_us.html
-        │       ├── contact.html.j2
+        │       ├── contact.html
         │       └── index.html
         └── views
             └── site_controller.py

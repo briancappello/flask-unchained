@@ -30,7 +30,7 @@ class BundleBlueprint(_Blueprint):
     """
     This is a semi-private class to make blueprints compatible with bundles and
     their hierarchies. Bundle blueprints are created automatically for each bundle
-    tht has a template folder and/or static folder. If *any* bundle in the hierarchy
+    that has a template folder and/or static folder. If *any* bundle in the hierarchy
     has views/routes that should be registered with the app, then those views/routes
     will get registered *only* with the :class:`BundleBlueprint` for the *top-most*
     bundle in the hierarchy.
