@@ -11,7 +11,7 @@ from werkzeug.local import LocalProxy
 
 from .constants import (DEV, PROD, STAGING, TEST,
                         _DI_AUTOMATICALLY_HANDLED, _INJECT_CLS_ATTRS)
-from .di import _ensure_service_name, injectable, _inject_cls_attrs
+from .di import _ensure_service_name, _get_injected_value, injectable, _inject_cls_attrs
 from .exceptions import ServiceUsageError
 from .utils import AttrDict
 
@@ -320,22 +320,26 @@ class Unchained:
                 bound_args = sig.bind_partial(*fn_args, **fn_kwargs)
                 required = set(sig.parameters.keys())
                 have = set(bound_args.arguments.keys())
-                need = required.difference(have)
-                to_inject = (args if has_explicit_args
-                             else set([k for k, v in sig.parameters.items()
-                                       if isinstance(v.default, str)
-                                       and v.default == injectable]))
+                need = required - have
+                to_inject = need & (set(args) if has_explicit_args
+                                    else set([k for k, v in sig.parameters.items()
+                                              if isinstance(v.default, str)
+                                              and v.default == injectable]))
 
                 # try to inject needed params from extensions or services
                 for param_name in to_inject:
-                    if param_name not in need:
+                    try:
+                        fn_kwargs[param_name] = _get_injected_value(
+                            unchained_ext=self,
+                            param_name=param_name,
+                            requested_by=dependency_injector.__di_name__,
+                        )
+                    except:
                         continue
-                    if param_name in self.extensions:
-                        fn_kwargs[param_name] = self.extensions[param_name]
-                    elif param_name in self.services:
-                        fn_kwargs[param_name] = self.services[param_name]
 
-                # check to make sure we we're not missing anything required
+                # check to make sure we're not missing anything required
+                # this check must live here so that it works when services get used
+                # outside of flask unchained
                 bound_args = sig.bind_partial(*fn_args, **fn_kwargs)
                 bound_args.apply_defaults()
                 for k, v in bound_args.arguments.items():

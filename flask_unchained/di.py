@@ -2,11 +2,12 @@ import functools
 import inspect
 
 from py_meta_utils import (AbstractMetaOption, McsArgs, MetaOptionsFactory,
-                           process_factory_meta_options, deep_getattr)
+                           process_factory_meta_options, deep_getattr, _missing)
 from types import FunctionType
 from typing import *
 
 from .constants import _DI_AUTOMATICALLY_HANDLED, _INJECT_CLS_ATTRS
+from .exceptions import ServiceUsageError
 from .string_utils import snake_case
 
 
@@ -44,20 +45,36 @@ def _ensure_service_name(service, name=None):
     return name
 
 
+def _get_injected_value(
+    unchained_ext,
+    param_name: str,
+    requested_by: str = None,
+    throw: bool = True,
+):
+    value = _missing
+    if param_name == 'config':
+        value = unchained_ext._app.config
+    elif param_name in unchained_ext.extensions:
+        value = unchained_ext.extensions[param_name]
+    elif param_name in unchained_ext.services:
+        value = unchained_ext.services[param_name]
+    elif throw:
+        if not requested_by:
+            raise RuntimeError('You must pass `requested_by` when `throw` is True')
+        raise ServiceUsageError(f'No extension or service was found with the name '
+                                f'{param_name} (required by ''{requested_by})')
+    return value
+
+
 def _inject_cls_attrs(_wrapped_fn=None, _call_super_for_cls: Optional[str] = None):
     def __init__(self, *args, **kwargs):
         from .unchained import unchained
-        for param in self.__inject_cls_attrs__:
-            if param == 'config':
-                value = unchained._app.config
-            elif param in unchained.extensions:
-                value = unchained.extensions[param]
-            elif param in unchained.services:
-                value = unchained.services[param]
-            else:
-                raise Exception(f'No service found with the name {param} '
-                                f'(required by {self.__class__.__name__})')
-            setattr(self, param, value)
+        for param in getattr(self, _INJECT_CLS_ATTRS):
+            setattr(self, param, _get_injected_value(
+                unchained_ext=unchained,
+                param_name=param,
+                requested_by=self.__class__.__name__
+            ))
 
         if _call_super_for_cls:
             module, name = _call_super_for_cls.split(':')
