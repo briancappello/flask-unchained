@@ -107,16 +107,12 @@ class AppFactory(metaclass=Singleton):
             folder = os.path.join(root_path, folder_name)
             return folder if os.path.isdir(folder) else None
 
-        if 'template_folder' not in app_kwargs:
-            app_kwargs.setdefault('template_folder', root_folder_or_none('templates'))
-
-        if 'static_folder' not in app_kwargs:
-            app_kwargs.setdefault('static_folder', root_folder_or_none('static'))
-
+        app_kwargs.setdefault('template_folder', root_folder_or_none('templates'))
+        app_kwargs.setdefault('static_folder', root_folder_or_none('static'))
         if app_kwargs['static_folder'] and not app_kwargs.get('static_url_path'):
             app_kwargs.setdefault('static_url_path', '/static')
 
-        # instantiate the app
+        # instantiate and initialize the app
         app_import_name = (bundles[-1].module_name.split('.')[0] if bundles
                            else ('tests' if env == TEST else 'dev_app'))
         app = self.APP_CLASS(app_import_name, **app_kwargs)
@@ -170,14 +166,15 @@ class AppFactory(metaclass=Singleton):
         for bundle_package_name in bundle_package_names:
             bundles.append(cls.load_bundle(bundle_package_name))
 
-        if not isinstance(bundles[-1], AppBundle):
-            if unchained_config:
-                single_module_app_bundle = cls._bundle_from_module(unchained_config)
-                if single_module_app_bundle:
-                    bundles.append(single_module_app_bundle)
-                return single_module_app_bundle, bundles
-            return None, bundles
-        return bundles[-1], bundles
+        if isinstance(bundles[-1], AppBundle):
+            return bundles[-1], bundles
+
+        if unchained_config:
+            single_module_app_bundle = cls.bundle_from_module(unchained_config)
+            if single_module_app_bundle:
+                bundles.append(single_module_app_bundle)
+            return single_module_app_bundle, bundles
+        return None, bundles
 
     @classmethod
     def load_bundle(cls, bundle_package_name: str) -> Union[AppBundle, Bundle]:
@@ -189,7 +186,7 @@ class AppFactory(metaclass=Singleton):
                     continue
                 raise e
 
-            bundle = cls._bundle_from_module(module)
+            bundle = cls.bundle_from_module(module)
             if bundle:
                 return bundle
 
@@ -199,23 +196,19 @@ class AppFactory(metaclass=Singleton):
             ' subclass in the packages\'s __init__.py (or bundle.py) file.')
 
     @classmethod
-    def is_bundle(cls, module: ModuleType) -> FunctionType:
-        def _is_bundle(obj):
-            return (
-                isinstance(obj, type) and issubclass(obj, Bundle)
-                and obj not in {AppBundle, Bundle}
-                and obj.__module__.startswith(module.__name__)
-            )
-        return _is_bundle
-
-    @classmethod
-    def _bundle_from_module(cls, module: ModuleType) -> Union[AppBundle, Bundle, None]:
+    def bundle_from_module(cls, module: ModuleType) -> Union[AppBundle, Bundle, None]:
         try:
-            bundle_class = inspect.getmembers(module, cls.is_bundle(module))[0][1]
+            bundle_class = inspect.getmembers(module, cls._is_bundle(module))[0][1]
         except IndexError:
             return None
         else:
             return bundle_class()
+
+    @classmethod
+    def _is_bundle(cls, module: ModuleType) -> FunctionType:
+        return lambda obj: (isinstance(obj, type) and issubclass(obj, Bundle)
+                            and obj not in {AppBundle, Bundle}
+                            and obj.__module__.startswith(module.__name__))
 
 
 __all__ = [
