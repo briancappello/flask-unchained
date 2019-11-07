@@ -1,23 +1,27 @@
-Templates and Static Assets
----------------------------
+Views, Templates, and Static Assets
+-----------------------------------
 
-Our site looks pretty weak as it stands. Let's add Bootstrap and a landing page to spruce things up a bit. In order to share as much code as possible between templates, it's best practice to abstract away the boilerplate into ``templates/layout.html``. But first, we need to download a few assets for Bootstrap:
+So far we've been returning a raw string from our view function. This works fine for demo purposes, however, in the real world you'll most often use template files. Let's create a directory each for our templates and static assets.
 
 .. code:: bash
 
-   mkdir -p static templates \
-     && wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js -O static/bootstrap-v4.1.2.min.js \
+   mkdir -p templates static \
+     && touch templates/layout.html templates/_navbar.html templates/_flashes.html
+
+These directories are the standard locations the :class:`~flask.Flask` constructor expects, so they will automatically be used. (Note however that if just created either of these directories, then you will need to restart the development server for them to be picked up by it.)
+
+Our site looks pretty weak as it stands. Let's add Bootstrap to spruce things up a bit:
+
+.. code:: bash
+
+   && wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js -O static/bootstrap-v4.1.2.min.js \
      && wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css -O static/bootstrap-v4.1.2.min.css \
      && wget https://code.jquery.com/jquery-3.3.1.slim.min.js -O static/jquery-v3.3.1.slim.min.js \
      && wget https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js -O static/popper-v1.14.3.min.js \
-     && touch templates/layout.html templates/_navbar.html templates/_flashes.html
-
-We're placing these assets in the project root ``static`` and ``templates`` folders. These directories are the standard locations :class:`flask.Flask` expects, so they will be automatically picked up. (Note however that if just created either of these directories, then you will need to restart the development server for these new assets to be picked up by it.)
 
 Layout Template
 ^^^^^^^^^^^^^^^
-
-Just like vanilla Flask, Flask Unchained uses the Jinja2 templating engine. If you're unfamiliar with what anything below is doing, I recommend checking out the `official Jinja2 documentation <jinja.pocoo.org/docs/>`_. It's excellent.
+In order to share as much code as possible between templates, it's best practice to abstract away the shared boilerplate into ``templates/layout.html``. Just like vanilla Flask, Flask Unchained uses the Jinja2 templating engine. If you're unfamiliar with what anything below is doing, I recommend checking out the exeellent `official Jinja2 documentation <jinja.pocoo.org/docs/>`_.
 
 Now let's write our ``templates/layout.html`` file:
 
@@ -66,7 +70,28 @@ Now let's write our ``templates/layout.html`` file:
      </body>
    </html>
 
-And also the included ``templates/_navbar.html`` and ``templates/_flashes.html`` templates:
+And also the included  ``templates/_flashes.html`` and ``templates/_navbar.html`` templates:
+
+.. code:: html+jinja
+
+   {# templates/_flashes.html #}
+
+   {% with messages = get_flashed_messages(with_categories=True) %}
+   {% if messages %}
+     <div class="row flashes">
+       <div class="col">
+         {% for category, message in messages %}
+           <div class="alert alert-{{ category }} alert-dismissable fade show" role="alert">
+             {{ message }}
+             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+             </button>
+           </div>
+         {% endfor %}
+       </div>
+     </div>
+   {% endif %}
+   {% endwith %}
 
 .. code:: html+jinja
 
@@ -106,27 +131,6 @@ And also the included ``templates/_navbar.html`` and ``templates/_flashes.html``
    </nav>
 
 The ``nav_link`` macro perhaps deserves some explanation. This is a small utility function that renders a navigation item in the bootstrap navbar. We do this to make our code more DRY, because every navigation link needs to contain logic to determine whether or not it is the currently active view. The ``{% if endpoint is active %}`` bit is special - Flask Unchained adds the ``active`` template test by default to make this easier.
-
-.. code:: html+jinja
-
-   {# templates/_flashes.html #}
-
-   {% with messages = get_flashed_messages(with_categories=True) %}
-   {% if messages %}
-     <div class="row flashes">
-       <div class="col">
-         {% for category, message in messages %}
-           <div class="alert alert-{{ category }} alert-dismissable fade show" role="alert">
-             {{ message }}
-             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-               <span aria-hidden="true">&times;</span>
-             </button>
-           </div>
-         {% endfor %}
-       </div>
-     </div>
-   {% endif %}
-   {% endwith %}
 
 And now let's update our ``app/templates/site/index.html`` template to use our new layout template:
 

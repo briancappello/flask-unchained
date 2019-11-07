@@ -8,38 +8,11 @@ Create a new directory and enter it:
 
 .. code:: bash
 
-   mkdir flaskr-unchained
-   cd flaskr-unchained
+   mkdir hello-flask-unchained && cd hello-flask-unchained
 
-The tutorial will assume you’re working from the ``flaskr-unchained`` directory from now on. All commands are assumed to be run from this top-level project directory, and the file names at the top of each code block are also relative to this directory.
+The tutorial will assume you’re working from the ``hello-flask-unchained`` directory from now on. All commands are assumed to be run from this top-level project directory, and the file names at the top of each code block are also relative to this directory.
 
-Create a new virtualenv and activate it:
-
-**Using Pipenv**
-
-.. code:: bash
-
-   # create our virtualenv and install flask-unchained into it
-   pipenv install flask-unchained
-   pipenv install --dev "flask-unchained[dev]"
-
-   # activate the virtualenv
-   pipenv shell
-
-**Using virtualenvwrapper**
-
-.. code:: bash
-
-   # create our virtualenv and activate it
-   mkvirtualenv flaskr-unchained
-
-   # install flask-unchained
-   pip install "flask-unchained[dev]"
-
-   # refresh the virtualenv so that pytest will work correctly
-   deactivate && workon flaskr-unchained
-
-**Using the built-in venv**
+Next, let's create a new virtualenv and activate it:
 
 .. code:: bash
 
@@ -60,9 +33,9 @@ some way or another.
 Project Layout
 ^^^^^^^^^^^^^^
 
-Unlike stock Flask, Flask Unchained apps cannot be written in a single file. Instead, we've defined a (configurable) folder convention that must be followed for Flask Unchained to be able to correctly discover all of your code. A large project might have a folder structure that looks like this::
+Just like vanilla Flask, Flask Unchained apps can be written either in a single file (a single Python module) or in multiple files (a Python package of many modules) following a (configurable) folder convention that must be adhered to for Flask Unchained to be able to correctly discover all of your code. A large project might have a folder structure that looks like this::
 
-   /home/user/dev/flaskr-unchained
+   /home/user/dev/hello-flask-unchained
    ├── app                 # your app bundle package
    │   ├── admins          # model admins
    │   ├── commands        # click groups/commands
@@ -101,262 +74,41 @@ By the end of this tutorial, we'll have built something very close. But for now,
 A Minimal Hello World App
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The starting project layout of our hello world app looks like this:
+The starting project layout of our hello world app is a single file (two if you count the tests):
 
 .. code:: bash
 
-   /home/user/dev/flaskr-unchained
-   ├── app
-   │   ├── templates
-   │   │   └── site
-   │   │       └── index.html
-   │   ├── __init__.py
-   │   ├── config.py
-   │   ├── routes.py
-   │   └── views.py
-   ├── static
-   ├── templates
-   ├── tests
-   │   ├── app
-   │   │   └── test_views.py
-   │   └── __init__.py
-   └── unchained_config.py
+   /home/user/dev/hello-flask-unchained
+   ├── app.py
+   └── test_app.py
 
-Create the files and folders:
+Let's create the app bundle:
 
 .. code:: bash
 
-   mkdir -p app/templates/site static templates tests/app \
-     && touch unchained_config.py app/__init__.py app/config.py \
-     && touch app/views.py app/routes.py app/templates/site/index.html \
-     && touch tests/__init__.py tests/app/test_views.py
+   touch app.py test_app.py
 
-First, let's configure Flask Unchained:
+And the code:
 
 .. code:: python
 
-   # unchained_config.py
+   # app.py
 
-   import os
+   from flask_unchained import AppBundle, Controller, route
 
-   ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
-
-
-   def folder_or_none(folder_name):
-       folder = os.path.join(ROOT_PATH, folder_name)
-       return folder if os.path.exists(folder) else None
-
-
-   # upper-cased variables get passed as kwargs to `AppFactory.APP_CLASS.__init__`
-   # (by default, `:class:FlaskUnchained`, which has the same constructor as :class:`flask.Flask`)
-   TEMPLATE_FOLDER = folder_or_none('templates')
-   STATIC_FOLDER = folder_or_none('static')
-   STATIC_URL_PATH = '/static' if STATIC_FOLDER else None
-
-   BUNDLES = [
-       'app',  # your app bundle *must* be last
-   ]
-
-The purpose of ``unchained_config.py`` is to define which bundles to load and the keyword arguments passed to the :class:`~flask_unchained.FlaskUnchained` constructor (which takes the same arguments as the original :class:`~flask.Flask` constructor). Because we've named our app bundle module ``app``, we make this the last element of the ``BUNDLES`` list.
-
-Whenever you create a new app bundle, you must subclass :class:`~flask_unchained.AppBundle` in your app bundle's module root. The :class:`~flask_unchained.Bundle` base class (which :class:`~flask_unchained.AppBundle` extends) contains a bit of magic that's necessary for all the sub-modules of your bundle to be discovered by Flask Unchained.
-
-.. code:: python
-
-   # app/__init__.py
-
-   from flask_unchained import AppBundle
-
-   class FlaskrUnchained(AppBundle):
+   class App(AppBundle):
        pass
-
-In order to configure your app, Flask Unchained uses environment-specific configuration classes:
-
-.. code:: python
-
-   # app/config.py
-
-   import os
-
-   from flask_unchained import AppBundleConfig
-
-
-   class Config(AppBundleConfig):
-       SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key')
-
-
-   class DevConfig(Config):
-       EXPLAIN_TEMPLATE_LOADING = False
-
-
-   class ProdConfig(Config):
-       pass
-
-
-   class StagingConfig(ProdConfig):
-       pass
-
-
-   class TestConfig(Config):
-       pass
-
-How this works is pretty simple. First, we load configuration defaults defined within Flask Unchained itself. At the time of writing, the only defaults it sets are the ``DEBUG`` option (pulled from the ``FLASK_DEBUG`` environment variable), and only when ``env == 'test'``, :code:`TESTING = True` and :code:`WTF_CSRF_ENABLED = False`.
-
-Next, we load the config defaults from the bundles defined in your ``unchained_config.BUNDLES`` setting. First the options from the ``Config`` class are loaded, and then if an env-specific config class exists, we then load options from it (possibly overwriting settings from ``Config``). All of the config classes are optional; if they don't exist Flask Unchained will simply skip trying to load them. Your app bundle is the one bundle where the ``Config`` class isn't optional. It's also special in that it gets loaded last and can therefore override all of the default settings as loaded from Flask Unchained and your ``BUNDLES``.
-
-Taking the above into account, the truly minimally required app bundle config is actually the following:
-
-.. code:: python
-
-   # app/config.py
-
-   import os
-
-   from flask_unchained import AppBundleConfig
-
-
-   class Config(AppBundleConfig):
-       SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key')
-
-Now let's define our hello world view:
-
-.. code:: python
-
-   # app/views.py
-
-   from flask_unchained import Controller, route
-
 
    class SiteController(Controller):
        @route('/')
        def index(self):
-           return self.render('index')
+           return 'Hello World!'
 
-Flask Unchained prefers class-based views for a number of reasons. As you can see a hint of above, :class:`~flask_unchained.Controller` includes some convenience methods for rendering templates, redirecting, flashing messages, and returning JSON responses. Subclassing :class:`~flask_unchained.Controller` is also necessary for the bit of magic that allows views in bundles to extend and override each other, which we'll see specific examples of later on in this tutorial.
+Whenever you create a new app in Flask Unchained, you start by creating a new "app bundle": This is an overloaded term. The app bundle, conceptually, *is* your app. Literally, the app bundle is a subclass of :class:`~flask_unchained.AppBundle` that must live in your app bundle's module root (`app.py` here).
 
-What about blueprints? Blueprints are a bit tricky, because they actually serve at least eight separate (if sometimes related) purposes:
+We can now start the development server and you should see your site running at `<http://localhost:5000>`_::
 
-1. Allowing to register request/response hooks that run for all views in the app
-2. Allowing to register template context processors that run for all views in the app
-3. Allowing to register error handlers that run for all views in the app
-4. Grouping of view functions together into a "namespace"
-5. Allowing to register request/response hooks that only run for views in the blueprint
-6. Allowing to register template context processors that run only for views in the blueprint
-7. Allowing to register error handlers that run only for views in the blueprint (with a few caveats)
-8. Defining template folders to load from (and via the order blueprints get registered with the app, the priority of template folders to search for templates in)
-
-This works fine for stock Flask apps, but it wreaks havoc on the bit of magic Flask Unchained adds on top of views and templates. Flask Unchained does still use Blueprints internally, however, as an end-user you should never need to deal with them explicitly. Requirements ``1``, ``2``, and ``3`` are served by equivalently-named methods on the :class:`~flask_unchained.unchained.Unchained` extension instance:
-
-.. list-table::
-   :header-rows: 1
-
-   * - :class:`~flask_unchained.Unchained` extension method name
-     - Description
-   * - :meth:`~flask_unchained.Unchained.before_request`
-     - Registers a function to run before each request.
-   * - :meth:`~flask_unchained.Unchained.before_first_request`
-     - Registers a function to be run before the first request to this instance of the application.
-   * - :meth:`~flask_unchained.Unchained.after_request`
-     - Register a function to be run after each request.
-   * - :meth:`~flask_unchained.Unchained.teardown_request`
-     - Register a function to be run at the end of each request, regardless of whether there was an exception or not.  These functions are executed when the request context is popped, even if not an actual request was performed.
-   * - :meth:`~flask_unchained.Unchained.teardown_appcontext`
-     - Registers a function to be called when the application context ends.  These functions are typically also called when the request context is popped.
-   * - :meth:`~flask_unchained.Unchained.context_processor`
-     - Registers a template context processor function.
-   * - :meth:`~flask_unchained.Unchained.url_value_preprocessor`
-     - Register a URL value preprocessor function for all view functions in the application. These functions will be called before the :meth:`before_request` functions.
-   * - :meth:`~flask_unchained.Unchained.url_defaults`
-     - Callback function for URL defaults for all view functions of the application.  It's called with the endpoint and values and should update the values passed in place.
-   * - :meth:`~flask_unchained.Unchained.errorhandler`
-     - Register a function to handle errors by code or exception class.
-
-Likewise, requirements ``5``, ``6``, and ``7`` are fulfilled by equivalently-named methods that also must be accessed via the ``unchained`` extension instance. The difference here is that you must specify which bundle you want the functions to run for:
-
-.. list-table::
-   :header-rows: 1
-
-   * - Method Name
-     - Description
-   * - ``unchained.bundle_name.before_request``
-     - Like :meth:`~flask.Flask.before_request` but for a bundle. This function is only executed before each request that is handled by a view function of that bundle.
-   * - ``unchained.bundle_name.after_request``
-     - Like :meth:`~flask.Flask.after_request` but for a bundle. This function is only executed after each request that is handled by a function of that bundle.
-   * - ``unchained.bundle_name.teardown_request``
-     - Like :meth:`~flask.Blueprint.teardown_request` but for a bundle. This function is only executed when tearing down requests handled by a function of that bundle.  Teardown request functions are executed when the request context is popped, even when no actual request was performed.
-   * - ``unchained.bundle_name.context_processor``
-     - Like :meth:`~flask.Blueprint.context_processor` but for a bundle. This function is only executed for requests handled by a bundle.
-   * - ``unchained.bundle_name.url_value_preprocessor``
-     - Registers a function as URL value preprocessor for this bundle. It's called before the view functions are called and can modify the url values provided.
-   * - ``unchained.bundle_name.url_defaults``
-     - Callback function for URL defaults for this bundle. It's called with the endpoint and values and should update the values passed in place.
-   * - ``unchained.bundle_name.errorhandler``
-     - Registers an error handler that becomes active for this bundle only.  Please be aware that routing does not happen local to a bundle so an error handler for 404 usually is not handled by a bundle unless it is caused inside a view function.  Another special case is the 500 internal server error which is always looked up from the application. Otherwise works as the :meth:`~flask.Blueprint.errorhandler` decorator.
-
-For the ``4th`` requirement, Flask Unchained automatically creates a :class:`~flask.Blueprint` for each bundle hierarchy, and assigns all of the discovered views that are registered with the app in a bundle hierarchy to it. This necessarily must happen dynamically, which using a stock Flask :class:`~flask.Blueprint` does not allow for. (For backwards compatibility, Flask Unchained does still technically support regular function-based views using blueprints from stock Flask, however it's strongly recommended to **not** use them.)
-
-And last but not least, for the ``8th`` requirement, this again is handled automatically (internally, we create empty blueprints for each bundle in a hierarchy that only points to the bundle's template folder, registering them in the correct order with the app).
-
-Let's get back to finishing our hello view. We need to add a template for it to render. :meth:`flask_unchained.Controller.render` knows that when you pass a template name of ``index``, it should look for ``site/index.html`` in the bundle's ``templates`` folder.
-
-The ``site`` prefix is determined from the controller's class name. By default we right strip any ``Controller`` or ``View`` suffix from the class name, and then convert the remainder to snake case.
-
-You can also set it manually to customize the folder the controller will look for its templates in, like so:
-
-.. code:: python
-
-   class SiteController(Controller):
-       class Meta:
-           template_folder = 'site'
-
-The template's code itself is about as simple as it gets, with a tiny bit of styling thrown in:
-
-.. code:: html
-
-   <!-- app/templates/site/index.html -->
-
-   <!DOCTYPE html>
-   <html>
-   <head>
-     <title>Hello World from Flaskr Unchained!</title>
-     <style>
-       body {
-         margin: 0 auto;
-         max-width: 50em;
-         font-family: "Helvetica", "Arial", sans-serif;
-         line-height: 1.5;
-         padding: 2em 1em;
-         color: #555;
-       }
-       h1 {
-         color: #333;
-       }
-     </style>
-   </head>
-   <body>
-     <h1>Hello World from Flaskr Unchained!</h1>
-   </body>
-   </html>
-
-Lastly, Flask Unchained uses declarative routing. This means that while view functions can be decorated with routing defaults, you must explicitly enable the routes you want:
-
-.. code:: python
-
-   # app/routes.py
-
-   from flask_unchained import (controller, resource, func, include, prefix,
-                                get, delete, post, patch, put, rule)
-
-   from .views import SiteController
-
-
-   routes = lambda: [
-       controller(SiteController),
-   ]
-
-Now start the development server, and you should see your site running at `<http://localhost:5000>`_::
-
-   flask run
+   UNCHAINED_CONFIG="app" flask run
     * Environment: development
     * Debug mode: on
     * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
@@ -365,26 +117,28 @@ Let's add a quick test before we continue.
 
 .. code:: python
 
-   # tests/app/test_views.py
+   # test_app.py
 
    class TestSiteController:
        def test_index(self, client):
            r = client.get('site_controller.index')
            assert r.status_code == 200
-           assert r.html.count('Hello World from Flaskr Unchained!') == 2
+           assert r.html.count('Hello World!') == 1
 
-And now let's make sure it passes:
+Here, we're using the HTTP ``client`` pytest fixture to request the URL for the endpoint ``"site_controller.index"``, verifying the response has a status code of ``200``, and lastly checking that the string ``"Hello World!"`` is in the response.
+
+Let's make sure it passes:
 
 .. code:: bash
 
-   pytest
+   UNCHAINED_CONFIG="app" pytest
    ======================== test session starts ========================
    platform linux -- Python 3.6.6, pytest-3.6.4, py-1.5.4, pluggy-0.7.1
-   rootdir: /home/user/dev/flaskr-unchained, inifile:
-   plugins: flask-0.10.0, Flask-Unchained-0.5.1
+   rootdir: /home/user/dev/hello-flask-unchained, inifile:
+   plugins: flask-0.10.0, Flask-Unchained-0.8.0
    collected 1 item
 
-   tests/app/test_views.py .                                    [100%]
+   test_app.py .                                                   [100%]
    ======================== 1 passed in 0.18 seconds ====================
 
 NOTE: If you get any errors, you may need to deactivate and reactivate your virtualenv if you haven't already since installing ``pytest``.
@@ -421,4 +175,4 @@ Initialize the repo and make our first commit:
 
    git commit -m 'initial hello world commit'
 
-OK, everything works, but it doesn't do anything more than display a static page. Let's make things a bit more interesting by moving on to :doc:`templates_and_static_assets`.
+OK, everything works, but this is about as basic as it gets. Let's make things a bit more interesting by moving on to :doc:`views_templates_and_static_assets`.

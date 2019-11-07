@@ -1,7 +1,7 @@
 Authentication and Authorization
 --------------------------------
 
-Flask Unchained currently has one officially supported bundle for securing your app. It's a refactored and cleaned up fork of the `Flask Security <https://pythonhosted.org/Flask-Security/>`_ project, and includes support for session and token authentication. (All of the core security logic remains unchanged.) Adding support for JWT token authentication is on the roadmap, but isn't implemented yet.
+Flask Unchained currently has one officially supported bundle for securing your app. It's a refactored and cleaned up fork of the `Flask Security <https://pythonhosted.org/Flask-Security/>`_ project, and includes support for session and token authentication. (All of the core security logic remains unchanged.) Adding support for JWT authentication is on the roadmap, but isn't implemented yet.
 
 Install Security Bundle
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -10,7 +10,7 @@ Install Security Bundle
 
    pip install "flask-unchained[security]"
 
-Let's update our test fixtures configuration file to include the test fixtures provided by Flask Security Bundle:
+Let's update our test fixtures configuration file to include the fixtures provided by the Security Bundle:
 
 .. code:: python
 
@@ -19,9 +19,9 @@ Let's update our test fixtures configuration file to include the test fixtures p
    from flask_unchained.bundles.sqlalchemy.pytest import *
    from flask_unchained.bundles.security.pytest import *  # add this line
 
-The security bundle overrides the ``client`` and ``api_client`` test fixtures to add support for logging in and logging out. It also includes three fixtures specific to testing security views: ``registrations``, ``confirmations``, and ``password_resets``. We'll cover using these later on.
+The security bundle overrides the ``client`` and ``api_client`` test fixtures to add support for logging in and logging out.
 
-Now we can enable the bundle by updating ``unchained_config.py``:
+Now we can enable the Security Bundle by adding it to ``unchained_config.py``:
 
 .. code:: python
 
@@ -596,8 +596,8 @@ Running them should pass:
    pytest --maxfail=1
    ================================== test session starts ===================================
    platform linux -- Python 3.6.6, pytest-3.7.1, py-1.5.4, pluggy-0.7.1
-   rootdir: /home/user/dev/flaskr-unchained, inifile:
-   plugins: flask-0.10.0, Flask-Unchained-0.5.1, Flask-Security-Bundle-0.3.0
+   rootdir: /home/user/dev/hello-flask-unchained, inifile:
+   plugins: flask-0.10.0, Flask-Unchained-0.8.0, Flask-Security-Bundle-0.3.0
    collected 11 items
 
    tests/app/test_views.py .....                                         [ 45%]
