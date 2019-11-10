@@ -12,6 +12,7 @@ from http import HTTPStatus
 from types import FunctionType
 from typing import *
 
+from ...string_utils import snake_case
 from .attr_constants import (
     CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR, NO_ROUTES_ATTR,
     NOT_VIEWS_ATTR, REMOVE_SUFFIXES_ATTR)
@@ -164,6 +165,25 @@ class _ControllerUrlPrefixMetaOption(MetaOption):
             f'The {self.name} meta option must be a string'
 
 
+class _ControllerEndpointPrefixMetaOption(MetaOption):
+    def __init__(self, name='endpoint_prefix', default=_missing, inherit=False):
+        super().__init__(name=name, default=default, inherit=inherit)
+
+    def check_value(self, value: Any, mcs_args: McsArgs):
+        if not value:
+            return
+
+        assert isinstance(value, str), \
+            f'The {self.name} meta option must be a string'
+
+    def get_value(self, meta, base_classes_meta, mcs_args: McsArgs):
+        value = super().get_value(meta, base_classes_meta, mcs_args)
+        if value is not _missing:
+            return value
+
+        return snake_case(mcs_args.name)
+
+
 class _ControllerMetaOptionsFactory(MetaOptionsFactory):
     _options = [
         _ControllerAbstractMetaOption,
@@ -171,6 +191,7 @@ class _ControllerMetaOptionsFactory(MetaOptionsFactory):
         _ControllerTemplateFolderNameMetaOption,
         _ControllerTemplateFileExtensionMetaOption,
         _ControllerUrlPrefixMetaOption,
+        _ControllerEndpointPrefixMetaOption,
     ]
 
 
@@ -194,6 +215,7 @@ class Controller(metaclass=_ControllerMetaclass):
                                                # minus any Controller/View suffix
                 template_file_extension = app.config.TEMPLATE_FILE_EXTENSION = '.html'
                 url_prefix = None  # optional url prefix to use for all routes
+                endpoint_prefix = 'site_controller'
 
             # dependency injection works automatically on controllers
             session_manager: SessionManager = injectable

@@ -119,7 +119,7 @@ class Route:
         if self._endpoint:
             return self._endpoint
         elif self._controller_cls:
-            endpoint = f'{snake_case(self._controller_cls.__name__)}.{self.method_name}'
+            endpoint = f'{self._controller_cls.Meta.endpoint_prefix}.{self.method_name}'
             return endpoint if not self.bp_name else f'{self.bp_name}.{endpoint}'
         elif self.bp_name:
             return f'{self.bp_name}.{self.method_name}'

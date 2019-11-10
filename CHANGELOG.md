@@ -22,6 +22,7 @@
 - alias `flask_wtf.csrf.generate_csrf` as `flask_unchained.generate_csrf`
 - alias `flask.Request` and `flask.Response` into `flask_unchained`
 - support `Accept` headers for handling responses in the API bundle
+- allow customizing the endpoint prefix for controllers using `Controller.Meta.endpoint_prefix`
 
 ### General Improvements
 

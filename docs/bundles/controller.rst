@@ -176,6 +176,7 @@ Controllers have a few meta options that you can use to customize their behavior
            template_folder: str = 'site'                  # see explanation below
            template_file_extension: Optional[str] = None  # default is None
            url_prefix = Optional[str] = None              # default is None
+           endpoint_prefix = 'site_controller'            # see explanation below
 
 .. list-table::
    :header-rows: 1
@@ -198,6 +199,9 @@ Controllers have a few meta options that you can use to customize their behavior
    * - url_prefix
      - The url prefix to use for all routes from this controller.
      - Defaults to ``'/'`` (aka no prefix).
+   * - endpoint_prefix
+     - The endpoint prefix to use for all routes from this controller.
+     - Defaults to the snake_cased class name.
 
 Overriding Controllers
 ######################
