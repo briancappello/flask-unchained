@@ -51,8 +51,19 @@ class Config(BundleConfig):
     MAIL_SEND_FN = _send_mail
     """
     The function to use for sending emails. Defaults to
-    :func:`~flask_unchained.bundles.mail.utils._send_mail`, and any customized
-    send function must implement the same function signature.
+    :func:`~flask_unchained.bundles.mail.utils._send_mail`. Any customized
+    send function must implement the same function signature::
+
+       def send_mail(subject_or_message: Optional[Union[str, Message]] = None,
+                     to: Optional[Union[str, List[str]] = None,
+                     template: Optional[str] = None,
+                     **kwargs):
+           # ...
+
+    NOTE: `subject_or_message` is optional because you can also pass `subject` as
+    a keyword argument, and `to` is optional because you can also pass `recipients`
+    as a keyword argument. These are artifacts of backwards-compatibility with
+    vanilla Flask-Mail.
     """
 
     MAIL_DEBUG = 0
