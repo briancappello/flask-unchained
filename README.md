@@ -99,7 +99,7 @@ You can run it like so:
 **NOTE:** The README assumes v0.8 of Flask Unchained, which is not yet released to PyPI. (install from master with `pip install "git+https://github.com/briancappello/flask-unchained.git@master#egg=flask-unchained[dev]"`)
 
 ```bash
-pip install flask-unchained[dev]
+pip install "flask-unchained[dev]"
 export UNCHAINED_CONFIG="app"
 pytest app.py
 flask urls
@@ -123,8 +123,8 @@ A larger application structure might look about like this:
 │   ├── tasks           # Celery tasks
 │   ├── templates       # Jinja2 templates
 │   ├── views           # Controllers, Resources and views
-│   └── __init__.py
-│   └── config.py       # app config
+│   ├── __init__.py
+│   ├── config.py       # app config
 │   └── routes.py       # declarative routes
 ├── assets              # static assets to be handled by Webpack
 │   ├── images

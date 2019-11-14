@@ -33,7 +33,7 @@ logging
 
 documentation
 -------------
-* improve documentation/use cases/examples for all the bundles
+* improve documentation, use cases, and examples for all the bundles
 * document creating extendable bundles
 * finish tutorial
 

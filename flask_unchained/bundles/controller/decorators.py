@@ -63,7 +63,7 @@ def no_route(arg=None):
     """
     Decorator to mark a
     :class:`~flask_unchained.bundles.controller.controller.Controller` or
-    :class:`~flask_unchained.bundles.resource.resource.Resource` method as *not*
+    :class:`~flask_unchained.bundles.controller.resource.Resource` method as *not*
     a route. For example::
 
         class SiteController(Controller):
