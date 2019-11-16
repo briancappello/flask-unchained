@@ -47,6 +47,7 @@ class AppFactory(metaclass=Singleton):
                    bundles: Optional[List[str]] = None,
                    *,
                    _config_overrides: Optional[Dict[str, Any]] = None,
+                   _load_unchained_config: bool = True,
                    **app_kwargs,
                    ) -> FlaskUnchained:
         """
@@ -65,10 +66,13 @@ class AppFactory(metaclass=Singleton):
         :param app_kwargs: keyword argument overrides for the :attr:`APP_CLASS`
                            constructor
         :param _config_overrides: a dictionary of config option overrides; meant for
-                                  test fixtures.
+                                  test fixtures (for internal use only).
+        :param _load_unchained_config: Whether or not to try to load unchained_config
+                                       (for internal use only).
         :return: The configured and initialized :attr:`APP_CLASS` application instance
         """
-        unchained_config = self.load_unchained_config(env)
+        unchained_config = (self.load_unchained_config(env)
+                            if _load_unchained_config else None)
         app_bundle, bundles = self.load_bundles(
             bundle_package_names=bundles or getattr(unchained_config, 'BUNDLES', []),
             unchained_config=unchained_config,

@@ -7,6 +7,7 @@ flask [--env=dev|prod|staging|test] [--no-warn] COMMAND <args> [OPTIONS]
 """
 import argparse
 import flask.cli as flask_cli
+import functools
 import os
 import sys
 import time
@@ -47,13 +48,14 @@ def _should_create_basic_app(env):
         return True
 
 
-def cli_create_app(_):
+def cli_create_app(_, _load_unchained_config=True):
     # Flask's default click integration silences exceptions thrown by
     # create_app, which IMO isn't so awesome. so this gets around that.
     env = os.getenv('FLASK_ENV')
 
     try:
-        return AppFactory().create_app(env)
+        return AppFactory().create_app(
+            env, _load_unchained_config=_load_unchained_config)
     except:
         print(format_exc())
         clear_env_vars()
@@ -163,15 +165,18 @@ def main():
     os.environ['FLASK_DEBUG'] = 'true' if debug else 'false'
 
     maybe_set_app_factory_from_env()
+    _load_unchained_config = True
     if _should_create_basic_app(env):
         cli = _get_basic_cli()
+        _load_unchained_config = False
     else:
         cli = _get_main_cli()
 
     # make sure to always load the app. this is necessary because some 3rd party
     # extensions register commands using setup.py, which for some reason
     # bypasses this step
-    obj = flask_cli.ScriptInfo(create_app=cli_create_app)
+    obj = flask_cli.ScriptInfo(create_app=functools.partial(
+        cli_create_app, _load_unchained_config=_load_unchained_config))
     obj.load_app()
 
     cli.main(args=[arg for arg in sys.argv[1:] if '--env' not in arg], obj=obj)
