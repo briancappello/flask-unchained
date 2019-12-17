@@ -4,7 +4,6 @@ from typing import *
 
 from flask import Blueprint
 from flask_unchained.flask_unchained import FlaskUnchained
-from flask_unchained.string_utils import snake_case
 from py_meta_utils import _missing
 from werkzeug.utils import cached_property
 
