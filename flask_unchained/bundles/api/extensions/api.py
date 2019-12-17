@@ -1,8 +1,8 @@
 try:
     from apispec.ext.marshmallow.openapi import __location_map__
 except ImportError:
-    from collections import defaultdict
-    __location_map__ = defaultdict(None)
+    from warnings import warn
+    warn("Please install apispec>=3.0 for the API Bundle to work correctly")
 
 from flask_unchained import FlaskUnchained, unchained
 from flask_unchained.bundles.controller.constants import (
