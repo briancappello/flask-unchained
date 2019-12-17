@@ -5,6 +5,10 @@ api bundle
 * probably room for many more improvements, it's a big domain...
 
 
+sqlalchemy bundle
+-----------------
+* create test database if it doesn't exist (see `db` fixture in `bundles/sqlalchemy/pytest.py`)
+
 security bundle
 ---------------
 * implement GraphQL support (integrate with Graphene Bundle)
