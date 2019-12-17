@@ -3,7 +3,7 @@ import functools
 import os
 
 from flask import (after_this_request, current_app as app, flash, jsonify,
-                   make_response, render_template, request)
+                   make_response, render_template, render_template_string, request)
 from flask_unchained.di import _set_up_class_dependency_injection
 from py_meta_utils import (AbstractMetaOption as _ControllerAbstractMetaOption,
                            McsArgs, MetaOption, MetaOptionsFactory, deep_getattr,
@@ -304,6 +304,9 @@ class Controller(metaclass=_ControllerMetaclass):
             template_name = os.path.join(self.Meta.template_folder,
                                          template_name)
         return render_template(template_name, **ctx)
+
+    def render_template_string(self, source, **ctx):
+        return render_template_string(source, **ctx)
 
     def redirect(self,
                  where: Optional[str] = None,
