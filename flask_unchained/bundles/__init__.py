@@ -28,16 +28,25 @@ class _BundleModuleNameDescriptor:
     def __get__(self, instance, cls):
         return _normalize_module_name(cls.__module__)
 
+    def __set__(self, instance, value):
+        raise AttributeError
+
 
 class _BundleIsSingleModuleDescriptor:
     def __get__(self, instance, cls):
         return not importlib.util.find_spec(cls.module_name).submodule_search_locations
+
+    def __set__(self, instance, value):
+        raise AttributeError
 
 
 class _BundleRootPathDescriptor:
     def __get__(self, instance, cls):
         module = importlib.import_module(cls.module_name)
         return os.path.dirname(module.__file__)
+
+    def __set__(self, instance, value):
+        raise AttributeError
 
 
 class _BundleNameDescriptor:
@@ -80,7 +89,9 @@ class Bundle(metaclass=_BundleMetaclass):
 
     is_single_module: bool = _BundleIsSingleModuleDescriptor()
     """
-    Whether or not the bundle is a single module (Python file). Automatically determined.
+    Whether or not the bundle is a single module (Python file).
+
+    Automatically determined; read-only.
     """
 
     default_load_from_module_name: str = None
@@ -93,18 +104,22 @@ class Bundle(metaclass=_BundleMetaclass):
 
     module_name: str = _BundleModuleNameDescriptor()
     """
-    Top-level module name of the bundle (dot notation). Automatically determined.
+    Top-level module name of the bundle (dot notation).
+
+    Automatically determined; read-only.
     """
 
     name: str = _BundleNameDescriptor()
     """
-    Name of the bundle. Defaults to the snake_cased class name, unless it's your app
-    bundle, in which case we also strip off the "bundle" suffix (if any).
+    Name of the bundle. Defaults to the snake_cased class name, or for the app
+    bundle, the snake_cased class name minus its "Bundle" suffix (if any).
     """
 
     root_path: str = _BundleRootPathDescriptor()
     """
-    Root directory path of the bundle's package. Automatically determined.
+    Root directory path of the bundle's package.
+
+    Automatically determined; read-only.
     """
 
     template_folder: Optional[str] = _BundleTemplateFolderDescriptor()
@@ -183,6 +198,7 @@ class Bundle(metaclass=_BundleMetaclass):
             return True
 
         from ..hooks.views_hook import ViewsHook
+
         for bundle in self._iter_class_hierarchy():
             if ViewsHook.import_bundle_modules(bundle):
                 return True
