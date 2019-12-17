@@ -56,9 +56,9 @@
 - CSRF protection is no longer enabled by default. To re-enable it:
 
 ```python
-from flask_unchained import AppBundle, AppBundleConfig, generate_csrf
+from flask_unchained import AppBundle, BundleConfig, generate_csrf
 
-class Config(AppBundleConfig):
+class Config(BundleConfig):
     SECRET_KEY = 'some-secret-key'
     WTF_CSRF_ENABLED = True
 
@@ -217,7 +217,7 @@ pip install git+https://github.com/sqlalchemy/alembic.git@d46de05b8b3281a85e6b10
 
 - move database fixture loading code into the `py_yaml_fixtures` package (which is now a bundle as of v0.4.0)
 - consolidate `unchained.get_extension_local_proxy` and `unchained.get_service_local_proxy` into a single function, `unchained.get_local_proxy`
-- rename `AppConfig` to `AppBundleConfig`
+- rename `AppConfig` to `BundleConfig`
 - rename the `SQLAlchemy` extension class to `SQLAlchemyUnchained`
 - rename `flask_unchained.bundles.sqlalchemy.model_form` to `flask_unchained.bundles.sqlalchemy.forms`
 - rename the Graphene Bundle's `QueryObjectType` to `QueriesObjectType` and `MutationObjectType` to `MutationsObjectType`

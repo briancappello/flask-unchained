@@ -27,33 +27,6 @@ class BundleConfig(metaclass=_BundleConfigMetaclass):
     """
 
 
-class AppBundleConfig(BundleConfig):
-    """
-    Base class for app-bundle configs. Example usage::
-
-        # project-root/your_app_bundle/config.py
-
-        import os
-
-        from flask_unchained import AppBundleConfig
-
-        class Config(AppBundleConfig):
-            SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key')
-
-        class DevConfig(Config):
-            pass
-
-        class ProdConfig(Config):
-            pass
-
-        class StagingConfig(ProdConfig):
-            pass
-
-        class TestConfig(Config):
-            pass
-    """
-
-
 class _ConfigDefaults:
     DEBUG = get_boolean_env('FLASK_DEBUG', False)
 
@@ -75,6 +48,5 @@ class _TestConfigDefaults:
 
 
 __all__ = [
-    'AppBundleConfig',
     'BundleConfig',
 ]

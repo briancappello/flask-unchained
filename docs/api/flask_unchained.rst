@@ -31,12 +31,6 @@ BundleConfig
 .. autoclass:: flask_unchained.BundleConfig
    :members:
 
-AppBundleConfig
-^^^^^^^^^^^^^^^
-
-.. autoclass:: flask_unchained.AppBundleConfig
-   :members:
-
 FlaskForm
 ^^^^^^^^^
 

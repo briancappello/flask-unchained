@@ -22,7 +22,7 @@ from werkzeug.exceptions import abort
 
 from .app_factory import AppFactory
 from .app_factory_hook import AppFactoryHook
-from .config import AppBundleConfig, BundleConfig
+from .config import BundleConfig
 from .bundles import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
 from .decorators import param_converter

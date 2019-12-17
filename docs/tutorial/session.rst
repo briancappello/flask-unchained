@@ -31,7 +31,7 @@ Let's configure the Session Bundle to use SQLAlchemy:
 
    # app/config.py
 
-   class Config(AppBundleConfig):
+   class Config(BundleConfig):
        # ...
        SESSION_TYPE = 'sqlalchemy'
        SESSION_SQLALCHEMY_TABLE = 'flask_sessions'

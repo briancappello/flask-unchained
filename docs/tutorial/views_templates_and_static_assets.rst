@@ -644,9 +644,9 @@ The first is to update our configuration:
 
    # app/config.py
 
-   from flask_unchained import AppBundleConfig
+   from flask_unchained import BundleConfig
 
-   class Config(AppBundleConfig):
+   class Config(BundleConfig):
        SECRET_KEY = 'some-secret-key'
        WTF_CSRF_ENABLED = True
 

@@ -56,9 +56,9 @@ To configure these, would look like this:
 
    import os
 
-   from flask_unchained import AppBundleConfig
+   from flask_unchained import BundleConfig
 
-   class Config(AppBundleConfig):
+   class Config(BundleConfig):
        OAUTH_GITHUB_CONSUMER_KEY = os.getenv('OAUTH_GITHUB_CONSUMER_KEY', '')
        OAUTH_GITHUB_CONSUMER_SECRET = os.getenv('OAUTH_GITHUB_CONSUMER_SECRET', '')
 
@@ -73,9 +73,9 @@ You can also add other remote providers, for example to add support for the (mad
 
    import os
 
-   from flask_unchained import AppBundleConfig
+   from flask_unchained import BundleConfig
 
-   class Config(AppBundleConfig):
+   class Config(BundleConfig):
        OAUTH_REMOTE_APP_ABC = dict(
            consumer_key=os.getenv('OAUTH_ABC_CONSUMER_KEY', ''),
            consumer_secret=os.getenv('OAUTH_ABC_CONSUMER_SECRET', ''),

@@ -1,5 +1,5 @@
-from flask_unchained import AppBundleConfig
+from flask_unchained import BundleConfig
 
 
-class Config(AppBundleConfig):
+class Config(BundleConfig):
     pass

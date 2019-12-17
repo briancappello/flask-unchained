@@ -50,9 +50,9 @@ If you'd like to change the path, it would look like this:
 
    # app/config.py
 
-   from flask_unchained import AppBundleConfig
+   from flask_unchained import BundleConfig
 
-   class Config(AppBundleConfig):
+   class Config(BundleConfig):
       # ...
       SQLALCHEMY_DATABASE_URI = 'sqlite:///db/hello-flask-unchained.sqlite'
 
@@ -64,9 +64,9 @@ If instead you'd like to use MariaDB/MySQL or PostgreSQL, now would be the time 
 
    # app/config.py
 
-   from flask_unchained import AppBundleConfig
+   from flask_unchained import BundleConfig
 
-   class Config(AppBundleConfig):
+   class Config(BundleConfig):
        # ...
        SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{pw}@{host}:{port}/{db}'.format(
            engine=os.getenv('FLASK_DATABASE_ENGINE', 'postgresql+psycopg2'),

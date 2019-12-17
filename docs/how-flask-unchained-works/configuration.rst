@@ -39,10 +39,10 @@ In order to configure your app, Flask Unchained uses specifically named per-envi
 
    import os
 
-   from flask_unchained import AppBundleConfig
+   from flask_unchained import BundleConfig
 
 
-   class Config(AppBundleConfig):
+   class Config(BundleConfig):
        """Options set here will be configured for all environments."""
        SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key')
 
