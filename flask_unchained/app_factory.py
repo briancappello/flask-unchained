@@ -78,8 +78,47 @@ class AppFactory(metaclass=Singleton):
             unchained_config=unchained_config,
         )
 
+        # instantiate and initialize the app
+        app_import_name = (bundles[-1].module_name.split('.')[0] if bundles
+                           else ('tests' if env == TEST else 'dev_app'))
+        app = self.APP_CLASS(app_import_name, **self.apply_default_app_kwargs(
+            app_kwargs, bundles, env, unchained_config))
+
+        for bundle in bundles:
+            bundle.before_init_app(app)
+
+        unchained.init_app(app, env, bundles, _config_overrides=_config_overrides)
+
+        for bundle in bundles:
+            bundle.after_init_app(app)
+
+        return app
+
+    @staticmethod
+    def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]) -> ModuleType:
+        if not sys.path or sys.path[0] != os.getcwd():
+            sys.path.insert(0, os.getcwd())
+
+        msg = None
+        if env == TEST:
+            try:
+                return cwd_import('tests._unchained_config')
+            except ImportError as e:
+                msg = f'{e.msg}: Could not find _unchained_config.py in the tests directory'
+
+        unchained_config_module_name = os.getenv('UNCHAINED_CONFIG', 'unchained_config')
+        try:
+            return cwd_import(unchained_config_module_name)
+        except ImportError as e:
+            if not msg:
+                msg = f'{e.msg}: Could not find {unchained_config_module_name}.py ' \
+                      f'in the current working directory (are you in the project root?)'
+            e.msg = msg
+            raise e
+
+    def apply_default_app_kwargs(self, app_kwargs, bundles, env, unchained_config):
         # this is for developing standalone bundles (as opposed to regular apps)
-        if app_bundle is None and env != TEST:
+        if not isinstance(bundles[-1], AppBundle) and env != TEST:
             app_kwargs['template_folder'] = os.path.join(
                 os.path.dirname(__file__), 'templates')
 
@@ -116,42 +155,7 @@ class AppFactory(metaclass=Singleton):
         if app_kwargs['static_folder'] and not app_kwargs.get('static_url_path'):
             app_kwargs.setdefault('static_url_path', '/static')
 
-        # instantiate and initialize the app
-        app_import_name = (bundles[-1].module_name.split('.')[0] if bundles
-                           else ('tests' if env == TEST else 'dev_app'))
-        app = self.APP_CLASS(app_import_name, **app_kwargs)
-
-        for bundle in bundles:
-            bundle.before_init_app(app)
-
-        unchained.init_app(app, env, bundles, _config_overrides=_config_overrides)
-
-        for bundle in bundles:
-            bundle.after_init_app(app)
-
-        return app
-
-    @staticmethod
-    def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]) -> ModuleType:
-        if not sys.path or sys.path[0] != os.getcwd():
-            sys.path.insert(0, os.getcwd())
-
-        msg = None
-        if env == TEST:
-            try:
-                return cwd_import('tests._unchained_config')
-            except ImportError as e:
-                msg = f'{e.msg}: Could not find _unchained_config.py in the tests directory'
-
-        unchained_config_module_name = os.getenv('UNCHAINED_CONFIG', 'unchained_config')
-        try:
-            return cwd_import(unchained_config_module_name)
-        except ImportError as e:
-            if not msg:
-                msg = f'{e.msg}: Could not find {unchained_config_module_name}.py ' \
-                      f'in the current working directory (are you in the project root?)'
-            e.msg = msg
-            raise e
+        return app_kwargs
 
     @classmethod
     def load_bundles(cls,
