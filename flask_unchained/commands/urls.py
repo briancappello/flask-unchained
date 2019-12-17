@@ -90,7 +90,7 @@ def _get_rule_view(url_rule: Rule) -> str:
     elif '.method_as_view.' in view_fn.__qualname__:
         view_fn_name = f'{view_class.__name__}.{view_fn.__name__}'
 
-    return f'{view_module.__name__} :: {view_fn_name}'
+    return f'{view_module.__name__}.{view_fn_name}'
 
 
 def _format_rule_options(url_rule: Rule) -> str:
