@@ -15,7 +15,7 @@ injectable = 'INJECTABLE_PARAMETER'
 """
 Use this to mark a service parameter as injectable. For example::
 
-    class MyService(BaseService):
+    class MyService(Service):
         def __init__(self, a_dependency: ADependency = injectable):
             self.a_dependency = a_dependency
 
@@ -151,7 +151,7 @@ class _ServiceMetaclass(type):
         _ensure_service_name(cls)
 
 
-class BaseService(metaclass=_ServiceMetaclass):
+class Service(metaclass=_ServiceMetaclass):
     """
     Base class for services in Flask Unchained. Automatically sets up dependency
     injection on the constructor of the subclass, and allows for your service to
@@ -163,5 +163,5 @@ class BaseService(metaclass=_ServiceMetaclass):
 
 __all__ = [
     'injectable',
-    'BaseService',
+    'Service',
 ]

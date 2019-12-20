@@ -1,4 +1,4 @@
-from flask_unchained import BaseService, unchained
+from flask_unchained import Service, unchained
 from flask_unchained.di import _ServiceMetaclass, _ServiceMetaOptionsFactory
 from sqlalchemy_unchained.model_manager import (ModelManager as _ModelManager,
                                                 _ModelManagerMetaclass)
@@ -30,7 +30,7 @@ class ModelManagerMetaclass(_ServiceMetaclass, _ModelManagerMetaclass):
     pass
 
 
-class ModelManager(_ModelManager, BaseService, metaclass=ModelManagerMetaclass):
+class ModelManager(_ModelManager, Service, metaclass=ModelManagerMetaclass):
     """
     Base class for database model manager services.
     """

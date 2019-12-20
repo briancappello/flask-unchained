@@ -1,29 +1,29 @@
-from flask_unchained import BaseService, injectable, unchained
+from flask_unchained import Service, injectable, unchained
 
 
-class OneService(BaseService):
+class OneService(Service):
     """one_service"""
     def __init__(self):
         """one_service __init__"""
         self.bundle = 'services'
 
 
-class TwoService(BaseService):
+class TwoService(Service):
     """two_service"""
     def __init__(self, one_service: OneService = injectable):
         """two_service __init__"""
         self.one_service = one_service
 
 
-class ThreeService(BaseService):
+class ThreeService(Service):
     pass
 
 
-class FourService(BaseService):
+class FourService(Service):
     pass
 
 
-class FunkyService(BaseService):
+class FunkyService(Service):
     """funky_service"""
     @unchained.inject()
     def __init__(self, two_service: TwoService = injectable):
@@ -43,7 +43,7 @@ class FunkyService(BaseService):
         return one_service, two_service
 
 
-class ClassAttrService(BaseService):
+class ClassAttrService(Service):
     one_service: OneService = injectable
     two_service: TwoService = injectable
 
@@ -52,7 +52,7 @@ class ExtendedClassAttrService(ClassAttrService):
     funky_service: FunkyService = injectable
 
 
-class ClassAttrServiceWithInit(BaseService):
+class ClassAttrServiceWithInit(Service):
     one_service: OneService = injectable
     two_service: TwoService = injectable
 

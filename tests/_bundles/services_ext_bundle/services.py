@@ -1,9 +1,9 @@
-from flask_unchained import BaseService, injectable, unchained
+from flask_unchained import Service, injectable, unchained
 from tests._bundles.services_bundle.services import (
     TwoService as BaseTwo, FunkyService as BaseFunky, ClassAttrService as BaseAttrs)
 
 
-class OneService(BaseService):
+class OneService(Service):
     """
     ext one_service
     """
@@ -43,7 +43,7 @@ class FunkyService(BaseFunky):
 
 # this is silly and you shouldn't do this. (but it should work regardless)
 @unchained.inject()
-class WhyBoth(BaseService):
+class WhyBoth(Service):
     """
     why_both
     """
@@ -55,7 +55,7 @@ class WhyBoth(BaseService):
         self.funky_service = funky_service
 
 
-class ManualInstantiation(BaseService):
+class ManualInstantiation(Service):
     def __init__(self):
         self.foobars = {}
 

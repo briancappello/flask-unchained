@@ -1,11 +1,11 @@
 import pytest
 
-from flask_unchained import BaseService, injectable, unchained
+from flask_unchained import Service, injectable, unchained
 from flask_unchained.exceptions import ServiceUsageError
 
 
 def test_injectable():
-    class Foo(BaseService):
+    class Foo(Service):
         def __init__(self, fail=injectable):
             self.fail = fail
 

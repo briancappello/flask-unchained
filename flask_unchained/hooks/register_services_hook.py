@@ -1,7 +1,7 @@
 from typing import *
 
 from ..app_factory_hook import AppFactoryHook
-from ..di import BaseService
+from ..di import Service
 from ..flask_unchained import FlaskUnchained
 
 
@@ -16,7 +16,7 @@ class RegisterServicesHook(AppFactoryHook):
 
     def process_objects(self,
                         app: FlaskUnchained,
-                        services: Dict[str, BaseService],
+                        services: Dict[str, Service],
                         ) -> None:
         for name, obj in services.items():
             self.unchained.register_service(name, obj)
@@ -28,7 +28,7 @@ class RegisterServicesHook(AppFactoryHook):
     def type_check(self, obj) -> bool:
         if not isinstance(obj, type):
             return False
-        return issubclass(obj, BaseService) and hasattr(obj, '__di_name__')
+        return issubclass(obj, Service) and hasattr(obj, '__di_name__')
 
     def update_shell_context(self, ctx: Dict[str, Any]) -> None:
         ctx.update(self.unchained.services)

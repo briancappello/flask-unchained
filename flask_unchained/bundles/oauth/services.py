@@ -1,10 +1,10 @@
 from flask_oauthlib.client import OAuthRemoteApp
-from flask_unchained import BaseService, unchained
+from flask_unchained import Service, unchained
 from typing import *
 
 
 @unchained.service('oauth_service')
-class OAuthService(BaseService):
+class OAuthService(Service):
     def get_user_details(self, provider: OAuthRemoteApp) -> Tuple[str, dict]:
         """
         For the given ``provider``, return the user's email address and any

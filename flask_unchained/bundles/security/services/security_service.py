@@ -5,7 +5,7 @@ from flask_login.utils import logout_user as _logout_user
 from flask_principal import Identity, AnonymousIdentity, identity_changed
 from flask_unchained import url_for, lazy_gettext as _
 from flask_unchained.bundles.mail import Mail
-from flask_unchained import BaseService, injectable
+from flask_unchained import Service, injectable
 from typing import *
 
 from .security_utils_service import SecurityUtilsService
@@ -18,7 +18,7 @@ from ..signals import (
     password_changed, password_reset, user_confirmed, user_registered)
 
 
-class SecurityService(BaseService):
+class SecurityService(Service):
     """
     The security service.
 

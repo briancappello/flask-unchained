@@ -3,11 +3,11 @@ import hashlib
 import hmac
 
 from datetime import timedelta
-from flask_unchained import BaseService, current_app, injectable
+from flask_unchained import Service, current_app, injectable
 from itsdangerous import BadSignature, SignatureExpired
 
 
-class SecurityUtilsService(BaseService):
+class SecurityUtilsService(Service):
     """
     The security utils service. Mainly contains lower-level encryption/token handling
     code.

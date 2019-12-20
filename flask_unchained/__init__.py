@@ -25,7 +25,7 @@ from .app_factory_hook import AppFactoryHook
 from .config import BundleConfig
 from .bundles import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
-from .di import BaseService, injectable
+from .di import Service, injectable
 from .flask_unchained import FlaskUnchained
 from .forms import FlaskForm
 from .routes import (controller, resource, func, include, prefix,

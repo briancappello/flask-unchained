@@ -44,6 +44,7 @@
 
 - require `marshmallow>=3.0` (if using the API bundle)
 - require `sqlalchemy-unchained>=0.8` (if using the SQLAlchemy bundle)
+- rename `flask_unchained.BaseService` to `flask_unchained.Service`
 - rename `PROJECT_ROOT` to `ROOT_PATH` for consistency with upstream `Flask`
 - rename `Bundle.folder` to `Bundle.root_path` for consistency with `Flask`
 - rename `Controller.Meta.template_folder_name` to `Controller.Meta.template_folder` for consistency with `Flask`
