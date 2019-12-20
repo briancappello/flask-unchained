@@ -6,7 +6,7 @@ from .constants import (
     ALL_RESOURCE_METHODS, RESOURCE_INDEX_METHODS, RESOURCE_MEMBER_METHODS,
     CREATE, DELETE, GET, LIST, PATCH, PUT)
 from .controller import Controller
-from .decorators import no_route, route
+from .decorators import param_converter, no_route, route
 from .resource import Resource
 from .route import Route
 from .routes import (
@@ -62,6 +62,7 @@ __all__ = [
     'Resource',
     'route',
     'no_route',
+    'param_converter',
     'controller',
     'func',
     'get',

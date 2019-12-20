@@ -126,6 +126,7 @@ class YourBundle(AppBundle):
 - warn when identical routes are registered
 - make `AppFactory` methods `load_bundles`, `load_bundle` and `is_bundle` classmethods
 - add a noop `ViewsHook` to consolidate logic for defining and loading `views_module_names`
+- move `param_converter` into the controller bundle
 
 ## v0.7.9 (2019/05/19)
 

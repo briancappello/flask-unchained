@@ -25,7 +25,6 @@ from .app_factory_hook import AppFactoryHook
 from .config import BundleConfig
 from .bundles import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST
-from .decorators import param_converter
 from .di import BaseService, injectable
 from .flask_unchained import FlaskUnchained
 from .forms import FlaskForm
@@ -33,7 +32,8 @@ from .routes import (controller, resource, func, include, prefix,
                      delete, get, patch, post, put, rule)
 from .unchained import Unchained, unchained
 from .utils import get_boolean_env
-from .views import Controller, Resource, route, no_route, redirect, url_for
+from .views import Controller, Resource
+from .views import param_converter, route, no_route, redirect, url_for
 
 # must be last
 from .bundles.babel import gettext, ngettext, lazy_gettext, lazy_ngettext
