@@ -1,7 +1,11 @@
 version = 1
 
 test_patterns = [
-  "*/tests/**"
+  "tests/**"
+]
+
+exclude_patterns = [
+    "flask_unchained/_code_templates"
 ]
 
 [[analyzers]]
