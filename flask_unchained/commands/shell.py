@@ -1,5 +1,6 @@
 import os
 import sys
+import traceback
 
 from flask_unchained.cli import click, with_appcontext
 from flask.globals import _app_ctx_stack
@@ -34,10 +35,22 @@ def _get_shell_ctx():
     ctx = {}
 
     # Support the regular Python interpreter startup script if someone is using it.
-    startup = os.environ.get('PYTHONSTARTUP')
-    if startup and os.path.isfile(startup):
-        with open(startup, 'r') as f:
-            eval(compile(f.read(), startup, 'exec'), ctx)
+    # We want to honor both $PYTHONSTARTUP and .pythonrc.py, so follow system
+    # conventions and get $PYTHONSTARTUP first then .pythonrc.py.
+    for pythonrc in [os.environ.get("PYTHONSTARTUP"),
+                     os.path.expanduser('~/.pythonrc.py')]:
+        if not pythonrc:
+            continue
+        if not os.path.isfile(pythonrc):
+            continue
+        with open(pythonrc) as f:
+            pythonrc_code = f.read()
+        # Match the behavior of the cpython shell where an error in
+        # PYTHONSTARTUP prints an exception and continues.
+        try:
+            exec(compile(pythonrc_code, pythonrc, 'exec'), ctx)  # nosec
+        except:
+            traceback.print_exc()
 
     ctx.update(app.make_shell_context())
     return ctx
