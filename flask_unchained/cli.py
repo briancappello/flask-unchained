@@ -157,9 +157,7 @@ def main():
     args, _ = parser.parse_known_args()
 
     env = args.env or os.getenv('FLASK_ENV', DEV)
-    if env in ENV_ALIASES:
-        env = ENV_ALIASES[env]
-    os.environ['FLASK_ENV'] = env
+    os.environ['FLASK_ENV'] = ENV_ALIASES.get(env, env)
 
     debug = get_boolean_env('FLASK_DEBUG', env not in PROD_ENVS)
     os.environ['FLASK_DEBUG'] = 'true' if debug else 'false'

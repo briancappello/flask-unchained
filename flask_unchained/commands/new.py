@@ -17,7 +17,7 @@ OTHER_INLINE_START_STR = '#!('
 OTHER_INLINE_END_STR = ')'
 
 
-env = Environment()
+env = Environment()  # skipcq: BAN-B701
 _excluded = object()
 
 MODULE_NAME_RE = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_]*$')
@@ -111,7 +111,7 @@ class IfToken(Token):
     def render(self, ctx=None, *, _debug=False):
         condition = (self.condition if isinstance(self.condition, (str, bytes))
                      else repr(self.condition))
-        if not eval(condition, env.globals, ctx):  # nosec
+        if not eval(condition, env.globals, ctx):  # skipcq: PYL-W0123
             if self.next:
                 return self.next.render(ctx, _debug=_debug)
             return _excluded
