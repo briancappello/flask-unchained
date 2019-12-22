@@ -169,8 +169,7 @@ class Route:
         if not self.view_func:
             return None
         elif self._controller_cls:
-            rv = inspect.getmodule(self._controller_cls).__name__
-            return rv
+            return inspect.getmodule(self._controller_cls).__name__
         return inspect.getmodule(self.view_func).__name__
 
     @property
