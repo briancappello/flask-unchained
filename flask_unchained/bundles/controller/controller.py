@@ -135,8 +135,9 @@ class _ControllerTemplateFolderNameMetaOption(MetaOption):
 class _ControllerTemplateFileExtensionMetaOption(MetaOption):
     """
     The filename extension to use for templates for this controller's views.
-    Defaults to your app config's ``TEMPLATE_FILE_EXTENSION`` setting, and
-    overrides it if set.
+    Defaults to None. ``Controller.render`` will use the
+    ``app.config.TEMPLATE_FILE_EXTENSION`` setting as the default when this
+    returns None.
     """
     def __init__(self):
         super().__init__('template_file_extension', default=None, inherit=False)
@@ -147,6 +148,11 @@ class _ControllerTemplateFileExtensionMetaOption(MetaOption):
 
         assert isinstance(value, str), \
             f'The {self.name} meta option must be a string'
+
+    # def get_value(...):
+    # NOTE: the logic for returning app.config.TEMPLATE_FILE_EXTENSION must
+    # live in Controller.render (because the app context must be available.
+    # it isn't here, because metaclass code runs at import time)
 
 
 class _ControllerUrlPrefixMetaOption(MetaOption):
