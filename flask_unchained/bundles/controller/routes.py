@@ -221,7 +221,7 @@ def include(url_prefix_or_module_name: str,
 
         # project-root/your_app_bundle/routes.py
         routes = lambda: [
-            include('some_bundle.routes'),
+            include('bundles.primes.routes'),
 
             # these last two are equivalent
             include('/blog', 'bundles.blog.routes'),

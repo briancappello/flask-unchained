@@ -58,8 +58,7 @@ class _ControllerMetaclass(type):
         clsdict['_view_funcs'] = {}
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         _set_up_class_dependency_injection(mcs_args)
-        if clsdict.get('__abstract__',
-                       getattr(clsdict.get('Meta'), 'abstract', False)):
+        if mcs_args.is_abstract:
             mcs_args.clsdict[REMOVE_SUFFIXES_ATTR] = _get_remove_suffixes(
                     name, bases, CONTROLLER_REMOVE_EXTRA_SUFFIXES)
             mcs_args.clsdict[NOT_VIEWS_ATTR] = _get_not_views(clsdict, bases)
@@ -68,7 +67,7 @@ class _ControllerMetaclass(type):
             mcs_args, default_factory_class=_ControllerMetaOptionsFactory)
 
         cls = super().__new__(*mcs_args)
-        if mcs_args.Meta.abstract:
+        if mcs_args.is_abstract:
             return cls
 
         controller_routes = copy.deepcopy(getattr(cls, CONTROLLER_ROUTES_ATTR, {}))
@@ -419,8 +418,9 @@ class Controller(metaclass=_ControllerMetaclass):
 
     def dispatch_request(self, method_name, *view_args, **view_kwargs):
         decorators = self.get_decorators(method_name)
-        method = self.apply_decorators(getattr(self, method_name), decorators)
-        return method(*view_args, **view_kwargs)
+        view_func = self.apply_decorators(view_func=getattr(self, method_name),
+                                          decorators=decorators)
+        return view_func(*view_args, **view_kwargs)
 
     def get_decorators(self, method_name):
         return self.Meta.decorators or []

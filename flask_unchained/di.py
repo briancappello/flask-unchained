@@ -62,7 +62,7 @@ def _get_injected_value(
         if not requested_by:
             raise RuntimeError('You must pass `requested_by` when `throw` is True')
         raise ServiceUsageError(f'No extension or service was found with the name '
-                                f'{param_name} (required by ''{requested_by})')
+                                f'{param_name} (required by {requested_by})')
     return value
 
 
