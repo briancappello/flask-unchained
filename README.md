@@ -53,7 +53,7 @@ A silly (more verbose than it needs to be) example looks about like this:
 # project-root/app.py
 
 import random
-from flask_unchained import FlaskUnchained, AppBundle, BaseService, injectable
+from flask_unchained import FlaskUnchained, AppBundle, Service, injectable
 from flask_unchained import Controller, route, param_converter, url_for
 from flask_unchained.pytest import HtmlTestClient
 
@@ -69,7 +69,7 @@ class App(AppBundle):
         pass
 
 
-class RandomService(BaseService):
+class RandomService(Service):
     def get_name(self) -> str:
         return random.choice(['Alice', 'Bob', 'Grace', 'Judy'])
 
