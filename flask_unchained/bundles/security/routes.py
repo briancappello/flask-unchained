@@ -13,7 +13,8 @@ routes = lambda: [
     ]),
     prefix('/api/v1', [
         controller('/auth', SecurityController, rules=[
-            get('/check-auth-token', SecurityController.check_auth_token, only_if=True),
+            get('/check-auth-token', SecurityController.check_auth_token,
+                endpoint='security_api.check_auth_token', only_if=True),
             post('/login', SecurityController.login,
                  endpoint='security_api.login'),
             get('/logout', SecurityController.logout,
