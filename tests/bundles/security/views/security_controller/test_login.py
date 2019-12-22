@@ -47,7 +47,7 @@ class TestApiLogin:
     def test_json_login_errors(self, api_client):
         r = api_client.post('security_api.login',
                             data=dict(email=None, password=None))
-        assert 'Invalid email and/or password.' == r.json['error']
+        assert r.json['error'] == 'Invalid email and/or password.'
 
     def test_json_login_with_email(self, api_client, user):
         r = api_client.post('security_api.login',
@@ -77,4 +77,4 @@ class TestApiLogin:
         r = api_client.post('security_api.login',
                             data=dict(email=user.email, password='password'))
         assert r.status_code == 401
-        assert 'Email requires confirmation.' == r.json['error']
+        assert r.json['error'] == 'Email requires confirmation.'
