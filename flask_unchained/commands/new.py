@@ -111,7 +111,7 @@ class IfToken(Token):
     def render(self, ctx=None, *, _debug=False):
         condition = (self.condition if isinstance(self.condition, (str, bytes))
                      else repr(self.condition))
-        if not eval(condition, env.globals, ctx):
+        if not eval(condition, env.globals, ctx):  # nosec
             if self.next:
                 return self.next.render(ctx, _debug=_debug)
             return _excluded

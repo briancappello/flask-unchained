@@ -33,7 +33,7 @@ def beat():
 def _run_until_killed(cmd, kill_proc):
     p = None
     try:
-        p = subprocess.Popen(cmd, shell=True)
+        p = subprocess.Popen(cmd, shell=True)  # nosec
         while p.poll() is None:
             time.sleep(0.25)
     except KeyboardInterrupt:
@@ -45,7 +45,7 @@ def _run_until_killed(cmd, kill_proc):
         try:
             r = p.wait(timeout=60)
         except subprocess.TimeoutExpired:
-            subprocess.run(f'pkill -9 -f {kill_proc!r}', shell=True)
+            subprocess.run(f'pkill -9 -f {kill_proc!r}', shell=True)  # nosec
             sys.exit(1)
         else:
             sys.exit(r)
