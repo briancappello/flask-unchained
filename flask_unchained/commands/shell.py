@@ -48,7 +48,7 @@ def _get_shell_ctx():
         # Match the behavior of the cpython shell where an error in
         # PYTHONSTARTUP prints an exception and continues.
         try:
-            exec(compile(pythonrc_code, pythonrc, 'exec'), ctx)  # nosec
+            exec(compile(pythonrc_code, pythonrc, 'exec'), ctx)  # skipcq: PYL-W0122
         except:
             traceback.print_exc()
 
