@@ -7,7 +7,7 @@ from flask_unchained.cli import click
 @click.command()
 def clean():
     """
-    Recursively remove \*.pyc and \*.pyo files.
+    Recursively remove \\*.pyc and \\*.pyo files.
     """
     for dirpath, dirnames, filenames in os.walk('.'):
         for filename in filenames:

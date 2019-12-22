@@ -255,8 +255,8 @@ class Bundle(metaclass=_BundleMetaclass):
             top_bundle = subclasses[0]
             subclasses = top_bundle.__subclasses__()
 
-        return any([b.name == self.name and b.__class__ != self.__class__
-                    for b in top_bundle()._iter_class_hierarchy()])
+        return any(b.name == self.name and b.__class__ != self.__class__
+                   for b in top_bundle()._iter_class_hierarchy())
 
     def __getattr__(self, name):
         if name in {'before_request', 'after_request', 'teardown_request',

@@ -30,8 +30,8 @@ class RegisterExtensionsHook(AppFactoryHook):
 
     def collect_from_bundle(self, bundle: Bundle) -> Dict[str, object]:
         extensions = {}
-        for bundle in bundle._iter_class_hierarchy():
-            for module in self.import_bundle_modules(bundle):
+        for b in bundle._iter_class_hierarchy():
+            for module in self.import_bundle_modules(b):
                 extensions.update(getattr(module, 'EXTENSIONS', {}))
         return extensions
 
@@ -58,8 +58,8 @@ class RegisterExtensionsHook(AppFactoryHook):
             extension_order = reversed(list(nx.topological_sort(dag)))
         except nx.NetworkXUnfeasible:
             msg = 'Circular dependency detected between extensions'
-            problem_graph = ', '.join([f'{a} -> {b}'
-                                       for a, b in nx.find_cycle(dag)])
+            problem_graph = ', '.join(f'{a} -> {b}'
+                                      for a, b in nx.find_cycle(dag))
             raise Exception(f'{msg}: {problem_graph}')
 
         rv = []

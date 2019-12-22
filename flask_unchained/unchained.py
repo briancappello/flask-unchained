@@ -401,8 +401,8 @@ class Unchained:
             instantiation_order = reversed(list(nx.topological_sort(dag)))
         except nx.NetworkXUnfeasible:
             msg = 'Circular dependency detected between services'
-            problem_graph = ', '.join([f'{a} -> {b}'
-                                       for a, b in nx.find_cycle(dag)])
+            problem_graph = ', '.join(f'{a} -> {b}'
+                                      for a, b in nx.find_cycle(dag))
             raise Exception(f'{msg}: {problem_graph}')
 
         for name in instantiation_order:

@@ -67,8 +67,8 @@ class RunHooksHook(AppFactoryHook):
             order = reversed(list(nx.topological_sort(dag)))
         except nx.NetworkXUnfeasible:
             msg = 'Circular dependency detected between hooks'
-            problem_graph = ', '.join([f'{a} -> {b}'
-                                       for a, b in nx.find_cycle(dag)])
+            problem_graph = ', '.join(f'{a} -> {b}'
+                                      for a, b in nx.find_cycle(dag))
             raise Exception(f'{msg}: {problem_graph}')
 
         rv = []

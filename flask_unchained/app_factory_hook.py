@@ -173,10 +173,10 @@ class AppFactoryHook:
         members = {}
         hierarchy = ([bundle] if not self.discover_from_bundle_superclasses
                      else bundle._iter_class_hierarchy())
-        for bundle in hierarchy:
+        for b in hierarchy:
             last_module = None
             from_this_bundle = set()
-            for module in self.import_bundle_modules(bundle):
+            for module in self.import_bundle_modules(b):
                 found = self._collect_from_package(module)
                 name_collisions = from_this_bundle & set(found.keys())
                 if name_collisions:

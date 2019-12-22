@@ -63,8 +63,8 @@ class RegisterRoutesHook(AppFactoryHook):
         # for each route, figure out which bundle hierarchy it's from, and assign the
         # route to the top bundle for that hierarchy
         bundle_route_endpoints = set()
-        for endpoint, routes in self.bundle.endpoints.items():
-            for route in routes:
+        for endpoint, endpoint_routes in self.bundle.endpoints.items():
+            for route in endpoint_routes:
                 if not route.module_name:
                     continue
 

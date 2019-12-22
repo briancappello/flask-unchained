@@ -121,8 +121,7 @@ def force_text(s, encoding='utf-8', errors='strict'):
         if not isinstance(s, Exception):
             raise FlaskMailUnicodeDecodeError(s, *e.args)
         else:
-            s = ' '.join([force_text(arg, encoding, errors)
-                          for arg in s])
+            s = ' '.join(force_text(arg, encoding, errors) for arg in s)
     return s
 
 
@@ -418,10 +417,10 @@ class Message(object):
 
         attachments = self.attachments or []
 
-        if len(attachments) == 0 and not self.alts:
+        if not attachments and not self.alts:
             # No html content and zero attachments means plain text
             msg = self._mimetext(self.body, self.subtype)
-        elif len(attachments) > 0 and not self.alts:
+        elif attachments and not self.alts:
             # No html and at least one attachment means multipart
             subtype = self.subtype or 'mixed'
             msg = MIMEMultipart(_subtype=subtype)
@@ -531,7 +530,7 @@ class Message(object):
                         return True
                     if _has_newline(line):
                         return True
-                    if len(line.strip()) == 0:
+                    if not line.strip():
                         return True
         return False
 

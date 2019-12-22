@@ -2,7 +2,7 @@ import os
 
 from flask_unchained import BundleConfig
 
-from .tasks import async_mail_task, _send_mail_async
+from .tasks import _send_mail_async
 
 
 class Config(BundleConfig):
@@ -31,5 +31,4 @@ class Config(BundleConfig):
     # configure mail bundle to send emails via celery
     # NOTE: the celery bundle must be listed *after* the mail bundle in the user's
     # unchained_config in order for this to work
-    if async_mail_task:
-        MAIL_SEND_FN = _send_mail_async
+    MAIL_SEND_FN = _send_mail_async

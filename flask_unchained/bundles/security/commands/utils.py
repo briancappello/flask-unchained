@@ -34,5 +34,4 @@ def _query_to_kwargs(query):
 
 
 def _format_query(query):
-    return ', '.join([f'{k!s}={v!r}'
-                      for k, v in _query_to_kwargs(query).items()])
+    return ', '.join(f'{k!s}={v!r}' for k, v in _query_to_kwargs(query).items())

@@ -118,7 +118,7 @@ def basic_cli(env):
 
 
 def production_warning(env, args):
-    if len(args):
+    if args:
         cmd = ' '.join(args)
         # allow some time to cancel commands
         for i in [3, 2, 1]:
@@ -134,7 +134,7 @@ def _get_main_cli():
     cli.add_command(clean)
     cli.add_command(lint)
     cli.add_command(new)
-    if qtconsole:
+    if qtconsole:  # skipcq: PYL-W0125
         cli.add_command(qtconsole)
     cli.add_command(flask_cli.run_command)
     cli.add_command(shell)

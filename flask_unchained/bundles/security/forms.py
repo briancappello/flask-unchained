@@ -175,8 +175,9 @@ class RegisterForm(BaseForm, PasswordFormMixin, NextFormMixin):
         def is_field_and_user_attr(member):
             return isinstance(member, Field) and hasattr(self.Meta.model, member.name)
 
-        fields = inspect.getmembers(self, is_field_and_user_attr)
-        return dict((key, value.data) for key, value in fields)
+        return {key: value.data
+                for key, value
+                in inspect.getmembers(self, is_field_and_user_attr)}
 
 
 class ResetPasswordForm(BaseForm, PasswordFormMixin):

@@ -21,7 +21,7 @@ class OnlyMetaOption(MetaOption):
             return
 
         if (not isinstance(value, (list, tuple))
-                or not all([isinstance(x, str) for x in value])):
+                or not all(isinstance(x, str) for x in value)):
             raise TypeError(f'The `only` Meta option for {mcs_args.name} must be '
                             f'a list (or tuple) of strings')
 
@@ -242,11 +242,12 @@ class ModelForm(FlaskForm, metaclass=_ModelFormMetaclass):
     def errors(self):
         if self._errors:
             return self._errors
-        return dict((name, f.errors) for name, f in self._fields.items() if f.errors)
+        return {name: field.errors for name, field
+                in self._fields.items() if field.errors}
 
     @property
     def data(self):
-        return dict((name, f.data) for name, f in self._fields.items())
+        return {name: field.data for name, field in self._fields.items()}
 
     def make_instance(self):
         return self.Meta.model(**self.data)

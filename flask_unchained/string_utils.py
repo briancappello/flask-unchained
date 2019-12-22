@@ -39,8 +39,8 @@ def class_case(string):
         rv += part.title() or '_'
         if part:
             break
-    return rv + ''.join([part if part.isupper() else part.title()
-                         for part in parts])
+    return rv + ''.join(part if part.isupper() else part.title()
+                        for part in parts)
 
 
 def kebab_case(string):
@@ -106,5 +106,5 @@ def title_case(string):
         return string
     string = string.replace('_', ' ').replace('-', ' ')
     parts = de_camel(string, ' ', _lowercase=False).strip().split(' ')
-    return ' '.join([part if part.isupper() else part.title()
-                     for part in parts])
+    return ' '.join(part if part.isupper() else part.title()
+                    for part in parts)

@@ -113,7 +113,7 @@ class SQLAlchemyUnchained(BaseSQLAlchemy):
         self.MaterializedView = MaterializedView
 
         # a bit of hackery to make type-hinting in PyCharm work better
-        if False:
+        if False:  # skipcq: PYL-W0125
             self.Column = sqla._column_type_hinter_
             self.backref = sqla._relationship_type_hinter_
             self.relationship = sqla._relationship_type_hinter_

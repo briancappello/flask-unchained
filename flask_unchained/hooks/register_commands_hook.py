@@ -51,8 +51,8 @@ class RegisterCommandsHook(AppFactoryHook):
             return self.is_click_command(obj) and obj.name not in group_command_names
 
         commands = {}
-        for bundle in bundle._iter_class_hierarchy():
-            for module in self.import_bundle_modules(bundle):
+        for b in bundle._iter_class_hierarchy():
+            for module in self.import_bundle_modules(b):
                 new = self._collect_from_package(module, is_click_command)
                 commands.update(inherit_docstrings(new, commands))
         return commands
@@ -60,8 +60,8 @@ class RegisterCommandsHook(AppFactoryHook):
     def get_bundle_command_groups(self, bundle: Bundle) -> Dict[str, click.Group]:
         command_groups = {}
         module_found = False
-        for bundle in bundle._iter_class_hierarchy():
-            for module in self.import_bundle_modules(bundle):
+        for b in bundle._iter_class_hierarchy():
+            for module in self.import_bundle_modules(b):
                 module_found = True
                 command_groups.update(
                     self._collect_from_package(module, self.is_click_group)

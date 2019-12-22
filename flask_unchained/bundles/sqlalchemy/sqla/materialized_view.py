@@ -19,7 +19,7 @@ def create_materialized_view(name, selectable, db=injectable):
         table.append_column(
             db.Column(col.name, col.type, primary_key=col.primary_key))
 
-    if not any([col.primary_key for col in selectable.c]):
+    if not any(col.primary_key for col in selectable.c):
         table.append_constraint(
             db.PrimaryKeyConstraint(*[col.name for col in selectable.c]))
 

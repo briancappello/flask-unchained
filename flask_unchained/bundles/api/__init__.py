@@ -56,7 +56,6 @@ class ApiBundle(Bundle):
 
     def set_json_encoder(self, app: FlaskUnchained):
         from flask_unchained.bundles.sqlalchemy import BaseModel
-        from flask_unchained import unchained
         from werkzeug.local import LocalProxy
 
         class JSONEncoder(app.json_encoder):
