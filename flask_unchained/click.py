@@ -120,10 +120,7 @@ class Command(click.Command):
     def get_short_help_str(self, limit=0):
         if self.short_help:
             return self.short_help
-        elif not self.help:
-            return ''
-        rv = _make_default_short_help(self.help, CLI_HELP_STRING_MAX_LEN)
-        return rv
+        return _make_default_short_help(self.help or '', CLI_HELP_STRING_MAX_LEN)
 
 
 class GroupOverrideMixin:
@@ -172,9 +169,7 @@ class GroupOverrideMixin:
     def get_short_help_str(self, limit=0):
         if self.short_help:
             return self.short_help
-        elif not self.help:
-            return ''
-        return _make_default_short_help(self.help, CLI_HELP_STRING_MAX_LEN)
+        return _make_default_short_help(self.help or '', CLI_HELP_STRING_MAX_LEN)
 
 
 class Group(GroupOverrideMixin, click.Group):
