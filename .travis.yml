@@ -1,33 +1,23 @@
 ---
-# FIXME-travis-postgres: see https://github.com/travis-ci/travis-ci/issues/8537
+dist: bionic
 
-dist: trusty
 env:
   global:
-  - PGPORT=5433  # FIXME-travis-postgres (rm this line)
-  - TRAVIS=True
-  - CI=True
+    - CI=True
+    - TRAVIS=True
+
 language: python
 python:
   - 3.6
+  - 3.7
+  - 3.8
+
 services:
   - postgresql
-
-# FIXME-travis-postgres (hopefully delete the entire addons block)
-addons:
-  postgresql: "10"
-  apt:
-    packages:
-      - postgresql-10
-      - postgresql-client-10
 
 before_install:
   - sudo apt-get update -q
   - sudo apt-get install postfix
-
-  # FIXME-travis-postgres (rm next 2 lines)
-  - sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
-  - sudo service postgresql restart
 
 install:
   - pip install tox-travis
@@ -38,4 +28,4 @@ before_script:
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE flask_test TO flask_test;" -U postgres
 
 script:
-  - tox -c .travis.tox.ini
+  - tox
