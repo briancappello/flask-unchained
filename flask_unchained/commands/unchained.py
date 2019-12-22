@@ -95,14 +95,12 @@ def services():
     header = ('Name', 'Class', 'Location')
     rows = []
     for name, svc in current_app.unchained.services.items():
-        if not not hasattr(svc, '__name__') or not hasattr(svc, '__module__'):
-            rows.append((name, str(svc), ''))
+        if isinstance(svc, object):
+            rows.append((name, svc.__class__.__name__, svc.__module__))
+        elif hasattr(svc, '__module__') and hasattr(svc, '__name__'):
+            rows.append((name, svc.__name__, svc.__module__))
         else:
-            rows.append((
-                name,
-                svc.__class__.__name__ if isinstance(svc, object) else svc.__name__,
-                svc.__module__
-            ))
+            rows.append((name, str(svc), ''))
 
     # sort by name within (grouped by) location
     print_table(
