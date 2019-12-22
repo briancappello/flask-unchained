@@ -20,7 +20,7 @@ def auth_required(decorated_fn=None, **role_rules):
         @auth_required(roles=['REQUIRE', 'ALL', 'OF', 'THESE', 'ROLES'])
         @auth_required(one_of=['EITHER_THIS_ROLE', 'OR_THIS_ONE'])
 
-    One of role or roles kwargs can also be combined with one_of::
+    Either of the `role` or `roles` kwargs can also be combined with one_of::
 
         @auth_required(role='REQUIRED', one_of=['THIS', 'OR_THIS'])
 
