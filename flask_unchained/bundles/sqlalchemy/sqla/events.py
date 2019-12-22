@@ -8,7 +8,7 @@ from sqlalchemy import event
 # http://docs.sqlalchemy.org/en/rel_1_1/orm/events.html
 
 
-class _SQLAlchemyEvent(object):
+class _SQLAlchemyEvent:
     """Private helper class for the @attach_events and @on decorators"""
     ATTR = '_sqlalchemy_event'
 

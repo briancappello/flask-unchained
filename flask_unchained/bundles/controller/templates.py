@@ -166,4 +166,4 @@ def is_active(endpoint_or_kwargs: Union[str, dict]):
     if endpoint:
         return endpoint == request.endpoint
 
-    return href == request.path or href == request.url
+    return href in {request.path, request.url}

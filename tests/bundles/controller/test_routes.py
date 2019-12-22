@@ -158,7 +158,7 @@ class TestController:
 class TestFunc:
     def test_it_works_with_undecorated_view(self):
         route = list(func(undecorated_view))[0]
-        assert route.view_func == undecorated_view
+        assert route.view_func is undecorated_view
         assert route.rule == '/undecorated-view'
         assert route.blueprint is None
         assert route.endpoint == 'undecorated_view'
@@ -172,7 +172,7 @@ class TestFunc:
                           defaults={'id': 1}, methods=['GET', 'POST'],
                           only_if='only_if'))[0]
         assert route.rule == '/a/<id>'
-        assert route.view_func == undecorated_view
+        assert route.view_func is undecorated_view
         assert route.blueprint == bp
         assert route.endpoint == 'overridden.endpoint'
         assert route.defaults == {'id': 1}
@@ -181,7 +181,7 @@ class TestFunc:
 
     def test_it_works_with_decorated_view(self):
         route = list(func(decorated_view))[0]
-        assert route.view_func == decorated_view
+        assert route.view_func is decorated_view
         assert route.rule == '/decorated-view'
         assert route.blueprint is None
         assert route.endpoint == 'decorated_view'
@@ -195,7 +195,7 @@ class TestFunc:
                           defaults={'id': 1}, methods=['GET', 'POST'],
                           only_if='only_if'))[0]
         assert route.rule == '/b/<id>'
-        assert route.view_func == decorated_view
+        assert route.view_func is decorated_view
         assert route.blueprint == bp
         assert route.endpoint == 'overridden.endpoint'
         assert route.defaults == {'id': 1}

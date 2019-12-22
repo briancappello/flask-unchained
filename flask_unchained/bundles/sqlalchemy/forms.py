@@ -41,7 +41,7 @@ class ExcludeMetaOption(MetaOption):
             return
 
         if (not isinstance(value, (list, tuple))
-                or not all([isinstance(x, str) for x in value])):
+                or not all(isinstance(x, str) for x in value)):
             raise TypeError(f'The `exclude` Meta option for {mcs_args.name} must be '
                             f'a list (or tuple) of strings')
 

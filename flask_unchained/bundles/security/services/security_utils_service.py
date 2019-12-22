@@ -132,7 +132,7 @@ class SecurityUtilsService(Service):
             token, 'confirm', 'SECURITY_CONFIRM_EMAIL_WITHIN', return_data=True)
 
         if not invalid and user:
-            user_id, token_email_hash = token_data
+            _, token_email_hash = token_data
             invalid = not self.verify_hash(token_email_hash, user.email)
 
         return expired, invalid, user
@@ -187,7 +187,7 @@ class SecurityUtilsService(Service):
         try:
             data = serializer.loads(token, max_age=max_age)
         except SignatureExpired:
-            d, data = serializer.loads_unsafe(token)
+            _, data = serializer.loads_unsafe(token)
             expired = True
         except (BadSignature, TypeError, ValueError):
             invalid = True

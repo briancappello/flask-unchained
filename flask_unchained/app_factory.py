@@ -73,7 +73,7 @@ class AppFactory(metaclass=Singleton):
         """
         unchained_config = (self.load_unchained_config(env)
                             if _load_unchained_config else None)
-        app_bundle, bundles = self.load_bundles(
+        _, bundles = self.load_bundles(
             bundle_package_names=bundles or getattr(unchained_config, 'BUNDLES', []),
             unchained_config=unchained_config,
         )

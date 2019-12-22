@@ -38,8 +38,11 @@ class ModelFactory(factory.Factory):
 
     @classmethod
     @unchained.inject('session_manager')
-    def _create(cls, model_class, session_manager: SessionManager = injectable,
-                *args, **kwargs):
+    def _create(cls,
+                model_class,
+                *args,
+                session_manager: SessionManager = injectable,
+                **kwargs):
         # make sure we get the correct mapped class
         model_class = unchained.sqlalchemy_bundle.models[model_class.__name__]
 

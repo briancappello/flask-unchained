@@ -67,7 +67,7 @@ def _auth_required():
     def wrapper(fn):
         @wraps(fn)
         def decorated_view(*args, **kwargs):
-            for method, mechanism in login_mechanisms:
+            for _, mechanism in login_mechanisms:
                 if mechanism and mechanism():
                     return fn(*args, **kwargs)
             return security._unauthorized_callback()

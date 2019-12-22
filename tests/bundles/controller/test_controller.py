@@ -95,7 +95,7 @@ class TestControllerAttributes:
         controller = DefaultController()
 
         new_view = controller.apply_decorators(view_func, [])
-        assert new_view == view_func
+        assert new_view is view_func
 
     def test_apply_decorators_order(self):
         controller = DefaultController()

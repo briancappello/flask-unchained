@@ -12,7 +12,7 @@ class Config(BundleConfig):
 
     CELERY_BROKER_URL = 'redis://{host}:{port}/0'.format(
         host=os.getenv('FLASK_REDIS_HOST', '127.0.0.1'),
-        port=os.getenv('FLASK_REDIS_PORT', 6379),
+        port=int(os.getenv('FLASK_REDIS_PORT', "6379")),
     )
     """
     The broker URL to connect to.

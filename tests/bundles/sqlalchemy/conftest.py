@@ -14,7 +14,7 @@ POSTGRES = '{dialect}://{user}:{password}@{host}:{port}/{db_name}'.format(
     user=os.getenv('FLASK_DATABASE_USER', 'flask_test'),
     password=os.getenv('FLASK_DATABASE_PASSWORD', 'flask_test'),
     host=os.getenv('FLASK_DATABASE_HOST', '127.0.0.1'),
-    port=os.getenv('FLASK_DATABASE_PORT', 5432),
+    port=int(os.getenv('FLASK_DATABASE_PORT', "5432")),
     db_name=os.getenv('FLASK_DATABASE_NAME', 'flask_test'))
 
 PRIOR_FLASK_ENV = os.getenv('FLASK_ENV', None)

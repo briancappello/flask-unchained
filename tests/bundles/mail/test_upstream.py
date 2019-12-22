@@ -48,8 +48,7 @@ from contextlib import contextmanager
 from email.header import Header
 
 from flask import Flask
-from flask_mail import BadHeaderError, Connection, Mail, Message, PY3, \
-    sanitize_address
+from flask_mail import BadHeaderError, Connection, Mail, Message, sanitize_address
 import mock
 from speaklater import make_lazy_string
 
@@ -740,7 +739,7 @@ class TestConnection(TestCase):
                 host.sendmail.assert_called_once_with(
                     "from@example.com",
                     ["to@example.com"],
-                    msg.as_bytes() if PY3 else msg.as_string(),
+                    msg.as_bytes(),
                     msg.mail_options,
                     msg.rcpt_options
                 )
@@ -757,7 +756,7 @@ class TestConnection(TestCase):
                 host.sendmail.assert_called_once_with(
                     "from@example.com",
                     ["=?utf-8?b?w4TDnMOWIOKGkiDinJM=?= <to@example.com>"],
-                    msg.as_bytes() if PY3 else msg.as_string(),
+                    msg.as_bytes(),
                     msg.mail_options,
                     msg.rcpt_options
                 )
@@ -774,7 +773,7 @@ class TestConnection(TestCase):
                 host.sendmail.assert_called_once_with(
                     "from@example.com",
                     ["to@example.com"],
-                    msg.as_bytes() if PY3 else msg.as_string(),
+                    msg.as_bytes(),
                     msg.mail_options,
                     msg.rcpt_options
                 )
@@ -792,7 +791,7 @@ class TestConnection(TestCase):
                 host.sendmail.assert_called_once_with(
                     "from@example.com",
                     ["to@example.com"],
-                    msg.as_bytes() if PY3 else msg.as_string(),
+                    msg.as_bytes(),
                     msg.mail_options,
                     msg.rcpt_options
                 )

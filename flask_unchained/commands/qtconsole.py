@@ -187,7 +187,7 @@ def embed_kernel(module=None, local_ns=None, **kwargs):
 
 
 def wait_for_connection_file(connection_file):
-    for i in range(100):
+    for _ in range(100):
         try:
             st = os.stat(connection_file)
         except OSError as exc:

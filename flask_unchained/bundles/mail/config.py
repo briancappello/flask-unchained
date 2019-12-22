@@ -16,7 +16,7 @@ class Config(BundleConfig):
     The hostname/IP of the mail server.
     """
 
-    MAIL_PORT = os.getenv('FLASK_MAIL_PORT', 25)
+    MAIL_PORT = int(os.getenv('FLASK_MAIL_PORT', "25"))
     """
     The port the mail server is running on.
     """
@@ -82,7 +82,7 @@ class Config(BundleConfig):
     useful for testing.
     """
 
-    MAIL_ASCII_ATTACHMENTS = os.getenv('FLASK_MAIL_ASCII_ATTACHMENTS', False)
+    MAIL_ASCII_ATTACHMENTS = get_boolean_env('FLASK_MAIL_ASCII_ATTACHMENTS', False)
     """
     Whether or not to coerce attachment filenames to ASCII.
     """
@@ -98,7 +98,7 @@ class DevConfig(Config):
     Set the mail server debug level to 1 in development.
     """
 
-    MAIL_PORT = os.getenv('FLASK_MAIL_PORT', 1025)  # MailHog
+    MAIL_PORT = int(os.getenv('FLASK_MAIL_PORT', "1025"))  # MailHog
     """
     In development, the mail bundle is configured to connect to MailHog.
     """
@@ -109,7 +109,7 @@ class ProdConfig(Config):
     Production-specific config options for the mail bundle.
     """
 
-    MAIL_PORT = os.getenv('FLASK_MAIL_PORT', 465)
+    MAIL_PORT = int(os.getenv('FLASK_MAIL_PORT', "465"))
     """
     In production, the mail bundle is configured to connect using SSL.
     """

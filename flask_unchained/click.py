@@ -36,7 +36,7 @@ def default(value):
 
 
 def should_prompt(ctx, param, value):
-    global SKIP_PROMPTING
+    global SKIP_PROMPTING  # skipcq: PYL-W0603
 
     if value is False:
         SKIP_PROMPTING = True

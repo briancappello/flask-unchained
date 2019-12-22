@@ -14,7 +14,7 @@ class RegisterModelResourcesHook(AppFactoryHook):
     run_after = ['models', 'serializers']
 
     def process_objects(self, app, objects):
-        for name, resource_cls in objects.items():
+        for resource_cls in objects.values():
             if isinstance(resource_cls.Meta.model, str):
                 resource_cls.Meta.model = \
                     self.unchained.sqlalchemy_bundle.models[resource_cls.Meta.model]

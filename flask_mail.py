@@ -37,12 +37,9 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-
-from __future__ import with_statement
-
+import blinker
 import re
 import smtplib
-import sys
 import time
 import unicodedata
 
@@ -53,31 +50,13 @@ from email.header import Header
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.policy import SMTP
 from email.utils import formataddr, formatdate, make_msgid, parseaddr
 
-import blinker
 from flask import current_app
-
-try:
-    from email import policy
-    message_policy = policy.SMTP
-except ImportError:
-    message_policy = None
 
 
 __version__ = '0.9.3'
-
-
-PY3 = sys.version_info[0] == 3
-PY34 = PY3 and sys.version_info[1] >= 4
-
-if PY3:
-    string_types = str,
-    text_type = str
-else:
-    string_types = basestring,  # noqa: F821
-    text_type = unicode         # noqa: F821
-
 
 charset.add_charset('utf-8', charset.SHORTEST, None, 'utf-8')
 
@@ -101,20 +80,15 @@ def force_text(s, encoding='utf-8', errors='strict'):
 
     If strings_only is True, don't convert (some) non-string-like objects.
     """
-    if isinstance(s, text_type):
+    if isinstance(s, str):
         return s
 
     try:
-        if not isinstance(s, string_types):
-            if PY3:
-                if isinstance(s, bytes):
-                    s = text_type(s, encoding, errors)
-                else:
-                    s = text_type(s)
-            elif hasattr(s, '__unicode__'):
-                s = s.__unicode__()
+        if not isinstance(s, str):
+            if isinstance(s, bytes):
+                s = str(s, encoding, errors)
             else:
-                s = text_type(bytes(s), encoding, errors)
+                s = str(s)
         else:
             s = s.decode(encoding, errors)
     except UnicodeDecodeError as e:
@@ -137,7 +111,7 @@ def sanitize_subject(subject, encoding='utf-8'):
 
 
 def sanitize_address(addr, encoding='utf-8'):
-    if isinstance(addr, string_types):
+    if isinstance(addr, str):
         addr = parseaddr(force_text(addr))
     nm, addr = addr
 
@@ -168,7 +142,7 @@ def sanitize_addresses(addresses, encoding='utf-8'):
 def fix_recipients_list(recipients):
     fixed_recipients = []
     for recipient in recipients:
-        if not isinstance(recipient, string_types):
+        if not isinstance(recipient, str):
             # Ensure that the name/email values are a tuple and not a list
             fixed_recipients.append(tuple(recipient))
         else:
@@ -183,7 +157,7 @@ def _has_newline(line):
     return False
 
 
-class Connection(object):
+class Connection:
     """Handles connection to host."""
 
     def __init__(self, mail):
@@ -247,7 +221,7 @@ class Connection(object):
             ret = self.host.sendmail(
                 sanitize_address(envelope_from or message.sender),
                 list(sanitize_addresses(message.send_to)),
-                message.as_bytes() if PY3 else message.as_string(),
+                message.as_bytes(),
                 message.mail_options,
                 message.rcpt_options
             )
@@ -279,7 +253,7 @@ class BadHeaderError(Exception):
     pass
 
 
-class Attachment(object):
+class Attachment:
     """Encapsulates file attachment information.
 
     :versionadded: 0.3.5
@@ -301,7 +275,7 @@ class Attachment(object):
         self.content_id = content_id
 
 
-class Message(object):
+class Message:
     """Encapsulates an email message.
 
     :param subject: email subject header
@@ -476,8 +450,6 @@ class Message(object):
             try:
                 filename and filename.encode('ascii')
             except UnicodeEncodeError:
-                if not PY3:
-                    filename = filename.encode('utf8')
                 filename = ('UTF8', '', filename)
 
             f.add_header('Content-Disposition',
@@ -494,9 +466,7 @@ class Message(object):
                     f.add_header('Content-ID', attachment.content_id)
 
             msg.attach(f)
-        if message_policy:
-            msg.policy = message_policy
-
+        msg.policy = SMTP
         return msg
 
     def as_string(self):
@@ -577,7 +547,7 @@ class Message(object):
         )
 
 
-class _MailMixin(object):
+class _MailMixin:
     @contextmanager
     def record_messages(self):
         """

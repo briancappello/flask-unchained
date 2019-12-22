@@ -20,7 +20,7 @@ class RegisterModelAdminsHook(AppFactoryHook):
         db = self.unchained.extensions.db
         models = self.unchained.sqlalchemy_bundle.models
 
-        for admin_name, admin_cls in objects.items():
+        for admin_cls in objects.values():
             model = (admin_cls.model if not isinstance(admin_cls.model, str)
                      else models[admin_cls.model])
             admin_cls.model = model
