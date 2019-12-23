@@ -67,7 +67,7 @@ class _ModelResourceSerializerMetaOption(MetaOption):
     def check_value(self,
                     value,
                     mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
-                    ) ->  None:
+                    ) -> None:
         if not value:
             return
 

@@ -63,7 +63,10 @@ class _ResourceUrlPrefixMetaOption(MetaOption):
                                     mcs_args.getattr(REMOVE_SUFFIXES_ATTR))
         return '/' + pluralize(ctrl_name.replace('_', '-'))
 
-    def check_value(self, value, mcs_args: McsArgs):
+    def check_value(self,
+                    value,
+                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    ) -> None:
         if not value:
             return
 

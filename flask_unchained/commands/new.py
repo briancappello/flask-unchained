@@ -238,7 +238,7 @@ def copy_file_tree(src: str,
     shutil.copytree(src, dest)
 
     if option_locations:
-        for option, paths in option_locations:
+        for _, paths in option_locations:
             for path in paths:
                 path = os.path.join(dest, path)
                 if os.path.isfile(path):
@@ -259,7 +259,7 @@ def _render_file_tree(root_dir: str, ctx: Optional[Dict[str, Any]] = None):
     if not ctx:
         return
 
-    for dirpath, dirnames, filenames in os.walk(root_dir):
+    for dirpath, _, filenames in os.walk(root_dir):
         for filename in filenames:
             path = os.path.join(dirpath, filename)
             if ('__pycache__' in path

@@ -206,7 +206,7 @@ class AppFactoryHook:
 
         # if the passed module is a package, also get members from child modules
         if importlib.util.find_spec(module.__name__).submodule_search_locations:
-            for loader, name, is_pkg in pkgutil.walk_packages(module.__path__):
+            for _, name, _ in pkgutil.walk_packages(module.__path__):
                 child_module_name = f'{module.__package__}.{name}'
                 child_module = importlib.import_module(child_module_name)
                 for key, obj in self._get_members(child_module, type_check_wrapper):
