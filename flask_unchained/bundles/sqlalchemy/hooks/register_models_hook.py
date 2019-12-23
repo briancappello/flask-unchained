@@ -1,4 +1,3 @@
-import inspect
 import sys
 
 from flask_unchained import AppFactoryHook, FlaskUnchained, unchained, injectable
