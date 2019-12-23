@@ -12,6 +12,7 @@ except ImportError:
 try:
     import lxml
 except ImportError:
+    lxml = None
     from warnings import warn
     warn('lxml is not installed. Will not automatically '
          'convert html email messages to plain text.')

@@ -5,7 +5,7 @@ test_patterns = [
 ]
 
 exclude_patterns = [
-    "flask_unchained/_code_templates"
+    "flask_unchained/_code_templates/**"
 ]
 
 [[analyzers]]
