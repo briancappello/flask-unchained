@@ -35,6 +35,7 @@ class ConfigureAppHook(AppFactoryHook):
     require_exactly_one_bundle_module = True
     run_after = ['register_extensions']
 
+    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     def run_hook(self,
                  app: FlaskUnchained,
                  bundles: List[Bundle],

@@ -16,6 +16,7 @@ class RegisterSerializersHook(AppFactoryHook):
     bundle_module_names = ['serializers']
     run_after = ['models']
 
+    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     def process_objects(self,
                         app: FlaskUnchained,
                         serializers: Dict[str, Type[ModelSerializer]],

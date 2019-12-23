@@ -19,6 +19,7 @@ class RunHooksHook(AppFactoryHook):
 
     bundle_module_names = ['hooks']
 
+    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     def run_hook(self,
                  app: FlaskUnchained,
                  bundles: List[Bundle],

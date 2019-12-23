@@ -20,6 +20,7 @@ class RegisterModelsHook(AppFactoryHook):
     run_after = ['register_extensions']
     run_before = ['configure_app', 'init_extensions', 'services']
 
+    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     @unchained.inject('db')
     def process_objects(self,
                         app: FlaskUnchained,

@@ -10,6 +10,7 @@ class RegisterGrapheneQueriesHook(AppFactoryHook):
     bundle_override_module_names_attr = 'graphene_queries_module_names'
     run_after = ['graphene_types']
 
+    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     def process_objects(self,
                         app: FlaskUnchained,
                         queries: Dict[str, QueriesObjectType]):

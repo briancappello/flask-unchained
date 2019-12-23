@@ -82,6 +82,7 @@ class BabelBundle(Bundle):
         if current_app.url_map.is_endpoint_expecting(endpoint, self.language_code_key):
             values[self.language_code_key] = g.lang_code
 
+    # skipcq: PYL-W0613 (unused argument)
     def lang_code_url_value_preprocessor(self, endpoint: str, values: Dict[str, Any]):
         if values is not None:
             g.lang_code = values.pop(self.language_code_key, None)

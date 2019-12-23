@@ -37,6 +37,7 @@ class RegisterRoutesHook(AppFactoryHook):
 
         self.process_objects(app, routes)
 
+    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     def process_objects(self, app: FlaskUnchained, routes: Iterable[Route]):
         for route in _reduce_routes(routes):
             if route.should_register(app):

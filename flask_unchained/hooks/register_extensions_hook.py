@@ -20,6 +20,7 @@ class RegisterExtensionsHook(AppFactoryHook):
     name = 'register_extensions'
     bundle_module_names = ['extensions']
 
+    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     def process_objects(self,
                         app: FlaskUnchained,
                         extensions: Dict[str, object],

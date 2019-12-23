@@ -15,6 +15,7 @@ class RegisterBlueprintsHook(AppFactoryHook):
 
     limit_discovery_to_local_declarations = False
 
+    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     def process_objects(self, app: FlaskUnchained, blueprints: List[Blueprint]):
         for blueprint in reversed(blueprints):
             # rstrip '/' off url_prefix because views should be declaring their
