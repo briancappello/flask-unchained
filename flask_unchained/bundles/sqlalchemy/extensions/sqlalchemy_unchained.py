@@ -10,7 +10,7 @@ from .. import sqla
 from ..base_model import BaseModel
 from ..services import SessionManager
 
-from ..model_registry import UnchainedModelRegistry  # required import
+from ..model_registry import UnchainedModelRegistry  # skipcq (required import)
 
 
 class SQLAlchemyUnchained(BaseSQLAlchemy):

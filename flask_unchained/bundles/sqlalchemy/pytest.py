@@ -3,7 +3,7 @@ import pytest
 
 from flask_unchained import unchained, injectable
 
-from .model_registry import UnchainedModelRegistry  # required import
+from .model_registry import UnchainedModelRegistry  # skipcq (required import)
 from .services import SessionManager
 
 

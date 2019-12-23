@@ -145,7 +145,7 @@ class IPythonKernelApp(IPKernelApp):
         for line in _ctrl_c_lines:
             io.rprint(line)
 
-        # upstream has this here, even though it seems like a silly place for it
+        # skipcq (upstream has this here)
         self.ports = dict(shell=self.shell_port, iopub=self.iopub_port,
                           stdin=self.stdin_port, hb=self.hb_port,
                           control=self.control_port)

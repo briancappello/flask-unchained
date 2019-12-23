@@ -12,7 +12,7 @@ import os
 import sys
 import time
 
-from flask.cli import with_appcontext  # alias this here
+from flask.cli import with_appcontext  # skipcq (alias)
 from flask_unchained import click
 from flask_unchained.app_factory import AppFactory, maybe_set_app_factory_from_env
 from flask_unchained.constants import DEV, PROD, STAGING, TEST

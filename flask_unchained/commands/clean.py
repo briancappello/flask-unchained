@@ -9,7 +9,7 @@ def clean():
     """
     Recursively remove \\*.pyc and \\*.pyo files.
     """
-    for dirpath, dirnames, filenames in os.walk('.'):
+    for dirpath, _, filenames in os.walk('.'):
         for filename in filenames:
             if filename.endswith('.pyc') or filename.endswith('.pyo'):
                 filepath = os.path.join(dirpath, filename)
