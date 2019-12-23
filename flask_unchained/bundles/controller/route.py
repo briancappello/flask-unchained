@@ -250,23 +250,6 @@ class Route:
             prefix = f'{module_name}.{class_name}'
         return f'{prefix}.{self.method_name}'
 
-    def __eq__(self, other):
-        return (self.blueprint == other.blueprint
-                and self.defaults == other.defaults
-                and self.endpoint == other.endpoint
-                and self.is_member == other.is_member
-                and self.methods == other.methods
-                and self.full_name == other.full_name
-                and self._controller_cls == other._controller_cls
-                and self.module_name == other.module_name
-                and self.only_if == other.only_if
-                and self.full_rule == other.full_rule
-                and self._member_param == other._member_param
-                and self.unique_member_param == other.unique_member_param)
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
     def __repr__(self):
         props = [prop for prop in ['full_name', 'endpoint', 'methods', 'defaults']
                  if getattr(self, prop)]
