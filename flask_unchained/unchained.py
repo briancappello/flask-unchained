@@ -322,9 +322,9 @@ class Unchained:
                 have = set(bound_args.arguments.keys())
                 need = required - have
                 to_inject = need & (set(args) if has_explicit_args
-                                    else set([k for k, v in sig.parameters.items()
-                                              if isinstance(v.default, str)
-                                              and v.default == injectable]))
+                                    else {k for k, v in sig.parameters.items()
+                                          if isinstance(v.default, str)
+                                          and v.default == injectable})
 
                 # try to inject needed params from extensions or services
                 for param_name in to_inject:

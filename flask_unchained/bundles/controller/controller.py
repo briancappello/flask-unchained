@@ -104,8 +104,9 @@ class _ControllerDecoratorsMetaOption(MetaOption):
         if not value:
             return
 
-        assert all(callable(x) for x in value), \
-            f'The {self.name} meta option must be a list of callables.'
+        if not all(callable(x) for x in value):
+            raise ValueError(
+                f'The {self.name} meta option must be a list of callables.')
 
 
 class _ControllerTemplateFolderNameMetaOption(MetaOption):
@@ -128,8 +129,9 @@ class _ControllerTemplateFolderNameMetaOption(MetaOption):
         if not value:
             return
 
-        assert isinstance(value, str) and os.sep not in value, \
-            f'The {self.name} meta option must be a string and not a full path'
+        if not isinstance(value, str) or os.sep in value:
+            raise ValueError(
+                f'The {self.name} meta option must be a string and not a full path')
 
 
 class _ControllerTemplateFileExtensionMetaOption(MetaOption):
@@ -146,8 +148,8 @@ class _ControllerTemplateFileExtensionMetaOption(MetaOption):
         if not value:
             return
 
-        assert isinstance(value, str), \
-            f'The {self.name} meta option must be a string'
+        if not isinstance(value, str):
+            raise ValueError(f'The {self.name} meta option must be a string')
 
     # def get_value(...):
     # NOTE: the logic for returning app.config.TEMPLATE_FILE_EXTENSION must
@@ -166,8 +168,8 @@ class _ControllerUrlPrefixMetaOption(MetaOption):
         if not value:
             return
 
-        assert isinstance(value, str), \
-            f'The {self.name} meta option must be a string'
+        if not isinstance(value, str):
+            raise ValueError(f'The {self.name} meta option must be a string')
 
 
 class _ControllerEndpointPrefixMetaOption(MetaOption):
@@ -178,8 +180,8 @@ class _ControllerEndpointPrefixMetaOption(MetaOption):
         if not value:
             return
 
-        assert isinstance(value, str), \
-            f'The {self.name} meta option must be a string'
+        if not isinstance(value, str):
+            raise ValueError(f'The {self.name} meta option must be a string')
 
     def get_value(self, meta, base_classes_meta, mcs_args: McsArgs):
         value = super().get_value(meta, base_classes_meta, mcs_args)

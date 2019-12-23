@@ -60,7 +60,7 @@ def _auth_required():
     """
 
     login_mechanisms = (
-        ('token', lambda: _check_token()),
+        ('token', _check_token),
         ('session', lambda: current_user.is_authenticated),
     )
 

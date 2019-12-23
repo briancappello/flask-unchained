@@ -26,7 +26,7 @@ class EnumField(Select2Field):
     """
 
     def __init__(self, column, **kwargs):
-        assert isinstance(column.type, sqlalchemy.sql.sqltypes.Enum)
+        assert isinstance(column.type, sqlalchemy.sql.sqltypes.Enum)  # skipcq: BAN-B101
 
         def coercer(value):
             # coerce incoming value to enum value

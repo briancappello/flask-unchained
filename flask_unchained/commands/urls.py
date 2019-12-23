@@ -50,7 +50,7 @@ def urls(order_by: Optional[str] = None):
     # sort the rules. by default they're sorted by priority,
     # ie in the order they were registered with the app
     if order_by == 'view':
-        url_rules = sorted(url_rules, key=lambda rule: _get_rule_view(rule))
+        url_rules = sorted(url_rules, key=_get_rule_view)
     elif order_by != 'priority':
         url_rules = sorted(url_rules, key=lambda rule: getattr(rule, order_by))
 

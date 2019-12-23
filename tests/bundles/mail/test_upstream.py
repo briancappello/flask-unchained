@@ -189,13 +189,13 @@ class TestMessage(TestCase):
         msg = Message(subject="testing",
                       recipients=["to@example.com"],
                       body="testing")
-        self.assertRaises(AssertionError, self.mail.send, msg)
+        self.assertRaises(ValueError, self.mail.send, msg)
 
     def test_send_without_recipients(self):
         msg = Message(subject="testing",
                       recipients=[],
                       body="testing")
-        self.assertRaises(AssertionError, self.mail.send, msg)
+        self.assertRaises(ValueError, self.mail.send, msg)
 
     def test_bcc(self):
         msg = Message(sender="from@example.com",
@@ -711,14 +711,14 @@ class TestConnection(TestCase):
                       recipients=["to@example.com"],
                       body="testing")
         with self.mail.connect() as conn:
-            self.assertRaises(AssertionError, conn.send, msg)
+            self.assertRaises(ValueError, conn.send, msg)
 
     def test_send_without_recipients(self):
         msg = Message(subject="testing",
                       recipients=[],
                       body="testing")
         with self.mail.connect() as conn:
-            self.assertRaises(AssertionError, conn.send, msg)
+            self.assertRaises(ValueError, conn.send, msg)
 
     def test_bad_header_subject(self):
         msg = Message(subject="testing\n\r",

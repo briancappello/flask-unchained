@@ -67,8 +67,8 @@ class _ResourceUrlPrefixMetaOption(MetaOption):
         if not value:
             return
 
-        assert isinstance(value, str), \
-            f'The {self.name} meta option must be a string'
+        if not isinstance(value, str):
+            raise ValueError(f'The {self.name} meta option must be a string')
 
 
 class _ResourceMemberParamMetaOption(MetaOption):
@@ -90,9 +90,9 @@ class _ResourceMemberParamMetaOption(MetaOption):
         if mcs_args.is_abstract:
             return
 
-        assert isinstance(value, str) and len(get_param_tuples(value)) == 1, \
-            f'The {self.name} meta option must be in the format of ' \
-            f'<werkzeug_type:param_name>'
+        if not isinstance(value, str) or not len(get_param_tuples(value)) == 1:
+            raise TypeError(f'The {self.name} meta option must be in the format of '
+                            f'<werkzeug_type:param_name>')
 
 
 class _ResourceUniqueMemberParamMetaOption(MetaOption):
@@ -112,9 +112,9 @@ class _ResourceUniqueMemberParamMetaOption(MetaOption):
         if mcs_args.is_abstract or value is None:
             return
 
-        assert isinstance(value, str) and len(get_param_tuples(value)) == 1, \
-            f'The {self.name} meta option must be in the format of ' \
-            f'<werkzeug_type:param_name>'
+        if not isinstance(value, str) or not len(get_param_tuples(value)) == 1:
+            raise TypeError(f'The {self.name} meta option must be in the format of '
+                            f'<werkzeug_type:param_name>')
 
 
 class _ResourceMetaOptionsFactory(_ControllerMetaOptionsFactory):

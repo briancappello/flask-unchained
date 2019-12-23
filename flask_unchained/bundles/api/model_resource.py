@@ -71,8 +71,9 @@ class _ModelResourceSerializerMetaOption(MetaOption):
         if not value:
             return
 
-        assert isinstance(value, ModelSerializer), \
-            f'The {self.name} meta option must be an instance of ModelSerializer'
+        if not isinstance(value, ModelSerializer):
+            raise ValueError(
+                f'The {self.name} meta option must be an instance of ModelSerializer')
 
 
 class _ModelResourceSerializerCreateMetaOption(MetaOption):
@@ -83,12 +84,16 @@ class _ModelResourceSerializerCreateMetaOption(MetaOption):
     def __init__(self):
         super().__init__('serializer_create', default=None, inherit=True)
 
-    def check_value(self, value, mcs_args: McsArgs):
+    def check_value(self,
+                    value,
+                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    ) -> None:
         if not value:
             return
 
-        assert isinstance(value, ModelSerializer), \
-            f'The {self.name} meta option must be an instance of ModelSerializer'
+        if not isinstance(value, ModelSerializer):
+            raise ValueError(
+                f'The {self.name} meta option must be an instance of ModelSerializer')
 
 
 class _ModelResourceSerializerManyMetaOption(MetaOption):
@@ -106,8 +111,9 @@ class _ModelResourceSerializerManyMetaOption(MetaOption):
         if not value:
             return
 
-        assert isinstance(value, ModelSerializer), \
-            f'The {self.name} meta option must be an instance of ModelSerializer'
+        if not isinstance(value, ModelSerializer):
+            raise ValueError(
+                f'The {self.name} meta option must be an instance of ModelSerializer')
 
 
 class _ModelResourceIncludeMethodsMetaOption(MetaOption):
@@ -132,9 +138,9 @@ class _ModelResourceIncludeMethodsMetaOption(MetaOption):
         if not value:
             return
 
-        assert all(x in ALL_RESOURCE_METHODS for x in value), \
-            f'Invalid values for the {self.name} meta option. The valid values ' \
-            f'are ' + ', '.join(ALL_RESOURCE_METHODS)
+        if not all(x in ALL_RESOURCE_METHODS for x in value):
+            raise ValueError(f'Invalid values for the {self.name} meta option. The '
+                             f'valid values are ' + ', '.join(ALL_RESOURCE_METHODS))
 
 
 class _ModelResourceExcludeMethodsMetaOption(MetaOption):
@@ -151,9 +157,9 @@ class _ModelResourceExcludeMethodsMetaOption(MetaOption):
         if not value:
             return
 
-        assert all(x in ALL_RESOURCE_METHODS for x in value), \
-            f'Invalid values for the {self.name} meta option. The valid values ' \
-            f'are ' + ', '.join(ALL_RESOURCE_METHODS)
+        if not all(x in ALL_RESOURCE_METHODS for x in value):
+            raise ValueError(f'Invalid values for the {self.name} meta option. The '
+                             f'valid values are ' + ', '.join(ALL_RESOURCE_METHODS))
 
 
 class _ModelResourceIncludeDecoratorsMetaOption(MetaOption):
@@ -199,9 +205,9 @@ class _ModelResourceIncludeDecoratorsMetaOption(MetaOption):
         if not value:
             return
 
-        assert all(x in ALL_RESOURCE_METHODS for x in value), \
-            f'Invalid values for the {self.name} meta option. The valid values ' \
-            f'are ' + ', '.join(ALL_RESOURCE_METHODS)
+        if not all(x in ALL_RESOURCE_METHODS for x in value):
+            raise ValueError(f'Invalid values for the {self.name} meta option. The '
+                             f'valid values are ' + ', '.join(ALL_RESOURCE_METHODS))
 
 
 class _ModelResourceExcludeDecoratorsMetaOption(MetaOption):
@@ -219,9 +225,9 @@ class _ModelResourceExcludeDecoratorsMetaOption(MetaOption):
         if not value:
             return
 
-        assert all(x in ALL_RESOURCE_METHODS for x in value), \
-            f'Invalid values for the {self.name} meta option. The valid values ' \
-            f'are ' + ', '.join(ALL_RESOURCE_METHODS)
+        if not all(x in ALL_RESOURCE_METHODS for x in value):
+            raise ValueError(f'Invalid values for the {self.name} meta option. The '
+                             f'valid values are ' + ', '.join(ALL_RESOURCE_METHODS))
 
 
 class _ModelResourceMethodDecoratorsMetaOption(MetaOption):
@@ -239,15 +245,17 @@ class _ModelResourceMethodDecoratorsMetaOption(MetaOption):
             return
 
         if isinstance(value, (list, tuple)):
-            assert all(callable(x) for x in value), \
-                f'The {self.name} meta option requires a list or tuple of callables'
+            if not all(callable(x) for x in value):
+                raise ValueError(f'The {self.name} meta option requires a '
+                                 f'list or tuple of callables')
         else:
             for method_name, decorators in value.items():
-                assert mcs_args.getattr(method_name), \
-                    f'The {method_name} was not found on {mcs_args.name}'
-                assert all(callable(x) for x in decorators), \
-                    f'Invalid decorator detected in the {self.name} meta option for ' \
-                    f'the {method_name} key'
+                if not mcs_args.getattr(method_name):
+                    raise ValueError(
+                        f'The {method_name} was not found on {mcs_args.name}')
+                if not all(callable(x) for x in decorators):
+                    raise ValueError(f'Invalid decorator detected in the {self.name} '
+                                     f'meta option for the {method_name} key')
 
 
 class _ModelResourceUrlPrefixMetaOption(MetaOption):
@@ -274,8 +282,8 @@ class _ModelResourceUrlPrefixMetaOption(MetaOption):
         if not value:
             return
 
-        assert isinstance(value, str), \
-            f'The {self.name} meta option must be a string'
+        if not isinstance(value, str):
+            raise ValueError(f'The {self.name} meta option must be a string')
 
 
 class _ModelResourceMetaOptionsFactory(_ResourceMetaOptionsFactory):
@@ -438,7 +446,7 @@ class ModelResource(Resource, metaclass=_ModelResourceMetaclass):
 
         return self.make_response(rv, code, headers)
 
-    def make_response(self, data, code=200, headers=None):
+    def make_response(self, data, code=200, headers=None):  # skipcq:  PYL-W0221
         headers = headers or {}
         if isinstance(data, Response):
             return make_response(data, code, headers)

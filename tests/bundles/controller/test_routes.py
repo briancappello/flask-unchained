@@ -177,7 +177,7 @@ class TestFunc:
         assert route.endpoint == 'overridden.endpoint'
         assert route.defaults == {'id': 1}
         assert route.methods == ['GET', 'POST']
-        assert route.only_if is 'only_if'
+        assert route.only_if == 'only_if'
 
     def test_it_works_with_decorated_view(self):
         route = list(func(decorated_view))[0]

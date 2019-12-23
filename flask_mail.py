@@ -204,11 +204,12 @@ class Connection:
         :param message: Message instance.
         :param envelope_from: Email address to be used in MAIL FROM command.
         """
-        assert message.send_to, "No recipients have been added"
+        if not message.send_to:
+            raise ValueError("No recipients have been added")
 
-        assert message.sender is not None, (
-            "The message does not specify a sender and a default sender "
-            "has not been configured")
+        if message.sender is None:
+            raise ValueError("The message does not specify a sender and a default "
+                             "sender has not been configured")
 
         if message.has_bad_headers():
             raise BadHeaderError

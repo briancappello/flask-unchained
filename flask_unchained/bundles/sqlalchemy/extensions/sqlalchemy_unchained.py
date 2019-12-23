@@ -27,7 +27,8 @@ class SQLAlchemyUnchained(BaseSQLAlchemy):
                          metadata=metadata,
                          query_class=query_class,
                          model_class=model_class)
-        SessionManager.set_session_factory(lambda: self.session())
+        SessionManager.set_session_factory(
+            lambda: self.session())  # skipcq: PYL-W0108 (unnecessary lambda)
 
         self.Column = sqla.Column
         self.BigInteger = sqla.BigInteger
