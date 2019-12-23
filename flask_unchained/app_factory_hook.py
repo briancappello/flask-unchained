@@ -241,7 +241,10 @@ class AppFactoryHook:
             if is_local_declaration or not self.limit_discovery_to_local_declarations:
                 yield self.key_name(name, obj), obj
 
-    def key_name(self, name: str, obj: Any) -> str:
+    def key_name(self,
+                 name: str,
+                 obj: Any,  # skipcq: PYL-W0613 (unused arg)
+                 ) -> str:
         """
         Override to use a custom key to determine uniqueness/overriding.
         """

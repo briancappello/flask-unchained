@@ -30,13 +30,11 @@ TEMPLATES_ROOT = os.path.abspath(
 PROJECT_TEMPLATE = os.path.join(TEMPLATES_ROOT, 'project')
 
 
-def _validate_module_name(ctx, param, value):
-    try:
-        assert MODULE_NAME_RE.match(value) is not None
-        return value
-    except AssertionError:
+def _validate_module_name(ctx, param, value):  # skipcq: PYL-W0613 (unused arg)
+    if not MODULE_NAME_RE.match(value):
         raise click.BadParameter('must be a valid python module name '
                                  '(letters, numbers, and underscore characters only)')
+    return value
 
 
 class Token:

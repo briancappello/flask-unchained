@@ -6,15 +6,12 @@ from graphene.utils.subclass_with_meta import (
     SubclassWithMeta_Meta as _BaseObjectTypeMetaclass)
 from graphene_sqlalchemy import SQLAlchemyObjectType as _SQLAObjectType
 from graphene_sqlalchemy.converter import (
-    convert_sqlalchemy_type, convert_column_to_int_or_id, get_column_doc, is_column_nullable)
+    convert_sqlalchemy_type, get_column_doc, is_column_nullable)
 from graphene_sqlalchemy.types import (
     SQLAlchemyObjectTypeOptions as _SQLAObjectTypeOptions)
 from sqlalchemy import types
 from sqlalchemy.orm import class_mapper
 
-
-# convert_sqlalchemy_type.register(BigInteger)(convert_column_to_int_or_id)
-# convert_sqlalchemy_type.register(types.BigInteger)(convert_column_to_int_or_id)
 
 @convert_sqlalchemy_type.register(BigInteger)
 @convert_sqlalchemy_type.register(types.BigInteger)

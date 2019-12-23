@@ -21,7 +21,7 @@ class AdminSecurityMixin:
             return True
         return False
 
-    def _handle_view(self, name, **kwargs):
+    def _handle_view(self, name, **kwargs):  # skipcq: PYL-W0613 (unused arg)
         if not self.is_accessible():
             if not user.is_authenticated:
                 return redirect(url_for('ADMIN_LOGIN_ENDPOINT', next=request.url))

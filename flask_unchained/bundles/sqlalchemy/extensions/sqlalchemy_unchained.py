@@ -74,7 +74,7 @@ class SQLAlchemyUnchained(BaseSQLAlchemy):
                     if isinstance(Parent, str):
                         Parent = cls._decl_class_registry[Parent]
 
-                    def refresh_mv(mapper, connection, target):
+                    def refresh_mv(mapper, connection, target):  # skipcq: PYL-W0613
                         cls.refresh()
 
                     event.listen(Parent, 'after_insert', refresh_mv)

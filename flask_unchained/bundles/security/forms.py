@@ -26,7 +26,7 @@ new_password_equal = validators.EqualTo('new_password', message=_(
     'flask_unchained.bundles.security:error.retype_password_mismatch'))
 
 
-def unique_user_email(form, field):
+def unique_user_email(form, field):  # skipcq: PYL-W0613 (unused arg)
     if user_manager.get_by(email=field.data) is not None:
         raise ValidationError(
             _('flask_unchained.bundles.security:error.email_already_associated',

@@ -64,7 +64,10 @@ class _ModelResourceSerializerMetaOption(MetaOption):
     def __init__(self):
         super().__init__('serializer', default=None, inherit=True)
 
-    def check_value(self, value, mcs_args: McsArgs):
+    def check_value(self,
+                    value,
+                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    ) ->  None:
         if not value:
             return
 
@@ -96,7 +99,10 @@ class _ModelResourceSerializerManyMetaOption(MetaOption):
     def __init__(self):
         super().__init__('serializer_many', default=None, inherit=True)
 
-    def check_value(self, value, mcs_args: McsArgs):
+    def check_value(self,
+                    value,
+                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    ) -> None:
         if not value:
             return
 
@@ -119,7 +125,10 @@ class _ModelResourceIncludeMethodsMetaOption(MetaOption):
 
         return ALL_RESOURCE_METHODS
 
-    def check_value(self, value, mcs_args: McsArgs):
+    def check_value(self,
+                    value,
+                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    ) -> None:
         if not value:
             return
 
@@ -135,7 +144,10 @@ class _ModelResourceExcludeMethodsMetaOption(MetaOption):
     def __init__(self):
         super().__init__('exclude_methods', default=(), inherit=True)
 
-    def check_value(self, value, mcs_args: McsArgs):
+    def check_value(self,
+                    value,
+                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    ) -> None:
         if not value:
             return
 
@@ -180,7 +192,10 @@ class _ModelResourceIncludeDecoratorsMetaOption(MetaOption):
 
         return ALL_RESOURCE_METHODS
 
-    def check_value(self, value, mcs_args: McsArgs):
+    def check_value(self,
+                    value,
+                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    ) -> None:
         if not value:
             return
 
@@ -197,7 +212,10 @@ class _ModelResourceExcludeDecoratorsMetaOption(MetaOption):
     def __init__(self):
         super().__init__('exclude_decorators', default=(), inherit=True)
 
-    def check_value(self, value, mcs_args: McsArgs):
+    def check_value(self,
+                    value,
+                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    ) -> None:
         if not value:
             return
 
@@ -249,7 +267,10 @@ class _ModelResourceUrlPrefixMetaOption(MetaOption):
 
         return '/' + pluralize(kebab_case(mcs_args.Meta.model.__name__))
 
-    def check_value(self, value, mcs_args: McsArgs):
+    def check_value(self,
+                    value,
+                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    ) -> None:
         if not value:
             return
 

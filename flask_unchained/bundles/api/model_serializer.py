@@ -3,7 +3,7 @@ from typing import *
 
 from flask_unchained import unchained
 from flask_unchained.di import _set_up_class_dependency_injection
-from flask_unchained.string_utils import camel_case, snake_case, title_case
+from flask_unchained.string_utils import title_case
 from py_meta_utils import McsArgs
 from speaklater import _LazyString
 
@@ -347,7 +347,11 @@ class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass)
             many=many,
         )
 
-    def handle_error(self, error, data, **kwargs):
+    def handle_error(self,
+                     error: MarshmallowValidationError,
+                     data: Any,  # skipcq: PYL-W0613 (unused arg)
+                     **kwargs
+                     ) -> None:
         """
         Customize the error messages for required/not-null validators with
         dynamically generated field names. This is definitely a little hacky (it

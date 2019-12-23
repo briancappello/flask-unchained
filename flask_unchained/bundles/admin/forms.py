@@ -46,7 +46,7 @@ class EnumField(Select2Field):
             **kwargs
         )
 
-    def pre_validate(self, form):
+    def pre_validate(self, form):  # skipcq: PYL-W0613 (unused arg)
         for v, _ in self.choices:
             if self.data == self.coerce(v):
                 break
