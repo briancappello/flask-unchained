@@ -296,16 +296,15 @@ class Unchained:
                 cls = fn
                 fn = cls.__init__
 
-            # check if the fn has already been wrapped with inject
+            # check if the fn/class has already been wrapped with inject
             if hasattr(fn, '__signature__'):
-                if cls and not hasattr(cls, '__signature__'):
+                if not cls:
+                    return fn
+                if not hasattr(cls, '__signature__'):
                     # this happens when both the class and its __init__ method
                     # where decorated with @inject. which would be silly, but,
                     # it should still work regardless
                     cls.__signature__ = fn.__signature__
-
-                if not cls:
-                    return fn
 
             if cls and hasattr(cls, '__di_name__'):
                 return cls
