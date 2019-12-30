@@ -16,7 +16,7 @@ class RegisterCommandsHook(AppFactoryHook):
 
     name = 'commands'
     bundle_module_names = ['commands']
-    run_after = ['inject_extension_services']
+    run_after = ['services']
 
     limit_discovery_to_local_declarations = False
 

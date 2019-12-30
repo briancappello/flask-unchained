@@ -1,3 +1,5 @@
+import inspect
+
 from typing import *
 
 from ..app_factory_hook import AppFactoryHook
@@ -19,9 +21,19 @@ class RegisterServicesHook(AppFactoryHook):
                         app: FlaskUnchained,
                         services: Dict[str, Service],
                         ) -> None:
+        # register and initialize services
         for name, obj in services.items():
             self.unchained.register_service(name, obj)
         self.unchained._init_services()
+
+        # inject services into extensions
+        for ext in app.unchained.extensions.values():
+            if not hasattr(ext, 'inject_services'):
+                continue
+
+            services = inspect.signature(ext.inject_services).parameters
+            ext.inject_services(**{name: app.unchained.services.get(name)
+                                   for name in services})
 
     def key_name(self, name, obj) -> str:
         return obj.__di_name__
