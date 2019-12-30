@@ -38,8 +38,9 @@ class AppFactory(metaclass=Singleton):
     """
 
     REQUIRED_BUNDLES = [
-        'flask_unchained.bundles.babel',
+        # these are ordered by first to be loaded
         'flask_unchained.bundles.controller',
+        'flask_unchained.bundles.babel',  # requires controller bundle
     ]
 
     def create_app(self,
@@ -78,7 +79,6 @@ class AppFactory(metaclass=Singleton):
             unchained_config=unchained_config,
         )
 
-        # instantiate and initialize the app
         app_import_name = (bundles[-1].module_name.split('.')[0] if bundles
                            else ('tests' if env == TEST else 'dev_app'))
         app = self.APP_CLASS(app_import_name, **self.apply_default_app_kwargs(
@@ -163,9 +163,14 @@ class AppFactory(metaclass=Singleton):
                      unchained_config: Optional[ModuleType] = None,
                      ) -> Tuple[Union[None, AppBundle], List[Bundle]]:
         bundle_package_names = bundle_package_names or []
-        for b in cls.REQUIRED_BUNDLES:
-            if b not in bundle_package_names:
-                bundle_package_names.insert(0, b)
+        for bundle_name in reversed(cls.REQUIRED_BUNDLES):
+            try:
+                existing_index = bundle_package_names.index(bundle_name)
+            except ValueError:
+                pass
+            else:
+                bundle_package_names.pop(existing_index)
+            bundle_package_names.insert(0, bundle_name)
 
         if not bundle_package_names:
             return None, []
