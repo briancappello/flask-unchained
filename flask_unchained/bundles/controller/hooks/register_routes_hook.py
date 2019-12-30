@@ -41,9 +41,12 @@ class RegisterRoutesHook(AppFactoryHook):
     def process_objects(self, app: FlaskUnchained, routes: Iterable[Route]):
         for route in _reduce_routes(routes):
             if route.should_register(app):
-                if route.module_name and route in self.bundle.endpoints[route.endpoint]:
+                existing_route = (self.bundle.endpoints.get(route.endpoint, None)
+                                  if route.module_name else None)
+                if existing_route:
                     import warnings
-                    warnings.warn(f'Duplicate route found: {route}')
+                    warnings.warn(f'Skipping duplicate latter route: '
+                                  f'{existing_route} precedes {route}')
                     continue
 
                 self.bundle.endpoints[route.endpoint].append(route)
