@@ -431,7 +431,7 @@ class Controller(metaclass=_ControllerMetaclass):
         return view_func(*view_args, **view_kwargs)
 
     def get_decorators(self, method_name):
-        return self.Meta.decorators or []
+        return self.Meta.decorators or ()
 
     def apply_decorators(self, view_func, decorators):
         if not decorators:

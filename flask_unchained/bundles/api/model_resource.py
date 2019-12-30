@@ -457,7 +457,7 @@ class ModelResource(Resource, metaclass=_ModelResourceMetaclass):
         return make_response(dump_fn(data), code, headers)
 
     def get_decorators(self, method_name):
-        decorators = super().get_decorators(method_name).copy()
+        decorators = list(super().get_decorators(method_name)).copy()
         if method_name not in ALL_RESOURCE_METHODS:
             return decorators
 
