@@ -52,11 +52,13 @@ class StringConverter(UnicodeConverter):
 def controller_name(cls, _remove_suffixes=None) -> str:
     """
     Returns the snake_cased name for a controller/resource class. Automatically
-    strips ``Controller``, ``View``, and ``MethodView`` suffixes, eg::
+    strips the ``Controller`` and ``View`` suffixes from controllers and resources,
+    as well as the ``Resource`` and ``MethodView`` suffixes from resources, eg::
 
         SiteController -> site
         FooBarBazView -> foo_bar_baz
         UsersMethodView -> users
+        RoleResource -> role
     """
     name = cls if isinstance(cls, str) else cls.__name__
     remove_suffixes = _remove_suffixes or getattr(cls, REMOVE_SUFFIXES_ATTR)

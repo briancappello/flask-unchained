@@ -381,9 +381,7 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
     Example usage::
 
         routes = lambda: [
-            prefix('/api/v1', [
-                resource('/products', ProductResource),
-            ])
+            resource(ProductResource),
         ]
 
     Or with the optional prefix argument::
