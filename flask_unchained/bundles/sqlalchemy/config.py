@@ -10,8 +10,8 @@ class Config(BundleConfig):
     The default configuration options for the SQLAlchemy Bundle.
     """
 
-    db_file = os.path.join(BundleConfig.current_app.root_path, 'db',
-                           f'{BundleConfig.current_app.env}.sqlite')
+    db_file = os.path.join(BundleConfig.current_app.root_path or '', 'db',
+                           f'{BundleConfig.current_app.env or "development"}.sqlite')
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{db_file}'
     """
     The database URI that should be used for the connection. Defaults to using SQLite
