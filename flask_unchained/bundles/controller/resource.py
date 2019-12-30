@@ -171,9 +171,7 @@ class Resource(Controller, metaclass=_ResourceMetaclass):
             class Meta:
                 member_param: '<string:username>'
 
-            def __init__(self, user_manager: UserManager = injectable):
-                super().__init__()
-                self.user_manager = user_manager
+            user_manager: UserManager = injectable
 
             def list():
                 return self.jsonify(dict(users=User.query.all()))

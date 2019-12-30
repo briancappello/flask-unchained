@@ -328,8 +328,7 @@ class ModelResource(Resource, metaclass=_ModelResourceMetaclass):
     class Meta:
         abstract = True
 
-    def __init__(self, session_manager: SessionManager = injectable):
-        self.session_manager = session_manager
+    session_manager: SessionManager = injectable
 
     @classmethod
     def methods(cls):

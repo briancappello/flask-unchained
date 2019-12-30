@@ -16,8 +16,7 @@ injectable = 'INJECTABLE_PARAMETER'
 Use this to mark a service parameter as injectable. For example::
 
     class MyService(Service):
-        def __init__(self, a_dependency: ADependency = injectable):
-            self.a_dependency = a_dependency
+        a_dependency: ADependency = injectable
 
 This allows MyService to be used in two ways::
 
@@ -66,9 +65,12 @@ def _get_injected_value(
     return value
 
 
-def _inject_cls_attrs(_wrapped_fn=None, _call_super_for_cls: Optional[str] = None):
+def _inject_cls_attrs(_wrapped_constructor: Optional[callable] = None,
+                      _call_super_for_cls: Optional[str] = None,
+                      ) -> callable:
     def __init__(self, *args, **kwargs):
         from .unchained import unchained
+
         for param in getattr(self, _INJECT_CLS_ATTRS):
             setattr(self, param, _get_injected_value(
                 unchained_ext=unchained,
@@ -81,11 +83,11 @@ def _inject_cls_attrs(_wrapped_fn=None, _call_super_for_cls: Optional[str] = Non
             this_cls = [c for c in self.__class__.__mro__
                         if c.__module__ == module and c.__name__ == name][0]
             super(this_cls, self).__init__(*args, **kwargs)
-        elif _wrapped_fn:
-            _wrapped_fn(self, *args, **kwargs)
+        elif _wrapped_constructor:
+            _wrapped_constructor(self, *args, **kwargs)
 
-    if _wrapped_fn:
-        return functools.wraps(_wrapped_fn)(__init__)
+    if _wrapped_constructor:
+        return functools.wraps(_wrapped_constructor)(__init__)
     return __init__
 
 
@@ -114,7 +116,7 @@ def _set_up_class_dependency_injection(mcs_args: McsArgs):
         init = unchained.inject()(mcs_args.clsdict['__init__'])
         init.__di_name__ = mcs_args.name
         mcs_args.clsdict['__init__'] = (init if not cls_attrs_to_inject
-                                        else _inject_cls_attrs(_wrapped_fn=init))
+                                        else _inject_cls_attrs(_wrapped_constructor=init))
         mcs_args.clsdict['__signature__'] = init.__signature__
 
     # when the user has wrapped a method with unchained.inject(), add our
