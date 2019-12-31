@@ -1,7 +1,7 @@
 alembic==1.3.2
-apispec==3.1.1
+apispec==3.2.0
 bcrypt==3.1.7
-beautifulsoup4==4.8.1
+beautifulsoup4==4.8.2
 blinker==1.4
 celery==4.4.0
 click==7.0
@@ -13,13 +13,14 @@ flask-graphql==2.0.1
 flask-login==0.4.1
 flask-marshmallow==0.10.1
 flask_migrate==2.5.2
+flask-oauthlib==0.9.5
 flask-principal==0.4.0
 flask-session==0.3.1
 flask-sqlalchemy-unchained==0.7.3
 flask_wtf==0.14.2
 graphene==2.1.8
 graphene-sqlalchemy==2.2.2
-IPython==7.10.2
+IPython==7.11.0
 itsdangerous==1.1.0
 jinja2==2.10.3
 lxml==4.4.2
@@ -30,6 +31,7 @@ networkx==2.4
 passlib==1.7.2
 py-meta-utils==0.7.6
 py-yaml-fixtures==0.5.0
+pyterminalsize
 pyqt5==5.14.0
 speaklater==1.3
 sqlalchemy==1.3.12
