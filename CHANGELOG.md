@@ -78,7 +78,6 @@ class YourAppBundle(AppBundle):
 - customizing bundle module locations changed:
 
 ```python
-# before
 class YourBundle(AppBundle):
     extensions_module_name = 'custom'  # before
     extensions_module_names = ['custom']  # after
@@ -120,7 +119,7 @@ class YourBundle(AppBundle):
 ### Internals
 
 - move `Bundle` and `AppBundle` into the `flask_unchained.bundles` module
-- move `BundleBlueprint` into the `flask_unchained.bundles.controler.bundle_blueprint` module
+- move `BundleBlueprint` into the `flask_unchained.bundles.controller.bundle_blueprint` module
 - move `_DeferredBundleFunctions` into `flask_unchained.unchained`, rename it to `DeferredBundleFunctions`
 - make `_has_views`, `_blueprint_names`, `_static_folders`, `is_top_bundle` and `_has_hierarchy_name_conflicts` methods on `Bundle` properties
 - rename double-negative `reverse_mro` parameter for `Bundle._iter_class_hierarchy` to `mro`
