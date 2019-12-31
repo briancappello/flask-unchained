@@ -14,7 +14,7 @@ from .forms import (
 from .models import AnonymousUser
 
 
-class AuthenticationConfigMixin(BundleConfig):
+class AuthenticationConfig:
     """
     Config options for logging in and out.
     """
@@ -47,7 +47,7 @@ class AuthenticationConfigMixin(BundleConfig):
     """
 
 
-class ChangePasswordConfigMixin(BundleConfig):
+class ChangePasswordConfig:
     """
     Config options for changing passwords
     """
@@ -75,7 +75,7 @@ class ChangePasswordConfigMixin(BundleConfig):
     """
 
 
-class EncryptionConfigMixin(BundleConfig):
+class EncryptionConfig:
     """
     Config options for encryption hashing.
     """
@@ -130,7 +130,7 @@ class EncryptionConfigMixin(BundleConfig):
     """
 
 
-class ForgotPasswordConfigMixin(BundleConfig):
+class ForgotPasswordConfig:
     """
     Config options for recovering forgotten passwords
     """
@@ -188,7 +188,7 @@ class ForgotPasswordConfigMixin(BundleConfig):
     """
 
 
-class RegistrationConfigMixin(BundleConfig):
+class RegistrationConfig:
     """
     Config options for user registration
     """
@@ -253,7 +253,7 @@ class RegistrationConfigMixin(BundleConfig):
     """
 
 
-class TokenConfigMixin(BundleConfig):
+class TokenConfig:
     """
     Config options for token authentication.
     """
@@ -275,12 +275,12 @@ class TokenConfigMixin(BundleConfig):
     """
 
 
-class Config(AuthenticationConfigMixin,
-             ChangePasswordConfigMixin,
-             EncryptionConfigMixin,
-             ForgotPasswordConfigMixin,
-             RegistrationConfigMixin,
-             TokenConfigMixin,
+class Config(AuthenticationConfig,
+             ChangePasswordConfig,
+             EncryptionConfig,
+             ForgotPasswordConfig,
+             RegistrationConfig,
+             TokenConfig,
              BundleConfig):
     """
     Default configuration settings for the Security Bundle.

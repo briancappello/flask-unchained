@@ -85,21 +85,19 @@ class _BundleTemplateFolderDescriptor:
 class Bundle(metaclass=_BundleMetaclass):
     """
     Base class for bundles.
+
+    Should be placed in your package's root or the ``bundle`` module::
+
+        # your_bundle_package/__init__.py
+        # your_bundle_package/bundle.py
+
+        class YourBundle(Bundle):
+            pass
     """
 
-    is_single_module: bool = _BundleIsSingleModuleDescriptor()
+    name: str = _BundleNameDescriptor()
     """
-    Whether or not the bundle is a single module (Python file).
-
-    Automatically determined; read-only.
-    """
-
-    default_load_from_module_name: str = None
-    """
-    **!! WARNING: EXPERIMENTAL (may cause mysterious exceptions to be thrown) !!**
-
-    The default module name for hooks to load from. Set hooks' bundle module override
-    attributes for the modules you want in separate files.
+    Name of the bundle. Defaults to the snake_cased class name.
     """
 
     module_name: str = _BundleModuleNameDescriptor()
@@ -107,12 +105,6 @@ class Bundle(metaclass=_BundleMetaclass):
     Top-level module name of the bundle (dot notation).
 
     Automatically determined; read-only.
-    """
-
-    name: str = _BundleNameDescriptor()
-    """
-    Name of the bundle. Defaults to the snake_cased class name, or for the app
-    bundle, the snake_cased class name minus its "Bundle" suffix (if any).
     """
 
     root_path: str = _BundleRootPathDescriptor()
@@ -141,6 +133,26 @@ class Bundle(metaclass=_BundleMetaclass):
     Url path where this bundle's static assets will be served from. If
     :attr:`~flask_unchained.Bundle.static_folder` is set, this will default to
     ``/<bundle.name>/static``, otherwise ``None``.
+    """
+
+    is_single_module: bool = _BundleIsSingleModuleDescriptor()
+    """
+    Whether or not the bundle is a single module (Python file).
+
+    Automatically determined; read-only.
+    """
+
+    default_load_from_module_name: str = None
+    """
+    The default module name for hooks to load from. Set hooks' bundle module override
+    attributes for the modules you want in separate files.
+
+    .. admonition:: WARNING - EXPERIMENTAL
+        :class: danger
+
+        Using this feature may cause mysterious exceptions to be thrown!!
+
+        Best practice is to organize your code in separate modules.
     """
 
     _deferred_functions: List[FunctionType] = []
@@ -277,8 +289,8 @@ class Bundle(metaclass=_BundleMetaclass):
 
 class _AppBundleMetaclass(_BundleMetaclass):
     """
-    Metaclass for :class:`AppBundle` to automatically set the user's subclass
-    on the :class:`~flask_unchained.Unchained` extension instance.
+    Metaclass for :class:`~flask_unchained.AppBundle` to automatically set the
+    user's subclass on the :class:`~flask_unchained.Unchained` extension instance.
     """
     def __init__(cls, name, bases, clsdict):
         super().__init__(name, bases, clsdict)
@@ -287,8 +299,14 @@ class _AppBundleMetaclass(_BundleMetaclass):
 
 class AppBundle(Bundle, metaclass=_AppBundleMetaclass):
     """
-    Like :class:`Bundle`, except used to specify your bundle is the top-most
+    Like :class:`~flask_unchained.Bundle`, except used for the top-most
     application bundle.
+    """
+
+    name: str = _BundleNameDescriptor()
+    """
+    Name of the bundle. Defaults to the snake_cased class name, excluding any
+    "Bundle" suffix.
     """
 
 

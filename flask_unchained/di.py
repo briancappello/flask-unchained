@@ -155,9 +155,9 @@ class _ServiceMetaclass(type):
 
 class Service(metaclass=_ServiceMetaclass):
     """
-    Base class for services in Flask Unchained. Automatically sets up dependency
-    injection on the constructor of the subclass, and allows for your service to
-    be automatically detected and used.
+    Base class for services. Automatically sets up dependency injection on the
+    constructor of the subclass, and allows for your service to be automatically
+    detected and used.
     """
     class Meta:
         abstract = True

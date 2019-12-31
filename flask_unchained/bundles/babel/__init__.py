@@ -29,6 +29,11 @@ class BabelBundle(Bundle):
     Names of the command groups included in this bundle.
     """
 
+    name = 'babel_bundle'
+    """
+    The name of the Babel Bundle.
+    """
+
     language_code_key = 'lang_code'
     """
     Default werkzeug parameter name to be used when registering language-specific URLs.
@@ -92,7 +97,9 @@ def gettext(*args, **kwargs):
     """
     Return the localized translation of message, based on the language, and
     locale directory of the domain specified in the translation key (or the
-    current global domain). This function is usually aliased as ``_``.
+    current global domain). This function is usually aliased as ``_``::
+
+        from flask_unchained import gettext as _
     """
     key = args[0]
     key_match = TRANSLATION_KEY_RE.match(key)
@@ -105,14 +112,19 @@ def gettext(*args, **kwargs):
 
 def lazy_gettext(*args, **kwargs):
     """
-    Like :func:`gettext`, except lazy. This function is usually aliased as ``_``.
+    Like :func:`gettext`, except lazy. This function is usually aliased as ``_``::
+
+        from flask_unchained import lazy_gettext as _
     """
     return make_lazy_string(gettext, *args, **kwargs)
 
 
 def ngettext(*args, **kwargs):
     """
-    Like :func:`gettext`, except it supports pluralization.
+    Like :func:`gettext`, except it supports pluralization. This function is usually
+    aliased as ``_``::
+
+        from flask_unchained import ngettext as _
     """
     is_plural = args[2] > 1
     if not is_plural:
@@ -131,7 +143,9 @@ def ngettext(*args, **kwargs):
 
 def lazy_ngettext(*args, **kwargs):
     """
-    Like :func:`ngettext`, except lazy.
+    Like :func:`ngettext`, except lazy. This function is usually aliased as ``_``::
+
+        from flask_unchained import lazy_ngettext as _
     """
     return make_lazy_string(ngettext, *args, **kwargs)
 

@@ -71,7 +71,7 @@ def right_replace(string, old, new, count=1):
 
 def slugify(string):
     """
-    Converts a string to a valid slug. For example::
+    Converts a string into a url-safe slug. For example::
 
         slugify('Hello World') -> 'hello-world'
     """

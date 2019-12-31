@@ -237,7 +237,7 @@ def maybe_convert_keys(data: Any,
 
 class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass):
     """
-    Base class for database model serializers. This is pretty much a stock
+    Base class for SQLAlchemy model serializers. This is pretty much a stock
     :class:`flask_marshmallow.sqla.ModelSchema`, except:
 
     - dependency injection is set up automatically on ModelSerializer

@@ -18,6 +18,8 @@ class Api:
     The ``Api`` extension::
 
         from flask_unchained.bundles.api import api
+
+    Allows interfacing with `apispec <https://apispec.readthedocs.io/en/latest/>`_.
     """
 
     def __init__(self):

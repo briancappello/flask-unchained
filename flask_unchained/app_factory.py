@@ -26,9 +26,7 @@ def maybe_set_app_factory_from_env():
 
 class AppFactory(metaclass=Singleton):
     """
-    This class implements the `Application Factory Pattern`_ for Flask Unchained.
-
-    .. _Application Factory Pattern: http://flask.pocoo.org/docs/1.0/patterns/appfactories/
+    The Application Factory Pattern for Flask Unchained.
     """
 
     APP_CLASS = FlaskUnchained

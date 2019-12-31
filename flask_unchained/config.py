@@ -12,9 +12,8 @@ class _BundleConfigMetaclass(type):
 
 class BundleConfig(metaclass=_BundleConfigMetaclass):
     """
-    Base class for bundle configs. Allows access to the app-under-construction
-    as it's currently configured from the order bundles were declared in
-    ``unchained_config.BUNDLES``. Example usage::
+    Base class for configuration settings. Allows access to the
+    app-under-construction as it's currently configured. Example usage::
 
         # your_bundle_root/config.py
 

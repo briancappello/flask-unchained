@@ -5,5 +5,6 @@ from .extensions import Session, session
 
 class SessionBundle(Bundle):
     """
-    The :class:`Bundle` subclass for the Session Bundle. Has no special behaviour.
+    The Session Bundle. Integrates
+    `Flask Session <https://pythonhosted.org/Flask-Session/>`_ with Flask Unchained.
     """

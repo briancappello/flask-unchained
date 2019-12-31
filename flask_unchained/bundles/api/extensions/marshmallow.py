@@ -14,9 +14,13 @@ from ..model_serializer import ModelSerializer
 
 class Marshmallow:
     """
-    The `Marshmallow` extension::
+    The ``Marshmallow`` extension::
 
         from flask_unchained.bundles.api import ma
+
+    Aliases the `Marshmallow <https://marshmallow.readthedocs.io/en/stable/>`_
+    module and fields to the extension, as well as the fields from
+    `Flask-Marshmallow <https://flask-marshmallow.readthedocs.io/en/latest/>`_.
     """
 
     def __init__(self):

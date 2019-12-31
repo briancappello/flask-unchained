@@ -12,7 +12,7 @@ from kombu.utils.encoding import str_to_bytes
 
 class Celery(BaseCelery):
     """
-    The `Celery` extension::
+    The ``Celery`` extension::
 
         from flask_unchained.bundles.celery import celery
     """

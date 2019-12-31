@@ -11,8 +11,21 @@ from .services import ModelManager, SessionManager
 
 
 class SQLAlchemyBundle(Bundle):
+    """
+    The SQLAlchemy Bundle. Integrates `SQLAlchemy <https://www.sqlalchemy.org/>`_
+    and `Flask-Migrate <https://flask-migrate.readthedocs.io/en/latest/>`_
+    with Flask Unchained.
+    """
+
     name = 'sqlalchemy_bundle'
+    """
+    The name of the SQLAlchemy Bundle.
+    """
+
     command_group_names = ['db']
+    """
+    Click groups for the SQLAlchemy Bundle.
+    """
 
     def __init__(self):
         self.models = {}

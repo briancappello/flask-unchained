@@ -6,12 +6,23 @@ from .models import AnonymousUser, User, Role, UserRole
 from .services import SecurityService, SecurityUtilsService, UserManager, RoleManager
 from .utils import current_user
 from .views import SecurityController, UserResource
-from .extensions import Security, security
+from .extensions import Security, security  # must be imported last
 
 
 class SecurityBundle(Bundle):
     """
-    The :class:`~flask_unchained.Bundle` subclass for the Security Bundle.
+    The Security Bundle. Integrates
+    `Flask Login <https://flask-login.readthedocs.io/en/latest/>`_ and
+    `Flask Principal <https://pythonhosted.org/Flask-Principal/>`_
+    with Flask Unchained.
+    """
+
+    name = 'security_bundle'
+    """
+    The name of the Security Bundle.
     """
 
     command_group_names = ['users', 'roles']
+    """
+    Click groups for the Security Bundle.
+    """

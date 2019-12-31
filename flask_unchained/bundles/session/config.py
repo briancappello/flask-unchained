@@ -9,7 +9,11 @@ except ImportError:
     db = None
 
 
-class _DefaultFlaskConfigForSessions(BundleConfig):
+class DefaultFlaskConfigForSessions(BundleConfig):
+    """
+    Default configuration options for sessions in Flask.
+    """
+
     SESSION_COOKIE_NAME = 'session'
     """
     The name of the session cookie.
@@ -78,9 +82,12 @@ class _DefaultFlaskConfigForSessions(BundleConfig):
     """
 
 
-class Config(_DefaultFlaskConfigForSessions):
+class Config(DefaultFlaskConfigForSessions):
     """
     Default configuration options for the Session Bundle.
+
+    See `Flask Session <https://pythonhosted.org/Flask-Session/#configuration>`_
+    for more information.
     """
 
     SESSION_TYPE = 'null'

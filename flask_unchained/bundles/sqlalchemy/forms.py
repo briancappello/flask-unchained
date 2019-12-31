@@ -195,6 +195,9 @@ class _ModelFormMetaclass(_FormMetaclass):
 
 
 class ModelForm(FlaskForm, metaclass=_ModelFormMetaclass):
+    """
+    Base class for SQLAlchemy model forms.
+    """
     class Meta:
         abstract = True
 

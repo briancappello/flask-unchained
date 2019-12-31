@@ -204,7 +204,7 @@ class _ControllerMetaOptionsFactory(MetaOptionsFactory):
 
 class Controller(metaclass=_ControllerMetaclass):
     """
-    Base class for class-based views in Flask Unchained.
+    Base class for views.
 
     Concrete controllers should subclass this and their public methods will used as
     the views. By default view methods will be assigned routing defaults with the
@@ -397,19 +397,15 @@ class Controller(metaclass=_ControllerMetaclass):
 
     @classmethod
     def method_as_view(cls, method_name, *class_args, **class_kwargs):
-        """
-        this code, combined with apply_decorators and dispatch_request, is
-        95% taken from Flask's View.as_view classmethod (albeit refactored)
-        differences:
-
-        - we pass method_name to dispatch_request, to allow for easier
-          customization of behavior by subclasses
-        - we apply decorators later, so they get called when the view does
-
-        FIXME: maybe this last bullet point is a horrible idea???
-        - we also apply them in reverse, so that they get applied in the
-          logical top-to-bottom order as declared in controllers
-        """
+        # this code, combined with apply_decorators and dispatch_request, is
+        # 95% taken from Flask's View.as_view classmethod (albeit refactored)
+        # differences:
+        #
+        # - we pass method_name to dispatch_request, to allow for easier
+        #   customization of behavior by subclasses
+        # - we apply decorators later, so they get called when the view does
+        # - we also apply them in reverse, so that they get applied in the
+        #   logical top-to-bottom order as declared in controllers
         if method_name not in cls._view_funcs:
             def view_func(*args, **kwargs):
                 self = view_func.view_class(*class_args, **class_kwargs)

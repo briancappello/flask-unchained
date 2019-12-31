@@ -58,11 +58,14 @@ class Config(BundleConfig):
 
 class DevConfig(Config):
     LAZY_TRANSLATIONS = False
+    """Do not use lazy translations in development."""
 
 
 class ProdConfig(Config):
     LAZY_TRANSLATIONS = True
+    """Use lazy translations in production."""
 
 
 class StagingConfig(ProdConfig):
-    pass
+    LAZY_TRANSLATIONS = True
+    """Use lazy translations in staging."""

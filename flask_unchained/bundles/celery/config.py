@@ -28,7 +28,9 @@ class Config(BundleConfig):
     Tuple of supported serialization strategies.
     """
 
-    # configure mail bundle to send emails via celery
-    # NOTE: the celery bundle must be listed *after* the mail bundle in the user's
-    # unchained_config in order for this to work
     MAIL_SEND_FN = _send_mail_async
+    """
+    If the celery bundle is listed *after* the mail bundle in
+    ``unchained_config.BUNDLES``, then this configures the mail bundle to
+    send emails asynchronously.
+    """

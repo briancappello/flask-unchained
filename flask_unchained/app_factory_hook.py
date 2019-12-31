@@ -90,7 +90,7 @@ class AppFactoryHook:
     this hook will load from for that bundle. The defaults are as follows:
 
     If :attr:`require_exactly_one_bundle_module` and :attr:`bundle_module_name` are set,
-    use f'{<the set bundle module name>}_module_name'.
+    use ``f'{<the set bundle module name>}_module_name'``.
 
     Otherwise if :attr:`bundle_module_names` is set, we use the same f-string, just with
     the first module name listed in :attr:`bundle_module_names`.

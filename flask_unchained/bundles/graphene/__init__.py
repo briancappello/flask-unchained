@@ -8,7 +8,14 @@ from .object_types import MutationsObjectType, QueriesObjectType, SQLAlchemyObje
 
 
 class GrapheneBundle(Bundle):
+    """
+    The Graphene Bundle. Integrates Flask-GraphQL with SQLAlchemy.
+    """
+
     name = 'graphene_bundle'
+    """
+    The name of the Graphene Bundle.
+    """
 
     root_schema: graphene.Schema = None
     """

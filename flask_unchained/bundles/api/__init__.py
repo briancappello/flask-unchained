@@ -9,6 +9,13 @@ from .model_serializer import ModelSerializer
 
 
 class ApiBundle(Bundle):
+    """The API Bundle."""
+
+    name = 'api_bundle'
+    """
+    The name of the API Bundle.
+    """
+
     def __init__(self):
         self.resources_by_model = {}
         """

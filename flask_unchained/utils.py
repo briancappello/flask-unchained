@@ -1,16 +1,15 @@
-import datetime
 import os
 import re
 import sys
 
+from datetime import datetime, timezone
 from flask import current_app
 from importlib import import_module
 
 
 class AttrDict(dict):
     """
-    A dictionary subclass that implements attribute access, ie using the dot operator
-    to get and set keys.
+    A dictionary that allows using the dot operator to get and set keys.
     """
     def __getattr__(self, key):
         return self[key]
@@ -24,8 +23,8 @@ class AttrDict(dict):
 
 class ConfigProperty:
     """
-    Used in conjunction with ConfigPropertyMetaclass, allows extension classes to
-    create properties that proxy to the config value, eg app.config.get(key)
+    Allows extension classes to create properties that proxy to the config value,
+    eg ``app.config[key]``.
 
     If key is left unspecified, in will be injected by ``ConfigPropertyMetaclass``,
     defaulting to ``f'{ext_class_name}_{property_name}'.upper()``.
@@ -97,7 +96,7 @@ def format_docstring(docstring):
 
 def get_boolean_env(name, default):
     """
-    Converts environment variables to boolean values, where truthy is defined as:
+    Converts environment variables to boolean values. Truthy is defined as:
     ``value.lower() in {'true', 'yes', 'y', '1'}`` (everything else is falsy).
     """
     default = 'true' if default else 'false'
@@ -107,7 +106,7 @@ def get_boolean_env(name, default):
 def safe_import_module(module_name):
     """
     Like :func:`importlib.import_module`, except it does not raise ``ImportError``
-    if the requested ``module_name`` was not found.
+    if the requested ``module_name`` is not found.
     """
     try:
         return import_module(module_name)
@@ -119,9 +118,10 @@ def safe_import_module(module_name):
 
 def utcnow():
     """
-    Returns a current timezone-aware datetime.datetime in UTC
+    Returns a current timezone-aware ``datetime.datetime`` in UTC.
     """
-    return datetime.datetime.now(datetime.timezone.utc)
+    # timeit shows that datetime.now(tz=timezone.utc) is 24% slower
+    return datetime.utcnow().replace(tzinfo=timezone.utc)
 
 
 __all__ = [

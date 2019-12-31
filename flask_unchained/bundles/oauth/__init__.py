@@ -1,5 +1,8 @@
 from flask_unchained import Bundle
 
+from .services import OAuthService
+from .views import OAuthController
+
 
 class OAuthBundle(Bundle):
     """

@@ -21,7 +21,7 @@ class _AttrDictFlaskConfig(_AttrDict, _FlaskConfig):
 
 class FlaskUnchained(Flask):
     """
-    A simple subclass of the :class:`~flask.Flask` class. Overrides
+    A simple subclass of :class:`flask.Flask`. Overrides
     :meth:`register_blueprint` and :meth:`add_url_rule` to support
     automatic (optional) registration of URLs prefixed with a language code.
     """
