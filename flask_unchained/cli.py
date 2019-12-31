@@ -12,14 +12,16 @@ import os
 import sys
 import time
 
-from flask.cli import with_appcontext  # skipcq (alias)
-from flask_unchained import click
-from flask_unchained.app_factory import AppFactory, maybe_set_app_factory_from_env
-from flask_unchained.constants import DEV, PROD, STAGING, TEST
-from flask_unchained.utils import get_boolean_env
-from pyterminalsize import get_terminal_size
 from traceback import format_exc
 from typing import *
+
+from flask.cli import with_appcontext  # skipcq (alias)
+from pyterminalsize import get_terminal_size
+
+from . import click
+from .app_factory import AppFactory, maybe_set_app_factory_from_env
+from .constants import DEV, PROD, STAGING, TEST
+from .utils import get_boolean_env
 
 IterableOfStrings = Union[List[str], Tuple[str, ...]]
 IterableOfTuples = Union[List[tuple], Tuple[tuple, ...]]

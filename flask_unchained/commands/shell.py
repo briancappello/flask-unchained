@@ -39,9 +39,7 @@ def _get_shell_ctx():
     # conventions and get $PYTHONSTARTUP first then .pythonrc.py.
     for pythonrc in [os.environ.get("PYTHONSTARTUP"),
                      os.path.expanduser('~/.pythonrc.py')]:
-        if not pythonrc:
-            continue
-        if not os.path.isfile(pythonrc):
+        if not pythonrc or not os.path.isfile(pythonrc):
             continue
         with open(pythonrc) as f:
             pythonrc_code = f.read()

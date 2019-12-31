@@ -1,11 +1,11 @@
 import os
 
-from flask import Blueprint as _Blueprint, current_app
-from flask.helpers import safe_join, send_file
+from flask import Blueprint as _Blueprint
 from flask.blueprints import BlueprintSetupState as _BlueprintSetupState
+from flask.helpers import send_from_directory as _send_from_directory
 from flask.helpers import _endpoint_from_view_func
 from flask_unchained import Bundle
-from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import NotFound
 
 
 class _BundleBlueprintSetupState(_BlueprintSetupState):
@@ -14,6 +14,8 @@ class _BundleBlueprintSetupState(_BlueprintSetupState):
         A helper method to register a rule (and optionally a view function)
         to the application.  The endpoint is automatically prefixed with the
         blueprint's name.
+
+        Overridden to allow dots in endpoint names.
         """
         if self.url_prefix:
             rule = self.url_prefix + rule
@@ -53,8 +55,13 @@ class BundleBlueprint(_Blueprint):
         # Ensure get_send_file_max_age is called in all cases.
         # Here, we ensure get_send_file_max_age is called for Blueprints.
         cache_timeout = self.get_send_file_max_age(filename)
-        return _send_from_directories(self.bundle._static_folders, filename,
-                                      cache_timeout=cache_timeout)
+        for directory in self.bundle._static_folders:
+            try:
+                return _send_from_directory(directory, filename,
+                                            cache_timeout=cache_timeout)
+            except NotFound:
+                continue
+        raise NotFound()
 
     def make_setup_state(self, app, options, first_registration=False):
         return _BundleBlueprintSetupState(self, app, options, first_registration)
@@ -64,7 +71,7 @@ class BundleBlueprint(_Blueprint):
         Like :meth:`~flask.Flask.add_url_rule` but for a blueprint.  The endpoint for
         the :func:`url_for` function is prefixed with the name of the blueprint.
 
-        Overridden to allow dots in endpoint names
+        Overridden to allow dots in endpoint names.
         """
         self.record(lambda s: s.add_url_rule(rule, endpoint, view_func,
                                              register_with_babel=False, **options))
@@ -93,43 +100,3 @@ class BundleBlueprint(_Blueprint):
 
     def __repr__(self):
         return f'BundleBlueprint(name={self.name!r}, bundle={self.bundle!r})'
-
-
-def _send_from_directories(directories, filename, **options):
-    """
-    Send a file from the first directory it's found in with :func:`send_file`.
-    This is a secure way to quickly expose static files from an upload folder
-    or something similar.
-
-    Example usage::
-
-        @app.route('/uploads/<path:filename>')
-        def download_file(filename):
-            return send_from_directory(app.config.UPLOAD_FOLDER,
-                                       filename, as_attachment=True)
-
-    .. admonition:: Sending files and Performance
-
-       It is strongly recommended to activate either ``X-Sendfile`` support in
-       your webserver or (if no authentication happens) to tell the webserver
-       to serve files for the given path on its own without calling into the
-       web application for improved performance.
-
-    :param directories: the list of directories to look for filename.
-    :param filename: the filename relative to that directory to
-                     download.
-    :param options: optional keyword arguments that are directly
-                    forwarded to :func:`send_file`.
-    """
-    for directory in directories:
-        filename = safe_join(directory, filename)
-        if not os.path.isabs(filename):
-            filename = os.path.join(current_app.root_path, filename)
-        try:
-            if not os.path.isfile(filename):
-                continue
-        except (TypeError, ValueError):
-            raise BadRequest()
-        options.setdefault('conditional', True)
-        return send_file(filename, **options)
-    raise NotFound()
