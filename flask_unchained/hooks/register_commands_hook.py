@@ -23,6 +23,7 @@ class RegisterCommandsHook(AppFactoryHook):
     def run_hook(self,
                  app: FlaskUnchained,
                  bundles: List[Bundle],
+                 unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> Dict[str, Union[click.Command, click.Group]]:
         commands = {}
         for bundle in bundles:

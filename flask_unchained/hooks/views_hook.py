@@ -10,5 +10,5 @@ class ViewsHook(AppFactoryHook):
     bundle_module_names = ['views']
     run_after = ['blueprints']
 
-    def run_hook(self, app, bundles) -> None:
+    def run_hook(self, app, bundles, unchained_config=None) -> None:
         pass  # noop

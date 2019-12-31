@@ -16,7 +16,11 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
     bundle_module_names = None
     run_before = ['blueprints']
 
-    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
+    def run_hook(self,
+                 app: FlaskUnchained,
+                 bundles: List[Bundle],
+                 unchained_config: Optional[Dict[str, Any]] = None,
+                 ) -> None:
         for bundle_ in reversed(bundles):
             for bundle in bundle_._iter_class_hierarchy(mro=True):
                 if (bundle.template_folder

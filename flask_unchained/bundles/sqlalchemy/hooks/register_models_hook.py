@@ -10,7 +10,7 @@ from ..model_registry import UnchainedModelRegistry
 
 class RegisterModelsHook(AppFactoryHook):
     """
-    Discovers models and model forms.
+    Discovers SQLAlchemy models.
     """
 
     name = 'models'

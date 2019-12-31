@@ -35,11 +35,10 @@ class ConfigureAppHook(AppFactoryHook):
     require_exactly_one_bundle_module = True
     run_after = ['register_extensions']
 
-    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     def run_hook(self,
                  app: FlaskUnchained,
                  bundles: List[Bundle],
-                 _config_overrides: Optional[Dict[str, Any]] = None,
+                 unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> None:
         """
         For each bundle in ``unchained_config.BUNDLES``, iterate through that
@@ -56,6 +55,8 @@ class ConfigureAppHook(AppFactoryHook):
             for bundle in bundle_._iter_class_hierarchy():
                 app.config.from_mapping(self.get_bundle_config(bundle, app.env))
 
+        _config_overrides = (unchained_config.get('_CONFIG_OVERRIDES')
+                             if unchained_config else None)
         if _config_overrides and isinstance(_config_overrides, dict):
             app.config.from_mapping(_config_overrides)
 

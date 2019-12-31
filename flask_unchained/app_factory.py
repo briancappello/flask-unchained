@@ -62,32 +62,39 @@ class AppFactory(metaclass=Singleton):
         :param env: Which environment the app should run in. Should be one of
                     "development", "production", "staging", or "test" (you can import
                     them: ``from flask_unchained import DEV, PROD, STAGING, TEST``)
+        :type env: str
         :param bundles: An optional list of bundle modules names to use. Overrides
                         ``unchained_config.BUNDLES`` (mainly useful for testing).
+        :type bundles: List[str]
         :param app_kwargs: keyword argument overrides for the :attr:`APP_CLASS`
                            constructor
+        :type app_kwargs: Dict[str, Any]
         :param _config_overrides: a dictionary of config option overrides; meant for
                                   test fixtures (for internal use only).
         :param _load_unchained_config: Whether or not to try to load unchained_config
                                        (for internal use only).
-        :return: The configured and initialized :attr:`APP_CLASS` application instance
+        :return: The initialized :attr:`APP_CLASS` app instance, ready to rock'n'roll
         """
-        unchained_config = (self.load_unchained_config(env)
-                            if _load_unchained_config else None)
+        config_dict, unchained_config_module = {}, None
+        if _load_unchained_config:
+            unchained_config_module = self.load_unchained_config(env)
+            config_dict = {k: v for k, v in vars(unchained_config_module).items()
+                           if not k.startswith('_') and k.isupper()}
+        config_dict['_CONFIG_OVERRIDES'] = _config_overrides
+
         _, bundles = self.load_bundles(
-            bundle_package_names=bundles or getattr(unchained_config, 'BUNDLES', []),
-            unchained_config=unchained_config,
-        )
+            bundle_package_names=bundles or config_dict.get('BUNDLES', []),
+            unchained_config=unchained_config_module)
 
         app_import_name = (bundles[-1].module_name.split('.')[0] if bundles
                            else ('tests' if env == TEST else 'dev_app'))
-        app = self.APP_CLASS(app_import_name, **self.apply_default_app_kwargs(
-            app_kwargs, bundles, env, unchained_config))
+        app = self.APP_CLASS(app_import_name, **self.get_app_kwargs(
+            app_kwargs, bundles, env, config_dict))
 
         for bundle in bundles:
             bundle.before_init_app(app)
 
-        unchained.init_app(app, env, bundles, _config_overrides=_config_overrides)
+        unchained.init_app(app, env, bundles, config_dict)
 
         for bundle in bundles:
             bundle.after_init_app(app)
@@ -116,25 +123,26 @@ class AppFactory(metaclass=Singleton):
             e.msg = msg
             raise e
 
-    def apply_default_app_kwargs(self, app_kwargs, bundles, env, unchained_config):
+    def get_app_kwargs(self,
+                       app_kwargs: Dict[str, Any],
+                       bundles: List[Bundle],
+                       env: Union[DEV, PROD, STAGING, TEST],
+                       unchained_config: Dict[str, Any],
+                       ) -> Dict[str, Any]:
         # this is for developing standalone bundles (as opposed to regular apps)
         if not isinstance(bundles[-1], AppBundle) and env != TEST:
             app_kwargs['template_folder'] = os.path.join(
                 os.path.dirname(__file__), 'templates')
 
         # set kwargs to pass to Flask from the unchained_config
-        valid_app_kwargs = {
-            name for i, (name, param)
-            in enumerate(inspect.signature(self.APP_CLASS).parameters.items())
-            if i > 0 and (
-                    param.kind == param.POSITIONAL_OR_KEYWORD
-                    or param.kind == param.KEYWORD_ONLY
-            )
-        }
+        params = inspect.signature(self.APP_CLASS).parameters
+        valid_app_kwargs = [name for i, (name, param) in enumerate(params.items())
+                            if i > 0 and (param.kind == param.POSITIONAL_OR_KEYWORD
+                                          or param.kind == param.KEYWORD_ONLY)]
         for kw in valid_app_kwargs:
             config_key = kw.upper()
-            if hasattr(unchained_config, config_key):
-                app_kwargs.setdefault(kw, getattr(unchained_config, config_key))
+            if config_key in unchained_config:
+                app_kwargs.setdefault(kw, unchained_config[config_key])
 
         # set up the root static/templates folders (if any)
         root_path = app_kwargs.get('root_path')

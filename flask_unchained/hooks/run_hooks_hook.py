@@ -19,19 +19,13 @@ class RunHooksHook(AppFactoryHook):
 
     bundle_module_names = ['hooks']
 
-    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     def run_hook(self,
                  app: FlaskUnchained,
                  bundles: List[Bundle],
-                 _config_overrides: Optional[Dict[str, Any]] = None,
+                 unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> None:
-        from .configure_app_hook import ConfigureAppHook
-
         for hook in self.collect_from_bundles(bundles):
-            if isinstance(hook, ConfigureAppHook):
-                hook.run_hook(app, bundles, _config_overrides=_config_overrides)
-            else:
-                hook.run_hook(app, bundles)
+            hook.run_hook(app, bundles, unchained_config)
             hook.update_shell_context(self.unchained._shell_ctx)
 
     def collect_from_bundles(self, bundles: List[Bundle]) -> List[AppFactoryHook]:

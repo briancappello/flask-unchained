@@ -20,7 +20,11 @@ class RegisterRoutesHook(AppFactoryHook):
     require_exactly_one_bundle_module = True
     run_before = ['blueprints', 'bundle_blueprints']
 
-    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
+    def run_hook(self,
+                 app: FlaskUnchained,
+                 bundles: List[Bundle],
+                 unchained_config: Optional[Dict[str, Any]] = None,
+                 ) -> None:
         app_bundle = bundles[-1]
 
         try:

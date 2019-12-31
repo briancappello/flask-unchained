@@ -9,7 +9,11 @@ class RegisterGrapheneRootSchemaHook(AppFactoryHook):
     bundle_module_names = None
     run_after = ['graphene_queries', 'graphene_mutations']
 
-    def run_hook(self, app: FlaskUnchained, bundles: List[Bundle]):
+    def run_hook(self,
+                 app: FlaskUnchained,
+                 bundles: List[Bundle],
+                 unchained_config: Optional[Dict[str, Any]] = None,
+                 ) -> None:
         mutations = tuple(self.bundle.mutations.values())
         queries = tuple(self.bundle.queries.values())
 

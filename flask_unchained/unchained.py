@@ -124,7 +124,7 @@ class DeferredBundleFunctions:
 
 class Unchained:
     """
-    The `Unchained` extension. Responsible for initializing the app by loading all
+    The ``Unchained`` extension. Responsible for initializing the app by loading all
     the things from bundles, keeping references to all of the various discovered
     bundles and things inside them, and for doing dependency injection. To get access
     to the ``unchained`` extension instance::
@@ -184,7 +184,7 @@ class Unchained:
                  # FIXME: properly type hint this once on 3.7+, on 3.6 we get
                  # circular import errors
                  bundles: Optional[List] = None,
-                 _config_overrides: Optional[Dict[str, Any]] = None,
+                 unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> None:
         # deferred import to prevent circular dependency
         from .hooks.run_hooks_hook import RunHooksHook
@@ -210,7 +210,7 @@ class Unchained:
             deferred(app)
 
         run_hooks_hook = RunHooksHook(self)
-        run_hooks_hook.run_hook(app, bundles, _config_overrides=_config_overrides)
+        run_hooks_hook.run_hook(app, bundles, unchained_config)
 
         self._initialized = True
 
