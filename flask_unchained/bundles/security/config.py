@@ -283,7 +283,7 @@ class Config(AuthenticationConfig,
              TokenConfig,
              BundleConfig):
     """
-    Default configuration settings for the Security Bundle.
+    Config options for the Security Bundle.
     """
 
     SECURITY_ANONYMOUS_USER = AnonymousUser

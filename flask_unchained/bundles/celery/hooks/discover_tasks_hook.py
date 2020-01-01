@@ -6,8 +6,20 @@ class DiscoverTasksHook(AppFactoryHook):
     """
     Discovers celery tasks.
     """
+
     name = 'celery_tasks'
+    """
+    The name of this hook.
+    """
+
     bundle_module_names = ['tasks']
+    """
+    The default module this hook loads from.
+
+    Override by setting the ``celery_tasks_module_names`` attribute on your
+    bundle class.
+    """
+
     bundle_override_module_names_attr = 'celery_tasks_module_names'
     run_after = ['init_extensions']
 

@@ -19,14 +19,9 @@ PLURAL_TRANSLATION_KEY_RE = re.compile(r'^(?P<domain>[a-z_.]+):[a-z_.]+\.plural$
 
 class BabelBundle(Bundle):
     """
-    The :class:`~flask_unchained.Bundle` subclass for the Babel Bundle. Responsible for
-    configuring the correct gettext callables with Jinja, as well as optionally
-    registering endpoints for language-specific URLs (if enabled).
-    """
-
-    command_group_names = ('babel',)
-    """
-    Names of the command groups included in this bundle.
+    The Babel Bundle. Responsible for configuring the correct gettext callables
+    with Jinja, as well as optionally registering endpoints for language-specific
+    URLs (if enabled).
     """
 
     name = 'babel_bundle'
@@ -34,9 +29,14 @@ class BabelBundle(Bundle):
     The name of the Babel Bundle.
     """
 
+    command_group_names = ('babel',)
+    """
+    Names of the command groups included in this bundle.
+    """
+
     language_code_key = 'lang_code'
     """
-    Default werkzeug parameter name to be used when registering language-specific URLs.
+    Default Werkzeug parameter name to be used when registering language-specific URLs.
     """
 
     def before_init_app(self, app: FlaskUnchained):

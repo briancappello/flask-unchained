@@ -5,7 +5,15 @@ from .extensions import Mail, mail
 
 class MailBundle(Bundle):
     """
-    The :class:`Bundle` subclass for the mail bundle. Has no special behavior.
+    The Mail Bundle.
+    """
+
+    name = 'mail_bundle'
+    """
+    The name of the Mail Bundle.
     """
 
     command_group_names = ['mail']
+    """
+    Click groups for the Mail Bundle.
+    """

@@ -16,7 +16,18 @@ class RegisterRoutesHook(AppFactoryHook):
     """
 
     name = 'routes'
+    """
+    The name of this hook.
+    """
+
     bundle_module_name = 'routes'
+    """
+    The default module this hook loads from.
+
+    Override by setting the ``routes_module_name`` attribute on your
+    bundle class.
+    """
+
     require_exactly_one_bundle_module = True
     run_before = ['blueprints', 'bundle_blueprints']
 
@@ -25,6 +36,9 @@ class RegisterRoutesHook(AppFactoryHook):
                  bundles: List[Bundle],
                  unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> None:
+        """
+        Discover and register routes.
+        """
         app_bundle = bundles[-1]
 
         try:
@@ -43,6 +57,10 @@ class RegisterRoutesHook(AppFactoryHook):
 
     # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     def process_objects(self, app: FlaskUnchained, routes: Iterable[Route]):
+        """
+        Organize routes by where they came from, and then register them with
+        the app.
+        """
         for route in _reduce_routes(routes):
             if route.should_register(app):
                 existing_route = (self.bundle.endpoints.get(route.endpoint, None)
@@ -103,6 +121,9 @@ class RegisterRoutesHook(AppFactoryHook):
                              **route.rule_options)
 
     def get_explicit_routes(self, bundle: Bundle):
+        """
+        Collect routes from a bundle using declarative routing.
+        """
         routes_module = self.import_bundle_modules(bundle)[0]
         try:
             return getattr(routes_module, 'routes')()
@@ -112,6 +133,9 @@ class RegisterRoutesHook(AppFactoryHook):
                                  f'in the {module_name} module!')
 
     def collect_from_bundle(self, bundle: Bundle):
+        """
+        Collect routes from a bundle when not using declarative routing.
+        """
         if not bundle._has_views:
             return ()
 
@@ -130,6 +154,10 @@ class RegisterRoutesHook(AppFactoryHook):
                 return ()
 
     def type_check(self, obj):
+        """
+        Returns True if ``obj`` was decorated with :func:`~flask_unchained.route` or
+        if ``obj`` is a controller or resource with views.
+        """
         if isinstance(obj, LocalProxy):
             return False
         is_controller = hasattr(obj, CONTROLLER_ROUTES_ATTR)

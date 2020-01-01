@@ -5,15 +5,28 @@ from ..model_admin import ModelAdmin
 
 class RegisterModelAdminsHook(AppFactoryHook):
     """
-    Registers ModelAdmins.
+    Registers ModelAdmins with the `Admin` extension.
     """
 
     name = 'admins'
+    """
+    The name of this hook.
+    """
+
     bundle_module_names = ['admins']
-    run_after = ['bundle_template_folders', 'register_extensions', 'models']
+    """
+    The default module this hook loads from.
+
+    Override by setting the ``admins_module_names`` attribute on your bundle class.
+    """
+
     run_before = ['init_extensions']
+    run_after = ['bundle_template_folders', 'register_extensions', 'models']
 
     def process_objects(self, app, objects):
+        """
+        Register discovered ModelAdmins with the Admin extension.
+        """
         admin = self.unchained.extensions.admin
         admin.category_icon_classes = app.config.ADMIN_CATEGORY_ICON_CLASSES
 
@@ -40,5 +53,9 @@ class RegisterModelAdminsHook(AppFactoryHook):
             admin.add_view(model_admin)
 
     def type_check(self, obj):
+        """
+        Returns True if ``obj`` is a subclass of
+        :class:`~flask_unchained.bundles.admin.ModelAdmin`.
+        """
         is_class = isinstance(obj, type) and issubclass(obj, ModelAdmin)
         return is_class and obj != ModelAdmin

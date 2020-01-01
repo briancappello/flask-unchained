@@ -62,7 +62,7 @@ class NextFormMixin:
 
 
 class LoginForm(BaseForm, NextFormMixin):
-    """The default login form"""
+    """The default login form."""
     class Meta:
         model = User
 
@@ -108,6 +108,7 @@ class LoginForm(BaseForm, NextFormMixin):
 
 
 class ForgotPasswordForm(BaseForm):
+    """The default forgot password form."""
     class Meta:
         model = User
 
@@ -128,6 +129,7 @@ class PasswordFormMixin:
 
 
 class ChangePasswordForm(BaseForm):
+    """The default change password form."""
     class Meta:
         model = User
         model_fields = {'new_password': 'password',
@@ -161,6 +163,7 @@ class ChangePasswordForm(BaseForm):
 
 
 class RegisterForm(BaseForm, PasswordFormMixin, NextFormMixin):
+    """The default register form."""
     class Meta:
         model = User
 
@@ -181,6 +184,7 @@ class RegisterForm(BaseForm, PasswordFormMixin, NextFormMixin):
 
 
 class ResetPasswordForm(BaseForm, PasswordFormMixin):
+    """The default reset password form."""
     class Meta:
         model = User
         model_fields = {'password_confirm': 'password'}
@@ -190,6 +194,7 @@ class ResetPasswordForm(BaseForm, PasswordFormMixin):
 
 
 class SendConfirmationForm(BaseForm):
+    """The default resend confirmation email form."""
     class Meta:
         model = User
 

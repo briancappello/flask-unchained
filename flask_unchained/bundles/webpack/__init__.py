@@ -5,7 +5,10 @@ from .extensions import Webpack, webpack
 
 class WebpackBundle(Bundle):
     """
-    The :class:`~flask_unchained.Bundle` subclass for the webpack bundle. Has no special
-    behavior.
+    The Webpack Bundle.
     """
-    pass
+
+    name = 'webpack_bundle'
+    """
+    The name of the Webpack Bundle.
+    """

@@ -32,6 +32,9 @@ class RegisterModelSerializersHook(AppFactoryHook):
                         app: FlaskUnchained,
                         serializers: Dict[str, Type[ModelSerializer]],
                         ) -> None:
+        """
+        Registers model serializers onto the API Bundle instance.
+        """
         for name, serializer in serializers.items():
             self.bundle.serializers[name] = serializer
 
@@ -48,9 +51,16 @@ class RegisterModelSerializersHook(AppFactoryHook):
                 self.bundle.many_by_model[model_name] = serializer
 
     def type_check(self, obj: Any) -> bool:
+        """
+        Returns True if ``obj`` is a subclass of
+        :class:`~flask_unchained.bundles.api.ModelSerializer`.
+        """
         if not isinstance(obj, type):
             return False
         return issubclass(obj, ModelSerializer) and obj != ModelSerializer
 
     def update_shell_context(self, ctx: Dict[str, Any]) -> None:
+        """
+        Adds model serializers to the CLI shell context.
+        """
         ctx.update(self.bundle.serializers)

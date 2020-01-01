@@ -15,7 +15,7 @@ from ..model_resource import ModelResource
 
 class Api:
     """
-    The ``Api`` extension::
+    The `Api` extension::
 
         from flask_unchained.bundles.api import api
 

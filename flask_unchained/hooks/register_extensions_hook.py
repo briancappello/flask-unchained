@@ -18,18 +18,35 @@ class RegisterExtensionsHook(AppFactoryHook):
     """
 
     name = 'register_extensions'
+    """
+    The name of this hook.
+    """
+
     bundle_module_names = ['extensions']
+    """
+    The default module this hook loads from.
+
+    Override by setting the ``extensions_module_names`` attribute on your
+    bundle class.
+    """
 
     # skipcq: PYL-W0221 (parameters mismatch in overridden method)
     def process_objects(self,
                         app: FlaskUnchained,
                         extensions: Dict[str, object],
                         ) -> None:
+        """
+        Discover extensions in bundles and register them with the Unchained
+        extension.
+        """
         for ext in self.resolve_extension_order(extensions):
             if ext.name not in self.unchained.extensions:
                 self.unchained.extensions[ext.name] = ext.extension
 
     def collect_from_bundle(self, bundle: Bundle) -> Dict[str, object]:
+        """
+        Collect declared extensions from a bundle hierarchy.
+        """
         extensions = {}
         for b in bundle._iter_class_hierarchy():
             for module in self.import_bundle_modules(b):

@@ -8,7 +8,7 @@ from markupsafe import Markup
 
 class Webpack:
     """
-    The ``Webpack`` extension::
+    The `Webpack` extension::
 
         from flask_unchained.bundles.webpack import webpack
     """
@@ -35,14 +35,23 @@ class Webpack:
         app.add_template_global(self.webpack_asset_url)
 
     def webpack_asset_url(self, asset):
+        """
+        Returns the Webpack URL for the given asset (a key from manifest.json).
+        """
         return self._url_for_asset(asset)
 
     def style_tag(self, href_or_bundle_name):
+        """
+        Include a stylesheet.
+        """
         href = self._url_for_asset(href_or_bundle_name, 'css')
         tag = f'<link rel="stylesheet" href="{href}">'
         return Markup(tag)
 
     def script_tag(self, src_or_bundle_name):
+        """
+        Include a script.
+        """
         src = self._url_for_asset(src_or_bundle_name, 'js')
         tag = f'<script src="{src}"></script>'
         return Markup(tag)

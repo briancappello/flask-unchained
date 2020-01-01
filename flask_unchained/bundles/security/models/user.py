@@ -9,9 +9,10 @@ MIN_PASSWORD_LENGTH = 8
 
 class User(db.Model):
     """
-    Base :class:`User` model. Includes :attr:`email`, :attr:`password`, :attr:`active`,
+    Base user model. Includes :attr:`email`, :attr:`password`, :attr:`active`,
     and :attr:`confirmed_at` columns, and a many-to-many relationship to the
-    :class:`Role` model via the intermediary :class:`UserRole` join table.
+    :class:`~flask_unchained.bundles.security.Role` model via the intermediary
+    :class:`~flask_unchained.bundles.security.UserRole` join table.
     """
     class Meta:
         lazy_mapped = True

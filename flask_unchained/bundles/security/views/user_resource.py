@@ -9,7 +9,7 @@ from ..services import SecurityService
 
 class UserResource(ModelResource):
     """
-    RESTful API resource for the :class:`User` model.
+    RESTful API resource for the :class:`~flask_unchained.bundles.security.User` model.
     """
 
     security_service: SecurityService = injectable

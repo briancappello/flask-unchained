@@ -16,7 +16,12 @@ from .utils import StringConverter, redirect, url_for
 
 class ControllerBundle(Bundle):
     """
-    The :class:`~flask_unchained.Bundle` subclass for the controller bundle.
+    The Controller Bundle.
+    """
+
+    name = 'controller_bundle'
+    """
+    The name of the Controller Bundle.
     """
 
     def __init__(self):

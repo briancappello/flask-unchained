@@ -5,7 +5,15 @@ from typing import *
 
 
 class RegisterGrapheneRootSchemaHook(AppFactoryHook):
+    """
+    Creates the root :class:`graphene.Schema` to register with Flask-GraphQL.
+    """
+
     name = 'graphene_root_schema'
+    """
+    The name of this hook.
+    """
+
     bundle_module_names = None
     run_after = ['graphene_queries', 'graphene_mutations']
 
@@ -14,6 +22,10 @@ class RegisterGrapheneRootSchemaHook(AppFactoryHook):
                  bundles: List[Bundle],
                  unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> None:
+        """
+        Create the root :class:`graphene.Schema` from queries, mutations, and types
+        discovered by the other hooks and register it with the Graphene Bundle.
+        """
         mutations = tuple(self.bundle.mutations.values())
         queries = tuple(self.bundle.queries.values())
 

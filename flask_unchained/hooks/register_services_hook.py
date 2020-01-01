@@ -13,7 +13,18 @@ class RegisterServicesHook(AppFactoryHook):
     """
 
     name = 'services'
+    """
+    The name of this hook.
+    """
+
     bundle_module_names = ['services']
+    """
+    The default module this hook loads from.
+
+    Override by setting the ``services_module_names`` attribute on your
+    bundle class.
+    """
+
     run_after = ['init_extensions']
 
     # skipcq: PYL-W0221 (parameters mismatch in overridden method)
@@ -21,6 +32,10 @@ class RegisterServicesHook(AppFactoryHook):
                         app: FlaskUnchained,
                         services: Dict[str, Service],
                         ) -> None:
+        """
+        Register services with the Unchained extension, initialize them, and
+        inject any requested into extensions.
+        """
         # register and initialize services
         for name, obj in services.items():
             self.unchained.register_service(name, obj)
@@ -36,12 +51,22 @@ class RegisterServicesHook(AppFactoryHook):
                                    for name in services})
 
     def key_name(self, name, obj) -> str:
+        """
+        Returns the service's dependency injection name.
+        """
         return obj.__di_name__
 
     def type_check(self, obj) -> bool:
+        """
+        Returns True if ``obj`` is a concrete subclass of
+        :class:`~flask_unchained.Service`.
+        """
         if not isinstance(obj, type):
             return False
         return issubclass(obj, Service) and hasattr(obj, '__di_name__')
 
     def update_shell_context(self, ctx: Dict[str, Any]) -> None:
+        """
+        Add services to the CLI shell context.
+        """
         ctx.update(self.unchained.services)

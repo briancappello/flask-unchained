@@ -5,8 +5,9 @@ from .user_role import UserRole
 
 class Role(db.Model):
     """
-    Base :class:`Role` model. Includes an :attr:`name` column and a many-to-many
-    relationship with the :class:`User` model via the intermediary :class:`UserRole`
+    Base role model. Includes an :attr:`name` column and a many-to-many
+    relationship with the :class:`~flask_unchained.bundles.security.User` model
+    via the intermediary :class:`~flask_unchained.bundles.security.UserRole`
     join table.
     """
     class Meta:

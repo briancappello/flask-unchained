@@ -18,17 +18,30 @@ class RunHooksHook(AppFactoryHook):
     """
 
     bundle_module_names = ['hooks']
+    """
+    The default module this hook loads from.
+
+    Override by setting the ``hooks_module_names`` attribute on your
+    bundle class.
+    """
 
     def run_hook(self,
                  app: FlaskUnchained,
                  bundles: List[Bundle],
                  unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> None:
+        """
+        Run hooks in their resolved order.
+        """
         for hook in self.collect_from_bundles(bundles):
             hook.run_hook(app, bundles, unchained_config)
             hook.update_shell_context(self.unchained._shell_ctx)
 
     def collect_from_bundles(self, bundles: List[Bundle]) -> List[AppFactoryHook]:
+        """
+        Collect hooks from Flask Unchained and the list of bundles, and resolve
+        their correct order.
+        """
         hooks = self.collect_from_unchained()
         for bundle in bundles:
             hooks += self.collect_from_bundle(bundle)
@@ -41,10 +54,17 @@ class RunHooksHook(AppFactoryHook):
                 for Hook in self._collect_from_package(hooks_pkg).values()]
 
     def collect_from_bundle(self, bundle: Bundle) -> List[HookTuple]:
+        """
+        Collect hooks from a bundle.
+        """
         return [HookTuple(Hook, bundle)
                 for Hook in super().collect_from_bundle(bundle).values()]
 
     def type_check(self, obj: Any) -> bool:
+        """
+        Returns True if ``obj`` is a subclass of
+        :class:`~flask_unchained.AppFactoryHook`.
+        """
         is_class = isinstance(obj, type) and issubclass(obj, AppFactoryHook)
         return is_class and obj not in {AppFactoryHook, RunHooksHook}
 

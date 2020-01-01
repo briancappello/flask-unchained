@@ -25,9 +25,13 @@ class ConfigureAppHook(AppFactoryHook):
     """
 
     name = 'configure_app'
+    """
+    The name of this hook.
+    """
+
     bundle_module_name = 'config'
     """
-    By default, look for config classes in the ``config`` module of bundles.
+    The default module this hook loads from.
 
     Override by setting the ``config_module_name`` attribute on your bundle class.
     """

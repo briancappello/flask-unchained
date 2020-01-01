@@ -120,6 +120,12 @@ class ProdConfig(Config):
     """
 
 
+class StagingConfig(ProdConfig):
+    """
+    Inherit settings from production.
+    """
+
+
 class TestConfig(Config):
     """
     Test-specific config options for the mail bundle.

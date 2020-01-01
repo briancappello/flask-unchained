@@ -11,7 +11,7 @@ from ..services import UserManager
 
 class UserSerializer(ma.ModelSerializer):
     """
-    Marshmallow serializer for the :class:`User` model.
+    Marshmallow serializer for the :class:`~flask_unchained.bundles.security.User` model.
     """
 
     user_manager: UserManager = injectable

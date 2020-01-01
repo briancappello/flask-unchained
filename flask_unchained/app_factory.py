@@ -101,6 +101,12 @@ class AppFactory(metaclass=Singleton):
 
     @staticmethod
     def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]) -> ModuleType:
+        """
+        Load the unchained config from the current working directory for the given
+        environment. If ``env == "test"``, look for ``tests._unchained_config``,
+        otherwise check the value of the ``UNCHAINED_CONFIG`` environment variable,
+        falling back to loading the ``unchained_config`` module.
+        """
         if not sys.path or sys.path[0] != os.getcwd():
             sys.path.insert(0, os.getcwd())
 
@@ -127,6 +133,9 @@ class AppFactory(metaclass=Singleton):
                        env: Union[DEV, PROD, STAGING, TEST],
                        unchained_config: Dict[str, Any],
                        ) -> Dict[str, Any]:
+        """
+        Returns ``app_kwargs`` with settings from ``unchained_config``.
+        """
         # this is for developing standalone bundles (as opposed to regular apps)
         if not isinstance(bundles[-1], AppBundle) and env != TEST:
             app_kwargs['template_folder'] = os.path.join(
@@ -168,6 +177,12 @@ class AppFactory(metaclass=Singleton):
                      bundle_package_names: Optional[List[str]] = None,
                      unchained_config: Optional[ModuleType] = None,
                      ) -> Tuple[Union[None, AppBundle], List[Bundle]]:
+        """
+        Load bundle instances from the given list of bundle packages. If
+        ``unchained_config_module`` is given and there was no app bundle listed
+        in ``bundle_package_names``, attempt to load the app bundle from the
+        unchained config.
+        """
         bundle_package_names = bundle_package_names or []
         for bundle_name in reversed(cls.REQUIRED_BUNDLES):
             try:
@@ -197,6 +212,9 @@ class AppFactory(metaclass=Singleton):
 
     @classmethod
     def load_bundle(cls, bundle_package_name: str) -> Union[AppBundle, Bundle]:
+        """
+        Attempt to load the bundle instance from the given package.
+        """
         for module_name in [f'{bundle_package_name}.bundle', bundle_package_name]:
             try:
                 module = importlib.import_module(module_name)
@@ -216,6 +234,9 @@ class AppFactory(metaclass=Singleton):
 
     @classmethod
     def bundle_from_module(cls, module: ModuleType) -> Union[AppBundle, Bundle, None]:
+        """
+        Attempt to instantiate the bundle class from the given module.
+        """
         try:
             bundle_class = inspect.getmembers(module, cls._is_bundle(module))[0][1]
         except IndexError:

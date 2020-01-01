@@ -15,9 +15,19 @@ class RegisterCommandsHook(AppFactoryHook):
     """
 
     name = 'commands'
-    bundle_module_names = ['commands']
-    run_after = ['services']
+    """
+    The name of this hook.
+    """
 
+    bundle_module_names = ['commands']
+    """
+    The default module this hook loads from.
+
+    Override by setting the ``commands_module_names`` attribute on your
+    bundle class.
+    """
+
+    run_after = ['services']
     limit_discovery_to_local_declarations = False
 
     def run_hook(self,
@@ -25,6 +35,10 @@ class RegisterCommandsHook(AppFactoryHook):
                  bundles: List[Bundle],
                  unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> Dict[str, Union[click.Command, click.Group]]:
+        """
+        Discover CLI command and command groups from bundles and register them
+        with the app.
+        """
         commands = {}
         for bundle in bundles:
             command_groups = self.get_bundle_command_groups(bundle)

@@ -5,12 +5,15 @@ from .extensions import Celery, celery
 
 class CeleryBundle(Bundle):
     """
-    The :class:`Bundle` subclass for the celery bundle. Has no special behavior.
+    The Celery Bundle.
     """
-
-    command_group_names = ['celery']
 
     name = 'celery_bundle'
     """
     The name of the Celery Bundle.
+    """
+
+    command_group_names = ['celery']
+    """
+    Click groups for the Celery Bundle.
     """

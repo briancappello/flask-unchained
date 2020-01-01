@@ -9,7 +9,10 @@ from .views import AdminDashboardView, AdminSecurityController
 
 class AdminBundle(Bundle):
     """
-    AdminBundle base class. Has no special behavior; subclass if you need to extend
-    the admin bundle.
+    The Admin Bundle.
     """
-    pass
+
+    name = 'admin_bundle'
+    """
+    The name of the Admin Bundle.
+    """

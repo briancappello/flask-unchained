@@ -6,7 +6,10 @@ from .views import OAuthController
 
 class OAuthBundle(Bundle):
     """
-    The :class:`~flask_unchained.Bundle` subclass for the OAuth Bundle.
+    The OAuth Bundle.
     """
 
     name = 'oauth_bundle'
+    """
+    The name of the OAuth Bundle.
+    """

@@ -5,7 +5,8 @@ from ..models import Role
 
 class RoleManager(ModelManager):
     """
-    :class:`ModelManager` for the :class:`Role` model.
+    :class:`~flask_unchained.bundles.sqlalchemy.ModelManager` for the
+    :class:`~flask_unchained.bundles.security.Role` model.
     """
     class Meta:
         model = Role

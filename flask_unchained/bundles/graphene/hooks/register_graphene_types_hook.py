@@ -5,8 +5,23 @@ from ..object_types import SQLAlchemyObjectType
 
 
 class RegisterGrapheneTypesHook(AppFactoryHook):
+    """
+    Registers SQLAlchemyObjectTypes with the Graphene Bundle.
+    """
+
     name = 'graphene_types'
+    """
+    The name of this hook.
+    """
+
     bundle_module_names = ['graphql.types']
+    """
+    The default module this hook loads from.
+
+    Override by setting the ``graphene_types_module_names`` attribute on your
+    bundle class.
+    """
+
     bundle_override_module_names_attr = 'graphene_types_module_names'
     run_after = ['models', 'services']
 

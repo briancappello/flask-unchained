@@ -13,6 +13,10 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
     """
 
     name = 'bundle_blueprints'
+    """
+    The name of this hook.
+    """
+
     bundle_module_names = None
     run_before = ['blueprints']
 
@@ -21,6 +25,9 @@ class RegisterBundleBlueprintsHook(AppFactoryHook):
                  bundles: List[Bundle],
                  unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> None:
+        """
+        Register blueprints for bundles, where necessary.
+        """
         for bundle_ in reversed(bundles):
             for bundle in bundle_._iter_class_hierarchy(mro=True):
                 if (bundle.template_folder
