@@ -82,7 +82,7 @@ class AppFactory(metaclass=Singleton):
 
         _, bundles = self.load_bundles(
             bundle_package_names=bundles or config_dict.get('BUNDLES', []),
-            unchained_config=unchained_config_module)
+            unchained_config_module=unchained_config_module)
 
         app_import_name = (bundles[-1].module_name.split('.')[0] if bundles
                            else ('tests' if env == TEST else 'dev_app'))
@@ -175,7 +175,7 @@ class AppFactory(metaclass=Singleton):
     @classmethod
     def load_bundles(cls,
                      bundle_package_names: Optional[List[str]] = None,
-                     unchained_config: Optional[ModuleType] = None,
+                     unchained_config_module: Optional[ModuleType] = None,
                      ) -> Tuple[Union[None, AppBundle], List[Bundle]]:
         """
         Load bundle instances from the given list of bundle packages. If
@@ -203,8 +203,8 @@ class AppFactory(metaclass=Singleton):
         if isinstance(bundles[-1], AppBundle):
             return bundles[-1], bundles
 
-        if unchained_config:
-            single_module_app_bundle = cls.bundle_from_module(unchained_config)
+        if unchained_config_module:
+            single_module_app_bundle = cls.bundle_from_module(unchained_config_module)
             if single_module_app_bundle:
                 bundles.append(single_module_app_bundle)
             return single_module_app_bundle, bundles
