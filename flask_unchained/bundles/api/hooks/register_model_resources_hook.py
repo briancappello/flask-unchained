@@ -1,17 +1,18 @@
 from flask_unchained import AppFactoryHook
+from flask_unchained.hooks.views_hook import ViewsHook
 
 from ..model_resource import ModelResource
 
 
 class RegisterModelResourcesHook(AppFactoryHook):
     """
-    Registers ModelResources and configures Serializers on them.
+    Registers ModelResources and configures ModelSerializers on them.
     """
 
     name = 'model_resources'
     bundle_module_names = ['views']
     bundle_override_module_names_attr = 'model_resources_module_names'
-    run_after = ['models', 'serializers']
+    run_after = ['models', 'model_serializers']
 
     def process_objects(self, app, objects):
         for resource_cls in objects.values():

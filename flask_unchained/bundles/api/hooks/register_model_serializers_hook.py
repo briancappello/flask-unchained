@@ -7,13 +7,24 @@ from ..model_serializer import ModelSerializer
 from ..extensions import api
 
 
-class RegisterSerializersHook(AppFactoryHook):
+class RegisterModelSerializersHook(AppFactoryHook):
     """
-    Registers serializers.
+    Registers ModelSerializers.
     """
 
-    name = 'serializers'
+    name = 'model_serializers'
+    """
+    The name of this hook.
+    """
+
     bundle_module_names = ['serializers']
+    """
+    The default module this hook loads from.
+
+    Override by setting the ``model_serializers_module_names`` attribute on your
+    bundle class.
+    """
+
     run_after = ['models']
 
     # skipcq: PYL-W0221 (parameters mismatch in overridden method)
