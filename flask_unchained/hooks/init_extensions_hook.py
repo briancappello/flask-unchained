@@ -37,3 +37,9 @@ class InitExtensionsHook(RegisterExtensionsHook):
             ext_instance.init_app(app)
             if ext.name not in self.unchained.extensions:
                 self.unchained.extensions[ext.name] = ext_instance
+
+    def update_shell_context(self, ctx: Dict[str, Any]) -> None:
+        """
+        Add extensions to the CLI shell context.
+        """
+        ctx.update(self.unchained.extensions)

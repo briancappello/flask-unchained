@@ -81,13 +81,6 @@ class TestRegisterExtensionsHook:
         assert registered == ['awesome', 'myext']
         assert extensions == [awesome, myext]
 
-    def test_update_shell_context(self, register_hook: RegisterExtensionsHook):
-        ctx = {}
-        data = {'one': 1, 'two': 2, 'three': 3}
-        register_hook.unchained.extensions = data
-        register_hook.update_shell_context(ctx)
-        assert ctx == data
-
 
 class TestInitExtensionsHook:
     def test_process_objects(self, app, init_hook: InitExtensionsHook):
@@ -108,3 +101,10 @@ class TestInitExtensionsHook:
         assert extensions == [awesome, myext]
         assert awesome.app == app
         assert myext.app == app
+
+    def test_update_shell_context(self, init_hook: InitExtensionsHook):
+        ctx = {}
+        data = {'one': 1, 'two': 2, 'three': 3}
+        init_hook.unchained.extensions = data
+        init_hook.update_shell_context(ctx)
+        assert ctx == data
