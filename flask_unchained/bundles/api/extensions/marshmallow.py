@@ -18,9 +18,86 @@ class Marshmallow:
 
         from flask_unchained.bundles.api import ma
 
-    Aliases the `Marshmallow <https://marshmallow.readthedocs.io/en/stable/>`_
-    module and fields to the extension, as well as the fields from
-    `Flask-Marshmallow <https://flask-marshmallow.readthedocs.io/en/latest/>`_.
+    Allows decorating a :class:`~flask_unchained.bundles.api.ModelSerializer`
+    with :meth:`serializer` to specify it should be used for creating objects,
+    listing them, or as the fallback.
+
+    Also provides aliases from the following modules:
+
+    **flask_unchained.bundles.api**
+
+    .. autosummary::
+
+        ~flask_unchained.bundles.api.ModelSerializer
+
+    **marshmallow.decorators**
+
+    .. autosummary::
+
+        ~marshmallow.decorators.pre_load
+        ~marshmallow.decorators.post_load
+        ~marshmallow.decorators.pre_dump
+        ~marshmallow.decorators.post_dump
+        ~marshmallow.decorators.validates
+        ~marshmallow.decorators.validates_schema
+
+    **marshmallow.exceptions**
+
+    .. autosummary::
+
+        ~marshmallow.exceptions.ValidationError
+
+    **marshmallow.fields**
+
+    .. autosummary::
+
+        # alias marshmallow fields
+        ~marshmallow.fields.Bool
+        ~marshmallow.fields.Boolean
+        ~marshmallow.fields.Constant
+        ~marshmallow.fields.Date
+        ~marshmallow.fields.DateTime
+        ~marshmallow.fields.NaiveDateTime
+        ~marshmallow.fields.AwareDateTime
+        ~marshmallow.fields.Decimal
+        ~marshmallow.fields.Dict
+        ~marshmallow.fields.Email
+        ~marshmallow.fields.Field
+        ~marshmallow.fields.Float
+        ~marshmallow.fields.Function
+        ~marshmallow.fields.Int
+        ~marshmallow.fields.Integer
+        ~marshmallow.fields.List
+        ~marshmallow.fields.Mapping
+        ~marshmallow.fields.Method
+        ~marshmallow.fields.Nested
+        ~marshmallow.fields.Number
+        ~marshmallow.fields.Pluck
+        ~marshmallow.fields.Raw
+        ~marshmallow.fields.Str
+        ~marshmallow.fields.String
+        ~marshmallow.fields.Time
+        ~marshmallow.fields.TimeDelta
+        ~marshmallow.fields.Tuple
+        ~marshmallow.fields.UUID
+        ~marshmallow.fields.Url
+        ~marshmallow.fields.URL
+
+    **flask_marshmallow.fields**
+
+    .. autosummary::
+
+        ~flask_marshmallow.fields.AbsoluteUrlFor
+        ~flask_marshmallow.fields.AbsoluteURLFor
+        ~flask_marshmallow.fields.UrlFor
+        ~flask_marshmallow.fields.URLFor
+        ~flask_marshmallow.fields.Hyperlinks
+
+    **flask_marshmallow.sqla**
+
+    .. autosummary::
+
+        ~flask_marshmallow.sqla.HyperlinkRelated
     """
 
     def __init__(self):
