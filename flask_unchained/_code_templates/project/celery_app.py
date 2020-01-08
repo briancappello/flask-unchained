@@ -1,6 +1,8 @@
 import os
 
 from flask_unchained import AppFactory, PROD
+
+# import the celery extension so that celery can access it for its startup
 from flask_unchained.bundles.celery import celery
 
 
