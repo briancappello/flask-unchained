@@ -1,5 +1,3 @@
-import os
-
 from flask import Blueprint as _Blueprint
 from flask.blueprints import BlueprintSetupState as _BlueprintSetupState
 from flask.helpers import send_from_directory as _send_from_directory
