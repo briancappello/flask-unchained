@@ -20,15 +20,14 @@ from pyterminalsize import get_terminal_size
 
 from . import click
 from .app_factory import AppFactory, maybe_set_app_factory_from_env
-from .constants import DEV, PROD, STAGING, TEST
+from .constants import DEV, PROD, STAGING, ENV_ALIASES, VALID_ENVS
 from .utils import get_boolean_env
 
 IterableOfStrings = Union[List[str], Tuple[str, ...]]
 IterableOfTuples = Union[List[tuple], Tuple[tuple, ...]]
 
 
-ENV_ALIASES = {'dev': DEV, 'prod': PROD}
-ENV_CHOICES = list(ENV_ALIASES.keys()) + [DEV, PROD, STAGING, TEST]
+ENV_CHOICES = list(ENV_ALIASES.keys()) + VALID_ENVS
 PROD_ENVS = {PROD, STAGING}
 
 SHOULD_CLEAR_FLASK_ENV = 'FLASK_ENV' not in os.environ

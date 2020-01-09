@@ -9,7 +9,7 @@ from typing import *
 from py_meta_utils import Singleton
 
 from .bundles import AppBundle, Bundle
-from .constants import DEV, PROD, STAGING, TEST
+from .constants import DEV, PROD, STAGING, TEST, ENV_ALIASES, VALID_ENVS
 from .exceptions import BundleNotFoundError
 from .flask_unchained import FlaskUnchained
 from .unchained import unchained
@@ -74,6 +74,11 @@ class AppFactory(metaclass=Singleton):
         :return: The initialized :attr:`APP_CLASS` app instance, ready to rock'n'roll
         """
         config_dict, unchained_config_module = {}, None
+        env = ENV_ALIASES.get(env, env)
+        if env not in VALID_ENVS:
+            valid_envs = [f'{x!r}' for x in VALID_ENVS]
+            raise RuntimeError(f"env must be one of {', '.join(valid_envs)}")
+
         if _load_unchained_config:
             unchained_config_module = self.load_unchained_config(env)
             config_dict = {k: v for k, v in vars(unchained_config_module).items()

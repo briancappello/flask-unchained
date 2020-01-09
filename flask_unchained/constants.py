@@ -33,6 +33,9 @@ PROD = 'production'
 STAGING = 'staging'
 TEST = 'test'
 
+ENV_ALIASES = {'dev': DEV, 'prod': PROD}
+VALID_ENVS = [DEV, PROD, STAGING, TEST]
+
 _INJECT_CLS_ATTRS = '__inject_cls_attrs__'
 _DI_AUTOMATICALLY_HANDLED = '__di_automatically_handled__'
 
@@ -42,4 +45,6 @@ __all__ = [
     'PROD',
     'STAGING',
     'TEST',
+    'ENV_ALIASES',
+    'VALID_ENVS',
 ]
