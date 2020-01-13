@@ -47,9 +47,9 @@ class FlaskUnchained(Flask):
 
     def register_blueprint(self, blueprint, register_with_babel=True, **options):
         """
-        Like :meth:`~flask.Flask.register_blueprint`, but if ``register_with_babel``
-        is True, then we also allow the Babel Bundle an opportunity to register language
-        code prefixed URLs.
+        The same as :meth:`flask.Flask.register_blueprint`, but if
+        ``register_with_babel`` is True, then we also allow the Babel Bundle an
+        opportunity to register language code prefixed URLs.
         """
         if self.unchained.babel_bundle and register_with_babel:
             self.unchained.babel_bundle.register_blueprint(self, blueprint, **options)
@@ -59,9 +59,9 @@ class FlaskUnchained(Flask):
                      provide_automatic_options=None, register_with_babel=False,
                      **options):
         """
-        Like :meth:`~flask.Flask.add_url_rule`, but if ``register_with_babel`` is True,
-        then we also allow the Babel Bundle an opportunity to register a language code
-        prefixed URL.
+        The same as :meth:`flask.Flask.add_url_rule`, but if ``register_with_babel``
+        is True, then we also allow the Babel Bundle an opportunity to register a
+        language code prefixed URL.
         """
         if self.unchained.babel_bundle and register_with_babel:
             self.unchained.babel_bundle.add_url_rule(
