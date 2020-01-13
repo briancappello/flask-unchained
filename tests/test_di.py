@@ -124,7 +124,8 @@ class TestInject:
 class TestInjectClassMethods:
     def test_with_manually_decorated_class(self):
         from tests._bundles.services_bundle.services import (
-            NotAutomaticInjectableMethods, OneService, TwoService)
+            NotAutomaticInjectableMethods,
+        )
 
         hm = NotAutomaticInjectableMethods()
         assert hm.one_service == 'constructor_default'
@@ -137,6 +138,14 @@ class TestInjectClassMethods:
         hm.two()
         assert hm.one_service == injectable
         assert hm.two_service == injectable
+
+    def test_explicit_class_attributes_injection(self):
+        from tests._bundles.services_bundle.services import (
+            ExplicitArgsForClassAttributes, OneService
+        )
+        instance = ExplicitArgsForClassAttributes()
+        assert isinstance(instance.one_service, OneService)
+        assert instance.two_service == injectable
 
 
 class TestInjectedClassAttributes:

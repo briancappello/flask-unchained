@@ -104,3 +104,9 @@ class NotAutomaticInjectableMethods:
 
     def two(self, two_service: TwoService = injectable):
         self.two_service = two_service
+
+
+@unchained.inject('one_service')
+class ExplicitArgsForClassAttributes:
+    one_service: OneService = injectable
+    two_service: TwoService = injectable

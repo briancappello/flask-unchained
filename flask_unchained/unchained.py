@@ -360,6 +360,8 @@ class Unchained:
                                 and attr not in cls_attrs_to_inject):
                             cls_attrs_to_inject.append(attr)
 
+                    if has_explicit_args:
+                        cls_attrs_to_inject = list(set(cls_attrs_to_inject) & set(args))
                     if cls_attrs_to_inject:
                         setattr(cls, _INJECT_CLS_ATTRS, cls_attrs_to_inject)
                         _inject_cls_attrs()(cls)
