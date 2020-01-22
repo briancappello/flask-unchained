@@ -27,6 +27,7 @@
 ### General Improvements
 
 - document the rest of SQLAlchemy's config options
+- bump sqlalchemy-unchained to v0.10.0
 
 ### Bug Fixes
 
