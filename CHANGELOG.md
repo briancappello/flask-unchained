@@ -40,6 +40,7 @@
 - fix `flask urls` command when no URLs found
 - make sure hooks don't resolve local proxies
 - fix `ModelResource.Meta.url_prefix` to use `Meta.model.__name__` instead of the resource's class name
+- allow using `AnonymousUser` as if it were a SQLAlchemy model in queries
 
 ### Breaking Changes
 
