@@ -222,6 +222,14 @@ def project(dest, app_bundle, force, dev,
     ])
 
     click.echo(f'Successfully created a new project at: {dest}')
+    click.echo('To get started, run the following commands:\n')
+    click.echo(f'cd {dest}')
+    click.echo('pip install -r requirements-dev.txt')
+    if ctx["sqlalchemy"]:
+        click.echo("flask db init")
+        click.echo("flask db migrate -m 'create models'")
+        click.echo("flask db upgrade")
+    click.echo("flask run")
 
 
 def copy_file_tree(src: str,
