@@ -80,7 +80,7 @@ class YourAppBundle(AppBundle):
 - customizing bundle module locations changed:
 
 ```python
-class YourBundle(AppBundle):
+class YourBundle(Bundle):
     extensions_module_name = 'custom'  # before
     extensions_module_names = ['custom']  # after
 
@@ -103,7 +103,7 @@ class YourBundle(AppBundle):
     model_resources_module_names = ['custom']  # after
 
     serializers_module_name = 'custom'  # before
-    serializers_module_names = ['custom']  # after
+    model_serializers_module_names = ['custom']  # after
 
     celery_tasks_module_name = 'custom'  # before
     celery_tasks_module_names = ['custom']  # after

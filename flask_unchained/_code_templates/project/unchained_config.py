@@ -1,20 +1,3 @@
-import os
-
-ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
-
-
-def folder_or_none(folder_name):
-    if not os.path.exists(os.path.join(ROOT_PATH, folder_name)):
-        return None
-    return folder_name
-
-
-# these get passed to the FlaskUnchained constructor
-TEMPLATE_FOLDER = folder_or_none('templates')
-STATIC_FOLDER = folder_or_none('static')
-STATIC_URL_PATH = '/static' if STATIC_FOLDER else None
-
-
 BUNDLES = [
     #! if api:
     'flask_unchained.bundles.api',

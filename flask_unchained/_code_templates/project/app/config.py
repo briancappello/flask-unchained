@@ -1,10 +1,11 @@
 import os
 
-from flask_unchained import BundleConfig, get_boolean_env
+from flask_unchained import BundleConfig
 
 
 class Config(BundleConfig):
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'change-me-to-a-secret-key!')
+    WTF_CSRF_ENABLED = True
 #! if security or session:
     #! SESSION_TYPE = "{{ 'sqlalchemy' if sqlalchemy else 'filesystem' }}"
 #! endif
@@ -39,3 +40,4 @@ class StagingConfig(ProdConfig):
 
 class TestConfig(Config):
     TESTING = True
+    WTF_CSRF_ENABLED = False
