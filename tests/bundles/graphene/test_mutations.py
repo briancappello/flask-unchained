@@ -2,7 +2,6 @@ import pytest
 
 from flask_unchained import unchained
 
-from ._bundles.graphene_bundle.graphql import types
 
 parent_manager = unchained.get_local_proxy('parent_manager')
 child_manager = unchained.get_local_proxy('child_manager')

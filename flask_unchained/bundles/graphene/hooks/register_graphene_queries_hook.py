@@ -14,7 +14,7 @@ class RegisterGrapheneQueriesHook(AppFactoryHook):
     The name of this hook.
     """
 
-    bundle_module_names = ['graphql.schema']
+    bundle_module_names = ['graphene.queries', 'graphene.schema']
     """
     The default module this hook loads from.
 

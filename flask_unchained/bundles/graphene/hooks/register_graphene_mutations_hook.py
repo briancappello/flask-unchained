@@ -14,7 +14,7 @@ class RegisterGrapheneMutationsHook(AppFactoryHook):
     The name of this hook.
     """
 
-    bundle_module_names = ['graphql.schema']
+    bundle_module_names = ['graphene.mutations', 'graphene.schema']
     """
     The default module this hook loads from.
 

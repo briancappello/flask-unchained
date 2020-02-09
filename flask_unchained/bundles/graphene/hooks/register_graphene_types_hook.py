@@ -14,7 +14,7 @@ class RegisterGrapheneTypesHook(AppFactoryHook):
     The name of this hook.
     """
 
-    bundle_module_names = ['graphql.types']
+    bundle_module_names = ['graphene.types', 'graphene.schema']
     """
     The default module this hook loads from.
 

@@ -28,8 +28,9 @@ class RegisterGrapheneRootSchemaHook(AppFactoryHook):
         """
         mutations = tuple(self.bundle.mutations.values())
         queries = tuple(self.bundle.queries.values())
+        types = list(self.bundle.types.values())
 
         self.bundle.root_schema = graphene.Schema(
             query=queries and type('Queries', queries, {}) or None,
             mutation=mutations and type('Mutations', mutations, {}) or None,
-            types=list(self.bundle.types.values()) or None)
+            types=types or None)
