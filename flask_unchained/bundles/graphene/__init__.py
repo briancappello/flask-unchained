@@ -5,6 +5,7 @@ from flask_unchained import Bundle, FlaskUnchained
 from flask_unchained.bundles.controller.extensions import csrf
 from typing import *
 
+from .exceptions import MutationValidationError
 from .object_types import MutationsObjectType, QueriesObjectType, SQLAlchemyObjectType
 
 
@@ -58,6 +59,7 @@ class GrapheneBundle(Bundle):
 
 __all__ = [
     'GrapheneBundle',
+    'MutationValidationError',
     'MutationsObjectType',
     'QueriesObjectType',
     'SQLAlchemyObjectType',
