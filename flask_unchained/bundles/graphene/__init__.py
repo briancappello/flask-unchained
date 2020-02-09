@@ -19,6 +19,8 @@ class GrapheneBundle(Bundle):
     The name of the Graphene Bundle.
     """
 
+    command_group_names = ['gql']
+
     root_schema: graphene.Schema = None
     """
     The root :class:`graphene.Schema` containing all discovered queries, mutations,
