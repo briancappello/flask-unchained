@@ -2,6 +2,7 @@ import graphene
 
 from flask_graphql import GraphQLView
 from flask_unchained import Bundle, FlaskUnchained
+from flask_unchained.bundles.controller.extensions import csrf
 from typing import *
 
 from .object_types import MutationsObjectType, QueriesObjectType, SQLAlchemyObjectType
@@ -31,22 +32,28 @@ class GrapheneBundle(Bundle):
     # that the way of adding graphql routes
     def after_init_app(self, app: FlaskUnchained):
         if app.config.GRAPHENE_URL:
-            app.add_url_rule(app.config.GRAPHENE_URL, view_func=GraphQLView.as_view(
-                'graphql',
-                schema=self.root_schema,
-                graphiql=app.config.GRAPHENE_ENABLE_GRAPHIQL,
-                pretty=app.config.GRAPHENE_PRETTY_JSON,
-                batch=False,
-            ))
+            app.add_url_rule(app.config.GRAPHENE_URL,
+                             view_func=csrf.exempt(GraphQLView.as_view(
+                                 'graphql',
+                                 schema=self.root_schema,
+                                 graphiql=app.config.GRAPHENE_ENABLE_GRAPHIQL,
+                                 pretty=app.config.GRAPHENE_PRETTY_JSON,
+                                 batch=False,
+                             )),
+                             methods=GraphQLView.methods,
+                             strict_slashes=False)
 
         if app.config.GRAPHENE_BATCH_URL:
-            app.add_url_rule(app.config.GRAPHENE_BATCH_URL, view_func=GraphQLView.as_view(
-                'graphql',
-                schema=self.root_schema,
-                graphiql=app.config.GRAPHENE_ENABLE_GRAPHIQL,
-                pretty=app.config.GRAPHENE_PRETTY_JSON,
-                batch=True,
-            ))
+            app.add_url_rule(app.config.GRAPHENE_BATCH_URL,
+                             view_func=csrf.exempt(GraphQLView.as_view(
+                                 'graphql',
+                                 schema=self.root_schema,
+                                 graphiql=app.config.GRAPHENE_ENABLE_GRAPHIQL,
+                                 pretty=app.config.GRAPHENE_PRETTY_JSON,
+                                 batch=True,
+                             )),
+                             methods=GraphQLView.methods,
+                             strict_slashes=False)
 
 
 __all__ = [
