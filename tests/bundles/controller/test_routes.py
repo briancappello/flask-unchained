@@ -121,7 +121,7 @@ class TestController:
         routes = list(controller('/prefix', SiteController))
         assert len(routes) == 2
         assert routes[0].endpoint == 'site_controller.index'
-        assert routes[0].rule == '/prefix/'
+        assert routes[0].rule == '/prefix'
         assert routes[1].endpoint == 'site_controller.about'
         assert routes[1].rule == '/prefix/about'
 
@@ -152,7 +152,7 @@ class TestController:
                        for route in routes]
         assert orig_routes[0].endpoint == routes[0].endpoint
         assert orig_routes[0].rule == '/'
-        assert routes[0].rule == '/prefix/'
+        assert routes[0].rule == '/prefix'
 
 
 class TestFunc:
@@ -267,7 +267,7 @@ class TestResource:
         routes = list(resource(UserResource))
         assert len(routes) == 2
         assert routes[0].endpoint == 'user_resource.list'
-        assert routes[0].rule == '/users/'
+        assert routes[0].rule == '/users'
         assert routes[1].endpoint == 'user_resource.get'
         assert routes[1].rule == '/users/<int:id>'
 
@@ -275,7 +275,7 @@ class TestResource:
         routes = list(resource('/prefix', UserResource))
         assert len(routes) == 2
         assert routes[0].endpoint == 'user_resource.list'
-        assert routes[0].rule == '/prefix/'
+        assert routes[0].rule == '/prefix'
         assert routes[1].endpoint == 'user_resource.get'
         assert routes[1].rule == '/prefix/<int:id>'
 
@@ -283,7 +283,7 @@ class TestResource:
         routes = list(resource(UserResource, member_param='<string:slug>'))
         assert len(routes) == 2
         assert routes[0].endpoint == 'user_resource.list'
-        assert routes[0].rule == '/users/'
+        assert routes[0].rule == '/users'
         assert routes[1].endpoint == 'user_resource.get'
         assert routes[1].rule == '/users/<string:slug>'
 
@@ -292,11 +292,11 @@ class TestResource:
             resource(BarResource),
         ]))
         assert routes[0].endpoint == 'foo_resource.list'
-        assert routes[0].rule == '/foo/'
+        assert routes[0].rule == '/foo'
         assert routes[1].endpoint == 'foo_resource.get'
         assert routes[1].rule == '/foo/<int:id>'
         assert routes[2].endpoint == 'bar_resource.list'
-        assert routes[2].rule == '/foo/<int:foo_id>/bars/'
+        assert routes[2].rule == '/foo/<int:foo_id>/bars'
         assert routes[3].endpoint == 'bar_resource.get'
         assert routes[3].rule == '/foo/<int:foo_id>/bars/<int:id>'
 
@@ -307,11 +307,11 @@ class TestResource:
                                                       member_param='<string:slug>')]))
 
         assert routes[0].endpoint == 'user_resource.list'
-        assert routes[0].rule == '/users/'
+        assert routes[0].rule == '/users'
         assert routes[1].endpoint == 'user_resource.get'
         assert routes[1].rule == '/users/<string:slug>'
         assert routes[2].endpoint == 'role_resource.list'
-        assert routes[2].rule == '/users/<string:user_slug>/roles/'
+        assert routes[2].rule == '/users/<string:user_slug>/roles'
         assert routes[3].endpoint == 'role_resource.get'
         assert routes[3].rule == '/users/<string:user_slug>/roles/<string:slug>'
 
@@ -320,11 +320,11 @@ class TestResource:
                                subresources=[resource(BarResource)]))
 
         assert routes[0].endpoint == 'baz_resource.list'
-        assert routes[0].rule == '/baz/'
+        assert routes[0].rule == '/baz'
         assert routes[1].endpoint == 'baz_resource.get'
         assert routes[1].rule == '/baz/<int:id>'
         assert routes[2].endpoint == 'bar_resource.list'
-        assert routes[2].rule == '/baz/<string:baz>/bars/'
+        assert routes[2].rule == '/baz/<string:baz>/bars'
         assert routes[3].endpoint == 'bar_resource.get'
         assert routes[3].rule == '/baz/<string:baz>/bars/<int:id>'
 
@@ -334,11 +334,11 @@ class TestResource:
                                    resource(BarResource, member_param='<int:pk>')]))
 
         assert routes[0].endpoint == 'baz_resource.list'
-        assert routes[0].rule == '/baz/'
+        assert routes[0].rule == '/baz'
         assert routes[1].endpoint == 'baz_resource.get'
         assert routes[1].rule == '/baz/<int:id>'
         assert routes[2].endpoint == 'bar_resource.list'
-        assert routes[2].rule == '/baz/<int:pk>/bars/'
+        assert routes[2].rule == '/baz/<int:pk>/bars'
         assert routes[3].endpoint == 'bar_resource.get'
         assert routes[3].rule == '/baz/<int:baz_pk>/bars/<int:pk>'
 
@@ -349,11 +349,11 @@ class TestResource:
                                                       member_param='<string:slug2>')]))
 
         assert routes[0].endpoint == 'user_resource.list'
-        assert routes[0].rule == '/users/'
+        assert routes[0].rule == '/users'
         assert routes[1].endpoint == 'user_resource.get'
         assert routes[1].rule == '/users/<string:slug>'
         assert routes[2].endpoint == 'role_resource.list'
-        assert routes[2].rule == '/users/<string:user_slug>/roles/'
+        assert routes[2].rule == '/users/<string:user_slug>/roles'
         assert routes[3].endpoint == 'role_resource.get'
         assert routes[3].rule == '/users/<string:user_slug>/roles/<string:slug2>'
 
@@ -368,22 +368,22 @@ class TestResource:
             ]))
 
         assert routes[0].endpoint == 'user_resource.list'
-        assert routes[0].rule == '/users/'
+        assert routes[0].rule == '/users'
         assert routes[1].endpoint == 'user_resource.get'
-        assert routes[1].rule == routes[0].rule + '<string:slug>'
+        assert routes[1].rule == routes[0].rule + '/<string:slug>'
         assert routes[2].endpoint == 'role_resource.list'
-        assert routes[2].rule == '/users/<string:user_slug>/roles/'
+        assert routes[2].rule == '/users/<string:user_slug>/roles'
         assert routes[3].endpoint == 'role_resource.get'
-        assert routes[3].rule == routes[2].rule + '<int:id>'
+        assert routes[3].rule == routes[2].rule + '/<int:id>'
         assert routes[4].endpoint == 'foo_resource.list'
-        assert routes[4].rule == '/users/<string:user_slug>/roles/<int:role_id>/foos/'
+        assert routes[4].rule == '/users/<string:user_slug>/roles/<int:role_id>/foos'
         assert routes[5].endpoint == 'foo_resource.get'
-        assert routes[5].rule == routes[4].rule + '<string:slug>'
+        assert routes[5].rule == routes[4].rule + '/<string:slug>'
         assert routes[6].endpoint == 'bar_resource.list'
         assert routes[6].rule == \
-           '/users/<string:user_slug>/roles/<int:role_id>/foos/<string:foo_slug>/bars/'
+           '/users/<string:user_slug>/roles/<int:role_id>/foos/<string:foo_slug>/bars'
         assert routes[7].endpoint == 'bar_resource.get'
-        assert routes[7].rule == routes[6].rule + '<int:id>'
+        assert routes[7].rule == routes[6].rule + '/<int:id>'
 
     def test_it_requires_a_controller(self):
         with pytest.raises(ValueError):
@@ -406,7 +406,7 @@ class TestResource:
                        for route in routes]
         assert orig_routes[0].endpoint == routes[0].endpoint
         assert orig_routes[0].rule == '/'
-        assert routes[0].rule == '/prefix/'
+        assert routes[0].rule == '/prefix'
 
     def test_it_does_not_mutate_subresource_routes(self):
         routes = list(resource('/one', UserResource, subresources=[
@@ -421,7 +421,7 @@ class TestResource:
 
         assert orig_routes[0].rule == '/'
         assert orig_routes[1].rule == '/<int:id>'
-        assert routes[2].rule == '/one/<int:user_id>/two/'
+        assert routes[2].rule == '/one/<int:user_id>/two'
         assert routes[3].rule == '/one/<int:user_id>/two/<int:id>'
 
 

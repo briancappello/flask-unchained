@@ -193,7 +193,8 @@ class Route:
         """
         The full url rule for this route, including any blueprint prefix.
         """
-        return join(self.bp_prefix, self.rule, trailing_slash=self.rule.endswith('/'))
+        rule = self.rule
+        return join(self.bp_prefix, self.rule, trailing_slash=rule.endswith('/'))
 
     def _make_rule(self,
                    url_prefix: Optional[str] = None,
@@ -206,7 +207,9 @@ class Route:
             self._unique_member_param = unique_member_param
 
         if self._rule:
-            return join(url_prefix, self._rule, trailing_slash=self._rule.endswith('/'))
+            return join(url_prefix, self._rule, trailing_slash=(
+                self._rule != '/' and self._rule.endswith('/')
+            ))
         elif self._controller_cls:
             rule = method_name_to_url(self.method_name)
             if (self._is_member or self._is_member_method) and not member_param:
