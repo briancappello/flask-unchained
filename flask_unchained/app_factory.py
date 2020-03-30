@@ -139,7 +139,7 @@ class AppFactory(metaclass=Singleton):
                        unchained_config: Dict[str, Any],
                        ) -> Dict[str, Any]:
         """
-        Returns ``app_kwargs`` with settings from ``unchained_config``.
+        Returns ``app_kwargs`` with default settings applied from ``unchained_config``.
         """
         # this is for developing standalone bundles (as opposed to regular apps)
         if not isinstance(bundles[-1], AppBundle) and env != TEST:

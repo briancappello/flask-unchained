@@ -75,7 +75,7 @@ def _inject_cls_attrs(_wrapped_constructor: Optional[callable] = None,
             setattr(self, param, _get_injected_value(
                 unchained_ext=unchained,
                 param_name=param,
-                requested_by=self.__class__.__name__
+                requested_by=self.__class__.__name__,
             ))
 
         if _call_super_for_cls:

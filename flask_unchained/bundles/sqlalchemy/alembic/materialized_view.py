@@ -8,6 +8,7 @@ from .reversible_op import ReversibleOp
 # http://alembic.zzzcomputing.com/en/latest/cookbook.html#replaceable-objects
 # http://alembic.zzzcomputing.com/en/latest/api/autogenerate.html#autogen-custom-ops
 
+
 class MaterializedViewMigration:
     def __init__(self, name, create_sql, drop_sql,
                  columns=None, indexes=None, prev=None):
@@ -74,8 +75,7 @@ def render_create_sql(autogen_context, op):
 @renderers.dispatch_for(DropMaterializedViewOp)
 def render_drop_sql(autogen_context, op):
     if op.target.prev:
-        return f'op.replace_sql({op.target.name}, ' \
-               f'replace_with={op.target.prev!r})'
+        return f'op.replace_sql({op.target.name}, replace_with={op.target.prev!r})'
     return f'op.drop_sql({op.target.name})'
 
 

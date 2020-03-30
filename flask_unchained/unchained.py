@@ -16,21 +16,6 @@ from .exceptions import ServiceUsageError
 from .utils import AttrDict
 
 
-class _DeferredBundleFunctionsStore:
-    """
-    An intermediary store that lives on :class:`~flask_unchained.Unchained` to
-    return an instance of :class:`~flask_unchained.DeferredBundleFunctions` for
-    each bundle name lookup on us (implements a dict-like readonly interface).
-    """
-    def __init__(self):
-        self._bundles = {}
-
-    def __getitem__(self, bundle_name):
-        if bundle_name not in self._bundles:
-            self._bundles[bundle_name] = DeferredBundleFunctions()
-        return self._bundles[bundle_name]
-
-
 class DeferredBundleFunctions:
     """
     The public interface for replacing Blueprints with Bundles. Must be accessed
@@ -120,6 +105,21 @@ class DeferredBundleFunctions:
             self._defer(lambda bp: bp.register_error_handler(code_or_exception, fn))
             return fn
         return decorator
+
+
+class _DeferredBundleFunctionsStore:
+    """
+    An intermediary store that lives on :class:`~flask_unchained.Unchained` to
+    return an instance of :class:`~flask_unchained.DeferredBundleFunctions` for
+    each bundle name lookup on us (implements a dict-like readonly interface).
+    """
+    def __init__(self):
+        self._bundles = {}
+
+    def __getitem__(self, bundle_name):
+        if bundle_name not in self._bundles:
+            self._bundles[bundle_name] = DeferredBundleFunctions()
+        return self._bundles[bundle_name]
 
 
 class Unchained:
@@ -302,7 +302,7 @@ class Unchained:
                     return fn
                 if not hasattr(cls, '__signature__'):
                     # this happens when both the class and its __init__ method
-                    # where decorated with @inject. which would be silly, but,
+                    # were decorated with @inject. which would be silly, but,
                     # it should still work regardless
                     cls.__signature__ = fn.__signature__
 
@@ -436,8 +436,9 @@ class Unchained:
     def _defer(self, fn):
         if self._initialized:
             from warnings import warn
-            warn('The app has already been initialized. Please register '
-                 f'{fn.__name__} sooner.')
+            warn('The app has already been initialized. '
+                 f'Please register {fn.__name__} sooner.')
+            return
         self._deferred_functions.append(fn)
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):

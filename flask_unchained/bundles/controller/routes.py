@@ -41,9 +41,10 @@ def controller(url_prefix_or_controller_cls: Union[str, Type[Controller]],
 
         routes = lambda: [
             controller(SecurityController, rules=[
-               rule('/login', SecurityController.login),
-               rule('/logout', SecurityController.logout),
-               rule('/sign-up', SecurityController.register),
+               # these inherit all unspecified kwargs from the decorated view methods
+               rule('/login', SecurityController.login),  # methods=['GET', 'POST']
+               rule('/logout', SecurityController.logout),  # methods=['GET']
+               rule('/sign-up', SecurityController.register),  # methods=['GET', 'POST']
             ]),
         ]
 
@@ -463,17 +464,18 @@ def rule(rule: str,
          ) -> RouteGenerator:
     """
     Used to specify customizations to the route settings of class-based view function.
+    Unspecified kwargs will be inherited from the route decorated on each view.
     For example::
 
         routes = lambda: [
             prefix('/api/v1', [
                 controller(SecurityController, rules=[
                    rule('/login', SecurityController.login,
-                        endpoint='security_api.login'),
+                        endpoint='security_api.login'),  # methods=['GET', 'POST']
                    rule('/logout', SecurityController.logout,
-                        endpoint='security_api.logout'),
+                        endpoint='security_api.logout'),  # methods=['GET']
                    rule('/sign-up', SecurityController.register,
-                        endpoint='security_api.register'),
+                        endpoint='security_api.register'),  # methods=['GET', 'POST']
                 ]),
             ],
         ]

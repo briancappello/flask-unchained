@@ -104,7 +104,8 @@ class AppGroup(AppGroupMixin, flask_cli.AppGroup):
 @click.pass_context
 def cli(ctx, env, warn):
     ctx.obj.data['env'] = env
-    if env in PROD_ENVS and warn:
+
+    if warn and env in PROD_ENVS:
         production_warning(env, [arg for arg in sys.argv[1:]
                                  if '--env' not in arg])
 

@@ -19,7 +19,7 @@ class _SQLAlchemyEvent:
 
 
 def attach_events(*args):
-    """Class decorator for SQLAlchemy models to attach listeners on class
+    """Class decorator for SQLAlchemy models to attach listeners for class
     methods decorated with :func:`.on`
 
     Usage::

@@ -109,7 +109,7 @@ class _ResourceUniqueMemberParamMetaOption(MetaOption):
         super().__init__('unique_member_param', default=None, inherit=False)
 
     # def get_value(...)
-    # NOTE: the logic for the default value lives in `Route.unique_member_param`
+    # NOTE: the default value logic lives in `Route.unique_member_param`
 
     def check_value(self, value, mcs_args: McsArgs):
         if mcs_args.is_abstract or value is None:

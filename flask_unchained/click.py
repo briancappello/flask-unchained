@@ -1,5 +1,5 @@
 """
-This module acts a drop-in replacement for ``click``::
+This module is a drop-in replacement for the ``click`` module::
 
     # before
     import click
@@ -189,8 +189,7 @@ class Group(GroupOverrideMixin, click.Group):
         :param name: the name of the group (optional)
         :param commands: a dictionary of commands.
         """
-        return super().group(
-            *args, cls=kwargs.pop('cls', Group) or Group, **kwargs)
+        return super().group(*args, cls=kwargs.pop('cls', Group) or Group, **kwargs)
 
 
 class Argument(click.Argument):
