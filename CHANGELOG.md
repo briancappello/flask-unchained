@@ -1,4 +1,4 @@
-# CHANGELOG
+d# CHANGELOG
 
 ## v0.8.0 (unreleased)
 
@@ -28,6 +28,7 @@
 
 - document the rest of SQLAlchemy's config options
 - bump sqlalchemy-unchained to v0.10.0
+- automatically discover services in the `services` and `managers` modules of bundles
 
 ### Bug Fixes
 

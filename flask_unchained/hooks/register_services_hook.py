@@ -17,7 +17,7 @@ class RegisterServicesHook(AppFactoryHook):
     The name of this hook.
     """
 
-    bundle_module_names = ['services']
+    bundle_module_names = ['services', 'managers']
     """
     The default modules this hook loads from.
 
