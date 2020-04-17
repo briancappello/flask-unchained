@@ -261,7 +261,7 @@ class _ModelResourceMethodDecoratorsMetaOption(MetaOption):
 class _ModelResourceUrlPrefixMetaOption(MetaOption):
     """
     The url prefix to use for all routes from this resource. Defaults to the
-    pluralized and snake-cased model class name.
+    pluralized and snake_cased model class name.
     """
     def __init__(self):
         super().__init__('url_prefix', default=_missing, inherit=False)

@@ -19,7 +19,7 @@ class RegisterServicesHook(AppFactoryHook):
 
     bundle_module_names = ['services']
     """
-    The default module this hook loads from.
+    The default modules this hook loads from.
 
     Override by setting the ``services_module_names`` attribute on your
     bundle class.

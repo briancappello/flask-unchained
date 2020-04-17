@@ -30,7 +30,7 @@ Config
 .. autoclass:: flask_unchained.bundles.admin.config.Config
    :members:
 
-API Documentation
-^^^^^^^^^^^^^^^^^
+API Docs
+^^^^^^^^
 
-See :doc:`../api/admin_bundle`
+See :doc:`../api/admin-bundle`

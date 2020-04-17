@@ -1,12 +1,12 @@
 Babel Bundle
 ------------
 
-Integrates `Flask BabelEx <https://pythonhosted.org/Flask-BabelEx/>`_ with Flask Unchained.
+The babel bundle provides support for internationalization and localization by integrating `Flask BabelEx <https://pythonhosted.org/Flask-BabelEx/>`_ with Flask Unchained.
 
 Installation
 ^^^^^^^^^^^^
 
-The Babel Bundle comes enabled by default.
+The babel bundle comes enabled by default.
 
 Config
 ^^^^^^
@@ -22,7 +22,7 @@ Commands
    :prog: flask babel
    :show-nested:
 
-API Documentation
-^^^^^^^^^^^^^^^^^
+API Docs
+^^^^^^^^
 
-See :doc:`../api/babel_bundle`
+See :doc:`../api/babel-bundle`

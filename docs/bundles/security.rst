@@ -43,7 +43,7 @@ Commands
    :prog: flask roles
    :show-nested:
 
-API Documentation
-^^^^^^^^^^^^^^^^^
+API Docs
+^^^^^^^^
 
-See :doc:`../api/security_bundle`
+See :doc:`../api/security-bundle`

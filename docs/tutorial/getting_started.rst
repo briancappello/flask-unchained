@@ -12,28 +12,28 @@ Create a new directory and enter it:
 
 The tutorial will assume you’re working from the ``hello-flask-unchained`` directory from now on. All commands are assumed to be run from this top-level project directory, and the file names at the top of each code block are also relative to this directory.
 
-Next, let's create a new virtualenv and activate it:
+Next, let's create a new virtualenv, install Flask Unchained into it, and activate it:
 
 .. code:: bash
 
    # create our virtualenv and activate it
-   python3 -m venv venv
-   . venv/bin/activate
+   python3 -m venv venv && . venv/bin/activate
 
    # install flask-unchained
    pip install "flask-unchained[dev]"
 
-   # refresh the virtualenv so that pytest will work correctly
+   # reactivate the virtualenv so that pytest will work correctly
    deactivate && . venv/bin/activate
 
-NOTE: There are other ways to create virtualenvs for Python, and if you have a different
-preferred method that's fine, but you should definitely always use a virtualenv by
-some way or another.
+.. admonition:: Python Virtual Environments
+    :class: note
+
+    There are other ways to create virtualenvs for Python, and if you have a different preferred method that's fine, but you should always use a virtualenv by some way or another.
 
 Project Layout
 ^^^^^^^^^^^^^^
 
-Just like vanilla Flask, Flask Unchained apps can be written either in a single file (a single Python module) or in multiple files (a Python package of many modules) following a (configurable) folder convention that must be adhered to for Flask Unchained to be able to correctly discover all of your code. A large project might have a folder structure that looks like this::
+Just like Flask, Flask Unchained apps can be written either as a single file or in multiple files following a (configurable) naming convention. A large project might have a folder structure that looks like this::
 
    /home/user/dev/hello-flask-unchained
    ├── app                 # your app bundle package
@@ -46,15 +46,15 @@ Just like vanilla Flask, Flask Unchained apps can be written either in a single 
    │   ├── tasks           # celery tasks
    │   ├── templates       # jinja templates
    │   ├── views           # controllers and resources
-   │   └── __init__.py
-   │   └── config.py       # app config
+   │   ├── __init__.py
+   │   ├── config.py       # app config
    │   └── routes.py       # declarative routes
    ├── assets              # static assets to be handled by Webpack
    │   ├── images
    │   ├── scripts
    │   └── styles
    ├── bundles             # third-party bundle extensions/overrides
-   │   └── security        # a customized/extended Flask Security Bundle
+   │   └── security        # a customized/extended Security Bundle
    │       ├── models
    │       ├── serializers
    │       ├── templates
@@ -74,23 +74,34 @@ By the end of this tutorial, we'll have built something very close. But for now,
 A Minimal Hello World App
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The starting project layout of our hello world app is a single file (two if you count the tests):
+The starting project layout of our hello world app is three files:
 
 .. code:: bash
 
    /home/user/dev/hello-flask-unchained
+   ├── unchained_config.py
    ├── app.py
    └── test_app.py
 
-Let's create the app bundle:
+Let's create them:
 
 .. code:: bash
 
-   touch app.py test_app.py
+   touch unchained_config.py app.py test_app.py
 
 And the code:
 
-.. code:: python
+.. code-block::
+    :linenos:
+
+    # unchained_config.py
+
+    BUNDLES = [
+        'app',
+    ]
+
+.. code-block::
+   :linenos:
 
    # app.py
 
@@ -106,9 +117,9 @@ And the code:
 
 Whenever you create a new app in Flask Unchained, you start by creating a new "app bundle": This is an overloaded term. The app bundle, conceptually, *is* your app. Literally, the app bundle is a subclass of :class:`~flask_unchained.AppBundle` that must live in your app bundle's module root (`app.py` here).
 
-We can now start the development server and you should see your site running at `<http://localhost:5000>`_::
+We can now start the development server with ``flask run`` and you should see your site running at `<http://localhost:5000>`_::
 
-   UNCHAINED_CONFIG="app" flask run
+   flask run
     * Environment: development
     * Debug mode: on
     * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
@@ -131,7 +142,7 @@ Let's make sure it passes:
 
 .. code:: bash
 
-   UNCHAINED_CONFIG="app" pytest
+   pytest
    ======================== test session starts ========================
    platform linux -- Python 3.6.6, pytest-3.6.4, py-1.5.4, pluggy-0.7.1
    rootdir: /home/user/dev/hello-flask-unchained, inifile:

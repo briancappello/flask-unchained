@@ -34,7 +34,9 @@ class _HookNameDescriptor:
 
 class AppFactoryHook:
     """
-    Base class for hooks. It has one entry point, :meth:`run_hook`, which can be
+    Base class for hooks.
+
+    Hooks have one entry point, :meth:`run_hook`, which can be
     overridden to completely customize the behavior of the subclass. The default
     behavior is to look for objects in :attr:`bundle_module_names` which pass the
     result of :meth:`type_check`. These objects are collected from all bundles
@@ -51,7 +53,7 @@ class AppFactoryHook:
 
     name: str = _HookNameDescriptor()
     """
-    The name of this hook. Defaults to the snake-cased class name.
+    The name of this hook. Defaults to the snake_cased class name.
     """
 
     run_before: Union[List[str], Tuple[str, ...]] = ()

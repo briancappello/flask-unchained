@@ -86,10 +86,9 @@ class Bundle(metaclass=_BundleMetaclass):
     """
     Base class for bundles.
 
-    Should be placed in your package's root or the ``bundle`` module::
+    Should be placed in your package's root or its ``bundle`` module::
 
-        # your_bundle_package/__init__.py
-        # your_bundle_package/bundle.py
+        # your_bundle_package/__init__.py or your_bundle_package/bundle.py
 
         class YourBundle(Bundle):
             pass

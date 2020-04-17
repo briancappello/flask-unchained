@@ -14,18 +14,18 @@ Our site looks pretty weak as it stands. Let's add Bootstrap to spruce things up
 
 .. code:: bash
 
-   && wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js -O static/bootstrap-v4.1.2.min.js \
+   wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js -O static/bootstrap-v4.1.2.min.js \
      && wget https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css -O static/bootstrap-v4.1.2.min.css \
      && wget https://code.jquery.com/jquery-3.3.1.slim.min.js -O static/jquery-v3.3.1.slim.min.js \
-     && wget https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js -O static/popper-v1.14.3.min.js \
+     && wget https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js -O static/popper-v1.14.3.min.js
 
 Layout Template
 ^^^^^^^^^^^^^^^
-In order to share as much code as possible between templates, it's best practice to abstract away the shared boilerplate into ``templates/layout.html``. Just like vanilla Flask, Flask Unchained uses the Jinja2 templating engine. If you're unfamiliar with what anything below is doing, I recommend checking out the exeellent `official Jinja2 documentation <jinja.pocoo.org/docs/>`_.
+In order to share as much code as possible between templates, it's best practice to abstract away the shared boilerplate into ``templates/layout.html``. Just like vanilla Flask, Flask Unchained uses the Jinja2 templating engine. If you're unfamiliar with what anything below is doing, I recommend checking out the excellent `official Jinja2 documentation <jinja.pocoo.org/docs/>`_.
 
 Now let's write our ``templates/layout.html`` file:
 
-.. code:: html+jinja
+.. code-block:: html+jinja
 
    {# templates/layout.html #}
 
@@ -35,7 +35,9 @@ Now let's write our ``templates/layout.html`` file:
        <meta charset="utf-8">
        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-       <title>{% block title %}Hello Flask Unchained!{% endblock %}</title>
+       <title>
+         {% block title %}Hello Flask Unchained!{% endblock %}
+       </title>
 
        {% block stylesheets %}
          <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-v4.1.2.min.css') }}">
@@ -72,7 +74,7 @@ Now let's write our ``templates/layout.html`` file:
 
 And also the included  ``templates/_flashes.html`` and ``templates/_navbar.html`` templates:
 
-.. code:: html+jinja
+.. code-block:: html+jinja
 
    {# templates/_flashes.html #}
 
@@ -544,27 +546,18 @@ What is this mythical ``render_form`` macro? Well, we need to write it ourselves
    {% macro render_field(field) %}
      {% set input_type = field.widget.input_type %}
 
-     {# hidden fields #}
      {% if input_type == 'hidden' %}
        {{ field(**kwargs)|safe }}
-
-     {# submit buttons #}
      {% elif input_type == 'submit' %}
        <div class="form-group">
          {{ field(class='btn btn-primary', **kwargs)|safe }}
        </div>
-
-     {# form fields #}
      {% else %}
        <div class="form-group">
-
-         {# checkboxes #}
          {% if input_type == 'checkbox' %}
            <label for="{{ field.id }}">
              {{ field(**kwargs)|safe }} {{ field.label.text }}
            </label>
-
-         {# all other form fields #}
          {% else %}
            {{ field.label }}
            {{ field(class='form-control', **kwargs)|safe }}
@@ -577,8 +570,7 @@ What is this mythical ``render_form`` macro? Well, we need to write it ourselves
            </small>
          {% endif %}
          {{ render_errors(field.errors) }}
-
-       </div>  {# /.form-group #}
+       </div> {# /.form-group #}
      {% endif %}
    {% endmacro %}
 

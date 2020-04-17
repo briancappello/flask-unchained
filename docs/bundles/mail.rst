@@ -62,7 +62,7 @@ The mail bundle includes one pytest fixture, :func:`~flask_unchained.bundles.mai
        assert outbox[0].subject == 'hello world'
        assert 'hello world' in outbox[0].html
 
-API Documentation
-^^^^^^^^^^^^^^^^^
+API Docs
+^^^^^^^^
 
-See :doc:`../api/mail_bundle`
+See :doc:`../api/mail-bundle`

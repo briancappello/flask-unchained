@@ -1,7 +1,7 @@
 Setting up the Database
 -----------------------
 
-Flask Unchained comes integrated with the `SQLAlchemy <http://www.sqlalchemy.org/>`_ ORM. It is currently the only ORM supported by Flask Unchained, however pull requests are always welcome!
+Flask Unchained comes integrated with the `SQLAlchemy <http://www.sqlalchemy.org/>`_ ORM.
 
 Install Dependencies
 ^^^^^^^^^^^^^^^^^^^^

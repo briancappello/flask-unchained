@@ -1,0 +1,10 @@
+{% if pagename in theme_heroes or '*' in theme_heroes %}
+  {% set hero_text = theme_heroes.get(pagename, theme_heroes['*']) %}
+  <div class="md-hero{% if nav_bar_tabs %} md-hero--expand{% endif %}"
+       data-md-component="hero"
+  >
+    <div class="md-hero__inner md-grid">
+      <p>{{ hero_text }}</p>
+    </div>
+  </div>
+{% endif %}

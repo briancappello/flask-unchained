@@ -101,7 +101,7 @@ def no_route(arg=None):
         # but without the @no_route decorator, it would have also added this route:
         SiteController.utility_method   => GET /utility-method
 
-    NOTE: The perhaps more Pythonic way to accomplish is simply to make all non-route
+    NOTE: The perhaps more Pythonic way to accomplish this is to make all non-route
     methods protected by prefixing them with an underscore, eg ``_utility_method``.
     """
     def wrapper(fn):
@@ -115,15 +115,27 @@ def no_route(arg=None):
 
 def param_converter(*decorator_args, **decorator_kwargs):
     """
-    Call with the url parameter names as keyword argument keys, their values
-    being the model to convert to.
+    Convert arguments from the URL and/or query string.
+
+    For parsing arguments from the query string, pass their names as
+    keyword argument keys where the value is a lookup (dict, Enum) or callable
+    used to convert the query string argument's value::
+
+        @route('/users/<int:id>')
+        @param_converter(id=User, foo=str, optional=int)
+        def show_user(user, foo, optional=10):
+            # GET /users/1?foo=bar
+            # calls show_user(user=User.query.get(1), foo='bar')
+
+    It also supports loading SQLAlchemy models from the database. Call with the
+    url parameter names as keyword argument keys, their values being the model
+    class to convert to.
 
     Models will be looked up by the url param names. If a url param name
-    is prefixed with the snake-cased model name, the prefix will be stripped.
-
+    is prefixed with the snake_cased model name, the prefix will be stripped.
     If a model isn't found, abort with a 404.
 
-    The action's argument names must match the snake-cased model names.
+    The view function's argument names must match the snake_cased model names.
 
     For example::
 
@@ -131,25 +143,16 @@ def param_converter(*decorator_args, **decorator_kwargs):
         @param_converter(user_id=User, id=Post)
         def show_post(user, post):
             # the param converter does the database lookups:
-            # user = User.query.filter_by(id=user_id).first()
-            # post = Post.query.filter_by(id=id).first()
-            # and calls the decorated action: show_post(user, post)
+            # user = User.query.get(id=user_id)
+            # post = Post.query.get(id=id)
+            # and calls the decorated view: show_post(user, post)
 
-        # or to customize the argument names passed to the action:
+        # or to customize the argument names passed to the view:
         @route('/users/<int:user_id>/posts/<int:post_id>')
         @param_converter(user_id={'user_arg_name': User},
                          post_id={'post_arg_name': Post})
         def show_post(user_arg_name, post_arg_name):
-            # do stuff ...
-
-    Also supports parsing arguments from the query string. For query string
-    keyword arguments, use a lookup (dict, Enum) or callable::
-
-        @bp.route('/users/<int:id>')
-        @param_converter(id=User, foo=str, optional=int)
-        def show_user(user, foo, optional=10):
-            # GET /users/1?foo=bar
-            # calls show_user(user=User.get(1), foo='bar')
+            # do stuff
     """
     def wrapped(fn):
         @wraps(fn)

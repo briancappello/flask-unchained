@@ -1,18 +1,30 @@
-Bundles
-=======
+.. BEGIN setup/comments -------------------------------------------------------
+
+   The heading hierarchy is defined as:
+        h1: =
+        h2: -
+        h3: ^
+        h4: ~
+        h5: "
+        h6: #
+
+.. BEGIN document -------------------------------------------------------------
+
+Included Bundles
+================
 
 .. toctree::
-   :caption: Contents:
-   :maxdepth: 2
+    :maxdepth: 2
 
-   admin
-   api
-   babel
-   celery
-   controller
-   mail
-   oauth
-   security
-   session
-   sqlalchemy
-   webpack
+    admin
+    api
+    babel
+    celery
+    controller
+    graphene
+    mail
+    oauth
+    security
+    session
+    sqlalchemy
+    webpack

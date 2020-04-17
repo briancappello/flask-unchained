@@ -358,7 +358,7 @@ The first thing we need to do is to include the :class:`~flask_unchained.bundles
        controller(SecurityController),
    ]
 
-By default, Flask Security Bundle only comes with the login and logout endpoints enabled. Let's confirm:
+By default, Security Bundle only comes with the login and logout endpoints enabled. Let's confirm:
 
 .. code:: bash
 
@@ -614,5 +614,3 @@ Let's commit our changes:
    git add .
    git status
    git commit -m 'install and configure security bundle'
-
-And move on to the meat of the application: :doc:`building_the_portfolio`.

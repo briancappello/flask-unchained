@@ -1,14 +1,44 @@
-/********************************************************************************
- * Need to use !important on rules in this file because the RTD stylesheets get *
- * loaded after this stylesheet                                                 *
+/*******************************************************************************
+ * IMPORTANT: Need to use !important on rules in this file to override theme   *
  *******************************************************************************/
 
 /* override table width restrictions (fix line-wrap inside cells) */
 @media screen and (min-width: 767px) {
-   .wy-table-responsive table td {
-      white-space: normal !important;
-   }
-   .wy-table-responsive {
-      overflow: visible !important;
-   }
+    .wy-table-responsive table td {
+        white-space: normal !important;
+    }
+
+    .wy-table-responsive {
+        overflow: visible !important;
+    }
+}
+
+/* do not add extra spacing around the hero text in responsive modes */
+.md-hero__inner {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* make the placement of the top-left nav-icon consistent (infinity icon) */
+.md-header-nav__button {
+    margin: 0 0 0 .4rem !important;
+    width: 20px !important;
+}
+
+@media only screen and (max-width: 76.1875em) {
+    /* do not add extra spacing around the hero text in responsive modes */
+    .md-hero__inner {
+        padding: .8rem .8rem .4rem !important;
+    }
+
+    /* make the placement of the top-left nav-icon consistent (hamburger icon) */
+    .md-header-nav__button {
+        margin: .2rem !important;
+        padding: .4rem !important;
+    }
+
+    /* add some left padding to nav sub-items when the sidebar is collapsed */
+    .md-nav__item > .md-nav__list {
+        margin-left: .8rem !important;
+    }
 }

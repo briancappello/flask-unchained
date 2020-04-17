@@ -1,22 +1,25 @@
 Controller Bundle
 -----------------
 
-The controller bundle provides the primary means for defining and registering views and their routes in Flask Unchained.
+The controller bundle provides the primary means for defining views and registering their routes with Flask. It is also the controller bundle that makes all of your other bundles blueprints.
 
 Installation
 ^^^^^^^^^^^^
 
 The controller bundle comes enabled by default.
 
+Usage
+^^^^^
+
 Config
-^^^^^^
+~~~~~~
 
 .. automodule:: flask_unchained.bundles.controller.config
    :members:
    :noindex:
 
-Usage
-^^^^^
+Views and Controllers
+~~~~~~~~~~~~~~~~~~~~~
 
 Like stock Flask, Flask Unchained supports using views defined the "standard" way, ie::
 
@@ -99,22 +102,22 @@ Here is a summary of the functions imported at the top of your ``routes.py``:
 
 .. list-table:: Declarative Routing Functions
    :header-rows: 1
-   :widths: 15 85
+   :widths: 20 80
 
    * - Function
      - Description
+   * - :func:`~flask_unchained.include`
+     - Include all of the routes from the specified module at that point in the tree.
+   * - :func:`~flask_unchained.prefix`
+     - Prefixes all of the child routing rules with the given prefix.
+   * - :func:`~flask_unchained.func`
+     - Registers a function-based view with the app, optionally specifying the routing rules.
    * - :func:`~flask_unchained.controller`
      - Registers a controller and its views with the app, optionally customizing the routes to register.
    * - :func:`~flask_unchained.resource`
      - Registers a resource and its views with the app, optionally customizing the routes to register.
-   * - :func:`~flask_unchained.func`
-     - Registers a function-based view with the app, optionally specifying the routing rules.
-   * - :func:`~flask_unchained.include`
-     - Includes all of the routing rules from the specified module at that point in the tree.
-   * - :func:`~flask_unchained.prefix`
-     - Prefixes all of the child routing rules with the given prefix.
-   * - :func:`~flask_unchained.delete`
-     - Defines a controller/resource method as only accepting the HTTP ``DELETE`` method, otherwise the same as :func:`~flask_unchained.rule`.
+   * - :func:`~flask_unchained.rule`
+     - Define customizations to a controller/resource method's route rules.
    * - :func:`~flask_unchained.get`
      - Defines a controller/resource method as only accepting the HTTP ``GET`` method, otherwise the same as :func:`~flask_unchained.rule`.
    * - :func:`~flask_unchained.patch`
@@ -123,8 +126,8 @@ Here is a summary of the functions imported at the top of your ``routes.py``:
      - Defines a controller/resource method as only accepting the HTTP ``POST`` method, otherwise the same as :func:`~flask_unchained.rule`.
    * - :func:`~flask_unchained.put`
      - Defines a controller/resource method as only accepting the HTTP ``PUT`` method, otherwise the same as :func:`~flask_unchained.rule`.
-   * - :func:`~flask_unchained.rule`
-     - Define customizations to a controller/resource method's route rules.
+   * - :func:`~flask_unchained.delete`
+     - Defines a controller/resource method as only accepting the HTTP ``DELETE`` method, otherwise the same as :func:`~flask_unchained.rule`.
 
 Class-Based Views
 ~~~~~~~~~~~~~~~~~
@@ -192,7 +195,7 @@ Controllers have a few meta options that you can use to customize their behavior
      - ()
    * - template_folder
      - The name of the folder containing the templates for this controller's views.
-     - Defaults to the snake-cased class name (with the ``Controller`` or ``View`` suffixes stripped).
+     - Defaults to the snake_cased class name (with the ``Controller`` or ``View`` suffixes stripped).
    * - template_file_extension
      - The filename extension to use for templates for this controller's views.
      - Defaults to your app config's ``TEMPLATE_FILE_EXTENSION`` setting, and overrides it if set.
@@ -257,58 +260,62 @@ If you implement any of these methods, then the shown URL rules will automatical
 
 So, for example::
 
-        from flask_unchained import Resource, injectable, param_converter
-        from flask_unchained.bundles.security import User, UserManager
+    from http import HTTPStatus
+    from flask_unchained import Resource, injectable, param_converter, request
+    from flask_unchained.bundles.security import User, UserManager
 
 
-        class UserResource(Resource):
-            class Meta:
-                member_param: '<string:username>'
+    class UserResource(Resource):
+        class Meta:
+            url_prefix = '/users'
+            member_param = '<int:id>'
+            unique_member_param = '<int:user_id>'
 
-            def __init__(self, user_manager: UserManager = injectable):
-                super().__init__()
-                self.user_manager = user_manager
+        user_manager: UserManager = injectable
 
-            def list():
-                return self.jsonify(dict(users=User.query.all()))
+        def list():
+            return self.jsonify(dict(users=self.user_manager.all()))
 
-            def create():
-                user = self.user_manager.create(**data, commit=True)
-                return self.jsonify(dict(user=user), code=201)
+        def create():
+            data = request.get_json()
+            user = self.user_manager.create(**data, commit=True)
+            return self.jsonify(dict(user=user), code=HTTPStatus.CREATED)
 
-            @param_converter(username=User)
-            def get(user):
-                return self.jsonify(dict( user=user)
+        @param_converter(id=User)
+        def get(user):
+            return self.jsonify(dict(user=user)
 
-            @param_converter(username=User)
-            def patch(user):
-                user = self.user_manager.update(user, **data, commit=True)
-                return self.jsonify(dict(user=user))
+        @param_converter(id=User)
+        def patch(user):
+            data = request.get_json()
+            user = self.user_manager.update(user, **data, commit=True)
+            return self.jsonify(dict(user=user))
 
-            @param_converter(username=User)
-            def put(user):
-                user = self.user_manager.update(user, **data, commit=True)
-                return self.jsonify(dict(user=user))
+        @param_converter(id=User)
+        def put(user):
+            data = request.get_json()
+            user = self.user_manager.update(user, **data, commit=True)
+            return self.jsonify(dict(user=user))
 
-            @param_converter(username=User)
-            def delete(user):
-                self.user_manager.delete(user, commit=True)
-                return self.make_response('', code=204)
+        @param_converter(id=User)
+        def delete(user):
+            self.user_manager.delete(user, commit=True)
+            return self.make_response('', code=HTTPStatus.NO_CONTENT)
 
 Registered like so::
 
   routes = lambda: [
-      resource('/users', UserResource),
+      resource(UserResource),
   ]
 
-Would register the following routes::
+Results in the following routes::
 
-   GET     /users                      UserResource.list
-   POST    /users                      UserResource.create
-   GET     /users/<string:username>    UserResource.get
-   PATCH   /users/<string:username>    UserResource.patch
-   PUT     /users/<string:username>    UserResource.put
-   DELETE  /users/<string:username>    UserResource.delete
+   GET     /users             UserResource.list
+   POST    /users             UserResource.create
+   GET     /users/<int:id>    UserResource.get
+   PATCH   /users/<int:id>    UserResource.patch
+   PUT     /users/<int:id>    UserResource.put
+   DELETE  /users/<int:id>    UserResource.delete
 
 Resource Meta Options
 #####################
@@ -323,11 +330,11 @@ Resources have a few extra meta options on top of those that Controller includes
 
    class UserResource(Resource):
        class Meta:
-           abstract: bool = False                         # default is False
-           decorators: List[callable] = ()                # default is an empty tuple
-           member_param: String = '<int:id>'
-           unique_member_parm: String = f'<{int}:{controller_name}_{member_param_name}>'
-           url_prefix = Optional[str] = None              # default is None
+           abstract: bool = False                     # the default
+           decorators: List[callable] = ()            # the default
+           url_prefix = Optional[str] = '/users'      # automatically determined
+           member_param: str = '<int:id>'             # the default
+           unique_member_parm: str = '<int:user_id>'  # automatically determined
 
 .. list-table::
    :header-rows: 1
@@ -335,12 +342,15 @@ Resources have a few extra meta options on top of those that Controller includes
    * - meta option name
      - description
      - default value
+   * - :attr:`~flask_unchained.Resource.Meta.url_prefix`
+     - The url prefix to use for all routes from this resource.
+     - Defaults to the pluralized, kebab-cased class name (without the Resource suffix)
    * - :attr:`~flask_unchained.Resource.Meta.member_param`
      - The url parameter rule to use for the special member functions (``get``, ``patch``, ``put``, and ``delete``) of this resource.
      - ``<int:id>``
    * - :attr:`~flask_unchained.Resource.Meta.unique_member_param`
      - The url parameter rule to use for the special member methods (``get``, ``patch``, ``put``, and ``delete``) of this resource when :attr:`~flask_unchained.Resource.Meta.member_param` conflicts with a subresource's :attr:`~flask_unchained.Resource.Meta.member_param`.
-     - ``f'<{int}:{controller_name}_{member_param_name}>'``
+     - ``<{type}:{prefix}_{name}>`` where ``type`` and ``name`` come from ``member_param`` and ``prefix`` is the snake_cased class name (without the Resource suffix)
 
 Overriding Resources
 ####################
@@ -350,13 +360,13 @@ Because :class:`~flask_unchained.Resource` is already a subclass of :class:`~fla
 Templating
 """"""""""
 
-Flask Unchained uses the `Jinja <http://jinja.pocoo.org/docs/>`_ templating language, just like stock Flask.
+Flask Unchained uses the `Jinja <https://jinja.palletsprojects.com/en/2.10.x/templates/>`_ templating language, just like stock Flask.
 
-By default bundles are configured to use a ``templates`` subfolder. This is configurable by setting :attr:`flask_unchained.Bundle.template_folder` to a custom path.
+By default bundles are configured to use a ``templates`` subfolder. This is configurable by setting the ``template_folder`` attribute on your ``Bundle`` subclass to a custom path.
 
-Controllers each have their own template folder within ``Bundle.template_folder``. It defaults to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping after the first one is found (if any). It then gets converted to snake-case. Or you can set it manually with :attr:`flask_unchained.Controller.Meta.template_folder`.
+Controllers each have their own template folder within ``Bundle.template_folder``. It defaults to the snake_cased class name, with the suffixes ``Controller`` or ``View`` stripped (if any). You can customize it using :attr:`flask_unchained.Controller.Meta.template_folder`.
 
-The default file extension used for templates is configured by setting ``TEMPLATE_FILE_EXTENSION``. It defaults to ``.html``, and is also configurable on a per-controller basis by setting :attr:`flask_unchained.Controller.Meta.template_file_extension`.
+The default file extension used for templates is configured by setting ``TEMPLATE_FILE_EXTENSION`` in your app config. It defaults to ``.html``, and is also configurable on a per-controller basis by setting :attr:`flask_unchained.Controller.Meta.template_file_extension`.
 
 Taking the above into account, given the following controller:
 
@@ -378,12 +388,12 @@ Then the corresponding folder structure would look like this:
    ├── __init__.py
    └── views.py
 
-Overriding Templates
-""""""""""""""""""""
+Extending and Overriding Templates
+""""""""""""""""""""""""""""""""""
 
 Templates can be overridden by placing an equivalently named template higher up in the bundle hierarchy.
 
-So for example, the security bundle includes default templates for all of its views. They are located at ``security/login.html``, ``security/logout.html``, ``security/register.html``, and so on. Thus, to extend or override them, you would make a ``security`` folder in your app bundle's or your security bundle's ``templates`` folder and put your customized ``login.html`` template in it. Flask Unchained will do the rest to make sure it uses the one you wanted. It's also worth noting that you can even extend the template you're overriding, using the standard Jinja syntax (this doesn't work in stock Flask apps):
+So for example, the Security Bundle includes default templates for all of its views. They are located at ``security/login.html``, ``security/register.html``, and so on. Thus, to extend or override them, you would make a ``security`` folder in your app bundle's ``templates`` folder and put your customized templates with the same names in it. You can even extend the template you're overriding, using the standard Jinja syntax (this doesn't work in regular Flask apps):
 
 .. code:: html+jinja
 
@@ -432,7 +442,7 @@ And here's what the same thing using the constructor looks like::
            self.security_utils_service = security_utils_service
            self.session_manager = session_manager
 
-API Documentation
-^^^^^^^^^^^^^^^^^
+API Docs
+^^^^^^^^
 
-See :doc:`../api/controller_bundle`
+See :doc:`../api/controller-bundle`

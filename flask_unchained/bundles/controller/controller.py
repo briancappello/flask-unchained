@@ -218,8 +218,8 @@ class Controller(metaclass=_ControllerMetaclass):
                 abstract = False  # this is the default; no need to set explicitly
                 decorators = ()  # a list of decorators to apply to all view methods
                                  # on the controller (defaults to an empty tuple)
-                template_folder = 'site'  # defaults to the snake-cased class name,
-                                               # minus any Controller/View suffix
+                template_folder = 'site'  # defaults to the snake_cased class name,
+                                          # minus any Controller/View suffix
                 template_file_extension = app.config.TEMPLATE_FILE_EXTENSION = '.html'
                 url_prefix = None  # optional url prefix to use for all routes
                 endpoint_prefix = 'site_controller'

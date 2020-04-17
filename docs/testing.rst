@@ -1,5 +1,5 @@
-Testing with pytest
-===================
+Testing
+=======
 
 Included pytest fixtures
 ------------------------

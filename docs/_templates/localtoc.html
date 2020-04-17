@@ -1,0 +1,29 @@
+{% set toc_nodes = derender_toc(toc, True, pagename) if display_toc else [] %}
+
+<nav class="md-nav md-nav--secondary">
+  <ul class="md-nav__list" data-md-scrollfix="">
+    {%- if display_toc and sidebars and 'localtoc.html' in sidebars %}
+      {%- for item in toc_nodes recursive %}
+        <li class="md-nav__item">
+          <a href="{{ item.href|e }}" class="md-nav__link">
+            {% if loop.depth0 == 0 and loop.index0 == 0 %}
+              <strong>{{ item.contents }}</strong>
+            {% else %}
+              {{ item.contents }}
+            {% endif %}
+          </a>
+          {%- if item.children -%}
+            <nav class="md-nav">
+              <ul class="md-nav__list">
+                {{ loop(item.children) }}
+              </ul>
+            </nav>
+          {%- endif %}
+        </li>
+      {%- endfor %}
+    {%- endif %}
+    {%- if show_source %}
+      {% include "sourcelink.html" %}
+    {%- endif %}
+  </ul>
+</nav>

@@ -83,17 +83,41 @@ These are customizable by declaring meta options. For example to disable timesta
            created_at = None
            updated_at = None
 
-The SQLAlchemy bundle supports `the same meta options as stock SQLAlchemy Unchained <https://github.com/briancappello/sqlalchemy-unchained#included-meta-options>`_, and adds two more:
+Models support the following meta options:
 
 .. list-table::
    :header-rows: 1
+   :widths: 15 30 55
 
    * - meta option name
+     - default
      - description
-   * - relationships
-     - This is an automatically determined meta option, and is used for determining whether or not a model has the same relationships as its base model. This is useful when you want to override a model from a bundle but change its relationships. The code that determines this is rather experimental, and may not do the right thing. Please report any bugs you come across!
+   * - table
+     - snake_cased model class name
+     - The database tablename to use for this model.
+   * - pk
+     - ``'id'``
+     - The name of the primary key column.
+   * - created_at
+     - ``'created_at'``
+     - The name of the row creation timestamp column.
+   * - updated_at
+     - ``'updated_at'``
+     - The name of the most recent row update timestamp column.
+   * - repr
+     - ``('id',)``
+     - Column attributes to include in the automatic ``__repr__``
+   * - validation
+     - ``True``
+     - Whether or not to enable validation on the model for CRUD operations.
    * - mv_for
-     - Used for specifying the name of the model a :attr:`~flask_unchained.bundles.sqlalchemy.SQLAlchemy.MaterializedView` is for.
+     - ``None``
+     - Used for specifying the name of the model a :attr:`~flask_unchained.bundles.sqlalchemy.SQLAlchemy.MaterializedView` is for, as a string.
+   * - relationships
+     - ``{}``
+     - This is an automatically determined meta option, and is used for determining whether or not a model has the same relationships as its base model. This is useful when you want to override a model from a bundle but change its relationships. The code that determines this is rather experimental, and may not do the right thing. Please report any bugs you come across!
+
+FIXME: Polymorphic Models
 
 Commands
 ^^^^^^^^
@@ -102,7 +126,7 @@ Commands
     :prog: flask db
     :show-nested:
 
-API Documentation
-^^^^^^^^^^^^^^^^^
+API Docs
+^^^^^^^^
 
-See :doc:`../api/sqlalchemy_bundle`
+See :doc:`../api/sqlalchemy-bundle`

@@ -1,7 +1,7 @@
 API Bundle
 ----------
 
-Integrates `Marshmallow <https://marshmallow.readthedocs.io/en/2.x-line/>`_ and `APISpec <http://apispec.readthedocs.io/en/stable/>`_ with `SQLAlchemy <https://www.sqlalchemy.org/>`_ and `Flask Unchained <https://flask-unchained.readthedocs.io/en/latest/>`_.
+Integrates `Marshmallow <https://marshmallow.readthedocs.io/en/2.x-line/>`_ and `APISpec <http://apispec.readthedocs.io/en/stable/>`_ with SQLAlchemy and Flask Unchained.
 
 Installation
 ^^^^^^^^^^^^
@@ -12,7 +12,7 @@ Install dependencies:
 
    pip install "flask-unchained[api]"
 
-And enable the bundle in your ``unchained_config.py``:
+And enable the API bundle in your ``unchained_config.py``:
 
 .. code:: python
 
@@ -27,7 +27,7 @@ And enable the bundle in your ``unchained_config.py``:
 Usage
 ^^^^^
 
-The API bundle includes two extensions, :class:`~flask_unchained.bundles.api.Api` and :class:`~flask_unchained.bundles.api.Marshmallow`. :class:`~flask_unchained.bundles.api.Api` is used for generating OpenAPI documentation while :class:`~flask_unchained.bundles.api.Marshmallow` is used for serialization. These should be imported like so:
+The API bundle includes two extensions, :class:`~flask_unchained.bundles.api.Api` and :class:`~flask_unchained.bundles.api.Marshmallow`. The :class:`~flask_unchained.bundles.api.Api` extension is used for generating OpenAPI documentation and the :class:`~flask_unchained.bundles.api.Marshmallow` extension is used for serialization. These should be imported like so:
 
 .. code:: python
 
@@ -38,8 +38,8 @@ Model Serializers
 
 :class:`~flask_unchained.bundles.api.ModelSerializer` is very similar to Flask Marshmallow's :class:`~flask_marshmallow.sqla.ModelSchema`. There are two differences:
 
-- dependency injection is automatically set up on the constructor, and
-- we automatically convert field names to camel case when dumping and loading
+- dependency injection is automatically set up, and
+- we automatically convert field names to/from camel case when dumping/loading (although this is customizable)
 
 Let's say you have the following model:
 
@@ -141,8 +141,7 @@ Add it to your routes:
 
 And that's it, unless you need to customize any behavior.
 
-Model Resource Meta Options
-"""""""""""""""""""""""""""
+**Model Resource Meta Options**
 
 :class:`~flask_unchained.bundles.api.ModelResource` inherits all of the meta options from :class:`~flask_unchained.Controller` and :class:`~flask_unchained.Resource`, and it adds some options of its own:
 
@@ -181,10 +180,7 @@ Model Resource Meta Options
      - This can either be a list of decorators to apply to *all* methods, or a dictionary of method names to a list of decorators to apply for each method. In both cases, decorators specified here are run *before* the default decorators.
      - ``()``
 
-FIXME: OpenAPI Documentation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+API Docs
+^^^^^^^^
 
-API Documentation
-^^^^^^^^^^^^^^^^^
-
-See :doc:`../api/api_bundle`
+See :doc:`../api/api-bundle`

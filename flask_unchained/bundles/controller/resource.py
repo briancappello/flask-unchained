@@ -48,7 +48,7 @@ class _ResourceMetaclass(_ControllerMetaclass):
 class _ResourceUrlPrefixMetaOption(MetaOption):
     """
     The url prefix to use for all routes from this resource. Defaults to the
-    pluralized and snake-cased class name with the ``Resource``, ``MethodView``,
+    pluralized and snake_cased class name with the ``Resource``, ``MethodView``,
     ``Controller``, and ``View`` suffixes stripped.
     """
     def __init__(self):

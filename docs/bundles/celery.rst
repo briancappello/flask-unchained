@@ -17,7 +17,7 @@ Install dependencies:
 
    pip install "flask-unchained[celery]" <broker-of-choice>
 
-And enable the bundle in your ``unchained_config.py``:
+And enable the celery bundle in your ``unchained_config.py``:
 
 .. code:: python
 
@@ -45,7 +45,7 @@ Commands
     :prog: flask celery
     :show-nested:
 
-API Documentation
-^^^^^^^^^^^^^^^^^
+API Docs
+^^^^^^^^
 
-See :doc:`../api/celery_bundle`
+See :doc:`../api/celery-bundle`
