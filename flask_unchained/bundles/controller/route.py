@@ -28,7 +28,7 @@ class Route:
     finalized from the outside using ``TheControllerClass.method_as_view``.
     """
     def __init__(self,
-                 rule: str,
+                 rule: Union[str, None],
                  view_func: Union[str, FunctionType],
                  blueprint: Optional[Blueprint] = None,
                  defaults: Optional[Dict[str, Any]] = None,

@@ -52,6 +52,7 @@ class ControllerBundle(Bundle):
         """
         from .templates import (UnchainedJinjaEnvironment,
                                 UnchainedJinjaLoader)
+
         app.jinja_environment = UnchainedJinjaEnvironment
         app.jinja_options = {**app.jinja_options,
                              'loader': UnchainedJinjaLoader(app)}
