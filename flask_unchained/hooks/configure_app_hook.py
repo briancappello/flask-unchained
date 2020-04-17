@@ -55,9 +55,8 @@ class ConfigureAppHook(AppFactoryHook):
         BundleConfig._set_current_app(app)
 
         self.apply_default_config(app, bundles and bundles[-1] or None)
-        for bundle_ in bundles:
-            for bundle in bundle_._iter_class_hierarchy():
-                app.config.from_mapping(self.get_bundle_config(bundle, app.env))
+        for bundle in bundles:
+            app.config.from_mapping(self.get_bundle_config(bundle, app.env))
 
         _config_overrides = (unchained_config.get('_CONFIG_OVERRIDES')
                              if unchained_config else None)
