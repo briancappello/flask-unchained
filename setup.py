@@ -29,7 +29,8 @@ setup(
         'py-meta-utils>=0.7.6',
         'pyterminalsize>=0.1.0',
         'networkx>=2.1',
-        'werkzeug>=0.15.3',
+        'werkzeug>=0.15.3,<1.0',
+        'wtforms>=2.2.1,<2.3'
     ],
     extras_require={
         'admin': [
