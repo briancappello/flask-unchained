@@ -17,7 +17,9 @@ Introducing Flask Unchained
 
 Bundles are a powerful concept Flask Unchained introduces to Flask: Bundles are Python packages that integrate functionality with Flask, Flask Unchained, and other bundles. That could mean anything from integrating Flask extensions to being full-blown apps *your* app can integrate, customize, and extend (like say, a blog or a web store).
 
-Conceptually, a bundle *is* a blueprint, and Flask Unchained gives you complete control to configure not only which views from each bundle get registered with your app and at what routes, but also to extend and/or override anything else you might want to from the bundles you enable (things like configuration, controllers, resources, and routes, templates, extensions and services, and models and serializers - to name some examples). The patterns to do this are simple, consistent, and work the same way in every bundle.
+Conceptually, a bundle *is* a blueprint, and Flask Unchained gives you complete control to configure not only which views from each bundle get registered with your app and at what routes, but also to extend and/or override anything else you might want to from the bundles you enable.
+
+Some examples of what you can customize from bundles include configuration, controllers, resources, and routes, templates, extensions and services, and models and serializers can all be customized using simple and consistent patterns that work the same way in every bundle. Extended/customized bundles can themselves also be distributed as their own projects, and support the same patterns for customization, ad infinitum.
 
 .. admonition:: Included bundles & integrated extensions
     :class: tip
@@ -114,10 +116,10 @@ You may be wondering, what happened to the ``Flask`` app instance? We are litera
 
     app = AppFactory().create_app(os.getenv('FLASK_ENV', PROD))
 
-.. admonition:: Note
+.. admonition:: This is beta software
     :class: warning
 
-    **This is beta software.** The core is solid, but there will be bugs at the edges. Please file issues on GitHub if you encounter any problems or have any questions!
+    The core should be solid, but there will be bugs at the edges. Please file `issues on GitHub <https://github.com/briancappello/flask-unchained/issues>`_ if you encounter any problems or have any questions!
 
 Going Big (Project Layout)
 --------------------------
@@ -163,14 +165,10 @@ Features
 Bundles
 ^^^^^^^
 
-Bundles are the core building block of Flask Unchained apps. Bundles are simply Python packages, and they can be distributed as standalone projects. They can do anything from integrate Flask extensions to being full-blown apps *your* app can integrate, customize, and extend.
-
-Bundles provide simple and consistent patterns for extending and/or overriding practically everything in them. That includes configuration, controllers/resources, routes, templates, models, serializers, services, extensions, CLI commands, and more. Extended/customized bundles can themselves also be distributed as their own projects, and support the same patterns for customization, ad infinitum.
-
 Bundle Structure
 ~~~~~~~~~~~~~~~~
 
-The example "hello world" app bundle lived in a single file, while a "full" bundle package looks about like this:
+The example "hello world" app bundle lived in a single file, while a "full" bundle package consists of many modules. An example using the defaults looks like this:
 
 .. code-block:: shell
 
@@ -204,13 +202,6 @@ These module locations are customizable on a per-bundle basis by setting class a
         routes_module_name = 'urls'
         views_module_names = ['controllers', 'resources', 'views']
 
-.. admonition:: Important
-    :class: tip
-
-    Your code lives in bundles, but it is actually app factory hooks that define the patterns and make everything work.
-
-    Those patterns are for the most part just following consistent naming conventions and using standard object-oriented Python. To override something, you just place it in your bundle with the same name and in the same location (module) as whatever you want to override, or to extend something, do the same while also subclassing whatever you wish to extend.
-
 You can see the default module names and the override attribute names to set on your :class:`~flask_unchained.bundles.Bundle` subclass by printing the ordered list of hooks that will run for your app using ``flask unchained hooks``:
 
 .. code-block:: shell
@@ -232,11 +223,6 @@ You can see the default module names and the override attribute names to set on 
     model_serializers     serializers            model_serializers_module_names
     model_resources       views                  model_resources_module_names
     celery_tasks          tasks                  celery_tasks_module_names
-
-.. admonition:: Advanced
-    :class: info
-
-    While it shouldn't be necessary, you can even extend and/or override hooks themselves if you need to customize their behavior.
 
 Bundle Blueprints
 ~~~~~~~~~~~~~~~~~

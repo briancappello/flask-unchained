@@ -149,7 +149,17 @@ The ``Unchained`` extension first forwards these calls to the ``Flask`` instance
 App Factory Hooks
 -----------------
 
-App Factory Hooks are what make sure all of the code from your configured list of bundles gets discovered and registered correctly with both the Flask app and the Unchained extension.
+App Factory Hooks are what make sure all of the code from your configured list of bundles gets discovered and registered correctly with both the Flask ``app`` instance and the Unchained extension.
+
+.. admonition:: Important
+    :class: tip
+
+    Hooks are what define the patterns to load and customize everything in bundles. By default, to override something, you just place it in your bundle with the same name and in the same location (module) as whatever you want to override, or to extend something, do the same while also subclassing whatever you wish to extend. In other words, you just use standard object-oriented Python while following consistent naming conventions.
+
+.. admonition:: Advanced
+    :class: info
+
+    While it shouldn't be necessary, you can even extend and/or override hooks themselves if you need to customize their behavior.
 
 These are some of the hooks Flask Unchained includes:
 
