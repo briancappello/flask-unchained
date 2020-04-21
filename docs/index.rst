@@ -17,6 +17,8 @@ Introducing Flask Unchained
 
 Bundles are a powerful concept Flask Unchained introduces to Flask: Bundles are Python packages that integrate functionality with Flask, Flask Unchained, and other bundles. That could mean anything from integrating Flask extensions to being full-blown apps *your* app can integrate, customize, and extend (like say, a blog or a web store).
 
+Conceptually, a bundle *is* a blueprint, and Flask Unchained gives you complete control to configure not only which views from each bundle get registered with your app and at what routes, but also to extend and/or override anything else you might want to from the bundles you enable (things like configuration, controllers, resources, and routes, templates, extensions and services, and models and serializers - to name some examples). The patterns to do this are simple, consistent, and work the same way in every bundle.
+
 .. admonition:: Included bundles & integrated extensions
     :class: tip
 
@@ -28,8 +30,6 @@ Bundles are a powerful concept Flask Unchained introduces to Flask: Bundles are 
     - **Celery Bundle**: `Celery <http://www.celeryproject.org/>`_ distributed tasks queue.
     - `Flask Admin <https://flask-admin.readthedocs.io/en/latest/>`_, `Flask BabelEx <https://pythonhosted.org/Flask-BabelEx/>`_, `Flask Mail <https://pythonhosted.org/Flask-Mail/>`_, `Flask Session <https://pythonhosted.org/Flask-Session/>`_, ...
     - **Testing** with `pytest <https://docs.pytest.org/en/latest/>`_ and `factory_boy <https://factoryboy.readthedocs.io/en/latest/>`_ supported out-of-the-box.
-
-Every bundle with views gets its own blueprint (conceptually, a bundle *is* a blueprint), and Flask Unchained gives you complete control to configure not only which views get registered with your app and at what routes, but also to extend and/or override anything else you might want to from the bundles you enable (things like configuration, controllers, resources, and routes, templates, extensions and services, and models and serializers - to name some examples).
 
 .. admonition:: Thanks and acknowledgements
     :class: tip
