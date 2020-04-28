@@ -74,9 +74,10 @@ class FakeBlueprint:
 
 class TestUnchained:
     def test_unchained(self, app):
+        app.env = DEV
         unchained = Unchained()
         app.unchained = unchained
-        unchained.init_app(app, DEV, [VendorBundle(), MyAppBundle()])
+        unchained.init_app(app, [VendorBundle(), MyAppBundle()])
         assert 'unchained' in app.extensions
         assert app.extensions['unchained'] == unchained
 
@@ -87,6 +88,7 @@ class TestUnchained:
         assert unchained.extensions.awesome == awesome
 
     def test_deferred_functions(self, app):
+        app.env = DEV
         unchained = Unchained()
         fake_app = FakeApp()
         unchained.add_url_rule('/test', 'test.endpoint', 'view_func', methods=['GET'])
@@ -100,7 +102,7 @@ class TestUnchained:
         unchained.url_defaults(lambda app: 'url_defaults')
         unchained.url_value_preprocessor(lambda app: 'url_value_preprocessor')
         unchained.errorhandler(500)(lambda app: 'errorhandler')
-        unchained.init_app(app, DEV)
+        unchained.init_app(app)
         assert unchained._deferred_functions[0](fake_app) == (
             '/test', 'test.endpoint', 'view_func', {'methods': ['GET']})
         assert unchained._deferred_functions[1](fake_app) == 'before_request'
@@ -115,6 +117,7 @@ class TestUnchained:
         assert unchained._deferred_functions[10](fake_app) == 'errorhandler'
 
     def test_deferred_bundle_functions(self, app):
+        app.env = DEV
         unchained = Unchained()
         empty = EmptyBundle()
         fake_bp = FakeBlueprint()
@@ -125,7 +128,7 @@ class TestUnchained:
         unchained.empty_bundle.url_defaults(lambda bp: 'url_defaults')
         unchained.empty_bundle.url_value_preprocessor(lambda bp: 'url_value_preprocessor')
         unchained.empty_bundle.errorhandler(500)(lambda bp: 'errorhandler')
-        unchained.init_app(app, DEV, [empty])
+        unchained.init_app(app, [empty])
         assert empty._deferred_functions[0](fake_bp) == 'before_request'
         assert empty._deferred_functions[1](fake_bp) == 'after_request'
         assert empty._deferred_functions[2](fake_bp) == 'teardown_request'
