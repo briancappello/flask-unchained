@@ -93,11 +93,12 @@ class AppFactory(metaclass=Singleton):
                            else ('tests' if env == TEST else 'dev_app'))
         app = self.APP_CLASS(app_import_name, **self.get_app_kwargs(
             app_kwargs, bundles, env, config_dict))
+        app.env = env
 
         for bundle in bundles:
             bundle.before_init_app(app)
 
-        unchained.init_app(app, env, bundles, config_dict)
+        unchained.init_app(app, bundles, config_dict)
 
         for bundle in bundles:
             bundle.after_init_app(app)

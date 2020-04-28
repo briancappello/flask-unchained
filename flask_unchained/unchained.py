@@ -179,9 +179,7 @@ class Unchained:
 
     def init_app(self,
                  app: Flask,
-                 env: Optional[Union[DEV, PROD, STAGING, TEST]] = None,
-
-                 # FIXME: properly type hint this once on 3.7+, on 3.6 we get
+                 # FIXME: properly type hint bundles on 3.7+, on 3.6 we get
                  # circular import errors
                  bundles: Optional[List] = None,
                  unchained_config: Optional[Dict[str, Any]] = None,
@@ -189,8 +187,7 @@ class Unchained:
         # deferred import to prevent circular dependency
         from .hooks.run_hooks_hook import RunHooksHook
 
-        self.env = env or self.env
-        app.env = self.env
+        self.env = app.env or self.env
         app.extensions['unchained'] = self
         app.unchained = self
         self._app = app
