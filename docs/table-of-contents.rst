@@ -5,9 +5,9 @@ Flask Unchained
     :maxdepth: 3
 
     index
+    how-flask-unchained-works
     tutorial/index
     bundles/index
-    how-flask-unchained-works
     commands
     testing
     api/index

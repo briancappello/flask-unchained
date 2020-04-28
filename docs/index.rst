@@ -19,7 +19,7 @@ Bundles are a powerful concept Flask Unchained introduces to Flask: Bundles are 
 
 Conceptually, a bundle *is* a blueprint, and Flask Unchained gives you complete control to configure not only which views from each bundle get registered with your app and at what routes, but also to extend and/or override anything else you might want to from the bundles you enable.
 
-Some examples of what you can customize from bundles include configuration, controllers, resources, and routes, templates, extensions and services, and models and serializers can all be customized using simple and consistent patterns that work the same way in every bundle. Extended/customized bundles can themselves also be distributed as their own projects, and support the same patterns for customization, ad infinitum.
+Some examples of what you can customize from bundles include configuration, controllers, resources, and routes, templates, extensions and services, and models and serializers. Each uses simple and consistent patterns that work the same way across every bundle. Extended/customized bundles can themselves also be distributed as their own projects, and support the same patterns for customization, ad infinitum.
 
 .. admonition:: Included bundles & integrated extensions
     :class: tip
@@ -115,6 +115,46 @@ You may be wondering, what happened to the ``Flask`` app instance? We are litera
     from flask_unchained import AppFactory, PROD
 
     app = AppFactory().create_app(os.getenv('FLASK_ENV', PROD))
+
+The app factory might sound like magic, but it's actually quite easy to understand, and every step it takes can be customized if necessary. In pseudo code, it looks about like this:
+
+.. code-block::
+
+    class AppFactory:
+        def create_app(self, env):
+            # first load the user's unchained config
+            unchained_config = self.load_unchained_config(env)
+
+            # next load configured bundles and the user's app bundle
+            app_bundle, bundles = self.load_bundles(unchained_config.BUNDLES)
+
+            # instantiate the Flask app instance
+            app = Flask(app_bundle.name, **kwargs_from_unchained_config)
+
+            # let bundles configure the app pre-initialization
+            for bundle in bundles:
+                bundle.before_init_app(app)
+
+            # discover code from bundles and boot up the Flask app using hooks
+            unchained.init_app(app, bundles)
+                # the Unchained extensions runs hooks in their correct order:
+                # (there may be more depending on which bundles you enable)
+                RegisterExtensionsHook.run_hook(app, bundles)
+                ConfigureAppHook.run_hook(app, bundles)
+                InitExtensionsHook.run_hook(app, bundles)
+                RegisterServicesHook.run_hook(app, bundles)
+                RegisterCommandsHook.run_hook(app, bundles)
+                RegisterRoutesHook.run_hook(app, bundles)
+                RegisterBundleBlueprintsHook.run_hook(app, bundles)
+
+            # let bundles configure the app post-initialization
+            for bundle in bundles:
+                bundle.after_init_app(app)
+
+            # return the finalized app ready to rock'n'roll
+            return app
+
+Continue reading to learn more about Flask Unchained's features, or check out :doc:`how-flask-unchained-works` for a deeper look at the app factory.
 
 .. admonition:: This is beta software
     :class: warning
@@ -377,7 +417,7 @@ Therefore, the above controller corresponds to the following templates folder st
    └── views.py
 
 Extending and Overriding Templates
-""""""""""""""""""""""""""""""""""
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Templates can be overridden by placing an equivalently named template higher up in the bundle hierarchy (i.e. in a bundle extending another bundle, or in your app bundle).
 

@@ -13,12 +13,61 @@
 How Flask Unchained Works
 =========================
 
-The app factory might sound like magic, but it's actually quite easy to understand, and every step it takes is customizable by you, if necessary.
+The Application Factory
+-----------------------
+
+The app factory might sound like magic, but it's actually quite easy to understand, and every step it takes is customizable by you, if necessary. The just-barely pseudo code looks like this:
+
+.. code-block::
+
+    class AppFactory:
+        def create_app(self, env):
+            # first load the user's unchained config
+            unchained_config = self.load_unchained_config(env)
+
+            # next load configured bundles
+            app_bundle, bundles = self.load_bundles(unchained_config.BUNDLES)
+
+            # instantiate the Flask app instance
+            app = Flask(app_bundle.name, **kwargs_from_unchained_config)
+
+            # let bundles configure the app pre-initialization
+            for bundle in bundles:
+                bundle.before_init_app(app)
+
+            # discover code from bundles and boot up the Flask app using hooks
+            unchained.init_app(app, bundles)
+                # the Unchained extensions runs hooks in their correct order:
+                # (there may be more depending on which bundles you enable)
+                RegisterExtensionsHook.run_hook(app, bundles)
+                ConfigureAppHook.run_hook(app, bundles)
+                InitExtensionsHook.run_hook(app, bundles)
+                RegisterServicesHook.run_hook(app, bundles)
+                RegisterCommandsHook.run_hook(app, bundles)
+                RegisterRoutesHook.run_hook(app, bundles)
+                RegisterBundleBlueprintsHook.run_hook(app, bundles)
+
+            # let bundles configure the app post-initialization
+            for bundle in bundles:
+                bundle.after_init_app(app)
+
+            # return the finalized app ready to rock'n'roll
+            return app
+
+.. admonition:: Advanced
+    :class: info
+
+    You can subclass :class:`flask_unchained.AppFactory` if you need to customize any of its behavior. If you want to take things a step further, Flask Unchained can even be used to create your own redistributable batteries-included web framework for Flask using whichever stack of Flask extensions and Python libraries you prefer.
 
 The Unchained Config
 --------------------
 
-The first thing the app factory does is to load your "Unchained Config". In the hello world example above, we exported ``UNCHAINED_CONFIG="app"`` to essentially tell the app factory, "just use the defaults with my app bundle". The more common way is to use a file at its default location:
+The first thing the app factory does is to load your "Unchained Config". The unchained config is used to declare which bundles should be loaded, as well as for passing any optional keyword arguments to the ``Flask`` constructor.
+
+Dedicated Module Mode
+^^^^^^^^^^^^^^^^^^^^^
+
+The most common way to configure Flask Unchained apps is with a module named ``unchained_config`` in the project root:
 
 .. code::  shell
 
@@ -26,7 +75,7 @@ The first thing the app factory does is to load your "Unchained Config". In the 
     ├── unchained_config.py    # your Unchained Config
     └── app.py                 # your App Bundle
 
-The Unchained Config is a module used to declare which bundles should be loaded, as well as for passing any optional keyword arguments to the ``Flask`` constructor. For example:
+The Unchained Config itself doesn't actually contain a whole lot. The only required setting is the ``BUNDLES`` list:
 
 .. code-block::
 
@@ -34,7 +83,7 @@ The Unchained Config is a module used to declare which bundles should be loaded,
 
     import os
 
-    # kwargs to pass to the Flask constructor (must be uppercase)
+    # kwargs to pass to the Flask constructor (must be uppercase, all optional)
     ROOT_PATH = os.path.dirname(__file__)  # determined automatically by default
     STATIC_FOLDER = "static"               # determined automatically by default
     STATIC_URL_PATH = "/static"            # determined automatically by default
@@ -50,44 +99,81 @@ The Unchained Config is a module used to declare which bundles should be loaded,
         'app',  # your app bundle *must* be last
     ]
 
-When ``unchained_config.py`` exists in the ``project-root`` directory, exporting ``UNCHAINED_CONFIG`` is no longer required, and the app can be run like so:
+When ``unchained_config.py`` exists in the ``project-root`` directory, exporting ``UNCHAINED_CONFIG`` is not required, and the app can be run like so:
 
 .. code-block:: shell
 
     cd project-root
     flask run
 
-The Application Factory
------------------------
+Single-File App Mode
+^^^^^^^^^^^^^^^^^^^^
 
-The app factory itself is pretty simple. This is the essence of it:
+For single-file apps, you can "double purpose" the ``app`` module as your Unchained Config. This is as simple as it gets:
 
 .. code-block::
 
-    # flask_unchained/app_factory.py
+    # project-root/app.py
 
-    from flask import Flask
-    from flask_unchained import unchained  # the Unchained extension
+    from flask_unchained import AppBundle, Controller, route
 
-    class AppFactory:
-        APP_CLASS = Flask
+    class App(AppBundle):
+        pass
 
-        def create_app(self, env):
-            unchained_config = self.load_unchained_config(env)
-            app_bundle, bundles = self.load_bundles(unchained_config.BUNDLES)
+    class SiteController(Controller):
+        @route('/')
+        def index(self):
+            return 'hello world'
 
-            # It's still just good old Flask under the easily-accessible hood
-            app = self.APP_CLASS(app_bundle.name, **kwargs_from_unchained_config)
+It can be run like so:
 
-            for bundle in bundles:
-                bundle.before_init_app(app)
+.. code-block:: shell
 
-            unchained.init_app(app, env, bundles)
+    export UNCHAINED_CONFIG="app"  # the module where the unchained config resides
+    flask run
 
-            for bundle in bundles:
-                bundle.after_init_app(app)
+In the above example, we're essentially telling the app factory, "just use the defaults with my app bundle". In single-file mode, the app bundle is automatically detected, so there aren't actually any Unchained Config settings in the above file. To set them looks as you would expect:
 
-            return app
+.. code-block::
+
+    # project-root/app.py
+
+    import os
+    from flask_unchained import AppBundle, Controller, route
+
+    # kwargs to pass to the Flask constructor (must be uppercase, all optional)
+    ROOT_PATH = os.path.dirname(__file__)  # determined automatically by default
+    STATIC_FOLDER = "static"               # determined automatically by default
+    STATIC_URL_PATH = "/static"            # determined automatically by default
+    STATIC_HOST = None                     # None by default
+    TEMPLATE_FOLDER = "templates"          # determined automatically by default
+    HOST_MATCHING = False                  # False by default
+    SUBDOMAIN_MATCHING = False             # False by default
+
+    # the ordered list of bundles to load for your app (in dot-module notation)
+    BUNDLES = [
+        'flask_unchained.bundles.babel',       # always enabled, optional to list here
+        'flask_unchained.bundles.controller',  # always enabled, optional to list here
+        'app',  # your app bundle *must* be last
+    ]
+
+    class App(AppBundle):
+        pass
+
+    class SiteController(Controller):
+        @route('/')
+        def index(self):
+            return 'hello world'
+
+And once again, just be sure to ``export UNCHAINED_CONFIG="app"``:
+
+.. code-block:: shell
+
+    export UNCHAINED_CONFIG="app"  # the module where the unchained config resides
+    flask run
+
+Bundle.before/after_init_app
+----------------------------
 
 The most obvious place you can hook into the app factory is with your :class:`~flask_unchained.bundles.Bundle` subclass, for example:
 
@@ -109,15 +195,10 @@ The most obvious place you can hook into the app factory is with your :class:`~f
 
 Using the :class:`~flask_unchained.unchained.Unchained` extension is another way to plug into the app factory, so let's look at that next.
 
-.. admonition:: Advanced
-    :class: info
-
-    You can subclass :class:`flask_unchained.AppFactory` if you need to customize any of its behavior. (For example, to use a custom subclass of :class:`~flask.Flask`.) If you want to take things a step further, Flask Unchained can even be used to create your own redistributable batteries-included web framework for Flask using whichever stack of Flask extensions and Python libraries you prefer.
-
 The Unchained Extension
 -----------------------
 
-As an alternative to using ``Bundle.before_init_app`` and ``after_init_app``, the :class:`~flask_unchained.unchained.Unchained` extension also acts as a drop-in replacement for some of the public API of :class:`~flask.Flask`:
+As an alternative to using ``Bundle.before_init_app`` and ``Bundle.after_init_app``, the :class:`~flask_unchained.unchained.Unchained` extension also acts as a drop-in replacement for some of the public API of :class:`~flask.Flask`:
 
 .. code-block::
 
