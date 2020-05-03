@@ -1,6 +1,12 @@
 import functools
 import inspect
 
+try:
+    import quart.flask_patch
+    QUART_ENABLED = True
+except ImportError:
+    QUART_ENABLED = False
+
 
 # *************************************************************************
 # monkey patch functools.wraps to assign __signature__ by default

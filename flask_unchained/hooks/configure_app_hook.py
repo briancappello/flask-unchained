@@ -86,7 +86,7 @@ class ConfigureAppHook(AppFactoryHook):
         if isinstance(bundle, AppBundle):
             return self._get_bundle_config(bundle, env)
 
-        config = flask.Config(None)
+        config = flask.Config('.')
         for bundle_ in bundle._iter_class_hierarchy():
             config.update(self._get_bundle_config(bundle_, env))
         return config
@@ -97,13 +97,13 @@ class ConfigureAppHook(AppFactoryHook):
                            ) -> flask.Config:
         bundle_config_modules = self.import_bundle_modules(bundle)
         if not bundle_config_modules:
-            return flask.Config(None)
+            return flask.Config('.')
 
         bundle_config_module = bundle_config_modules[0]
         base_config = getattr(bundle_config_module, BASE_CONFIG_CLASS, None)
         env_config = getattr(bundle_config_module, ENV_CONFIG_CLASSES[env], None)
 
-        merged = flask.Config(None)
+        merged = flask.Config('.')
         for config in [base_config, env_config]:
             if config:
                 merged.from_object(config)

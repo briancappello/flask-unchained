@@ -4,6 +4,10 @@ import itertools
 from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
 from typing import *
 from werkzeug.local import LocalProxy
+try:
+    from quart.local import LocalProxy as QuartLocalProxy
+except ImportError:
+    QuartLocalProxy = type('QuartLocalProxy', (), {})
 
 from ..attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
 from ..route import Route
@@ -158,7 +162,7 @@ class RegisterRoutesHook(AppFactoryHook):
         Returns True if ``obj`` was decorated with :func:`~flask_unchained.route` or
         if ``obj`` is a controller or resource with views.
         """
-        if isinstance(obj, LocalProxy):
+        if isinstance(obj, (LocalProxy, QuartLocalProxy)):
             return False
         is_controller = isinstance(getattr(obj, CONTROLLER_ROUTES_ATTR, None), dict)
         is_view_fn = isinstance(getattr(obj, FN_ROUTES_ATTR, None), list)
