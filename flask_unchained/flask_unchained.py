@@ -1,10 +1,13 @@
-from flask import Flask, Config as _FlaskConfig
+from types import FunctionType
+from typing import *
+
+import flask
 
 from .unchained import Unchained, unchained
-from .utils import AttrDict as _AttrDict
+from .utils import AttrDict
 
 
-class _AttrDictFlaskConfig(_AttrDict, _FlaskConfig):
+class AttrDictFlaskConfig(AttrDict, flask.Config):
     """
     The config class for Flask Unchained. Implements attribute access for
     config options, eg the following are equivalent::
@@ -19,14 +22,14 @@ class _AttrDictFlaskConfig(_AttrDict, _FlaskConfig):
     """
 
 
-class FlaskUnchained(Flask):
+class FlaskUnchained(flask.Flask):
     """
     A simple subclass of :class:`flask.Flask`. Overrides
     :meth:`register_blueprint` and :meth:`add_url_rule` to support
     automatic (optional) registration of URLs prefixed with a language code.
     """
 
-    config_class = _AttrDictFlaskConfig
+    config_class = AttrDictFlaskConfig
 
     env: str = None
     """
@@ -45,7 +48,12 @@ class FlaskUnchained(Flask):
     The :class:`~flask_unchained.Unchained` extension instance.
     """
 
-    def register_blueprint(self, blueprint, register_with_babel=True, **options):
+    def register_blueprint(self,
+                           blueprint: flask.Blueprint,
+                           *,
+                           register_with_babel: bool = True,
+                           **options: Any,
+                           ) -> None:
         """
         The same as :meth:`flask.Flask.register_blueprint`, but if
         ``register_with_babel`` is True, then we also allow the Babel Bundle an
@@ -53,11 +61,17 @@ class FlaskUnchained(Flask):
         """
         if self.unchained.babel_bundle and register_with_babel:
             self.unchained.babel_bundle.register_blueprint(self, blueprint, **options)
-        return super().register_blueprint(blueprint, **options)
+        super().register_blueprint(blueprint, **options)
 
-    def add_url_rule(self, rule, endpoint=None, view_func=None,
-                     provide_automatic_options=None, register_with_babel=False,
-                     **options):
+    def add_url_rule(self,
+                     rule: str,
+                     endpoint: Optional[str] = None,
+                     view_func: Optional[FunctionType] = None,
+                     provide_automatic_options: Optional[bool] = None,
+                     *,
+                     register_with_babel: bool = False,
+                     **options: Any,
+                     ) -> None:
         """
         The same as :meth:`flask.Flask.add_url_rule`, but if ``register_with_babel``
         is True, then we also allow the Babel Bundle an opportunity to register a
@@ -67,8 +81,9 @@ class FlaskUnchained(Flask):
             self.unchained.babel_bundle.add_url_rule(
                 self, rule, endpoint=endpoint, view_func=view_func,
                 provide_automatic_options=provide_automatic_options, **options)
-        return super().add_url_rule(rule, endpoint, view_func,
-                                    provide_automatic_options, **options)
+        super().add_url_rule(
+            rule, endpoint=endpoint, view_func=view_func,
+            provide_automatic_options=provide_automatic_options, **options)
 
     def __str__(self):
         return f"<FlaskUnchained module={self.import_name!r}>"
