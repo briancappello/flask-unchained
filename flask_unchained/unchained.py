@@ -5,15 +5,21 @@ import jinja2
 import markupsafe
 import networkx as nx
 
-from flask import Flask, current_app
 from typing import *
-from werkzeug.local import LocalProxy
+
+from flask import Flask, current_app
 
 from .constants import (DEV, PROD, STAGING, TEST,
                         _DI_AUTOMATICALLY_HANDLED, _INJECT_CLS_ATTRS)
 from .di import _ensure_service_name, _get_injected_value, injectable, _inject_cls_attrs
 from .exceptions import ServiceUsageError
 from .utils import AttrDict
+
+from ._compat import QUART_ENABLED
+if QUART_ENABLED:
+    from quart.local import LocalProxy
+else:
+    from werkzeug.local import LocalProxy
 
 
 class DeferredBundleFunctions:

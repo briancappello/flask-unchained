@@ -1,6 +1,7 @@
 import enum
 
 from flask_unchained import Bundle, FlaskUnchained, unchained
+from flask_unchained._compat import is_local_proxy
 from speaklater import _LazyString
 
 from .extensions import Api, Marshmallow, api, ma
@@ -63,11 +64,10 @@ class ApiBundle(Bundle):
 
     def set_json_encoder(self, app: FlaskUnchained):
         from flask_unchained.bundles.sqlalchemy import BaseModel
-        from werkzeug.local import LocalProxy
 
         class JSONEncoder(app.json_encoder):
             def default(self, obj):
-                if isinstance(obj, LocalProxy):
+                if is_local_proxy(obj):
                     obj = obj._get_current_object()
 
                 if isinstance(obj, enum.Enum):

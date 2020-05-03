@@ -3,10 +3,10 @@ import re
 from flask import (Response, current_app, request, redirect as flask_redirect,
                    url_for as flask_url_for)
 from flask_unchained.string_utils import kebab_case, right_replace, snake_case
+from flask_unchained._compat import is_local_proxy
 from py_meta_utils import _missing
 from typing import *
 from urllib.parse import urlsplit
-from werkzeug.local import LocalProxy
 from werkzeug.routing import BuildError, UnicodeConverter
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
@@ -135,7 +135,7 @@ def url_for(endpoint_or_url_or_config_key: str,
     if what and what.isupper():
         what = current_app.config.get(what)
 
-    if isinstance(what, LocalProxy):
+    if is_local_proxy(what):
         what = what._get_current_object()
 
     # if we already have a url (or an invalid value, eg None)

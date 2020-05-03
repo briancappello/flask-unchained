@@ -1,15 +1,10 @@
 import functools
 import inspect
 
-try:
-    import quart.flask_patch
-    QUART_ENABLED = True
-except ImportError:
-    QUART_ENABLED = False
-
 
 # *************************************************************************
 # monkey patch functools.wraps to assign __signature__ by default
+# *************************************************************************
 
 def update_wrapper(wrapper,
                    wrapped,
@@ -39,4 +34,22 @@ def wraps(wrapped_fn, assigned=None, updated=None):
 
 
 setattr(functools, 'wraps', wraps)
+
+
 # *************************************************************************
+# quart asyncio integration [optional]
+# *************************************************************************
+
+QUART_ENABLED = False
+try:
+    import quart.flask_patch
+    from quart.local import LocalProxy as QuartLocalProxy
+    QUART_ENABLED = True
+except ImportError:
+    QuartLocalProxy = type('QuartLocalProxy', (), {})
+
+from werkzeug.local import LocalProxy as WerkzeugLocalProxy
+
+
+def is_local_proxy(obj) -> bool:
+    return isinstance(obj, (WerkzeugLocalProxy, QuartLocalProxy))

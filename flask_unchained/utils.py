@@ -3,8 +3,10 @@ import re
 import sys
 
 from datetime import datetime, timezone
-from flask import current_app
 from importlib import import_module
+from typing import *
+
+from flask import current_app
 
 
 class AttrDict(dict):
