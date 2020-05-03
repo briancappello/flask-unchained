@@ -24,13 +24,13 @@ setup(
         'blinker>=1.4',
         'click>=7.0',
         'flask>=1.1.1',
-        'flask_babelex>=0.9.3',
-        'flask-wtf>=0.14.2',
+        'flask_babelex>=0.9.4',
+        'flask-wtf>=0.14.3',
         'py-meta-utils>=0.7.6',
         'pyterminalsize>=0.1.0',
         'networkx>=2.1',
-        'werkzeug>=0.15.3,<1.0',
-        'wtforms>=2.2.1,<2.3'
+        'werkzeug>=1.0.1',
+        'wtforms>=2.2.1',
     ],
     extras_require={
         'admin': [
@@ -54,7 +54,7 @@ setup(
             'm2r>=0.2.1',
             'mock>=2.0.0',
             'pytest>=4.6.5',
-            'pytest-flask>=0.15.0',
+            'pytest-flask>=1.0.0',
             'tox>=3.5.2',
         ],
         'docs': [
