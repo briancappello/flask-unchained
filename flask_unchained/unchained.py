@@ -8,18 +8,16 @@ import networkx as nx
 from typing import *
 
 from flask import Flask, current_app
+try:
+    from quart.local import LocalProxy
+except ImportError:
+    from werkzeug.local import LocalProxy
 
 from .constants import (DEV, PROD, STAGING, TEST,
                         _DI_AUTOMATICALLY_HANDLED, _INJECT_CLS_ATTRS)
 from .di import _ensure_service_name, _get_injected_value, injectable, _inject_cls_attrs
 from .exceptions import ServiceUsageError
 from .utils import AttrDict
-
-from ._compat import QUART_ENABLED
-if QUART_ENABLED:
-    from quart.local import LocalProxy
-else:
-    from werkzeug.local import LocalProxy
 
 
 class DeferredBundleFunctions:

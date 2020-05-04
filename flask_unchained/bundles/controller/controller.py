@@ -2,11 +2,15 @@ import copy
 import functools
 import os
 
+from http import HTTPStatus
+from types import FunctionType
+from typing import *
+
 from flask_unchained._compat import QUART_ENABLED
-if QUART_ENABLED:
+try:
     from quart import (after_this_request, current_app as app, flash, jsonify,
                        make_response, render_template, render_template_string, request)
-else:
+except ImportError:
     from flask import (after_this_request, current_app as app, flash, jsonify,
                        make_response, render_template, render_template_string, request)
 
@@ -14,9 +18,6 @@ from flask_unchained.di import _set_up_class_dependency_injection
 from py_meta_utils import (AbstractMetaOption as _ControllerAbstractMetaOption,
                            McsArgs, MetaOption, MetaOptionsFactory, deep_getattr,
                            _missing, process_factory_meta_options)
-from http import HTTPStatus
-from types import FunctionType
-from typing import *
 
 from ...string_utils import snake_case
 from .attr_constants import (

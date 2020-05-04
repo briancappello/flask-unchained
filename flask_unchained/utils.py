@@ -4,7 +4,6 @@ import sys
 
 from datetime import datetime, timezone
 from importlib import import_module
-from typing import *
 
 from flask import current_app
 
