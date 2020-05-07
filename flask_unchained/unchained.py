@@ -35,25 +35,31 @@ class DeferredBundleFunctions:
     def _defer(self, fn):
         self._deferred_functions.append(fn)
 
-    def before_request(self, fn):
+    def before_request(self, fn=None):
         """
         Like :meth:`flask.Blueprint.before_request` but for a bundle. This function
         is only executed before each request that is handled by a view function
         of that bundle.
         """
+        if fn is None:
+            return self.before_request
+
         self._defer(lambda bp: bp.before_request(fn))
         return fn
 
-    def after_request(self, fn):
+    def after_request(self, fn=None):
         """
         Like :meth:`flask.Blueprint.after_request` but for a bundle. This function
         is only executed after each request that is handled by a function of
         that bundle.
         """
+        if fn is None:
+            return self.after_request
+
         self._defer(lambda bp: bp.after_request(fn))
         return fn
 
-    def teardown_request(self, fn):
+    def teardown_request(self, fn=None):
         """
         Like :meth:`flask.Blueprint.teardown_request` but for a bundle. This
         function is only executed when tearing down requests handled by a
@@ -61,32 +67,44 @@ class DeferredBundleFunctions:
         when the request context is popped, even when no actual request was
         performed.
         """
+        if fn is None:
+            return self.teardown_request
+
         self._defer(lambda bp: bp.teardown_request(fn))
         return fn
 
-    def context_processor(self, fn):
+    def context_processor(self, fn=None):
         """
         Like :meth:`flask.Blueprint.context_processor` but for a bundle. This
         function is only executed for requests handled by a bundle.
         """
+        if fn is None:
+            return self.context_processor
+
         self._defer(lambda bp: bp.context_processor(fn))
         return fn
 
-    def url_defaults(self, fn):
+    def url_defaults(self, fn=None):
         """
         Callback function for URL defaults for this bundle. It's called
         with the endpoint and values and should update the values passed
         in place.
         """
+        if fn is None:
+            return self.url_defaults
+
         self._defer(lambda bp: bp.url_defaults(fn))
         return fn
 
-    def url_value_preprocessor(self, fn):
+    def url_value_preprocessor(self, fn=None):
         """
         Registers a function as URL value preprocessor for this
         bundle. It's called before the view functions are called and
         can modify the url values provided.
         """
+        if fn is None:
+            return self.url_value_preprocessor
+
         self._defer(lambda bp: bp.url_value_preprocessor(fn))
         return fn
 
@@ -447,7 +465,7 @@ class Unchained:
                                                  view_func=view_func,
                                                  **options))
 
-    def before_request(self, fn):
+    def before_request(self, fn=None):
         """
         Registers a function to run before each request.
 
@@ -458,10 +476,13 @@ class Unchained:
         non-None value, the value is handled as if it was the return value from
         the view, and further request handling is stopped.
         """
+        if fn is None:
+            return self.before_request
+
         self._defer(lambda app: app.before_request(fn))
         return fn
 
-    def before_first_request(self, fn):
+    def before_first_request(self, fn=None):
         """
         Registers a function to be run before the first request to this
         instance of the application.
@@ -469,10 +490,13 @@ class Unchained:
         The function will be called without any arguments and its return
         value is ignored.
         """
+        if fn is None:
+            return self.before_first_request
+
         self._defer(lambda app: app.before_first_request(fn))
         return fn
 
-    def after_request(self, fn):
+    def after_request(self, fn=None):
         """
         Register a function to be run after each request.
 
@@ -483,10 +507,13 @@ class Unchained:
         As of Flask 0.7 this function might not be executed at the end of the
         request in case an unhandled exception occurred.
         """
+        if fn is None:
+            return self.after_request
+
         self._defer(lambda app: app.after_request(fn))
         return fn
 
-    def teardown_request(self, fn):
+    def teardown_request(self, fn=None):
         """
         Register a function to be run at the end of each request,
         regardless of whether there was an exception or not.  These functions
@@ -522,10 +549,13 @@ class Unchained:
            debugger can still access it.  This behavior can be controlled
            by the ``PRESERVE_CONTEXT_ON_EXCEPTION`` configuration variable.
         """
+        if fn is None:
+            return self.teardown_request
+
         self._defer(lambda app: app.teardown_request(fn))
         return fn
 
-    def teardown_appcontext(self, fn):
+    def teardown_appcontext(self, fn=None):
         """
         Registers a function to be called when the application context
         ends.  These functions are typically also called when the request
@@ -553,24 +583,33 @@ class Unchained:
 
         The return values of teardown functions are ignored.
         """
+        if fn is None:
+            return self.teardown_appcontext
+
         self._defer(lambda app: app.teardown_appcontext(fn))
         return fn
 
-    def context_processor(self, fn):
+    def context_processor(self, fn=None):
         """
         Registers a template context processor function.
         """
+        if fn is None:
+            return self.context_processor
+
         self._defer(lambda app: app.context_processor(fn))
         return fn
 
-    def shell_context_processor(self, fn):
+    def shell_context_processor(self, fn=None):
         """
         Registers a shell context processor function.
         """
+        if fn is None:
+            return self.shell_context_processor
+
         self._defer(lambda app: app.shell_context_processor(fn))
         return fn
 
-    def url_value_preprocessor(self, fn):
+    def url_value_preprocessor(self, fn=None):
         """
         Register a URL value preprocessor function for all view
         functions in the application. These functions will be called before the
@@ -584,15 +623,21 @@ class Unchained:
         The function is passed the endpoint name and values dict. The return
         value is ignored.
         """
+        if fn is None:
+            return self.url_value_preprocessor
+
         self._defer(lambda app: app.url_value_preprocessor(fn))
         return fn
 
-    def url_defaults(self, fn):
+    def url_defaults(self, fn=None):
         """
         Callback function for URL defaults for all view functions of the
         application.  It's called with the endpoint and values and should
         update the values passed in place.
         """
+        if fn is None:
+            return self.url_defaults
+
         self._defer(lambda app: app.url_defaults(fn))
         return fn
 
