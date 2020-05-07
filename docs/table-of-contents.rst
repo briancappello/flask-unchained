@@ -11,3 +11,4 @@ Flask Unchained
     commands
     testing
     api/index
+    changelog

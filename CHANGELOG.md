@@ -1,23 +1,22 @@
-d# CHANGELOG
+# CHANGELOG
 
 ## v0.8.0 (unreleased)
 
 ### Features
 
-- :fire: major improvements to `AppFactory` and `AppFactoryHook` :fire:
+- **major improvements to** `AppFactory` **and** `AppFactoryHook`
+    - **support single-file app bundles** (just export the app bundle as `UNCHAINED_CONFIG`)
     - support using a custom subclass of `FlaskUnchained` using `AppFactory.APP_CLASS`
     - support using a custom subclass of `AppFactory`
     - support passing all kwargs to `Flask` by setting the same names upper-cased in `unchained_config`
     - support automatic defaults for the Flask app kwargs `root_path`, `template_folder`, `static_folder`, and `static_url_path`
     - support using a custom module name for `unchained_config` by setting the `UNCHAINED_CONFIG` environment variable
-    - :fire: support single-file app bundles :fire: (just export the app bundle as `UNCHAINED_CONFIG`)
     - make it possible to define multiple modules hooks should load from (excluding config and routes, as those only make sense to live inside a single module within bundles)
         - very experimental: add `Bundle.default_load_from_module_name` to ease migration from single-file app bundles to individual modules for different types (ie grouped by base class)
 - set up automatic dependency injection on commands (use `from flask_unchained.cli import cli, click` and define command groups for your commands using `@cli.group()`)
 - add `flask unchained config` command for listing the current config (optionally filtered by bundle)
 - add `flask unchained extensions` command for listing extensions discovered by the app
 - add `flask unchaiend services` command for listing services discovered by the app
-- add compatibility with pytest 5
 - alias `flask.abort` (`werkzeug.exceptions.abort`) as `flask_unchained.abort`
 - alias `flask_wtf.csrf.generate_csrf` as `flask_unchained.generate_csrf`
 - alias `flask.Request` and `flask.Response` into `flask_unchained`
@@ -27,8 +26,9 @@ d# CHANGELOG
 ### General Improvements
 
 - document the rest of SQLAlchemy's config options
-- bump sqlalchemy-unchained to v0.10.0
 - automatically discover services in the `services` and `managers` modules of bundles
+- bump sqlalchemy-unchained to v0.10.0
+- add compatibility with pytest 5
 
 ### Bug Fixes
 
@@ -45,8 +45,6 @@ d# CHANGELOG
 
 ### Breaking Changes
 
-- require `marshmallow>=3.0` (if using the API bundle)
-- require `sqlalchemy-unchained>=0.8` (if using the SQLAlchemy bundle)
 - rename `flask_unchained.BaseService` to `flask_unchained.Service`
 - rename `PROJECT_ROOT` to `ROOT_PATH` for consistency with upstream `Flask`
 - rename `Bundle.folder` to `Bundle.root_path` for consistency with `Flask`
@@ -57,6 +55,8 @@ d# CHANGELOG
 - rename Resource method name constants to reduce confusion with HTTP method names
 - remove `AppBundleConfig.ROOT_PATH` and `AppBundleConfig.APP_ROOT` as they didn't always work correctly (use `BundleConfig.current_app.root_path` instead)
 - moved `flask_unchained.commands.utils.print_table` to `flask_unchained.cli.print_table`
+- if using the API bundle, require `marshmallow>=3.0`, `marshmallow-sqlalchemy>=0.23`, and `flask-marshmallow>=0.12`
+- if using the SQLAlchemy bundle, require `sqlalchemy-unchained>=0.10`
 - CSRF protection is no longer enabled by default. To re-enable it:
 
 ```python
