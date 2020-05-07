@@ -41,14 +41,18 @@ setattr(functools, 'wraps', wraps)
 # *************************************************************************
 
 QUART_ENABLED = False
+
+from werkzeug.local import LocalProxy as WerkzeugLocalProxy
+LocalProxy = WerkzeugLocalProxy
+
 try:
     import quart.flask_patch
     from quart.local import LocalProxy as QuartLocalProxy
-    QUART_ENABLED = True
 except ImportError:
     QuartLocalProxy = type('QuartLocalProxy', (), {})
-
-from werkzeug.local import LocalProxy as WerkzeugLocalProxy
+else:
+    QUART_ENABLED = True
+    LocalProxy = QuartLocalProxy
 
 
 def is_local_proxy(obj) -> bool:

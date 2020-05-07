@@ -7,10 +7,10 @@ from types import FunctionType
 from typing import *
 
 from flask_unchained._compat import QUART_ENABLED
-try:
+if QUART_ENABLED:
     from quart import (after_this_request, current_app as app, flash, jsonify,
                        make_response, render_template, render_template_string, request)
-except ImportError:
+else:
     from flask import (after_this_request, current_app as app, flash, jsonify,
                        make_response, render_template, render_template_string, request)
 

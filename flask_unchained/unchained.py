@@ -8,11 +8,8 @@ import networkx as nx
 from typing import *
 
 from flask import Flask, current_app
-try:
-    from quart.local import LocalProxy
-except ImportError:
-    from werkzeug.local import LocalProxy
 
+from ._compat import QUART_ENABLED, LocalProxy
 from .constants import (DEV, PROD, STAGING, TEST,
                         _DI_AUTOMATICALLY_HANDLED, _INJECT_CLS_ATTRS)
 from .di import _ensure_service_name, _get_injected_value, injectable, _inject_cls_attrs
@@ -127,6 +124,28 @@ class DeferredBundleFunctions:
             self._defer(lambda bp: bp.register_error_handler(code_or_exception, fn))
             return fn
         return decorator
+
+    if QUART_ENABLED:
+        def before_websocket(self, fn=None):
+            if fn is None:
+                return self.before_websocket
+
+            self._defer(lambda bp: bp.before_websocket(fn))
+            return fn
+
+        def after_websocket(self, fn=None):
+            if fn is None:
+                return self.after_websocket
+
+            self._defer(lambda bp: bp.after_websocket(fn))
+            return fn
+
+        def teardown_websocket(self, fn=None):
+            if fn is None:
+                return self.teardown_websocket
+
+            self._defer(lambda bp: bp.teardown_websocket(fn))
+            return fn
 
 
 class _DeferredBundleFunctionsStore:
@@ -791,6 +810,78 @@ class Unchained:
         self._services_initialized = False
         self._services_registry = {}
         self._shell_ctx = {}
+
+    if QUART_ENABLED:
+        def add_websocket(
+            self,
+            path: str,
+            endpoint: Optional[str] = None,
+            view_func: Optional[Callable] = None,
+            defaults: Optional[dict] = None,
+            host: Optional[str] = None,
+            subdomain: Optional[str] = None,
+            *,
+            strict_slashes: Optional[bool] = None,
+        ):
+            self._defer(lambda app: app.add_websocket(
+                path,
+                endpoint=endpoint,
+                view_func=view_func,
+                defaults=defaults,
+                host=host,
+                subdomain=subdomain,
+                strict_slashes=strict_slashes,
+            ))
+
+        def before_serving(self, fn=None):
+            if fn is None:
+                return self.before_serving
+
+            self._defer(lambda app: app.before_serving(fn))
+            return fn
+
+        def after_serving(self, fn=None):
+            if fn is None:
+                return self.after_serving
+
+            self._defer(lambda app: app.after_serving(fn))
+            return fn
+
+        def before_websocket(self, fn=None):
+            """Add a before websocket function.
+
+            This is designed to be used as a decorator, if used to
+            decorate a synchronous function, the function will be wrapped
+            in :func:`~quart.utils.run_sync` and run in a thread executor
+            (with the wrapped function returned). An example usage,
+
+            .. code-block:: python
+
+                @app.before_websocket
+                async def func():
+                    ...
+
+            :param fn: The before websocket function itself.
+            """
+            if fn is None:
+                return self.before_websocket
+
+            self._defer(lambda app: app.before_websocket(fn))
+            return fn
+
+        def after_websocket(self, fn=None):
+            if fn is None:
+                return self.after_websocket
+
+            self._defer(lambda app: app.after_websocket(fn))
+            return fn
+
+        def teardown_websocket(self, fn=None):
+            if fn is None:
+                return self.teardown_websocket
+
+            self._defer(lambda app: app.teardown_websocket(fn))
+            return fn
 
 
 def _inject(fn, inject_args):
