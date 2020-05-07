@@ -4,15 +4,15 @@ from py_meta_utils import McsArgs, MetaOption, _missing
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
 from .constants import ALL_RESOURCE_METHODS, RESOURCE_INDEX_METHODS
 from .constants import CREATE, DELETE, GET, LIST, PATCH, PUT
-from .controller import (Controller, _ControllerMetaclass, _ControllerMetaOptionsFactory,
-                         _ControllerUrlPrefixMetaOption, _get_remove_suffixes)
+from .controller import (Controller, ControllerMetaclass, ControllerMetaOptionsFactory,
+                         ControllerUrlPrefixMetaOption, _get_remove_suffixes)
 from .utils import controller_name, get_param_tuples
 
 
 RESOURCE_REMOVE_EXTRA_SUFFIXES = ['MethodView']
 
 
-class _ResourceMetaclass(_ControllerMetaclass):
+class ResourceMetaclass(ControllerMetaclass):
     """
     Metaclass for Resource class
     """
@@ -45,7 +45,7 @@ class _ResourceMetaclass(_ControllerMetaclass):
         return cls
 
 
-class _ResourceUrlPrefixMetaOption(MetaOption):
+class ResourceUrlPrefixMetaOption(MetaOption):
     """
     The url prefix to use for all routes from this resource. Defaults to the
     pluralized and snake_cased class name with the ``Resource``, ``MethodView``,
@@ -74,7 +74,7 @@ class _ResourceUrlPrefixMetaOption(MetaOption):
             raise ValueError(f'The {self.name} meta option must be a string')
 
 
-class _ResourceMemberParamMetaOption(MetaOption):
+class ResourceMemberParamMetaOption(MetaOption):
     """
     The url parameter rule to use for the special member methods (``get``, ``patch``,
     ``put``, and ``delete``) of this resource. Defaults to ``<int:id>``.
@@ -98,7 +98,7 @@ class _ResourceMemberParamMetaOption(MetaOption):
                             f'<werkzeug_type:param_name>')
 
 
-class _ResourceUniqueMemberParamMetaOption(MetaOption):
+class ResourceUniqueMemberParamMetaOption(MetaOption):
     """
     The url parameter rule to use for the special member methods (``get``, ``patch``,
     ``put``, and ``delete``) of this resource when
@@ -120,16 +120,16 @@ class _ResourceUniqueMemberParamMetaOption(MetaOption):
                             f'<werkzeug_type:param_name>')
 
 
-class _ResourceMetaOptionsFactory(_ControllerMetaOptionsFactory):
-    _options = [option for option in _ControllerMetaOptionsFactory._options
-                if not issubclass(option, _ControllerUrlPrefixMetaOption)] + [
-        _ResourceUrlPrefixMetaOption,
-        _ResourceMemberParamMetaOption,
-        _ResourceUniqueMemberParamMetaOption,
+class ResourceMetaOptionsFactory(ControllerMetaOptionsFactory):
+    _options = [option for option in ControllerMetaOptionsFactory._options
+                if not issubclass(option, ControllerUrlPrefixMetaOption)] + [
+        ResourceUrlPrefixMetaOption,
+        ResourceMemberParamMetaOption,
+        ResourceUniqueMemberParamMetaOption,
     ]
 
 
-class Resource(Controller, metaclass=_ResourceMetaclass):
+class Resource(Controller, metaclass=ResourceMetaclass):
     """
     Base class for resources. This is intended for building RESTful APIs.
     Following the rules shown below, if the given class method is defined,
@@ -217,7 +217,7 @@ class Resource(Controller, metaclass=_ResourceMetaclass):
     See also :class:`~flask_unchained.bundles.api.model_resource.ModelResource` from
     the API bundle.
     """
-    _meta_options_factory_class = _ResourceMetaOptionsFactory
+    _meta_options_factory_class = ResourceMetaOptionsFactory
 
     class Meta:
         abstract = True
@@ -231,4 +231,6 @@ class Resource(Controller, metaclass=_ResourceMetaclass):
 
 __all__ = [
     'Resource',
+    'ResourceMetaclass',
+    'ResourceMetaOptionsFactory',
 ]

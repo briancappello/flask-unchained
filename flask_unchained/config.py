@@ -3,14 +3,14 @@ from py_meta_utils import OptionalClass
 from .utils import get_boolean_env
 
 
-class _BundleConfigMetaclass(type):
+class BundleConfigMetaclass(type):
     current_app = OptionalClass()
 
     def _set_current_app(cls, app):
         cls.current_app = app
 
 
-class BundleConfig(metaclass=_BundleConfigMetaclass):
+class BundleConfig(metaclass=BundleConfigMetaclass):
     """
     Base class for configuration settings. Allows access to the
     app-under-construction as it's currently configured. Example usage::

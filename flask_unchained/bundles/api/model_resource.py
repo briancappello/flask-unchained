@@ -9,7 +9,7 @@ from flask_unchained.bundles.controller.constants import (
     ALL_RESOURCE_METHODS, RESOURCE_INDEX_METHODS, RESOURCE_MEMBER_METHODS,
     CREATE, DELETE, GET, LIST, PATCH, PUT)
 from flask_unchained.bundles.controller.resource import (
-    _ResourceMetaclass, _ResourceMetaOptionsFactory, _ResourceUrlPrefixMetaOption)
+    ResourceMetaclass, ResourceMetaOptionsFactory, ResourceUrlPrefixMetaOption)
 from flask_unchained.bundles.controller.route import Route
 from flask_unchained.bundles.controller.utils import get_param_tuples
 from flask_unchained.bundles.sqlalchemy import SessionManager
@@ -26,7 +26,7 @@ from .model_serializer import ModelSerializer
 from .utils import unpack
 
 
-class _ModelResourceMetaclass(_ResourceMetaclass):
+class ModelResourceMetaclass(ResourceMetaclass):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         if mcs_args.is_abstract:
@@ -56,7 +56,7 @@ class _ModelResourceMetaclass(_ResourceMetaclass):
         return cls
 
 
-class _ModelResourceSerializerMetaOption(MetaOption):
+class ModelResourceSerializerMetaOption(MetaOption):
     """
     The serializer instance to use. If left unspecified, it will be looked up by
     model name and automatically assigned.
@@ -76,7 +76,7 @@ class _ModelResourceSerializerMetaOption(MetaOption):
                 f'The {self.name} meta option must be an instance of ModelSerializer')
 
 
-class _ModelResourceSerializerCreateMetaOption(MetaOption):
+class ModelResourceSerializerCreateMetaOption(MetaOption):
     """
     The serializer instance to use for creating models. If left unspecified, it
     will be looked up by model name and automatically assigned.
@@ -96,7 +96,7 @@ class _ModelResourceSerializerCreateMetaOption(MetaOption):
                 f'The {self.name} meta option must be an instance of ModelSerializer')
 
 
-class _ModelResourceSerializerManyMetaOption(MetaOption):
+class ModelResourceSerializerManyMetaOption(MetaOption):
     """
     The serializer instance to use for listing models. If left unspecified, it
     will be looked up by model name and automatically assigned.
@@ -116,7 +116,7 @@ class _ModelResourceSerializerManyMetaOption(MetaOption):
                 f'The {self.name} meta option must be an instance of ModelSerializer')
 
 
-class _ModelResourceIncludeMethodsMetaOption(MetaOption):
+class ModelResourceIncludeMethodsMetaOption(MetaOption):
     """
     A list of resource methods to automatically include. Defaults to
     ``('list', 'create', 'get', 'patch', 'put', 'delete')``.
@@ -143,7 +143,7 @@ class _ModelResourceIncludeMethodsMetaOption(MetaOption):
                              f'valid values are ' + ', '.join(ALL_RESOURCE_METHODS))
 
 
-class _ModelResourceExcludeMethodsMetaOption(MetaOption):
+class ModelResourceExcludeMethodsMetaOption(MetaOption):
     """
     A list of resource methods to exclude. Defaults to ``()``.
     """
@@ -162,7 +162,7 @@ class _ModelResourceExcludeMethodsMetaOption(MetaOption):
                              f'valid values are ' + ', '.join(ALL_RESOURCE_METHODS))
 
 
-class _ModelResourceIncludeDecoratorsMetaOption(MetaOption):
+class ModelResourceIncludeDecoratorsMetaOption(MetaOption):
     """
     A list of resource methods for which to automatically apply the default decorators.
     Defaults to ``('list', 'create', 'get', 'patch', 'put', 'delete')``.
@@ -210,7 +210,7 @@ class _ModelResourceIncludeDecoratorsMetaOption(MetaOption):
                              f'valid values are ' + ', '.join(ALL_RESOURCE_METHODS))
 
 
-class _ModelResourceExcludeDecoratorsMetaOption(MetaOption):
+class ModelResourceExcludeDecoratorsMetaOption(MetaOption):
     """
     A list of resource methods for which to *not* apply the default decorators, as
     outlined in :attr:`include_decorators`. Defaults to ``()``.
@@ -230,7 +230,7 @@ class _ModelResourceExcludeDecoratorsMetaOption(MetaOption):
                              f'valid values are ' + ', '.join(ALL_RESOURCE_METHODS))
 
 
-class _ModelResourceMethodDecoratorsMetaOption(MetaOption):
+class ModelResourceMethodDecoratorsMetaOption(MetaOption):
     """
     This can either be a list of decorators to apply to *all* methods, or a
     dictionary of method names to a list of decorators to apply for each method.
@@ -258,7 +258,7 @@ class _ModelResourceMethodDecoratorsMetaOption(MetaOption):
                                      f'meta option for the {method_name} key')
 
 
-class _ModelResourceUrlPrefixMetaOption(MetaOption):
+class ModelResourceUrlPrefixMetaOption(MetaOption):
     """
     The url prefix to use for all routes from this resource. Defaults to the
     pluralized and snake_cased model class name.
@@ -286,20 +286,20 @@ class _ModelResourceUrlPrefixMetaOption(MetaOption):
             raise ValueError(f'The {self.name} meta option must be a string')
 
 
-class _ModelResourceMetaOptionsFactory(_ResourceMetaOptionsFactory):
+class ModelResourceMetaOptionsFactory(ResourceMetaOptionsFactory):
     _allowed_properties = ['model']
-    _options = [option for option in _ResourceMetaOptionsFactory._options
-                if not issubclass(option, _ResourceUrlPrefixMetaOption)] + [
+    _options = [option for option in ResourceMetaOptionsFactory._options
+                if not issubclass(option, ResourceUrlPrefixMetaOption)] + [
         _ModelResourceModelMetaOption,
-        _ModelResourceUrlPrefixMetaOption,  # must come after the model meta option
-        _ModelResourceSerializerMetaOption,
-        _ModelResourceSerializerCreateMetaOption,
-        _ModelResourceSerializerManyMetaOption,
-        _ModelResourceIncludeMethodsMetaOption,
-        _ModelResourceExcludeMethodsMetaOption,
-        _ModelResourceIncludeDecoratorsMetaOption,
-        _ModelResourceExcludeDecoratorsMetaOption,
-        _ModelResourceMethodDecoratorsMetaOption,
+        ModelResourceUrlPrefixMetaOption,  # must come after the model meta option
+        ModelResourceSerializerMetaOption,
+        ModelResourceSerializerCreateMetaOption,
+        ModelResourceSerializerManyMetaOption,
+        ModelResourceIncludeMethodsMetaOption,
+        ModelResourceExcludeMethodsMetaOption,
+        ModelResourceIncludeDecoratorsMetaOption,
+        ModelResourceExcludeDecoratorsMetaOption,
+        ModelResourceMethodDecoratorsMetaOption,
     ]
 
     def __init__(self):
@@ -318,12 +318,12 @@ class _ModelResourceMetaOptionsFactory(_ResourceMetaOptionsFactory):
         self._model = model
 
 
-class ModelResource(Resource, metaclass=_ModelResourceMetaclass):
+class ModelResource(Resource, metaclass=ModelResourceMetaclass):
     """
     Base class for model resources. This is intended for building RESTful APIs
     with SQLAlchemy models and Marshmallow serializers.
     """
-    _meta_options_factory_class = _ModelResourceMetaOptionsFactory
+    _meta_options_factory_class = ModelResourceMetaOptionsFactory
 
     class Meta:
         abstract = True
@@ -498,4 +498,6 @@ class ModelResource(Resource, metaclass=_ModelResourceMetaclass):
 
 __all__ = [
     'ModelResource',
+    'ModelResourceMetaclass',
+    'ModelResourceMetaOptionsFactory',
 ]

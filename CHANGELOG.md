@@ -27,7 +27,7 @@
 
 - document the rest of SQLAlchemy's config options
 - automatically discover services in the `services` and `managers` modules of bundles
-- bump sqlalchemy-unchained to v0.10.0
+- bump sqlalchemy-unchained to v0.11.0
 - add compatibility with pytest 5
 
 ### Bug Fixes
@@ -124,6 +124,7 @@ class YourBundle(Bundle):
 - move `Bundle` and `AppBundle` into the `flask_unchained.bundles` module
 - move `BundleBlueprint` into the `flask_unchained.bundles.controller.bundle_blueprint` module
 - move `_DeferredBundleFunctions` into `flask_unchained.unchained`, rename it to `DeferredBundleFunctions`
+- make a bunch more protected internal classes public
 - make `_has_views`, `_blueprint_names`, `_static_folders`, `is_top_bundle` and `_has_hierarchy_name_conflicts` methods on `Bundle` properties
 - rename double-negative `reverse_mro` parameter for `Bundle._iter_class_hierarchy` to `mro`
 - warn when identical routes are registered

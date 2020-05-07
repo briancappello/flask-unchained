@@ -55,7 +55,7 @@ def foreign_key(*args,
 
     :param str fk_col: The column name of the primary key on the *opposite* side
       of the relationship (defaults to
-      :attr:`sqlalchemy_unchained._ModelRegistry.default_primary_key_column`).
+      :attr:`sqlalchemy_unchained.ModelRegistry.default_primary_key_column`).
     :param bool primary_key: Whether or not this :class:`~sqlalchemy.Column` is
                              a primary key.
     :param bool nullable: Whether or not this :class:`~sqlalchemy.Column` should

@@ -15,7 +15,7 @@ def _normalize_module_name(module_name):
     return module_name
 
 
-class _BundleMetaclass(type):
+class BundleMetaclass(type):
     def __new__(mcs, name, bases, clsdict):
         # check if the user explicitly set module_name
         module_name = clsdict.get('module_name')
@@ -82,7 +82,7 @@ class _BundleTemplateFolderDescriptor:
         return instance._template_folder
 
 
-class Bundle(metaclass=_BundleMetaclass):
+class Bundle(metaclass=BundleMetaclass):
     """
     Base class for bundles.
 
@@ -286,7 +286,7 @@ class Bundle(metaclass=_BundleMetaclass):
                 f'module={self.module_name!r}>')
 
 
-class _AppBundleMetaclass(_BundleMetaclass):
+class AppBundleMetaclass(BundleMetaclass):
     """
     Metaclass for :class:`~flask_unchained.AppBundle` to automatically set the
     user's subclass on the :class:`~flask_unchained.Unchained` extension instance.
@@ -296,7 +296,7 @@ class _AppBundleMetaclass(_BundleMetaclass):
         unchained._app_bundle_cls = cls
 
 
-class AppBundle(Bundle, metaclass=_AppBundleMetaclass):
+class AppBundle(Bundle, metaclass=AppBundleMetaclass):
     """
     Like :class:`~flask_unchained.Bundle`, except used for the top-most
     application bundle.
@@ -311,5 +311,7 @@ class AppBundle(Bundle, metaclass=_AppBundleMetaclass):
 
 __all__ = [
     'AppBundle',
+    'AppBundleMetaclass',
     'Bundle',
+    'BundleMetaclass',
 ]

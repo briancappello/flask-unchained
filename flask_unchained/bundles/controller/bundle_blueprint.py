@@ -1,12 +1,12 @@
-from flask import Blueprint as _Blueprint
-from flask.blueprints import BlueprintSetupState as _BlueprintSetupState
-from flask.helpers import send_from_directory as _send_from_directory
-from flask.helpers import _endpoint_from_view_func
+from flask import Blueprint as BaseBlueprint
+from flask import send_from_directory as _send_from_directory
+from flask.blueprints import BlueprintSetupState as BaseBlueprintSetupState
+
 from flask_unchained import Bundle
 from werkzeug.exceptions import NotFound
 
 
-class _BundleBlueprintSetupState(_BlueprintSetupState):
+class BundleBlueprintSetupState(BaseBlueprintSetupState):
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         """
         A helper method to register a rule (and optionally a view function)
@@ -19,14 +19,14 @@ class _BundleBlueprintSetupState(_BlueprintSetupState):
             rule = self.url_prefix + rule
         options.setdefault('subdomain', self.subdomain)
         if endpoint is None:
-            endpoint = _endpoint_from_view_func(view_func)
+            endpoint = view_func.__name__
         defaults = self.url_defaults
         if 'defaults' in options:
             defaults = dict(defaults, **options.pop('defaults'))
         self.app.add_url_rule(rule, endpoint, view_func, defaults=defaults, **options)
 
 
-class BundleBlueprint(_Blueprint):
+class BundleBlueprint(BaseBlueprint):
     """
     This is a semi-private class to make blueprints compatible with bundles and
     their hierarchies. Bundle blueprints are created automatically for each bundle
@@ -62,7 +62,7 @@ class BundleBlueprint(_Blueprint):
         raise NotFound()
 
     def make_setup_state(self, app, options, first_registration=False):
-        return _BundleBlueprintSetupState(self, app, options, first_registration)
+        return BundleBlueprintSetupState(self, app, options, first_registration)
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         """
@@ -98,3 +98,8 @@ class BundleBlueprint(_Blueprint):
 
     def __repr__(self):
         return f'BundleBlueprint(name={self.name!r}, bundle={self.bundle!r})'
+
+
+__all__ = [
+    'BundleBlueprint',
+]

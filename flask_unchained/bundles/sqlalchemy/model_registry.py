@@ -3,11 +3,11 @@ import warnings
 
 from py_meta_utils import McsInitArgs
 from sqlalchemy.exc import SAWarning
-from sqlalchemy_unchained import _ModelRegistry
+from sqlalchemy_unchained import ModelRegistry
 from typing import *
 
 
-class UnchainedModelRegistry(_ModelRegistry):
+class UnchainedModelRegistry(ModelRegistry):
     enable_lazy_mapping = True
 
     def __init__(self):
@@ -77,4 +77,4 @@ class UnchainedModelRegistry(_ModelRegistry):
                     return True
 
 
-_ModelRegistry.set_singleton_class(UnchainedModelRegistry)
+ModelRegistry.set_singleton_class(UnchainedModelRegistry)

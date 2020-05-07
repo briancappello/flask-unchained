@@ -44,7 +44,7 @@ def _is_view_func(method_name, method):
     return is_function and not (is_private or has_no_routes)
 
 
-class _ControllerMetaclass(type):
+class ControllerMetaclass(type):
     """
     Metaclass for Controller class
 
@@ -64,7 +64,7 @@ class _ControllerMetaclass(type):
             mcs_args.clsdict[NOT_VIEWS_ATTR] = _get_not_views(clsdict, bases)
 
         process_factory_meta_options(
-            mcs_args, default_factory_class=_ControllerMetaOptionsFactory)
+            mcs_args, default_factory_class=ControllerMetaOptionsFactory)
 
         cls = super().__new__(*mcs_args)
         if mcs_args.is_abstract:
@@ -92,7 +92,7 @@ class _ControllerMetaclass(type):
                 route._controller_cls = cls
 
 
-class _ControllerDecoratorsMetaOption(MetaOption):
+class ControllerDecoratorsMetaOption(MetaOption):
     """
     A list of decorators to apply to all views in this controller.
     """
@@ -109,7 +109,7 @@ class _ControllerDecoratorsMetaOption(MetaOption):
                 f'The {self.name} meta option must be a list of callables.')
 
 
-class _ControllerTemplateFolderNameMetaOption(MetaOption):
+class ControllerTemplateFolderNameMetaOption(MetaOption):
     """
     The name of the folder containing the templates for this controller's views. Defaults
     to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping
@@ -134,7 +134,7 @@ class _ControllerTemplateFolderNameMetaOption(MetaOption):
                 f'The {self.name} meta option must be a string and not a full path')
 
 
-class _ControllerTemplateFileExtensionMetaOption(MetaOption):
+class ControllerTemplateFileExtensionMetaOption(MetaOption):
     """
     The filename extension to use for templates for this controller's views.
     Defaults to None. ``Controller.render`` will use the
@@ -157,7 +157,7 @@ class _ControllerTemplateFileExtensionMetaOption(MetaOption):
     # it isn't here, because metaclass code runs at import time)
 
 
-class _ControllerUrlPrefixMetaOption(MetaOption):
+class ControllerUrlPrefixMetaOption(MetaOption):
     """
     The url prefix to use for all routes from this controller. Defaults to None.
     """
@@ -172,7 +172,7 @@ class _ControllerUrlPrefixMetaOption(MetaOption):
             raise ValueError(f'The {self.name} meta option must be a string')
 
 
-class _ControllerEndpointPrefixMetaOption(MetaOption):
+class ControllerEndpointPrefixMetaOption(MetaOption):
     def __init__(self, name='endpoint_prefix', default=_missing, inherit=False):
         super().__init__(name=name, default=default, inherit=inherit)
 
@@ -191,18 +191,18 @@ class _ControllerEndpointPrefixMetaOption(MetaOption):
         return snake_case(mcs_args.name)
 
 
-class _ControllerMetaOptionsFactory(MetaOptionsFactory):
+class ControllerMetaOptionsFactory(MetaOptionsFactory):
     _options = [
         _ControllerAbstractMetaOption,
-        _ControllerDecoratorsMetaOption,
-        _ControllerTemplateFolderNameMetaOption,
-        _ControllerTemplateFileExtensionMetaOption,
-        _ControllerUrlPrefixMetaOption,
-        _ControllerEndpointPrefixMetaOption,
+        ControllerDecoratorsMetaOption,
+        ControllerTemplateFolderNameMetaOption,
+        ControllerTemplateFileExtensionMetaOption,
+        ControllerUrlPrefixMetaOption,
+        ControllerEndpointPrefixMetaOption,
     ]
 
 
-class Controller(metaclass=_ControllerMetaclass):
+class Controller(metaclass=ControllerMetaclass):
     """
     Base class for views.
 
@@ -268,7 +268,7 @@ class Controller(metaclass=_ControllerMetaclass):
             def index():
                 return self.render('index')  # site/index.html
 
-        # your bundle root
+        # your_bundle_root
         ├── __init__.py
         ├── templates
         │   └── site
@@ -278,8 +278,10 @@ class Controller(metaclass=_ControllerMetaclass):
         └── views
             └── site_controller.py
     """
-    _meta_options_factory_class = _ControllerMetaOptionsFactory
-    _view_funcs = {}
+    _meta_options_factory_class = ControllerMetaOptionsFactory
+
+    # the metaclass ensures a unique _view_funcs dict for each subclass of controller
+    _view_funcs: Dict[str, FunctionType] = {}  # keyed by method names on controllers
 
     class Meta:
         abstract = True
@@ -398,8 +400,7 @@ class Controller(metaclass=_ControllerMetaclass):
     @classmethod
     def method_as_view(cls, method_name, *class_args, **class_kwargs):
         # this code, combined with apply_decorators and dispatch_request, is
-        # 95% taken from Flask's View.as_view classmethod (albeit refactored)
-        # differences:
+        # modified from Flask's View.as_view classmethod. Differences:
         #
         # - we pass method_name to dispatch_request, to allow for easier
         #   customization of behavior by subclasses
@@ -440,4 +441,6 @@ class Controller(metaclass=_ControllerMetaclass):
 
 __all__ = [
     'Controller',
+    'ControllerMetaclass',
+    'ControllerMetaOptionsFactory',
 ]

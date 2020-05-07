@@ -5,8 +5,8 @@ from py_meta_utils import (
 from sqlalchemy_unchained.validation import ValidationError, ValidationErrors
 from typing import *
 from wtforms.ext.sqlalchemy.fields import *
-from wtforms.ext.sqlalchemy.orm import ModelConverter as _BaseModelConverter, converts
-from wtforms.form import FormMeta as _FormMetaclass
+from wtforms.ext.sqlalchemy.orm import ModelConverter as BaseModelConverter, converts
+from wtforms.form import FormMeta as FormMetaclass
 
 from .extensions import db
 from .meta_options import ModelMetaOption
@@ -111,7 +111,7 @@ class ModelFormMetaOptionsFactory(MetaOptionsFactory):
     ]
 
 
-class _ModelConverter(_BaseModelConverter):
+class ModelConverter(BaseModelConverter):
     @converts('Integer', 'SmallInteger', 'BigInteger')
     def handle_integer_types(self, column, field_args, **extra):
         return super().handle_integer_types(column, field_args, **extra)
@@ -127,7 +127,7 @@ def model_fields(model, db_session=None, only=None, exclude=None,
     See `model_form` docstring for description of parameters.
     """
     mapper = model._sa_class_manager.mapper
-    converter = converter or _ModelConverter()
+    converter = converter or ModelConverter()
     field_args = field_args or {}
     properties = []
 
@@ -158,7 +158,7 @@ def model_fields(model, db_session=None, only=None, exclude=None,
     return field_dict
 
 
-class _ModelFormMetaclass(_FormMetaclass):
+class ModelFormMetaclass(FormMetaclass):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         Meta = process_factory_meta_options(mcs_args, ModelFormMetaOptionsFactory)
@@ -183,7 +183,7 @@ class _ModelFormMetaclass(_FormMetaclass):
                                        exclude_pk=Meta.exclude_pk,
                                        field_args=Meta.field_args,
                                        db_session=db.session,
-                                       converter=_ModelConverter())
+                                       converter=ModelConverter())
             new_clsdict.update(mcs_args.clsdict)  # user-declared fields take precedence
             mcs_args.clsdict = new_clsdict
         return super().__new__(*mcs_args)
@@ -194,7 +194,7 @@ class _ModelFormMetaclass(_FormMetaclass):
         return cls
 
 
-class ModelForm(FlaskForm, metaclass=_ModelFormMetaclass):
+class ModelForm(FlaskForm, metaclass=ModelFormMetaclass):
     """
     Base class for SQLAlchemy model forms.
     """

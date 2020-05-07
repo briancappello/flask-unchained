@@ -3,12 +3,12 @@ import graphene
 from flask_unchained import unchained
 from flask_unchained.bundles.sqlalchemy.sqla.types import BigInteger
 from graphene.utils.subclass_with_meta import (
-    SubclassWithMeta_Meta as _BaseObjectTypeMetaclass)
-from graphene_sqlalchemy import SQLAlchemyObjectType as _SQLAObjectType
+    SubclassWithMeta_Meta as BaseObjectTypeMetaclass)
+from graphene_sqlalchemy import SQLAlchemyObjectType as BaseSQLAlchemyObjectType
 from graphene_sqlalchemy.converter import (
     convert_sqlalchemy_type, get_column_doc, is_column_nullable)
 from graphene_sqlalchemy.types import (
-    SQLAlchemyObjectTypeOptions as _SQLAObjectTypeOptions)
+    SQLAlchemyObjectTypeOptions as BaseSQLAlchemyObjectTypeOptions)
 from sqlalchemy import types
 from sqlalchemy.orm import class_mapper
 
@@ -28,7 +28,7 @@ def convert_column_to_int_or_id(type, column, registry=None):
         )
 
 
-class SQLAlchemyObjectTypeOptions(_SQLAObjectTypeOptions):
+class SQLAlchemyObjectTypeOptions(BaseSQLAlchemyObjectTypeOptions):
     """
     This class stores the meta options for :class:`SQLAlchemyObjectType`.
 
@@ -52,7 +52,7 @@ class SQLAlchemyObjectTypeOptions(_SQLAObjectTypeOptions):
         self._model = model
 
 
-class SQLAlchemyObjectType(_SQLAObjectType):
+class SQLAlchemyObjectType(BaseSQLAlchemyObjectType):
     """
     Base class for SQLAlchemy model object types. Acts exactly the same as
     :class:`graphene_sqlalchemy.SQLAlchemyObjectType`, except we've added
@@ -143,7 +143,7 @@ def _get_list_resolver(list_: graphene.List):
     return _get_list
 
 
-class _QueriesObjectTypeMetaclass(_BaseObjectTypeMetaclass):
+class QueriesObjectTypeMetaclass(BaseObjectTypeMetaclass):
     def __new__(mcs, name, bases, clsdict):
         fields, lists = [], []
         for attr, value in clsdict.items():
@@ -161,7 +161,7 @@ class _QueriesObjectTypeMetaclass(_BaseObjectTypeMetaclass):
         return super().__new__(mcs, name, bases, clsdict)
 
 
-class QueriesObjectType(graphene.ObjectType, metaclass=_QueriesObjectTypeMetaclass):
+class QueriesObjectType(graphene.ObjectType, metaclass=QueriesObjectTypeMetaclass):
     """
     Base class for ``query`` schema definitions. :class:`graphene.Field` and
     :class:`graphene.List` fields are automatically resolved (but you can

@@ -9,28 +9,27 @@ from speaklater import _LazyString
 
 try:
     from flask_marshmallow.sqla import (
-        SQLAlchemyAutoSchema as _BaseModelSerializer,
-        SQLAlchemyAutoSchemaOpts as _BaseModelSerializerOptionsClass)
+        SQLAlchemyAutoSchema as BaseModelSerializer,
+        SQLAlchemyAutoSchemaOpts as BaseModelSerializerOptionsClass)
     from marshmallow.fields import Field
     from marshmallow.class_registry import _registry
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
-    from marshmallow_sqlalchemy.convert import ModelConverter as _BaseModelConverter
+    from marshmallow_sqlalchemy.convert import ModelConverter as BaseModelConverter
     from marshmallow_sqlalchemy.schema.sqlalchemy_schema import (
-        SQLAlchemyAutoSchemaMeta as _BaseModelSerializerMetaclass)
+        SQLAlchemyAutoSchemaMeta as BaseModelSerializerMetaclass)
     from sqlalchemy.orm import SynonymProperty
 except ImportError:
     _registry = {}
-    from py_meta_utils import OptionalClass as _BaseModelSerializer
-    from py_meta_utils import OptionalClass as _BaseModelSerializerOptionsClass
+    from py_meta_utils import OptionalClass as BaseModelSerializer
+    from py_meta_utils import OptionalClass as BaseModelSerializerOptionsClass
     from py_meta_utils import OptionalClass as MarshmallowValidationError
-    from py_meta_utils import OptionalClass as _BaseModelConverter
-    from py_meta_utils import OptionalMetaclass as _BaseModelSerializerMetaclass
-    from py_meta_utils import OptionalClass as SynonymProperty
+    from py_meta_utils import OptionalClass as BaseModelConverter
+    from py_meta_utils import OptionalMetaclass as BaseModelSerializerMetaclass
 
 from .config import Config
 
 
-class _ModelConverter(_BaseModelConverter):
+class ModelConverter(BaseModelConverter):
     def fields_for_model(self,
                          model,
                          *,
@@ -131,7 +130,7 @@ class _ModelSerializerMeta(metaclass=_ModelSerializerMetaMetaclass):
     pass
 
 
-class _ModelSerializerMetaclass(_BaseModelSerializerMetaclass):
+class ModelSerializerMetaclass(BaseModelSerializerMetaclass):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         _set_up_class_dependency_injection(mcs_args)
@@ -184,8 +183,16 @@ class _ModelSerializerMetaclass(_BaseModelSerializerMetaclass):
             fullname = f'{cls.__module__}.{cls.__name__}'
             _registry[name] = _registry[fullname] = [cls]
 
+    @classmethod
+    def get_declared_fields(mcs, klass, cls_fields, inherited_fields, dict_cls):
+        # overridden to fix building the docs
+        try:
+            return super().get_declared_fields(klass, cls_fields, inherited_fields, dict_cls)
+        except TypeError:
+            pass
 
-class _ModelSerializerOptionsClass(_BaseModelSerializerOptionsClass):
+
+class ModelSerializerOptionsClass(BaseModelSerializerOptionsClass):
     """
     Sets the default ``model_converter`` to :class:`_ModelConverter`.
     """
@@ -196,7 +203,7 @@ class _ModelSerializerOptionsClass(_BaseModelSerializerOptionsClass):
 
         # override the upstream default values for load_instance and model_converter
         meta.load_instance = getattr(meta, 'load_instance', True)
-        meta.model_converter = getattr(meta, 'model_converter', _ModelConverter)
+        meta.model_converter = getattr(meta, 'model_converter', ModelConverter)
         super().__init__(meta, **kwargs)
 
     @property
@@ -234,7 +241,7 @@ def maybe_convert_keys(data: Any,
     return data
 
 
-class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass):
+class ModelSerializer(BaseModelSerializer, metaclass=ModelSerializerMetaclass):
     """
     Base class for SQLAlchemy model serializers. This is pretty much a stock
     :class:`flask_marshmallow.sqla.ModelSchema`, except:
@@ -266,8 +273,8 @@ class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass)
     """
     __abstract__ = True
 
-    OPTIONS_CLASS = _ModelSerializerOptionsClass
-    opts: _ModelSerializerOptionsClass = None  # set by the metaclass
+    OPTIONS_CLASS = ModelSerializerOptionsClass
+    opts: ModelSerializerOptionsClass = None  # set by the metaclass
 
     def is_create(self):
         """
@@ -390,5 +397,8 @@ class ModelSerializer(_BaseModelSerializer, metaclass=_ModelSerializerMetaclass)
 
 
 __all__ = [
+    'ModelConverter',
     'ModelSerializer',
+    'ModelSerializerMetaclass',
+    'ModelSerializerOptionsClass',
 ]

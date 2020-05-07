@@ -128,16 +128,16 @@ def _set_up_class_dependency_injection(mcs_args: McsArgs):
             setattr(method, '__di_name__', f'{mcs_args.name}.{method.__di_name__}')
 
 
-class _ServiceMetaOptionsFactory(MetaOptionsFactory):
+class ServiceMetaOptionsFactory(MetaOptionsFactory):
     _options = [AbstractMetaOption]
 
 
-class _ServiceMetaclass(type):
+class ServiceMetaclass(type):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         _set_up_class_dependency_injection(mcs_args)
         process_factory_meta_options(
-            mcs_args, default_factory_class=_ServiceMetaOptionsFactory)
+            mcs_args, default_factory_class=ServiceMetaOptionsFactory)
 
         # extended concrete services should not inherit their super's di name
         if deep_getattr({}, bases, '__di_name__', None):
@@ -153,7 +153,7 @@ class _ServiceMetaclass(type):
         _ensure_service_name(cls)
 
 
-class Service(metaclass=_ServiceMetaclass):
+class Service(metaclass=ServiceMetaclass):
     """
     Base class for services. Automatically sets up dependency injection on the
     constructor of the subclass, and allows for your service to be automatically
@@ -166,4 +166,6 @@ class Service(metaclass=_ServiceMetaclass):
 __all__ = [
     'injectable',
     'Service',
+    'ServiceMetaclass',
+    'ServiceMetaOptionsFactory',
 ]
