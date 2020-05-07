@@ -69,6 +69,8 @@ class SecurityService(Service):
             marked as not "fresh". Defaults to ``True``.
         :type fresh: bool
         """
+        # this method's logic is modified from flask_login.utils.login_user
+
         if not force:
             if not user.active:
                 raise AuthenticationError(
@@ -84,22 +86,22 @@ class SecurityService(Service):
                 raise AuthenticationError(
                     _('flask_unchained.bundles.security:error.password_not_set'))
 
-        session['user_id'] = getattr(user, user.Meta.pk)
+        session['_user_id'] = getattr(user, user.Meta.pk)
         session['_fresh'] = fresh
         session['_id'] = app.login_manager._session_identifier_generator()
 
         if remember is None:
             remember = app.config.SECURITY_DEFAULT_REMEMBER_ME
         if remember:
-            session['remember'] = 'set'
+            session['_remember'] = 'set'
             if duration is not None:
                 try:
-                    session['remember_seconds'] = duration.total_seconds()
+                    session['_remember_seconds'] = duration.total_seconds()
                 except AttributeError:
                     raise Exception('duration must be a datetime.timedelta, '
                                     'instead got: {0}'.format(duration))
 
-        _request_ctx_stack.top.user = user
+        self.security.login_manager._update_request_context_with_user(user)
         user_logged_in.send(app._get_current_object(), user=user)
         identity_changed.send(app._get_current_object(),
                               identity=Identity(user.id))

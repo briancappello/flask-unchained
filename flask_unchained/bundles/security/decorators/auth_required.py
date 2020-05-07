@@ -76,7 +76,7 @@ def _auth_required():
 
 
 def _check_token():
-    user = security.login_manager.request_callback(request)
+    user = security.login_manager._request_callback(request)
 
     if user and user.is_authenticated:
         _request_ctx_stack.top.user = user
