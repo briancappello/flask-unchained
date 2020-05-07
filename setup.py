@@ -30,7 +30,7 @@ setup(
         'pyterminalsize>=0.1.0',
         'networkx>=2.1',
         'werkzeug>=1.0.1',
-        'wtforms>=2.2.1',
+        'wtforms>=2.3.1',
     ],
     extras_require={
         'admin': [

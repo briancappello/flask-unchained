@@ -202,6 +202,7 @@ class ModelForm(FlaskForm, metaclass=_ModelFormMetaclass):
         abstract = True
 
     def __init__(self, *args, **kwargs):
+        self._errors = None
         try:
             model_name = self.Meta.model.__name__
             self.Meta.model = unchained.sqlalchemy_bundle.models[model_name]
@@ -245,12 +246,11 @@ class ModelForm(FlaskForm, metaclass=_ModelFormMetaclass):
     def errors(self):
         if self._errors:
             return self._errors
-        return {name: field.errors for name, field
-                in self._fields.items() if field.errors}
+        return {name: f.errors for name, f in self._fields.items() if f.errors}
 
-    @property
-    def data(self):
-        return {name: field.data for name, field in self._fields.items()}
+    @errors.setter
+    def errors(self, errors):
+        self._errors = errors
 
     def make_instance(self):
         return self.Meta.model(**self.data)

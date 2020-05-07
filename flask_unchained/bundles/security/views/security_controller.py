@@ -45,7 +45,7 @@ class SecurityController(Controller):
             try:
                 self.security_service.login_user(form.user, form.remember.data)
             except AuthenticationError as e:
-                form._errors = {'_error': [str(e)]}
+                form.errors = {'_error': [str(e)]}
             else:
                 self.after_this_request(self._commit)
                 if request.is_json:
@@ -60,7 +60,7 @@ class SecurityController(Controller):
             msg = f"Invalid {', '.join(identity_attrs)} and/or password."
 
             # we just want a single top-level form error
-            form._errors = {'_error': [msg]}
+            form.errors = {'_error': [msg]}
             for field in form._fields.values():
                 field.errors = None
 
