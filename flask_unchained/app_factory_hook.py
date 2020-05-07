@@ -80,7 +80,7 @@ class AppFactoryHook:
     :attr:`require_exactly_one_bundle_module` is True).
     """
 
-    require_exactly_one_bundle_module = False
+    require_exactly_one_bundle_module: bool = False
     """
     Whether or not to require that there must be exactly one module name to load from
     in bundles.
