@@ -411,8 +411,7 @@ class Controller(metaclass=_ControllerMetaclass):
                 self = view_func.view_class(*class_args, **class_kwargs)
                 return self.dispatch_request(method_name, *args, **kwargs)
 
-            wrapper_assignments = (set(functools.WRAPPER_ASSIGNMENTS)
-                                   .difference({'__qualname__'}))
+            wrapper_assignments = set(functools.WRAPPER_ASSIGNMENTS) - {'__qualname__'}
             functools.update_wrapper(view_func, getattr(cls, method_name),
                                      assigned=list(wrapper_assignments))
             view_func.view_class = cls

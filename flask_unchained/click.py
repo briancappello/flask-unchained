@@ -189,7 +189,8 @@ class Group(GroupOverrideMixin, click.Group):
         :param name: the name of the group (optional)
         :param commands: a dictionary of commands.
         """
-        return super().group(*args, cls=kwargs.pop('cls', Group) or Group, **kwargs)
+        kwargs.setdefault('cls', Group)
+        return super().group(*args, **kwargs)
 
 
 class Argument(click.Argument):

@@ -154,8 +154,8 @@ def url_for(endpoint_or_url_or_config_key: str,
             return _url_for(method_routes[0].endpoint, **flask_url_for_kwargs)
         except (
             BuildError,  # url not found
-            IndexError,  # method_routes[0] is out-of-range
-            TypeError,   # method_routes is None
+            IndexError,  # method_routes[0] is out-of-range (no routes on view)
+            TypeError,   # method_routes is None ("what" wasn't a view/method name)
         ):
             pass
 

@@ -160,6 +160,6 @@ class RegisterRoutesHook(AppFactoryHook):
         """
         if isinstance(obj, LocalProxy):
             return False
-        is_controller = hasattr(obj, CONTROLLER_ROUTES_ATTR)
-        is_view_fn = hasattr(obj, FN_ROUTES_ATTR)
+        is_controller = isinstance(getattr(obj, CONTROLLER_ROUTES_ATTR, None), dict)
+        is_view_fn = isinstance(getattr(obj, FN_ROUTES_ATTR, None), list)
         return is_controller or is_view_fn

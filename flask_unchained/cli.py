@@ -72,8 +72,8 @@ class AppGroupMixin(click.GroupOverrideMixin):
         :param name: the name of the group (optional)
         :param commands: a dictionary of commands.
         """
-        return super().group(
-            *args, cls=kwargs.pop('cls', AppGroup) or AppGroup, **kwargs)
+        kwargs.setdefault('cls', AppGroup)
+        return super().group(*args, **kwargs)
 
 
 class FlaskGroup(AppGroupMixin, flask_cli.FlaskGroup):
