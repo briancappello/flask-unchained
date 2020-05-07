@@ -9,30 +9,37 @@ from speaklater import _LazyString
 
 try:
     from flask_marshmallow.sqla import (
-        ModelSchema as _BaseModelSerializer,
-        SchemaOpts as _BaseModelSerializerOptionsClass)
+        SQLAlchemyAutoSchema as _BaseModelSerializer,
+        SQLAlchemyAutoSchemaOpts as _BaseModelSerializerOptionsClass)
     from marshmallow.fields import Field
     from marshmallow.class_registry import _registry
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
-    from marshmallow.schema import SchemaMeta as _BaseModelSerializerMetaclass
     from marshmallow_sqlalchemy.convert import ModelConverter as _BaseModelConverter
-    from marshmallow_sqlalchemy.schema import (
-        ModelSchemaMeta as _BaseModelSchemaMetaclass)
+    from marshmallow_sqlalchemy.schema.sqlalchemy_schema import (
+        SQLAlchemyAutoSchemaMeta as _BaseModelSerializerMetaclass)
+    from sqlalchemy.orm import SynonymProperty
 except ImportError:
     _registry = {}
     from py_meta_utils import OptionalClass as _BaseModelSerializer
     from py_meta_utils import OptionalClass as _BaseModelSerializerOptionsClass
-    from py_meta_utils import OptionalMetaclass as _BaseModelSerializerMetaclass
     from py_meta_utils import OptionalClass as MarshmallowValidationError
     from py_meta_utils import OptionalClass as _BaseModelConverter
-    from py_meta_utils import OptionalMetaclass as _BaseModelSchemaMetaclass
+    from py_meta_utils import OptionalMetaclass as _BaseModelSerializerMetaclass
+    from py_meta_utils import OptionalClass as SynonymProperty
 
 from .config import Config
 
 
 class _ModelConverter(_BaseModelConverter):
-    def fields_for_model(self, model, include_fk=False, fields=None,
-                         exclude=None, base_fields=None, dict_cls=dict):
+    def fields_for_model(self,
+                         model,
+                         *,
+                         include_fk=False,
+                         include_relationships=False,
+                         fields=None,
+                         exclude=None,
+                         base_fields=None,
+                         dict_cls=dict):
         """
         Overridden to correctly name hybrid_property fields, eg given::
 
@@ -61,11 +68,12 @@ class _ModelConverter(_BaseModelConverter):
         result = dict_cls()
         base_fields = base_fields or {}
         for prop in model.__mapper__.iterate_properties:
+            key = self._get_field_name(prop)
             if self._should_exclude_field(prop, fields=fields, exclude=exclude):
-                result[prop.key] = None
+                result[key] = None
                 continue
-
-            attr_name = prop.key
+            if isinstance(prop, SynonymProperty):
+                continue
             if hasattr(prop, 'columns'):
                 if not include_fk:
                     # Only skip a column if there is no overridden column
@@ -77,12 +85,16 @@ class _ModelConverter(_BaseModelConverter):
                         continue
 
                 col_name = prop.columns[0].name
-                if attr_name != col_name and hasattr(model, col_name):
-                    attr_name = col_name
+                if key != col_name and hasattr(model, col_name):
+                    key = col_name
 
-            field = base_fields.get(attr_name) or self.property2field(prop)
+            if not include_relationships and hasattr(prop, "direction"):
+                continue
+
+            field = base_fields.get(key) or self.property2field(prop)
             if field:
-                result[attr_name] = field
+                result[key] = field
+
         return result
 
     def property2field(self, prop, instance=True, field_class=None, **kwargs):
@@ -119,7 +131,7 @@ class _ModelSerializerMeta(metaclass=_ModelSerializerMetaMetaclass):
     pass
 
 
-class _ModelSerializerMetaclass(_BaseModelSchemaMetaclass):
+class _ModelSerializerMetaclass(_BaseModelSerializerMetaclass):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         _set_up_class_dependency_injection(mcs_args)
@@ -172,22 +184,6 @@ class _ModelSerializerMetaclass(_BaseModelSchemaMetaclass):
             fullname = f'{cls.__module__}.{cls.__name__}'
             _registry[name] = _registry[fullname] = [cls]
 
-    # override marshmallow_sqlalchemy.SchemaMeta.get_declared_fields
-    @classmethod
-    def get_declared_fields(mcs, klass, cls_fields, inherited_fields, dict_cls):
-        """
-        Updates declared fields with fields converted from the SQLAlchemy model
-        passed as the `model` class Meta option.
-        """
-        opts = klass.opts
-        converter = opts.model_converter(schema_cls=klass)
-        base_fields = _BaseModelSerializerMetaclass.get_declared_fields(
-            klass, cls_fields, inherited_fields, dict_cls)
-        declared_fields = mcs.get_fields(converter, opts, base_fields, dict_cls)
-        if declared_fields is not None:  # prevents sphinx from blowing up
-            declared_fields.update(base_fields)
-        return declared_fields
-
 
 class _ModelSerializerOptionsClass(_BaseModelSerializerOptionsClass):
     """
@@ -195,10 +191,13 @@ class _ModelSerializerOptionsClass(_BaseModelSerializerOptionsClass):
     """
     def __init__(self, meta, **kwargs):
         self._model = None
-        super().__init__(meta, **kwargs)
-        self.model_converter = getattr(meta, 'model_converter', _ModelConverter)
         self.dump_key_fn = getattr(meta, 'dump_key_fn', Config.DUMP_KEY_FN)
         self.load_key_fn = getattr(meta, 'load_key_fn', Config.LOAD_KEY_FN)
+
+        # override the upstream default values for load_instance and model_converter
+        meta.load_instance = getattr(meta, 'load_instance', True)
+        meta.model_converter = getattr(meta, 'model_converter', _ModelConverter)
+        super().__init__(meta, **kwargs)
 
     @property
     def model(self):

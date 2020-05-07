@@ -1,5 +1,5 @@
 alembic==1.3.2
-apispec==3.2.0
+apispec==3.3.0
 bcrypt==3.1.7
 beautifulsoup4==4.8.2
 blinker==1.4
@@ -11,7 +11,7 @@ flask-admin==1.5.4
 flask_babelex==0.9.4
 flask-graphql==2.0.1
 flask-login==0.4.1
-flask-marshmallow==0.10.1
+flask-marshmallow==0.12.0
 flask_migrate==2.5.2
 flask-oauthlib==0.9.5
 flask-principal==0.4.0
@@ -28,8 +28,8 @@ itsdangerous==1.1.0
 jinja2==2.10.3
 lxml==4.4.2
 markupsafe==1.1.1
-marshmallow==3.3.0
-marshmallow-sqlalchemy==0.21.0
+marshmallow==3.5.2
+marshmallow-sqlalchemy==0.23.0
 networkx==2.4
 passlib==1.7.2
 py-meta-utils==0.7.6
