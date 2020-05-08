@@ -1,6 +1,6 @@
 import inspect
 
-from flask import make_response, request
+from flask import current_app, make_response, request
 from flask_unchained import Resource, route, param_converter, unchained, injectable
 from flask_unchained.string_utils import kebab_case, pluralize
 from flask_unchained.bundles.controller.attr_constants import (
@@ -20,7 +20,6 @@ from http import HTTPStatus
 from py_meta_utils import McsArgs, MetaOption, _missing
 from werkzeug.wrappers import Response
 
-from .config import Config
 from .decorators import list_loader, patch_loader, put_loader, post_loader
 from .model_serializer import ModelSerializer
 from .utils import unpack
@@ -453,7 +452,9 @@ class ModelResource(Resource, metaclass=ModelResourceMetaclass):
         # FIXME need to support ETags
         # see https://github.com/Nobatek/flask-rest-api/blob/master/flask_rest_api/response.py
 
-        dump_fn = Config.ACCEPT_HANDLERS[request.headers.get('Accept', 'application/json')]
+        dump_fn = current_app.config.ACCEPT_HANDLERS[
+            request.headers.get('Accept', 'application/json')
+        ]
         return make_response(dump_fn(data), code, headers)
 
     def get_decorators(self, method_name):
