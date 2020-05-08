@@ -1,5 +1,5 @@
 from datetime import timedelta
-from flask import _request_ctx_stack, current_app as app, session
+from flask import current_app as app, session
 from flask_login.signals import user_logged_in
 from flask_login.utils import logout_user as _logout_user
 from flask_principal import Identity, AnonymousIdentity, identity_changed

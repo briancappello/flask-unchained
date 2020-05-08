@@ -13,8 +13,7 @@ from flask_unchained.bundles.controller.resource import (
 from flask_unchained.bundles.controller.route import Route
 from flask_unchained.bundles.controller.utils import get_param_tuples
 from flask_unchained.bundles.sqlalchemy import SessionManager
-from flask_unchained.bundles.sqlalchemy.meta_options import (
-    ModelMetaOption as _ModelResourceModelMetaOption)
+from flask_unchained.bundles.sqlalchemy.meta_options import ModelMetaOption
 from functools import partial
 from http import HTTPStatus
 from py_meta_utils import McsArgs, MetaOption, _missing
@@ -28,10 +27,10 @@ from .utils import unpack
 class ModelResourceMetaclass(ResourceMetaclass):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
-        if mcs_args.is_abstract:
-            return super().__new__(*mcs_args)
-
         cls = super().__new__(*mcs_args)
+        if mcs_args.is_abstract:
+            return cls
+
         routes = {}
         include_methods = set(cls.Meta.include_methods)
         exclude_methods = set(cls.Meta.exclude_methods)
@@ -289,7 +288,7 @@ class ModelResourceMetaOptionsFactory(ResourceMetaOptionsFactory):
     _allowed_properties = ['model']
     _options = [option for option in ResourceMetaOptionsFactory._options
                 if not issubclass(option, ResourceUrlPrefixMetaOption)] + [
-        _ModelResourceModelMetaOption,
+        ModelMetaOption,
         ModelResourceUrlPrefixMetaOption,  # must come after the model meta option
         ModelResourceSerializerMetaOption,
         ModelResourceSerializerCreateMetaOption,

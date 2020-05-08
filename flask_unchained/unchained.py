@@ -172,29 +172,6 @@ class Unchained:
         self._services_registry = {}
         self._shell_ctx = {}
 
-    def __getattr__(self, name: str):
-        """
-        Implemented to allow accessing bundles by their name as attributes on the
-        ``unchained`` extension instance.
-
-        *Before* the app has been initialized (ie at import time), we don't
-        actually know what bundles the user has configured, and therefore we
-        need to make a compromise: *any* unrecognized attribute access before
-        the app has been initialized is assumed to be a valid bundle name, and
-        so we return a :class:`~flask_unchained.bundle.DeferredBundleFunctions`
-        instance that allows registering deferred functions (as a replacement
-        for that part of the public Blueprint API).
-
-        *After* the app has been initialized, we know what bundles the user
-        configured, and can therefore return the correct bundle instance (or
-        raise ``AttributeError`` if an invalid attribute was requested).
-        """
-        if name in self.bundles:
-            return self.bundles[name]
-        elif not self._initialized:
-            return self._deferred_bundle_functions[name]
-        raise AttributeError(name)
-
     def init_app(self,
                  app: Flask,
                  # FIXME: properly type hint bundles on 3.7+, on 3.6 we get
@@ -320,7 +297,6 @@ class Unchained:
                     # were decorated with @inject. which would be silly, but,
                     # it should still work regardless
                     cls.__signature__ = fn.__signature__
-
             if cls and hasattr(cls, '__di_name__'):
                 return cls
 
@@ -447,6 +423,29 @@ class Unchained:
                                     f'(required by {requester})')
 
         self._services_initialized = True
+
+    def __getattr__(self, name: str):
+        """
+        Implemented to allow accessing bundles by their name as attributes on the
+        ``unchained`` extension instance.
+
+        *Before* the app has been initialized (ie at import time), we don't
+        actually know what bundles the user has configured, and therefore we
+        need to make a compromise: *any* unrecognized attribute access before
+        the app has been initialized is assumed to be a valid bundle name, and
+        so we return a :class:`~flask_unchained.bundle.DeferredBundleFunctions`
+        instance that allows registering deferred functions (as a replacement
+        for that part of the public Blueprint API).
+
+        *After* the app has been initialized, we know what bundles the user
+        configured, and can therefore return the correct bundle instance (or
+        raise ``AttributeError`` if an invalid attribute was requested).
+        """
+        if name in self.bundles:
+            return self.bundles[name]
+        elif not self._initialized:
+            return self._deferred_bundle_functions[name]
+        raise AttributeError(name)
 
     def _defer(self, fn):
         if self._initialized:

@@ -18,8 +18,7 @@ def url(url: str, method: str):
     try:
         url_rule, params = (current_app.url_map.bind('localhost')
                             .match(url, method=method, return_rule=True))
-    except (NotFound, MethodNotAllowed)\
-            as e:
+    except (NotFound, MethodNotAllowed) as e:
         click.secho(str(e), fg='white', bg='red')
     else:
         headings = ('Method(s)', 'Rule', 'Params', 'Endpoint', 'View', 'Options')

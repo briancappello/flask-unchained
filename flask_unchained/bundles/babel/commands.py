@@ -73,13 +73,13 @@ def _run(str):
 
 def _get_babel_cfg():
     bundle = list(current_app.unchained.bundles.values())[-1]
-    babel_cfg = None
     if isinstance(bundle, AppBundle):
         babel_cfg = os.path.join(os.path.dirname(bundle.root_path), 'babel.cfg')
+        if os.path.exists(babel_cfg):
+            return babel_cfg
+
     bundle_babel_cfg = os.path.join(bundle.root_path, 'babel.cfg')
-    if babel_cfg and os.path.exists(babel_cfg):
-        return babel_cfg
-    elif os.path.exists(bundle_babel_cfg):
+    if os.path.exists(bundle_babel_cfg):
         return bundle_babel_cfg
 
     # default to using flask_unchained's babel.cfg
