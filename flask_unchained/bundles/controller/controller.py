@@ -405,8 +405,9 @@ class Controller(metaclass=ControllerMetaclass):
         # - we pass method_name to dispatch_request, to allow for easier
         #   customization of behavior by subclasses
         # - we apply decorators later, so they get called when the view does
-        # - we also apply them in reverse, so that they get applied in the
-        #   logical top-to-bottom order as declared in controllers
+        # - we also apply decorators listed in Meta.decorators in reverse,
+        #   so that they get applied in the logical top-to-bottom order as
+        #   declared in controllers
         if method_name not in cls._view_funcs:
             def view_func(*args, **kwargs):
                 self = view_func.view_class(*class_args, **class_kwargs)
