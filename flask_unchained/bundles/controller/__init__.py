@@ -24,6 +24,8 @@ class ControllerBundle(Bundle):
     The name of the Controller Bundle.
     """
 
+    _has_views = False
+
     def __init__(self):
 
         self.endpoints: Dict[str, Route] = defaultdict(list)

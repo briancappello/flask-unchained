@@ -27,6 +27,8 @@ class SQLAlchemyBundle(Bundle):
     Click groups for the SQLAlchemy Bundle.
     """
 
+    _has_views = False
+
     def __init__(self):
         self.models = {}
         """

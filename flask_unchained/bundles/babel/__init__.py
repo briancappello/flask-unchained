@@ -39,6 +39,8 @@ class BabelBundle(Bundle):
     Default Werkzeug parameter name to be used when registering language-specific URLs.
     """
 
+    _has_views = False
+
     def before_init_app(self, app: FlaskUnchained):
         app.jinja_env.add_extension('jinja2.ext.i18n')
         babel.locale_selector_func = self.get_locale
