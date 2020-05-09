@@ -291,18 +291,20 @@ class AppFactoryHook:
 
         module_names = getattr(bundle, cls.bundle_override_module_names_attr, None)
         if module_names is None:
-            module_names = (bundle.default_load_from_module_name
-                            if bundle.default_load_from_module_name
-                            else (cls.bundle_module_name
-                                  if cls.require_exactly_one_bundle_module
-                                  else cls.bundle_module_names))
+            if bundle.default_load_from_module_name:
+                module_names = bundle.default_load_from_module_name
+            elif cls.require_exactly_one_bundle_module:
+                module_names = cls.bundle_module_name
+            else:
+                module_names = cls.bundle_module_names
 
         # check to make sure the user's bundle override module name(s) attribute is correct
-        if cls.require_exactly_one_bundle_module or isinstance(module_names, str):
-            if not isinstance(module_names, str):
-                raise ValueError(f'The {cls.bundle_override_module_names_attr} attribute '
-                                 f'on {bundle.module_name}.{bundle.__class__.__name__} '
-                                 f'must be a string for exactly one module name.')
+        if cls.require_exactly_one_bundle_module and not isinstance(module_names, str):
+            raise ValueError(f'The {cls.bundle_override_module_names_attr} attribute '
+                             f'on {bundle.module_name}.{bundle.__class__.__name__} '
+                             f'must be a string for exactly one module name.')
+
+        if isinstance(module_names, str):
             return [module_names]
         return module_names
 
