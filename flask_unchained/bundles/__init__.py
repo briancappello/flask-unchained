@@ -50,8 +50,11 @@ class _BundleRootPathDescriptor:
 
 
 class _BundleNameDescriptor:
+    def __init__(self, *, strip_bundle_suffix: bool = False):
+        self.strip_bundle_suffix = strip_bundle_suffix
+
     def __get__(self, instance, cls):
-        if issubclass(cls, AppBundle):
+        if self.strip_bundle_suffix:
             return snake_case(right_replace(cls.__name__, 'Bundle', ''))
         return snake_case(cls.__name__)
 
@@ -302,7 +305,7 @@ class AppBundle(Bundle, metaclass=AppBundleMetaclass):
     application bundle.
     """
 
-    name: str = _BundleNameDescriptor()
+    name: str = _BundleNameDescriptor(strip_bundle_suffix=True)
     """
     Name of the bundle. Defaults to the snake_cased class name, excluding any
     "Bundle" suffix.
