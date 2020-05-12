@@ -154,8 +154,8 @@ class GroupOverrideMixin:
                                             metavar before the arguments.
                                             Defaults to False.
         """
-        return super().command(
-            *args, cls=kwargs.pop('cls', Command) or Command, **kwargs)
+        kwargs.setdefault('cls', Command)
+        return super().command(*args, **kwargs)
 
     def collect_usage_pieces(self, ctx):
         if self.chain:

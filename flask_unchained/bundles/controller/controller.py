@@ -70,7 +70,9 @@ class ControllerMetaclass(type):
         if mcs_args.is_abstract:
             return cls
 
-        controller_routes = copy.deepcopy(getattr(cls, CONTROLLER_ROUTES_ATTR, {}))
+        controller_routes: Dict[str, List[Route]] = copy.deepcopy(
+            getattr(cls, CONTROLLER_ROUTES_ATTR, {})
+        )
         not_views = deep_getattr({}, bases, NOT_VIEWS_ATTR)
 
         for method_name, method in clsdict.items():

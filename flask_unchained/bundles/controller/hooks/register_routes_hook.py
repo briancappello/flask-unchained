@@ -63,12 +63,12 @@ class RegisterRoutesHook(AppFactoryHook):
         """
         for route in _reduce_routes(routes):
             if route.should_register(app):
-                existing_route = (self.bundle.endpoints.get(route.endpoint, None)
-                                  if route.module_name else None)
-                if existing_route:
+                existing_routes = (self.bundle.endpoints.get(route.endpoint, None)
+                                   if route.module_name else None)
+                if existing_routes:
                     import warnings
                     warnings.warn(f'Skipping duplicate latter route: '
-                                  f'{existing_route} precedes {route}')
+                                  f'{existing_routes[0]} precedes {route}')
                     continue
 
                 self.bundle.endpoints[route.endpoint].append(route)

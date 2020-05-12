@@ -27,13 +27,14 @@ class ControllerBundle(Bundle):
     _has_views = False
 
     def __init__(self):
+        # these all get populated by the RegisterRoutesHook
 
-        self.endpoints: Dict[str, Route] = defaultdict(list)
+        self.endpoints: Dict[str, List[Route]] = defaultdict(list)
         """
         Lookup of routes by endpoint name.
         """
 
-        self.controller_endpoints: Dict[str, Route] = defaultdict(list)
+        self.controller_endpoints: Dict[str, List[Route]] = defaultdict(list)
         """
         Lookup of routes by keys: f'{ControllerClassName}.{view_method_name}'
         """
