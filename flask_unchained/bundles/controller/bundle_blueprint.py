@@ -13,7 +13,7 @@ class BundleBlueprintSetupState(BaseBlueprintSetupState):
         to the application.  The endpoint is automatically prefixed with the
         blueprint's name.
 
-        Overridden to allow dots in endpoint names.
+        Overridden to not prefix endpoints with the blueprint name (bundle name).
         """
         if self.url_prefix:
             rule = self.url_prefix + rule
