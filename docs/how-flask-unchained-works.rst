@@ -37,8 +37,7 @@ The app factory might sound like magic, but it's actually quite easy to understa
 
             # discover code from bundles and boot up the Flask app using hooks
             unchained.init_app(app, bundles)
-                # the Unchained extensions runs hooks in their correct order:
-                # (there may be more depending on which bundles you enable)
+                # the Unchained extension runs hooks in their correct order:
                 RegisterExtensionsHook.run_hook(app, bundles)
                 ConfigureAppHook.run_hook(app, bundles)
                 InitExtensionsHook.run_hook(app, bundles)
@@ -46,6 +45,7 @@ The app factory might sound like magic, but it's actually quite easy to understa
                 RegisterCommandsHook.run_hook(app, bundles)
                 RegisterRoutesHook.run_hook(app, bundles)
                 RegisterBundleBlueprintsHook.run_hook(app, bundles)
+                # (there may be more depending on which bundles you enable)
 
             # let bundles configure the app post-initialization
             for bundle in bundles:
