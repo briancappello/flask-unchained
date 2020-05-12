@@ -274,16 +274,25 @@ def _url_for(endpoint: str, **values) -> Union[str, None]:
     :param values: the variable arguments of the URL rule
     :return: a url path, or None
     """
-    _external_host = values.pop('_external_host', None)
+    _external_host = values.pop('_external_host', '')
     is_external = bool(_external_host or values.get('_external'))
-    external_host = _external_host or current_app.config.get('EXTERNAL_SERVER_NAME')
-    if not is_external or not external_host:
+    external_host = (
+        _external_host or current_app.config.get('EXTERNAL_SERVER_NAME', '')
+    ).rstrip('/')
+    if not external_host or not is_external:
         return flask_url_for(endpoint, **values)
 
+    values.pop('_external')  # do custom external host handling instead
+    scheme = values.pop('_scheme', 'http')
     if '://' not in external_host:
-        external_host = f'http://{external_host}'
-    values.pop('_external')
-    return external_host.rstrip('/') + flask_url_for(endpoint, **values)
+        external_host = f'{scheme}://{external_host}'
+    elif not external_host.startswith(f'{scheme}://'):
+        external_host = f"{scheme}{external_host[external_host.find('://'):]}"
+
+    url = flask_url_for(endpoint, **values)
+    if '://' in url:
+        url = url[url.find('/', url.find('://')+3):]
+    return f'{external_host}{url}'
 
 
 # modified from flask_security.utils.validate_redirect_url
