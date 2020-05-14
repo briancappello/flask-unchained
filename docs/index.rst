@@ -30,7 +30,7 @@ Requires **Python 3.6+**
 Bundles
 ^^^^^^^
 
-Your app's code and dependencies. A very powerful concept Flask Unchained introduces to Flask. By distributing code as bundles, Flask Unchained enables common design patterns for writing and sharing Flask code that all has simple, consistent, and configurable conventions for organizing, customizing, and extending *everything from anywhere*. **Under the easily accessible hood, everything is still just good old Flask.** But this... this is Python 3 baby! Check it out:
+Your app's code and dependencies. A very powerful concept Flask Unchained introduces to Flask. By distributing code as bundles, Flask Unchained enables common design patterns for writing and sharing Flask code that all have simple, consistent, and configurable conventions for organizing, customizing, and extending *everything from anywhere*. **Under the easily accessible hood, everything is still just good old Flask.** But this... this is Python 3 baby! Check it out:
 
 .. code-block::
 
