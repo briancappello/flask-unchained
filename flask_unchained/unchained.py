@@ -5,9 +5,9 @@ import jinja2
 import markupsafe
 import networkx as nx
 
-from typing import *
-
 from flask import Flask, current_app
+from py_meta_utils import _missing
+from typing import *
 
 from ._compat import QUART_ENABLED, LocalProxy
 from .constants import (DEV, PROD, STAGING, TEST,
@@ -25,9 +25,9 @@ class DeferredBundleFunctions:
        from flask_unchained import Bundle, unchained
 
        class Foobar(Bundle):
-           name = 'foobar'
+           name = 'the_bundle_name'
 
-       unchained.foobar.before_request() (or any other method on DeferredBundleFunctions)
+       unchained.the_bundle_name.before_request()  # or any other public method on this class
     """
 
     def __init__(self):
@@ -197,9 +197,7 @@ class Unchained:
 
     def init_app(self,
                  app: Flask,
-                 # FIXME: properly type hint bundles on 3.7+, on 3.6 we get
-                 # circular import errors
-                 bundles: Optional[List] = None,
+                 bundles: Optional[List] = None,  # FIXME Optional[List[Bundle]] on 3.7+
                  unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> None:
         # deferred import to prevent circular dependency
@@ -235,11 +233,10 @@ class Unchained:
         with ``name`` as registered with the current app.
         """
         def get_extension_or_service_by_name():
-            if name in current_app.unchained.extensions:
-                return current_app.unchained.extensions[name]
-            elif name in current_app.unchained.services:
-                return current_app.unchained.services[name]
-            raise KeyError(f'No extension or service was found with the name {name}.')
+            value = _get_injected_value(current_app.unchained, name, throw=False)
+            if value is _missing:
+                raise KeyError(f'No extension or service was found with the name {name}.')
+            return value
 
         return LocalProxy(get_extension_or_service_by_name)
 

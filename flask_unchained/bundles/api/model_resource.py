@@ -1,4 +1,5 @@
 import inspect
+from typing import *
 
 from flask import current_app, make_response, request
 from flask_unchained import Resource, route, param_converter, unchained, injectable
@@ -31,15 +32,15 @@ class ModelResourceMetaclass(ResourceMetaclass):
         if mcs_args.is_abstract:
             return cls
 
-        routes = {}
+        routes: Dict[str, List[Route]] = getattr(cls, CONTROLLER_ROUTES_ATTR)
         include_methods = set(cls.Meta.include_methods)
         exclude_methods = set(cls.Meta.exclude_methods)
         for method_name in ALL_RESOURCE_METHODS:
             if (method_name in exclude_methods
                     or method_name not in include_methods):
-                continue
+                routes.pop(method_name, None)
 
-            route = getattr(clsdict.get(method_name), FN_ROUTES_ATTR, [None])[0]
+            route: Route = getattr(clsdict.get(method_name), FN_ROUTES_ATTR, [None])[0]
             if not route:
                 route = Route(None, mcs_args.getattr(method_name))
 

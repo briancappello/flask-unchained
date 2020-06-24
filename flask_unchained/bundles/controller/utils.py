@@ -13,7 +13,6 @@ from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
 
 
 PARAM_NAME_RE = re.compile(r'<(\w+:)?(?P<param_name>\w+)>')
-LAST_PARAM_NAME_RE = re.compile(r'<(\w+:)?(?P<param_name>\w+)>$')
 
 
 class StringConverter(UnicodeConverter):
@@ -49,7 +48,10 @@ class StringConverter(UnicodeConverter):
         return super().to_url(value)
 
 
-def controller_name(cls, _remove_suffixes=None) -> str:
+def controller_name(
+    cls: Union[Type[object], str],  # FIXME Union[Type[Controller], str] on 3.7+
+    _remove_suffixes: Optional[Union[List[str], Tuple[str, ...]]] = None,
+) -> str:
     """
     Returns the snake_cased name for a controller/resource class. Automatically
     strips the ``Controller`` and ``View`` suffixes from controllers and resources,
@@ -69,7 +71,7 @@ def controller_name(cls, _remove_suffixes=None) -> str:
     return snake_case(name)
 
 
-def get_param_tuples(url_rule) -> List[Tuple[str, str]]:
+def get_param_tuples(url_rule: Union[str, None]) -> List[Tuple[str, str]]:
     """
     Returns a list of parameter tuples in a URL rule, eg::
 
@@ -83,22 +85,7 @@ def get_param_tuples(url_rule) -> List[Tuple[str, str]]:
             in re.findall(PARAM_NAME_RE, url_rule)]
 
 
-def get_last_param_name(url_rule) -> Union[str, None]:
-    """
-    Returns the name of the last parameter in a URL rule, eg::
-
-        assert get_last_param_name('/foo/<int:id>/roles') is None
-
-        url_rule = '/foo/<int:id>/bar/<any:something>/baz/<string:spam>'
-        assert get_last_param_name(url_rule) == 'spam'
-    """
-    if not url_rule:
-        return None
-    match = re.search(LAST_PARAM_NAME_RE, url_rule)
-    return match.group('param_name') if match else None
-
-
-def url_for(endpoint_or_url_or_config_key: str,
+def url_for(endpoint_or_url_or_config_key: Union[str, None],
             _anchor: Optional[str] = None,
             _cls: Optional[Union[object, type]] = None,
             _external: Optional[bool] = False,
@@ -163,7 +150,7 @@ def url_for(endpoint_or_url_or_config_key: str,
     return _url_for(what, **flask_url_for_kwargs)
 
 
-def join(*args, trailing_slash=False):
+def join(*args: Union[None, str], trailing_slash: bool = False) -> str:
     """
     Return a url path joined from the arguments. It correctly handles blank/None
     arguments, and removes back-to-back slashes, eg::
@@ -274,16 +261,25 @@ def _url_for(endpoint: str, **values) -> Union[str, None]:
     :param values: the variable arguments of the URL rule
     :return: a url path, or None
     """
-    _external_host = values.pop('_external_host', None)
+    _external_host = values.pop('_external_host', '')
     is_external = bool(_external_host or values.get('_external'))
-    external_host = _external_host or current_app.config.get('EXTERNAL_SERVER_NAME')
-    if not is_external or not external_host:
+    external_host = (
+        _external_host or current_app.config.get('EXTERNAL_SERVER_NAME', '')
+    ).rstrip('/')
+    if not external_host or not is_external:
         return flask_url_for(endpoint, **values)
 
+    values.pop('_external')  # do custom external host handling instead
+    scheme = values.pop('_scheme', 'http')
     if '://' not in external_host:
-        external_host = f'http://{external_host}'
-    values.pop('_external')
-    return external_host.rstrip('/') + flask_url_for(endpoint, **values)
+        external_host = f'{scheme}://{external_host}'
+    elif not external_host.startswith(f'{scheme}://'):
+        external_host = f"{scheme}{external_host[external_host.find('://'):]}"
+
+    url = flask_url_for(endpoint, **values)
+    if '://' in url:
+        url = url[url.find('/', url.find('://')+3):]
+    return f'{external_host}{url}'
 
 
 # modified from flask_security.utils.validate_redirect_url
@@ -302,7 +298,6 @@ def _validate_redirect_url(url, _external_host=None):
 
 __all__ = [
     'controller_name',
-    'get_last_param_name',
     'get_param_tuples',
     'join',
     'method_name_to_url',

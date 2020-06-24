@@ -10,10 +10,9 @@ class BundleBlueprintSetupState(BaseBlueprintSetupState):
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         """
         A helper method to register a rule (and optionally a view function)
-        to the application.  The endpoint is automatically prefixed with the
-        blueprint's name.
+        to the application.
 
-        Overridden to allow dots in endpoint names.
+        Overridden to not prefix endpoints with the blueprint name (bundle name).
         """
         if self.url_prefix:
             rule = self.url_prefix + rule
@@ -66,10 +65,7 @@ class BundleBlueprint(BaseBlueprint):
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         """
-        Like :meth:`~flask.Flask.add_url_rule` but for a blueprint.  The endpoint for
-        the :func:`url_for` function is prefixed with the name of the blueprint.
-
-        Overridden to allow dots in endpoint names.
+        Like :meth:`~flask.Flask.add_url_rule` but for a blueprint.
         """
         self.record(lambda s: s.add_url_rule(rule, endpoint, view_func,
                                              register_with_babel=False, **options))

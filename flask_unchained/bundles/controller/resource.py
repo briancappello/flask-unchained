@@ -1,3 +1,5 @@
+from typing import *
+
 from flask_unchained.string_utils import pluralize
 from py_meta_utils import McsArgs, MetaOption, _missing
 
@@ -6,6 +8,7 @@ from .constants import ALL_RESOURCE_METHODS, RESOURCE_INDEX_METHODS
 from .constants import CREATE, DELETE, GET, LIST, PATCH, PUT
 from .controller import (Controller, ControllerMetaclass, ControllerMetaOptionsFactory,
                          ControllerUrlPrefixMetaOption, _get_remove_suffixes)
+from .route import Route
 from .utils import controller_name, get_param_tuples
 
 
@@ -27,7 +30,7 @@ class ResourceMetaclass(ControllerMetaclass):
                 name, bases, RESOURCE_REMOVE_EXTRA_SUFFIXES))
             return cls
 
-        controller_routes = getattr(cls, CONTROLLER_ROUTES_ATTR)
+        controller_routes: Dict[str, List[Route]] = getattr(cls, CONTROLLER_ROUTES_ATTR)
         for method_name in ALL_RESOURCE_METHODS:
             if not clsdict.get(method_name):
                 continue
@@ -174,7 +177,9 @@ class Resource(Controller, metaclass=ResourceMetaclass):
             user_manager: UserManager = injectable
 
             def list():
-                return self.jsonify(dict(users=User.query.all()))
+                return self.jsonify(dict(users=self.user_manager.all()))
+                # NOTE: returning SQLAlchemy models directly like this is
+                # only supported by ModelResource from the API Bundle
 
             def create():
                 user = self.user_manager.create(**data, commit=True)
@@ -182,7 +187,7 @@ class Resource(Controller, metaclass=ResourceMetaclass):
 
             @param_converter(username=User)
             def get(user):
-                return self.jsonify(dict( user=user)
+                return self.jsonify(dict(user=user)
 
             @param_converter(username=User)
             def patch(user):

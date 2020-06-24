@@ -25,6 +25,8 @@ class RegisterModelSerializersHook(AppFactoryHook):
     bundle class.
     """
 
+    bundle_override_module_names_attr = 'model_serializers_module_names'
+
     run_after = ['models']
 
     # skipcq: PYL-W0221 (parameters mismatch in overridden method)

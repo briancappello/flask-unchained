@@ -50,7 +50,6 @@ setup(
             'coverage>=4.5.1',
             'factory_boy>=2.11.1',
             'IPython>=7.1.1',
-            'm2r>=0.2.1',
             'mock>=2.0.0',
             'pytest>=4.6.5',
             'pytest-flask>=1.0.0',
@@ -64,6 +63,7 @@ setup(
             'sphinx-autobuild>=0.7.1',
             'sphinx-click>=1.4.0',
             'sphinx-rtd-theme>=0.4.2',
+            'm2r>=0.2.1',
         ],
         'graphene': [
             'graphql-core>=2.3.1,<3',

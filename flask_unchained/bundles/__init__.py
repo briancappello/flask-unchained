@@ -50,8 +50,11 @@ class _BundleRootPathDescriptor:
 
 
 class _BundleNameDescriptor:
+    def __init__(self, *, strip_bundle_suffix: bool = False):
+        self.strip_bundle_suffix = strip_bundle_suffix
+
     def __get__(self, instance, cls):
-        if issubclass(cls, AppBundle):
+        if self.strip_bundle_suffix:
             return snake_case(right_replace(cls.__name__, 'Bundle', ''))
         return snake_case(cls.__name__)
 
@@ -94,7 +97,7 @@ class Bundle(metaclass=BundleMetaclass):
             pass
     """
 
-    name: str = _BundleNameDescriptor()
+    name: str = _BundleNameDescriptor(strip_bundle_suffix=False)
     """
     Name of the bundle. Defaults to the snake_cased class name.
     """
@@ -141,9 +144,9 @@ class Bundle(metaclass=BundleMetaclass):
     Automatically determined; read-only.
     """
 
-    default_load_from_module_name: str = None
+    default_load_from_module_name: Optional[str] = None
     """
-    The default module name for hooks to load from. Set hooks' bundle module override
+    The default module name for hooks to load from. Set hooks' bundle modules override
     attributes for the modules you want in separate files.
 
     .. admonition:: WARNING - EXPERIMENTAL
@@ -302,7 +305,7 @@ class AppBundle(Bundle, metaclass=AppBundleMetaclass):
     application bundle.
     """
 
-    name: str = _BundleNameDescriptor()
+    name: str = _BundleNameDescriptor(strip_bundle_suffix=True)
     """
     Name of the bundle. Defaults to the snake_cased class name, excluding any
     "Bundle" suffix.

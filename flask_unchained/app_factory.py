@@ -77,7 +77,7 @@ class AppFactory(metaclass=Singleton):
         env = ENV_ALIASES.get(env, env)
         if env not in VALID_ENVS:
             valid_envs = [f'{x!r}' for x in VALID_ENVS]
-            raise RuntimeError(f"env must be one of {', '.join(valid_envs)}")
+            raise ValueError(f"env must be one of {', '.join(valid_envs)}")
 
         if _load_unchained_config:
             unchained_config_module = self.load_unchained_config(env)
