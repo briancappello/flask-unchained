@@ -13,7 +13,6 @@ from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
 
 
 PARAM_NAME_RE = re.compile(r'<(\w+:)?(?P<param_name>\w+)>')
-LAST_PARAM_NAME_RE = re.compile(r'<(\w+:)?(?P<param_name>\w+)>$')
 
 
 class StringConverter(UnicodeConverter):
@@ -84,21 +83,6 @@ def get_param_tuples(url_rule: Union[str, None]) -> List[Tuple[str, str]]:
         return []
     return [(type_[:-1], name) for type_, name
             in re.findall(PARAM_NAME_RE, url_rule)]
-
-
-def get_last_param_name(url_rule) -> Union[str, None]:
-    """
-    Returns the name of the last parameter in a URL rule, eg::
-
-        assert get_last_param_name('/foo/<int:id>/roles') is None
-
-        url_rule = '/foo/<int:id>/bar/<any:something>/baz/<string:spam>'
-        assert get_last_param_name(url_rule) == 'spam'
-    """
-    if not url_rule:
-        return None
-    match = re.search(LAST_PARAM_NAME_RE, url_rule)
-    return match.group('param_name') if match else None
 
 
 def url_for(endpoint_or_url_or_config_key: Union[str, None],
@@ -314,7 +298,6 @@ def _validate_redirect_url(url, _external_host=None):
 
 __all__ = [
     'controller_name',
-    'get_last_param_name',
     'get_param_tuples',
     'join',
     'method_name_to_url',

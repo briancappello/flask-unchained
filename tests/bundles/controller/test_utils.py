@@ -4,7 +4,7 @@ from werkzeug.routing import BuildError
 
 from flask_unchained.bundles.controller import Controller, Resource
 from flask_unchained.bundles.controller.utils import (
-    controller_name, get_param_tuples, get_last_param_name, join,
+    controller_name, get_param_tuples, join,
     method_name_to_url, url_for, _validate_redirect_url)
 from py_meta_utils import deep_getattr
 
@@ -87,22 +87,6 @@ class TestGetParamTuples:
     def test_multiple(self):
         path = '/users/<int:user_id>/roles/<string:slug>'
         assert get_param_tuples(path) == [('int', 'user_id'), ('string', 'slug')]
-
-
-class TestGetLastParamName:
-    def test_it_works(self):
-        assert get_last_param_name('/foo/<id>') == 'id'
-        assert get_last_param_name('/foo/<int:id>') == 'id'
-
-    def test_it_works_on_garbage(self):
-        assert get_last_param_name(None) is None
-
-    def test_it_ignores_not_last_params(self):
-        assert get_last_param_name('/foo/<int:id>/roles') is None
-
-    def test_it_works_on_deep_parameters(self):
-        path = '/foo/<int:id>/bar/<any:something>/baz/<string:bazzes>'
-        assert get_last_param_name(path) == 'bazzes'
 
 
 class TestUrlFor:
