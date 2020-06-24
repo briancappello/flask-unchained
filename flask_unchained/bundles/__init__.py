@@ -144,7 +144,7 @@ class Bundle(metaclass=BundleMetaclass):
     Automatically determined; read-only.
     """
 
-    default_load_from_module_name: str = None
+    default_load_from_module_name: Optional[str] = None
     """
     The default module name for hooks to load from. Set hooks' bundle module override
     attributes for the modules you want in separate files.

@@ -174,9 +174,7 @@ class Unchained:
 
     def init_app(self,
                  app: Flask,
-                 # FIXME: properly type hint bundles on 3.7+, on 3.6 we get
-                 # circular import errors
-                 bundles: Optional[List] = None,
+                 bundles: Optional[List] = None,  # FIXME Optional[List[Bundle]] on 3.7+
                  unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> None:
         # deferred import to prevent circular dependency

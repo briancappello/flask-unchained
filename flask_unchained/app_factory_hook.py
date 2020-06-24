@@ -73,7 +73,7 @@ class AppFactoryHook:
     default functionality.
     """
 
-    bundle_module_names: Optional[List[str]] = None
+    bundle_module_names: Optional[Union[List[str], Tuple[str, ...]]] = None
     """
     A list of the default module names this hook will load from in bundles. Should
     be set to ``None`` if your hook does not use that default functionality (or

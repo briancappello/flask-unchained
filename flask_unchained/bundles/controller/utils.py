@@ -49,7 +49,10 @@ class StringConverter(UnicodeConverter):
         return super().to_url(value)
 
 
-def controller_name(cls, _remove_suffixes=None) -> str:
+def controller_name(
+    cls: Union[Type[object], str],  # FIXME Union[Type[Controller], str] on 3.7+
+    _remove_suffixes: Optional[Union[List[str], Tuple[str, ...]]] = None,
+) -> str:
     """
     Returns the snake_cased name for a controller/resource class. Automatically
     strips the ``Controller`` and ``View`` suffixes from controllers and resources,
@@ -69,7 +72,7 @@ def controller_name(cls, _remove_suffixes=None) -> str:
     return snake_case(name)
 
 
-def get_param_tuples(url_rule) -> List[Tuple[str, str]]:
+def get_param_tuples(url_rule: Union[str, None]) -> List[Tuple[str, str]]:
     """
     Returns a list of parameter tuples in a URL rule, eg::
 
@@ -98,7 +101,7 @@ def get_last_param_name(url_rule) -> Union[str, None]:
     return match.group('param_name') if match else None
 
 
-def url_for(endpoint_or_url_or_config_key: str,
+def url_for(endpoint_or_url_or_config_key: Union[str, None],
             _anchor: Optional[str] = None,
             _cls: Optional[Union[object, type]] = None,
             _external: Optional[bool] = False,
@@ -163,7 +166,7 @@ def url_for(endpoint_or_url_or_config_key: str,
     return _url_for(what, **flask_url_for_kwargs)
 
 
-def join(*args, trailing_slash=False):
+def join(*args: Union[None, str], trailing_slash: bool = False) -> str:
     """
     Return a url path joined from the arguments. It correctly handles blank/None
     arguments, and removes back-to-back slashes, eg::
