@@ -6,6 +6,7 @@ import markupsafe
 import networkx as nx
 
 from flask import Flask, current_app
+from py_meta_utils import _missing
 from typing import *
 from werkzeug.local import LocalProxy
 
@@ -210,11 +211,10 @@ class Unchained:
         with ``name`` as registered with the current app.
         """
         def get_extension_or_service_by_name():
-            if name in current_app.unchained.extensions:
-                return current_app.unchained.extensions[name]
-            elif name in current_app.unchained.services:
-                return current_app.unchained.services[name]
-            raise KeyError(f'No extension or service was found with the name {name}.')
+            value = _get_injected_value(current_app.unchained, name, throw=False)
+            if value is _missing:
+                raise KeyError(f'No extension or service was found with the name {name}.')
+            return value
 
         return LocalProxy(get_extension_or_service_by_name)
 
