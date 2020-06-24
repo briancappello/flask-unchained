@@ -49,7 +49,7 @@ def _should_create_basic_app(env):
         return True
 
 
-def cli_create_app(_, _load_unchained_config=True):
+def cli_create_app(_load_unchained_config=True):
     # Flask's default click integration silences exceptions thrown by
     # create_app, which IMO isn't so awesome. so this gets around that.
     env = os.getenv('FLASK_ENV')

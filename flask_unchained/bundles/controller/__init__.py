@@ -1,5 +1,6 @@
 from collections import defaultdict
 from flask_unchained import Bundle, FlaskUnchained
+from flask_unchained.constants import DEV, TEST
 from typing import *
 
 from .constants import (
@@ -58,6 +59,7 @@ class ControllerBundle(Bundle):
 
         app.jinja_environment = UnchainedJinjaEnvironment
         app.jinja_options = {**app.jinja_options,
+                             'cache_size': 0 if app.env in {DEV, TEST} else 400,
                              'loader': UnchainedJinjaLoader(app)}
         app.jinja_env.globals['url_for'] = url_for
 

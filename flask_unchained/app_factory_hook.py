@@ -4,7 +4,6 @@ import pkgutil
 
 from types import FunctionType, ModuleType
 from typing import *
-from werkzeug.local import LocalProxy
 
 from .bundles import AppBundle, Bundle
 from .exceptions import NameCollisionError
@@ -12,6 +11,7 @@ from .flask_unchained import FlaskUnchained
 from .string_utils import snake_case
 from .unchained import Unchained
 from .utils import safe_import_module
+from ._compat import is_local_proxy
 
 
 class _BundleOverrideModuleNamesAttrDescriptor:
@@ -204,7 +204,7 @@ class AppFactoryHook:
         to import everything into their ``__init__.py`` for it to be discovered)
         """
         def type_check_wrapper(obj):
-            if isinstance(obj, LocalProxy):
+            if is_local_proxy(obj):
                 return False
             return (type_checker or self.type_check)(obj)
 

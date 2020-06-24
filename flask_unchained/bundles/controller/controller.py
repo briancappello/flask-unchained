@@ -2,15 +2,22 @@ import copy
 import functools
 import os
 
-from flask import (after_this_request, current_app as app, flash, jsonify,
-                   make_response, render_template, render_template_string, request)
+from http import HTTPStatus
+from types import FunctionType
+from typing import *
+
+from flask_unchained._compat import QUART_ENABLED
+if QUART_ENABLED:
+    from quart import (after_this_request, current_app as app, flash, jsonify,
+                       make_response, render_template, render_template_string, request)
+else:
+    from flask import (after_this_request, current_app as app, flash, jsonify,
+                       make_response, render_template, render_template_string, request)
+
 from flask_unchained.di import _set_up_class_dependency_injection
 from py_meta_utils import (AbstractMetaOption as _ControllerAbstractMetaOption,
                            McsArgs, MetaOption, MetaOptionsFactory, deep_getattr,
                            _missing, process_factory_meta_options)
-from http import HTTPStatus
-from types import FunctionType
-from typing import *
 
 from ...string_utils import snake_case
 from .attr_constants import (
@@ -411,9 +418,14 @@ class Controller(metaclass=ControllerMetaclass):
         #   so that they get applied in the logical top-to-bottom order as
         #   declared in controllers
         if method_name not in cls._view_funcs:
-            def view_func(*args, **kwargs):
-                self = view_func.view_class(*class_args, **class_kwargs)
-                return self.dispatch_request(method_name, *args, **kwargs)
+            if QUART_ENABLED:
+                async def view_func(*args, **kwargs):
+                    self = view_func.view_class(*class_args, **class_kwargs)
+                    return await self.dispatch_request(method_name, *args, **kwargs)
+            else:
+                def view_func(*args, **kwargs):
+                    self = view_func.view_class(*class_args, **class_kwargs)
+                    return self.dispatch_request(method_name, *args, **kwargs)
 
             wrapper_assignments = set(functools.WRAPPER_ASSIGNMENTS) - {'__qualname__'}
             functools.update_wrapper(view_func, getattr(cls, method_name),

@@ -1,9 +1,9 @@
 import inspect
 import itertools
 
-from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
+from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained, unchained
+from flask_unchained._compat import is_local_proxy
 from typing import *
-from werkzeug.local import LocalProxy
 
 from ..attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
 from ..route import Route
@@ -158,7 +158,7 @@ class RegisterRoutesHook(AppFactoryHook):
         Returns True if ``obj`` was decorated with :func:`~flask_unchained.route` or
         if ``obj`` is a controller or resource with views.
         """
-        if isinstance(obj, LocalProxy):
+        if obj is unchained or is_local_proxy(obj):
             return False
         is_controller = isinstance(getattr(obj, CONTROLLER_ROUTES_ATTR, None), dict)
         is_view_fn = isinstance(getattr(obj, FN_ROUTES_ATTR, None), list)

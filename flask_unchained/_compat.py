@@ -4,6 +4,7 @@ import inspect
 
 # *************************************************************************
 # monkey patch functools.wraps to assign __signature__ by default
+# *************************************************************************
 
 def update_wrapper(wrapper,
                    wrapped,
@@ -33,4 +34,32 @@ def wraps(wrapped_fn, assigned=None, updated=None):
 
 
 setattr(functools, 'wraps', wraps)
+
+
+# FIXME can we somehow make this a callback loaded from an optional env var?
+# goals:
+# - set base class to use for FlaskUnchained
+# - set the LocalProxy class and the is_local_proxy fn
+# - a place for any other necessary monkey patching
+
 # *************************************************************************
+# quart asyncio integration [optional]
+# *************************************************************************
+
+QUART_ENABLED = False
+
+from werkzeug.local import LocalProxy as WerkzeugLocalProxy
+LocalProxy = WerkzeugLocalProxy
+
+try:
+    import quart.flask_patch
+    from quart.local import LocalProxy as QuartLocalProxy
+except ImportError:
+    QuartLocalProxy = type('QuartLocalProxy', (), {})
+else:
+    QUART_ENABLED = True
+    LocalProxy = QuartLocalProxy
+
+
+def is_local_proxy(obj) -> bool:
+    return isinstance(obj, (WerkzeugLocalProxy, QuartLocalProxy))
