@@ -97,7 +97,7 @@ class Bundle(metaclass=BundleMetaclass):
             pass
     """
 
-    name: str = _BundleNameDescriptor()
+    name: str = _BundleNameDescriptor(strip_bundle_suffix=False)
     """
     Name of the bundle. Defaults to the snake_cased class name.
     """
@@ -146,7 +146,7 @@ class Bundle(metaclass=BundleMetaclass):
 
     default_load_from_module_name: Optional[str] = None
     """
-    The default module name for hooks to load from. Set hooks' bundle module override
+    The default module name for hooks to load from. Set hooks' bundle modules override
     attributes for the modules you want in separate files.
 
     .. admonition:: WARNING - EXPERIMENTAL

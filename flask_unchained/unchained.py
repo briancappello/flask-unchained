@@ -24,9 +24,9 @@ class DeferredBundleFunctions:
        from flask_unchained import Bundle, unchained
 
        class Foobar(Bundle):
-           name = 'foobar'
+           name = 'the_bundle_name'
 
-       unchained.foobar.before_request() (or any other method on DeferredBundleFunctions)
+       unchained.the_bundle_name.before_request()  # or any other public method on this class
     """
 
     def __init__(self):

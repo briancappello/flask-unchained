@@ -177,7 +177,9 @@ class Resource(Controller, metaclass=ResourceMetaclass):
             user_manager: UserManager = injectable
 
             def list():
-                return self.jsonify(dict(users=User.query.all()))
+                return self.jsonify(dict(users=self.user_manager.all()))
+                # NOTE: returning SQLAlchemy models directly like this is
+                # only supported by ModelResource from the API Bundle
 
             def create():
                 user = self.user_manager.create(**data, commit=True)
@@ -185,7 +187,7 @@ class Resource(Controller, metaclass=ResourceMetaclass):
 
             @param_converter(username=User)
             def get(user):
-                return self.jsonify(dict( user=user)
+                return self.jsonify(dict(user=user)
 
             @param_converter(username=User)
             def patch(user):

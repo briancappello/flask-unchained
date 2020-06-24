@@ -195,7 +195,7 @@ class HtmlTestClient(FlaskClient):
         Follow redirects on a response after inspecting it. Example usage::
 
             def test_some_view(client):
-                r = client.post('some.endpoint.that.redircts', data=data)
+                r = client.post('some.endpoint.that.redirects', data=data)
                 assert r.status_code == 302
                 assert r.path == url_for('some.endpoint')
 
