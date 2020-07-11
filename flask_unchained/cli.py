@@ -199,7 +199,7 @@ def print_table(column_names: IterableOfStrings,
     console is wide enough, and if not, displays the information in list form.
 
     NOTE: Only "simple types" are supported for row values, AND the types must be
-          the same for every respective index in the rows. In other words,
+          the same within each column. In other words,
           type(row0[i]) == type(rowN[i]) for all rows for all i
 
     :param column_names: The heading labels
