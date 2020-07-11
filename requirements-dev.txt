@@ -1,15 +1,15 @@
 -r requirements.txt
 
 chios==0.1.5
-coverage==5.1
+coverage==5.2
 factory_boy==2.11.1
 m2r==0.2.1
 mock==4.0.2
 psycopg2-binary==2.8.5
 pytest==5.4.3
 pytest-flask==1.0.0
-sphinx==3.1.1
+sphinx==2.4.4
 sphinx-autobuild==0.7.1
 sphinx-click==2.3.2
 sphinx-material==0.0.30
-tox==3.15.2
+tox==3.16.1

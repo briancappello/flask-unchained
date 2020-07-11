@@ -59,7 +59,7 @@ setup(
             'IPython>=7.14.0',
             'PyQt5>=5.14.2',
             'qtconsole>=4.7.3',
-            'sphinx>=1.8.1',
+            'sphinx>=2.4.4,<3',
             'sphinx-autobuild>=0.7.1',
             'sphinx-click>=1.4.0',
             'sphinx-rtd-theme>=0.4.2',
