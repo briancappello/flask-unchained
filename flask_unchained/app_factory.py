@@ -73,32 +73,33 @@ class AppFactory(metaclass=Singleton):
                                        (for internal use only).
         :return: The initialized :attr:`APP_CLASS` app instance, ready to rock'n'roll
         """
-        config_dict, unchained_config_module = {}, None
         env = ENV_ALIASES.get(env, env)
         if env not in VALID_ENVS:
             valid_envs = [f'{x!r}' for x in VALID_ENVS]
             raise ValueError(f"env must be one of {', '.join(valid_envs)}")
 
+        unchained_config = {}
+        unchained_config_module = None
         if _load_unchained_config:
             unchained_config_module = self.load_unchained_config(env)
-            config_dict = {k: v for k, v in vars(unchained_config_module).items()
-                           if not k.startswith('_') and k.isupper()}
-        config_dict['_CONFIG_OVERRIDES'] = _config_overrides
+            unchained_config = {k: v for k, v in vars(unchained_config_module).items()
+                                if not k.startswith('_') and k.isupper()}
+        unchained_config['_CONFIG_OVERRIDES'] = _config_overrides
 
         _, bundles = self.load_bundles(
-            bundle_package_names=bundles or config_dict.get('BUNDLES', []),
+            bundle_package_names=bundles or unchained_config.get('BUNDLES', []),
             unchained_config_module=unchained_config_module)
 
         app_import_name = (bundles[-1].module_name.split('.')[0] if bundles
                            else ('tests' if env == TEST else 'dev_app'))
         app = self.APP_CLASS(app_import_name, **self.get_app_kwargs(
-            app_kwargs, bundles, env, config_dict))
+            app_kwargs, bundles, env, unchained_config))
         app.env = env
 
         for bundle in bundles:
             bundle.before_init_app(app)
 
-        unchained.init_app(app, bundles, config_dict)
+        unchained.init_app(app, bundles, unchained_config)
 
         for bundle in bundles:
             bundle.after_init_app(app)
