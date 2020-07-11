@@ -44,6 +44,8 @@ class BabelBundle(Bundle):
     def before_init_app(self, app: FlaskUnchained):
         app.jinja_env.add_extension('jinja2.ext.i18n')
         babel.locale_selector_func = self.get_locale
+
+        # FIXME: this setting needs to be pulled from an env var instead
         if app.config.get('ENABLE_URL_LANG_CODE_PREFIX',
                           BabelBundleConfig.ENABLE_URL_LANG_CODE_PREFIX):
             app.url_value_preprocessor(self.lang_code_url_value_preprocessor)

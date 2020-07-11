@@ -9,6 +9,7 @@ sqlalchemy bundle
 -----------------
 * create test database if it doesn't exist (see `db` fixture in `bundles/sqlalchemy/pytest.py`)
 
+
 security bundle
 ---------------
 * implement GraphQL support (integrate with Graphene Bundle)
@@ -18,11 +19,6 @@ security bundle
 oauth bundle
 ------------
 * switch over from deprecated Flask-OAuthlib to [authlib](https://github.com/lepture/authlib)
-
-
-mail bundle
------------
-* add extensible/pluggable support for API-based mail providers, eg SendGrid, MailGun, ...
 
 
 dotenv files
