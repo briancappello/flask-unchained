@@ -854,7 +854,7 @@ class TestAgainstLocalServer(TestCase):
             self.mail.send(msg)
             assert False  # exception expected
         except smtplib.SMTPServerDisconnected as e:
-            assert e.args[0] == 'Connection unexpectedly closed', e.args[0]
+            assert 'Connection unexpectedly closed' in e.args[0], e.args[0]
 
 
 if __name__ == '__main__':
