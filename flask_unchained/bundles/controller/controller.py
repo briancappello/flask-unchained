@@ -231,24 +231,24 @@ class Controller(metaclass=ControllerMetaclass):
                                           # minus any Controller/View suffix
                 template_file_extension = app.config.TEMPLATE_FILE_EXTENSION = '.html'
                 url_prefix = None  # optional url prefix to use for all routes
-                endpoint_prefix = 'site_controller'
+                endpoint_prefix = 'site_controller'  # defaults to snake_cased class name
 
             # dependency injection works automatically on controllers
             session_manager: SessionManager = injectable
 
             @route('/')  # change the default path of '/index' to '/'
             def index():
-                return self.render('index')
+                return self.render('index')  # site/index.html
 
             # use the defaults, equivalent to @route('/about-us', methods=['GET'])
             def about_us():
-                return self.render('about_us')
+                return self.render('about_us.html')  # site/about_us.html
 
             # change the path, HTTP methods, and the endpoint
             @route('/contact', methods=['GET', 'POST'], endpoint='site_controller.contact')
             def contact_us():
                 # ...
-                return self.render('contact.html.j2')  # use an explicit filename
+                return self.render('site/contact.html.j2')  # site/contact.html.j2
 
             @no_route
             def public_utility_method():

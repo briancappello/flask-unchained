@@ -12,10 +12,12 @@ class AttrDictFlaskConfig(AttrDict, flask.Config):
     The config class for Flask Unchained. Implements attribute access for
     config options, eg the following are equivalent::
 
+        # reading values
         secret_key = app.config['SECRET_KEY']
-        app.config['SECRET_KEY'] = 'super-secret'
-
         secret_key = app.config.SECRET_KEY
+
+        # setting values
+        app.config['SECRET_KEY'] = 'super-secret'
         app.config.SECRET_KEY = 'super-secret'
 
     Otherwise the same as :class:`flask.Config`.

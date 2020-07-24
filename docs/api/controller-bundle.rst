@@ -47,6 +47,13 @@ Controller Bundle API
 
     ~flask_unchained.Resource
 
+**flask_unchained.bundles.controller.route**
+
+.. autosummary::
+    :nosignatures:
+
+    ~flask_unchained.bundles.controller.route.Route
+
 **flask_unchained.bundles.controller.routes**
 
 .. autosummary::
@@ -159,6 +166,11 @@ put
 delete
 ~~~~~~
 .. autofunction:: flask_unchained.delete
+
+Route
+~~~~~
+.. autoclass:: flask_unchained.bundles.controller.route.Route
+    :members:
 
 Hooks
 ^^^^^

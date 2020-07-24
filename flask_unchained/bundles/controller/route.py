@@ -14,7 +14,8 @@ from .utils import (join, method_name_to_url, rename_parent_resource_param_name,
 class Route:
     """
     This is a semi-private class that you most likely shouldn't use directly.
-    Instead, you should use the public functions in :ref:`api/bundles/controller:Routes`,
+    Instead, you should use the public functions in
+    :ref:`bundles/controller:Declarative Routing`,
     and the :func:`~flask_unchained.route` and :func:`~flask_unchained.no_route`
     decorators.
 
