@@ -211,7 +211,7 @@ intersphinx_mapping = {
     'flask_marshmallow': (
         'https://flask-marshmallow.readthedocs.io/en/latest/', None),
     'flask_migrate': ('https://flask-migrate.readthedocs.io/en/latest/', None),
-    'flask_session': ('https://pythonhosted.org/Flask-Session/', None),
+    'flask_session': ('https://flask-session.readthedocs.io/en/latest/', None),
     'flask_sqlalchemy': ('http://flask-sqlalchemy.pocoo.org/latest/', None),
     'flask_wtf': ('https://flask-wtf.readthedocs.io/en/stable/', None),
     'graphene_sqlalchemy': (
