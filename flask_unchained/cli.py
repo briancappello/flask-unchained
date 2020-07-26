@@ -147,8 +147,10 @@ def _get_main_cli():
 
 
 def _get_basic_cli():
-    from flask_unchained.commands import new
+    from flask_unchained.commands import clean, lint, new
 
+    basic_cli.add_command(clean)
+    basic_cli.add_command(lint)
     basic_cli.add_command(new)
     return basic_cli
 
