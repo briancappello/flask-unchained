@@ -1,8 +1,8 @@
 # Flask Unchained
 
-## The quickest and easiest way to build large web apps and APIs with Flask
+## The quickest and easiest way to build large web apps and APIs with Flask and SQLAlchemy
 
-**Flask Unchained is a Flask extension and a pluggable implementation of the application factory pattern that together create a fully integrated and highly customizable optional-batteries-included web framework for Flask and its extension ecosystem.** Flask Unchained aims to stay true to the spirit and API of Flask, while making it significantly easier to quickly build large/complex web apps and GraphQL/REST APIs with Flask.
+**Flask Unchained is a Flask extension, a pluggable application factory, and a set of mostly optional "bundles" that together create a modern, fully integrated, and highly customizable web framework *for* Flask and its extension ecosystem.** Flask Unchained aims to stay true to the spirit and API of Flask, while making it significantly easier to quickly build large web apps and APIs with Flask and SQLAlchemy.
 
 Flask Unchained introduces "bundles" to Flask: bundles are Python packages that integrate functionality with Flask, Flask Unchained, and other bundles. That could mean anything from integrating vanilla Flask extensions to being full-blown apps *your* app can integrate, customize, and extend (like say, a blog or web store). Unlike vanilla Flask extensions, bundles are both consistent and highly extensible and customizable. Once you figure out how something works in one bundle, it's the same in every other bundle. They are conceptually similar to Django's "apps", but I think you'll find bundles are even more powerful and flexible.
 

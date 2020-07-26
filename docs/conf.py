@@ -112,7 +112,7 @@ html_theme_options = {
     'globaltoc_includehidden': False,
 
     'heroes': {
-        '*': 'The quickest and easiest way to build large web apps and APIs with Flask',
+        '*': 'The quickest and easiest way to build large web apps and APIs with Flask and SQLAlchemy',
     },
     # disable tabs below the hero
     'master_doc': False,

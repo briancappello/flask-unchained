@@ -8,7 +8,7 @@ with open('README.md', encoding='utf-8') as f:
 setup(
     name='Flask-Unchained',
     version='0.7.9',
-    description='The quickest and easiest way to build large web apps and APIs with Flask',
+    description='The quickest and easiest way to build large web apps and APIs with Flask and SQLAlchemy',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/briancappello/flask-unchained',

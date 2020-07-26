@@ -2,7 +2,7 @@
     flask_unchained
     ---------------
 
-    The quickest and easiest way to build large web apps and APIs with Flask
+    The quickest and easiest way to build large web apps and APIs with Flask and SQLAlchemy
 
     :copyright: Copyright © 2018 Brian Cappello
     :license: MIT, see LICENSE for more details

@@ -13,7 +13,7 @@
 Introducing Flask Unchained
 ===========================
 
-**Flask Unchained is a Flask extension, a pluggable application factory, and a set of mostly optional "bundles" that together create a modern, fully integrated, and highly customizable web framework** :bolditalic:`for` **Flask and its extension ecosystem.** Flask Unchained aims to stay true to the spirit and API of Flask, while making it significantly easier to quickly build large/complex web apps and GraphQL/REST APIs with Flask and SQLAlchemy.
+**Flask Unchained is a Flask extension, a pluggable application factory, and a set of mostly optional "bundles" that together create a modern, fully integrated, and highly customizable web framework** :bolditalic:`for` **Flask and its extension ecosystem.** Flask Unchained aims to stay true to the spirit and API of Flask, while making it significantly easier to quickly build large web apps and APIs with Flask and SQLAlchemy.
 
 Hello World
 -----------
@@ -27,15 +27,16 @@ Requires **Python 3.6+**
 
     pip install "flask-unchained[dev]"
 
-Bundles
-^^^^^^^
+A Basic App
+^^^^^^^^^^^
 
-Your app's code and dependencies. A very powerful concept Flask Unchained introduces to Flask. By distributing code as bundles, Flask Unchained enables common design patterns for writing and sharing Flask code that all have simple, consistent, and configurable conventions for organizing, customizing, and extending *everything from anywhere*. **Under the easily accessible hood, everything is still just good old Flask.** But this... this is Python 3 baby! Check it out:
+Almost as simple as it gets:
 
 .. code-block::
 
     # project-root/app.py
-    from flask_unchained import AppBundle, Controller, route, Service, injectable
+    from flask_unchained import AppBundle, Controller, Service, injectable, route
+    from flask_unchained.pytest import HtmlTestClient
 
     BUNDLES = ['flask_unchained.bundles.controller']
 
@@ -43,23 +44,26 @@ Your app's code and dependencies. A very powerful concept Flask Unchained introd
         pass
 
     class HelloService(Service):
-        def hello_world(self, name: Optional[str] = None) -> str:
-            return f"Hello World {name}!" if name else "Hello World!"
+        def hello_world(self, name: str) -> str:
+            return f'Hello World from {name}!'
 
     class SiteController(Controller):
         hello_service: HelloService = injectable
 
         @route('/')
-        def index(self):
-            return self.hello_service.hello_world("Flask Unchained")
+        def index(self) -> str:
+            return self.hello_service.hello_world('Flask Unchained')
+
 
     class TestSiteController:
-        def test_index(self, client):
+        def test_index(self, client: HtmlTestClient):
             r = client.get('site_controller.index')
             assert r.status_code == 200
-            assert r.html == "Hello World Flask Unchained!"
+            assert r.html == 'Hello World from Flask Unchained!'
 
-If you've used Flask before, the familiar call to ``app = Flask(__name__)`` isn't missing... That's a tiny working app right there! **No plumbing, no boilerplate, everything just works.** You can run it like so:
+If you've used Flask before, the familiar call to ``app = Flask(__name__)`` isn't missing... That's a tiny working app right there. **Under the easily accessible hood, everything is still just good old Flask. No plumbing, no boilerplate, everything just works!**
+
+You can run it like so:
 
 .. code-block:: bash
 
@@ -72,42 +76,103 @@ If you've used Flask before, the familiar call to ``app = Flask(__name__)`` isn'
     :class: tip
 
     - **Controller Bundle**: Enhanced class-based views, declarative routing, and `Flask WTF <https://flask-wtf.readthedocs.io/en/stable/>`_ for forms and CSRF protection.
-    - **SQLAlchemy Bundle** `Flask SQLAlchemy <https://flask-sqlalchemy.palletsprojects.com/en/2.x/>`_ and `Flask Migrate <https://flask-migrate.readthedocs.io/en/latest/>`_ for `SQLAlchemy <https://www.sqlalchemy.org/>`_ models, plus some optional "sugar" on top of SQLAlchemy to make the best ORM in existence even quicker and easier to use.
+    - **SQLAlchemy Bundle** `Flask SQLAlchemy <https://flask-sqlalchemy.palletsprojects.com/en/2.x/>`_ and `Flask Migrate <https://flask-migrate.readthedocs.io/en/latest/>`_ for models and migrations, plus some optional "sugar" on top of `SQLAlchemy <https://www.sqlalchemy.org/>`_ to make the best ORM in existence even quicker and easier to use with `SQLAlchemy Unchained <https://sqlalchemy-unchained.readthedocs.io/en/latest/>`_.
     - **Security Bundle**: `Flask Login <https://flask-login.readthedocs.io/en/latest/>`_ for authentication and `Flask Principal <https://pythonhosted.org/Flask-Principal/>`_ for authorization.
     - **API Bundle**: RESTful APIs with `Flask Marshmallow <https://flask-marshmallow.readthedocs.io/en/latest/>`_ serializers for SQLAlchemy models.
     - **Graphene Bundle**: `Flask GraphQL <https://github.com/graphql-python/flask-graphql>`_ with `Graphene <https://docs.graphene-python.org/en/latest/quickstart/>`_ for SQLAlchemy models.
     - **Celery Bundle**: `Celery <http://www.celeryproject.org/>`_ distributed tasks queue.
-    - `Flask Admin <https://flask-admin.readthedocs.io/en/latest/>`_, `Flask BabelEx <https://pythonhosted.org/Flask-BabelEx/>`_, `Flask Mail <https://pythonhosted.org/Flask-Mail/>`_, `Flask Session <https://pythonhosted.org/Flask-Session/>`_, ...
+    - `Flask Admin <https://flask-admin.readthedocs.io/en/latest/>`_, `Flask BabelEx <https://pythonhosted.org/Flask-BabelEx/>`_, `Flask Mail <https://pythonhosted.org/Flask-Mail/>`_, `Flask Session <https://flask-session.readthedocs.io/en/latest/>`_, ...
     - **Testing** with `pytest <https://docs.pytest.org/en/latest/>`_ and `factory_boy <https://factoryboy.readthedocs.io/en/latest/>`_ supported out-of-the-box.
     - Don't like the default stack? With Flask Unchained you can bring your own. Flask Unchained is designed to be so flexible that you could even use it to create your own works-out-of-the-box web framework for Flask.
 
-Alongside integrating Flask extensions for use by other Flask Unchained bundles/apps, bundles also:
+Alongside integrating Flask extensions for use by other Flask Unchained apps and bundles, bundles also:
 
+* utilize simple, consistent, and configurable patterns for writing and sharing Flask code that allows customizing *everything from anywhere*
 * can be standalone/redistributable Python packages (that share the same patterns for customization, ad infinitum)
 * can be full-blown apps (like say a blog or web store) that your app can integrate, extend, and/or customize
-* each bundle that has views *is itself* a Flask Blueprint, via the Unchained extension
+* each bundle with views *is itself* a Flask Blueprint (automatically)
+
+.. admonition:: New in v0.8: asyncio support  *[experimental]*
+    :class: danger
+
+    Thanks to `Quart <https://pgjones.gitlab.io/quart/>`_, Flask Unchained now has **preliminary** support for building asynchronous web apps with asyncio:
+
+    .. code:: bash
+
+        pip install "flask-unchained[dev]" quart
+
+    .. code-block::
+
+        # project-root/app.py
+        from flask_unchained import AppBundle, Controller, route
+        from quart import websocket
+
+        class App(AppBundle):
+            pass
+
+        class SiteController(Controller):
+            @route('/')
+            async def index(self):
+                return await self.render('index')
+
+            @route('/ws', is_websocket=True)
+            async def ws(self):
+                while True:
+                    data = await websocket.receive()
+                    await websocket.send(f'echo {data}')
+
+    .. code:: html+jinja
+
+        <!-- project-root/templates/site/index.html -->
+        <!doctype html>
+        <html>
+        <head>
+          <title>Websocket example</title>
+        </head>
+        <body>
+          <input type="text" id="message">
+          <button type="submit">Send</button>
+          <ul></ul>
+          <script type="text/javascript">
+            var ws = new WebSocket('ws://' + document.domain + ':' + location.port + '/ws');
+            ws.onmessage = function (event) {
+              var messages_dom = document.getElementsByTagName('ul')[0];
+              var message_dom = document.createElement('li');
+              var content_dom = document.createTextNode('Received: ' + event.data);
+              message_dom.appendChild(content_dom);
+              messages_dom.appendChild(message_dom);
+            };
+
+            var button = document.getElementsByTagName('button')[0];
+            button.onclick = function () {
+              var content = document.getElementsByTagName('input')[0].value;
+              ws.send(content);
+            };
+          </script>
+        </body>
+        </html>
+
+    .. code:: bash
+
+        cd project-root
+        UNCHAINED_CONFIG="app" flask run
+
+    Please note that some included bundles won't work, because they integrate Flask extensions that don't work with asyncio. Contributions welcome ;)
+
+.. admonition:: Disclaimer: this is alpha/beta quality software
+    :class: warning
+
+    The core is solid, but especially at the edges, there will *likely* be bugs - and possibly some breaking API changes too. Please `file issues on GitHub <https://github.com/briancappello/flask-unchained/issues>`_ if you have any questions, encounter any problems, and/or have any feedback!
 
 .. admonition:: Thanks and acknowledgements
     :class: tip
 
     The architecture of how Flask Unchained and its bundles work is inspired by the `Symfony Framework <https://symfony.com>`_, which is awesome, aside from the fact that it isn't Python ;)
 
-.. admonition:: New in v0.8: asyncio support  *[crazy experimental]*
-    :class: danger
-
-    Thanks to `Quart <https://pgjones.gitlab.io/quart/>`_, Flask Unchained now also has **very preliminary** support for building asynchronous web apps with asyncio (websockets!).
-
-    Please note that aside from the Controller Bundle, most of the other included bundles won't work, because they integrate Flask extensions that don't work with asyncio. Contributions welcome ;)
-
-.. admonition:: Disclaimer: this is alpha/beta quality software
-    :class: warning
-
-    The core is relatively solid, but especially at the edges there *will* be bugs - and possibly some breaking API changes too. Please `file issues on GitHub <https://github.com/briancappello/flask-unchained/issues>`_ if you have any questions, encounter any problems, and/or have any feedback!
-
 The Unchained Extension
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-The "orchestrator" that ties everything together.
+The "orchestrator" that ties everything together. It handles dependency injection and enables access to much of the public API of ``flask.Flask`` and ``flask.Blueprint``:
 
 .. code-block::
 
@@ -115,25 +180,24 @@ The "orchestrator" that ties everything together.
     from flask_unchained import unchained, injectable
 
     @unchained.inject()
-    def hello_world(name: Optional[str] = None,
-                    hello_service: HelloService = injectable):
+    def print_hello(name: str, hello_service: HelloService = injectable):
         print(hello_service.hello_world(name))
 
     @unchained.before_first_request
     def runs_once_at_startup():
-        hello_world()
+        print_hello("App")
 
     @unchained.app.after_request
     def runs_after_each_request_to_an_app_bundle_view(response):
-        hello_world("Response")
+        print_hello("Response")
         return response
 
-As shown above, the Unchained extension acts as a replacement for (more accurately, a proxy to) much of the public API of the ``flask.Flask`` and ``flask.Blueprint`` classes. It also plays a role in the app factory:
+The Unchained Extension also plays a role in the app factory:
 
 The App Factory
 ^^^^^^^^^^^^^^^
 
-The app factory discovers all the code from your app and its bundles, and then with it automatically initializes, configures, and "boots up" the Flask ``app`` instance for you. I know that probably sounds like magic, but it's actually quite easy to understand, and every step it takes can be customized by you if necessary. In pseudo code, it looks about like this:
+The app factory discovers all the code from your app and its bundles, and then with it automatically initializes, configures, and "boots up" the Flask ``app`` instance for you. I know that sounds like magic, but it's actually quite easy to understand, and every step it takes can be customized by you if necessary. In barely-pseudo-code, the app factory looks like this:
 
 .. code-block::
 
@@ -141,21 +205,21 @@ The app factory discovers all the code from your app and its bundles, and then w
     from flask_unchained import DEV, PROD, STAGING, TEST
 
     class AppFactory:
-        def create_app(self, env: Union[DEV, PROD, STAGING, TEST]) -> Flask:
-            # first load your unchained config
-            unchained_config = self.load_unchained_config(env)
+        APP_CLASS = Flask
 
-            # next load your app bundle and any other configured bundles
+        def create_app(self, env: Union[DEV, PROD, STAGING, TEST]) -> Flask:
+            # load the Unchained Config and configured bundles
+            unchained_config = self.load_unchained_config(env)
             app_bundle, bundles = self.load_bundles(unchained_config.BUNDLES)
 
             # instantiate the Flask app instance
-            app = Flask(app_bundle.name, **kwargs_from_unchained_config)
+            app = self.APP_CLASS(app_bundle.name, **kwargs_from_unchained_config)
 
             # let bundles configure the app pre-initialization
             for bundle in bundles:
                 bundle.before_init_app(app)
 
-            # discover code from bundles and boot up the Flask app using hooks
+            # discover code from bundles and boot the app using hooks
             unchained.init_app(app, bundles)
                 # the Unchained extension runs hooks in their correct order:
                 RegisterExtensionsHook.run_hook(app, bundles)
@@ -174,7 +238,7 @@ The app factory discovers all the code from your app and its bundles, and then w
             # return the app instance ready to rock'n'roll
             return app
 
-The ``flask`` and ``pytest`` CLI commands automatically use the app factory for you, while in production you just have to call it yourself:
+The ``flask`` and ``pytest`` CLI commands automatically use the app factory for you, while in production you have to call it yourself:
 
 .. code-block::
 
@@ -221,7 +285,11 @@ When you want to expand beyond a single file, Flask Unchained defines a configur
     ├── templates           # the top-level templates folder
     └── tests               # your pytest tests
 
-Want to start building now? Check out the :ref:`tutorial`!
+Want to start building now? Check out the :ref:`tutorial`! There are also a couple open source example apps available:
+
+* `Flask Unchained React SPA <https://github.com/briancappello/flask-unchained-react-spa>`_
+* `Flask Techan Unchained <https://github.com/briancappello/flask-techan-unchained>`_
+* Open a PR to add yours!
 
 Features
 --------
