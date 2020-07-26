@@ -48,7 +48,6 @@ setup(
         ],
         'dev': [
             'coverage>=4.5.1',
-            'factory_boy>=2.11.1',
             'IPython>=7.1.1',
             'mock>=2.0.0',
             'pytest>=4.6.5',
@@ -92,6 +91,7 @@ setup(
             'flask-session>=0.3.1',
         ],
         'sqlalchemy': [
+            'factory_boy>=2.11.1',
             'flask-migrate>=2.5.3',
             'flask-sqlalchemy-unchained>=0.7.3',
             'sqlalchemy-unchained>=0.11.0',
