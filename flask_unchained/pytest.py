@@ -57,7 +57,7 @@ def app(request):
     try:
         maybe_set_app_factory_from_env()
         app = AppFactory().create_app(TEST, _config_overrides=options)
-    except ImportError:
+    except ImportError:  # FIXME: why is this here??? seems like it _should_ raise...
         yield None
     else:
         ctx = app.app_context()
