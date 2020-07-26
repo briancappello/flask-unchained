@@ -4,8 +4,8 @@ from py_meta_utils import (
     process_factory_meta_options)
 from sqlalchemy_unchained.validation import ValidationError, ValidationErrors
 from typing import *
-from wtforms.ext.sqlalchemy.fields import *
-from wtforms.ext.sqlalchemy.orm import ModelConverter as BaseModelConverter, converts
+from wtforms_sqlalchemy.fields import *
+from wtforms_sqlalchemy.orm import ModelConverter as BaseModelConverter, converts
 from wtforms.form import FormMeta as FormMetaclass
 
 from .extensions import db
@@ -117,7 +117,7 @@ class ModelConverter(BaseModelConverter):
         return super().handle_integer_types(column, field_args, **extra)
 
 
-# this function is copied from wtforms.ext.sqlalchemy, aside from one line (marked)
+# this function is copied from wtforms_sqlalchemy, aside from one line (marked)
 def model_fields(model, db_session=None, only=None, exclude=None,
                  field_args=None, converter=None, exclude_pk=False,
                  exclude_fk=False):
@@ -140,8 +140,7 @@ def model_fields(model, db_session=None, only=None, exclude=None,
 
         properties.append((prop.key, prop))
 
-    # the following if condition is modified:
-    if only is not None:
+    if only is not None:  # the if statement on this line is modified
         properties = (x for x in properties if x[0] in only)
     elif exclude:
         properties = (x for x in properties if x[0] not in exclude)
@@ -164,8 +163,7 @@ class ModelFormMetaclass(FormMetaclass):
         Meta = process_factory_meta_options(mcs_args, ModelFormMetaOptionsFactory)
         mcs_args.clsdict['Meta'] = type('Meta', (), Meta._to_clsdict())
         if not Meta.abstract and (
-                unchained._models_initialized
-                or unchained._app_bundle_cls.is_single_module
+            unchained._models_initialized or unchained._app_bundle_cls.is_single_module
         ):
             try:
                 Meta.model = unchained.sqlalchemy_bundle.models[Meta.model.__name__]
