@@ -45,7 +45,7 @@ class UnchainedJinjaLoader(DispatchingJinjaLoader):
             except TemplateNotFound:
                 rv = None
 
-            if expected_priors - num_priors == 0:
+            if expected_priors == num_priors:
                 trv = rv
             if rv:
                 num_priors += 1
