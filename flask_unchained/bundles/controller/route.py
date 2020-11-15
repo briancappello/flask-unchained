@@ -195,7 +195,7 @@ class Route:
         The full url rule for this route, including any blueprint prefix.
         """
         rule = self.rule
-        return join(self.bp_prefix, self.rule, trailing_slash=rule.endswith('/'))
+        return join(self.bp_prefix, rule, trailing_slash=rule.endswith('/'))
 
     def _make_rule(self,
                    url_prefix: Optional[str] = None,

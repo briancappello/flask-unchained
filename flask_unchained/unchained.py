@@ -17,7 +17,7 @@ from .exceptions import ServiceUsageError
 from .utils import AttrDict
 
 
-class DeferredBundleFunctions:
+class DeferredBundleBlueprintFunctions:
     """
     The public interface for replacing Blueprints with Bundles. Must be accessed
     via the :class:`flask_unchained.Unchained` extension instance, eg::
@@ -148,18 +148,18 @@ class DeferredBundleFunctions:
             return fn
 
 
-class _DeferredBundleFunctionsStore:
+class _DeferredBundleBlueprintFunctionsStore:
     """
     An intermediary store that lives on :class:`~flask_unchained.Unchained` to
-    return an instance of :class:`~flask_unchained.DeferredBundleFunctions` for
-    each bundle name lookup on us (implements a dict-like readonly interface).
+    return an instance of :class:`~flask_unchained.DeferredBundleBlueprintFunctions`
+    for each bundle name lookup on us (implements a dict-like readonly interface).
     """
     def __init__(self):
         self._bundles = {}
 
     def __getitem__(self, bundle_name):
         if bundle_name not in self._bundles:
-            self._bundles[bundle_name] = DeferredBundleFunctions()
+            self._bundles[bundle_name] = DeferredBundleBlueprintFunctions()
         return self._bundles[bundle_name]
 
 
@@ -180,7 +180,7 @@ class Unchained:
 
     def __init__(self, env: Optional[Union[DEV, PROD, STAGING, TEST]] = None):
         self.bundles = AttrDict()
-        self._deferred_bundles = _DeferredBundleFunctionsStore()
+        self._deferred_bundle_functions = _DeferredBundleBlueprintFunctionsStore()
         self.babel_bundle = None
         self.env = env
         self.extensions = AttrDict()
@@ -209,8 +209,9 @@ class Unchained:
         self._app = app
 
         bundles = bundles or []
-        for b in bundles:
-            b._deferred_functions = self._deferred_bundles[b.name]._deferred_functions
+        for bundle in bundles:
+            bundle._deferred_functions = \
+                self._deferred_bundle_functions[bundle.name]._deferred_functions
         self.bundles = AttrDict({b.name: b for b in bundles})
         self.babel_bundle = self.bundles.get('babel_bundle', None)
 
@@ -452,7 +453,7 @@ class Unchained:
         actually know what bundles the user has configured, and therefore we
         need to make a compromise: *any* unrecognized attribute access before
         the app has been initialized is assumed to be a valid bundle name, and
-        so we return a :class:`~flask_unchained.bundle.DeferredBundleFunctions`
+        so we return a :class:`~flask_unchained.bundle.DeferredBundleBlueprintFunctions`
         instance that allows registering deferred functions (as a replacement
         for that part of the public Blueprint API).
 
@@ -463,7 +464,7 @@ class Unchained:
         if name in self.bundles:
             return self.bundles[name]
         elif not self._initialized:
-            return self._deferred_bundles[name]
+            return self._deferred_bundle_functions[name]
         raise AttributeError(name)
 
     def _defer(self, fn):
@@ -794,7 +795,7 @@ class Unchained:
         This method is for use by tests only!
         """
         self.bundles = AttrDict()
-        self._deferred_bundles = _DeferredBundleFunctionsStore()
+        self._deferred_bundle_functions = _DeferredBundleBlueprintFunctionsStore()
         self.babel_bundle = None
         self.env = None
         self.extensions = AttrDict()
