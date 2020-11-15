@@ -249,9 +249,9 @@ def include(url_prefix_or_module_name: str,
     module = importlib.import_module(module_name)
     try:
         routes = getattr(module, attr)()
-    except AttributeError:
+    except AttributeError as e:
         raise AttributeError(f'Could not find a variable named `{attr}` '
-                             f'in the {module_name} module!')
+                             f'in the {module_name} module!') from e
 
     routes = _reduce_routes(routes, exclude=exclude, only=only)
     if url_prefix:
