@@ -35,6 +35,7 @@
 - fix grouping routes by which bundle they're from
 - fix registration of resource method routes so the order is deterministic
 - fix `ConfigureAppHook` to load configs from every bundle in the hierarchy, not just the top-most one
+- fix resolving extension initiation order to only happen once instead of twice
 - fix passing explicit rule overrides to `routes.resource`
 - fix automatic endpoint names for resource routes using the default implementations for create/list/get/delete/patch/put
 - fix using default url rule from view function when no explicit rule passed to `func`

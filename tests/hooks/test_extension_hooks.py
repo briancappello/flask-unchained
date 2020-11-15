@@ -51,24 +51,11 @@ class TestRegisterExtensionsHook:
         vendor_ext = app_extensions['myext']
         assert vendor_ext == (myext, ['awesome'])
 
-    def test_resolve_extension_order(self, register_hook: RegisterExtensionsHook):
-        order = [ext.name for ext in register_hook.resolve_extension_order(FAKE_EXTENSIONS)]
-        assert order == ['four', 'two', 'three', 'one']
-
-    def test_resolve_broken_extension_order(self, register_hook: RegisterExtensionsHook):
-        extensions = {
-            'one': (None, ['two']),
-            'two': (None, ['one'])
-        }
-        with pytest.raises(Exception) as e:
-            register_hook.resolve_extension_order(extensions)
-        assert 'Circular dependency detected' in str(e.value)
-
     def test_process_objects(self, app, register_hook: RegisterExtensionsHook):
         register_hook.process_objects(app, FAKE_EXTENSIONS)
 
         registered = list(register_hook.unchained.extensions.keys())
-        assert registered == ['four', 'two', 'three', 'one']
+        assert registered == ['one', 'two', 'three', 'four']
         for name, ext in register_hook.unchained.extensions.items():
             assert name == ext.name
             assert ext.app is None
@@ -91,6 +78,19 @@ class TestInitExtensionsHook:
         for name, ext in init_hook.unchained.extensions.items():
             assert name == ext.name
             assert ext.app == app
+
+    def test_resolve_extension_order(self, init_hook: InitExtensionsHook):
+        order = [ext.name for ext in init_hook.resolve_extension_order(FAKE_EXTENSIONS)]
+        assert order == ['four', 'two', 'three', 'one']
+
+    def test_resolve_broken_extension_order(self, init_hook: InitExtensionsHook):
+        extensions = {
+            'one': (None, ['two']),
+            'two': (None, ['one'])
+        }
+        with pytest.raises(Exception) as e:
+            init_hook.resolve_extension_order(extensions)
+        assert 'Circular dependency detected' in str(e.value)
 
     def test_run_hook(self, app, init_hook: InitExtensionsHook):
         init_hook.run_hook(app, [EmptyBundle(), VendorBundle(), MyAppBundle()])

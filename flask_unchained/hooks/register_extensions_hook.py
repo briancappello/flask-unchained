@@ -1,15 +1,8 @@
-import networkx as nx
-
-from collections import namedtuple
 from typing import *
 
 from ..app_factory_hook import AppFactoryHook
 from ..bundles import Bundle
 from ..flask_unchained import FlaskUnchained
-
-
-ExtensionTuple = namedtuple('ExtensionTuple',
-                            ('name', 'extension', 'dependencies'))
 
 
 class RegisterExtensionsHook(AppFactoryHook):
@@ -39,9 +32,11 @@ class RegisterExtensionsHook(AppFactoryHook):
         Discover extensions in bundles and register them with the Unchained
         extension.
         """
-        for ext in self.resolve_extension_order(extensions):
-            if ext.name not in self.unchained.extensions:
-                self.unchained.extensions[ext.name] = ext.extension
+        for name, extension in extensions.items():
+            if name not in self.unchained.extensions:
+                if isinstance(extension, (list, tuple)):
+                    extension, dependencies = extension
+                self.unchained.extensions[name] = extension
 
     def collect_from_bundle(self, bundle: Bundle) -> Dict[str, object]:
         """
@@ -52,38 +47,3 @@ class RegisterExtensionsHook(AppFactoryHook):
             for module in self.import_bundle_modules(b):
                 extensions.update(getattr(module, 'EXTENSIONS', {}))
         return extensions
-
-    def resolve_extension_order(self,
-                                extensions: Dict[str, object],
-                                ) -> List[ExtensionTuple]:
-        extension_tuples = []
-        for name, extension in extensions.items():
-            dependencies = []
-            if isinstance(extension, (list, tuple)):
-                extension, dependencies = extension
-            extension_tuples.append(ExtensionTuple(name, extension, dependencies))
-
-        dag = nx.DiGraph()
-        for ext in extension_tuples:
-            dag.add_node(ext.name, extension_tuple=ext)
-            for dep_name in ext.dependencies:
-                dag.add_edge(ext.name, dep_name)
-
-        try:
-            extension_order = reversed(list(nx.topological_sort(dag)))
-        except nx.NetworkXUnfeasible:
-            msg = 'Circular dependency detected between extensions'
-            problem_graph = ', '.join(f'{a} -> {b}'
-                                      for a, b in nx.find_cycle(dag))
-            raise Exception(f'{msg}: {problem_graph}')
-
-        rv = []
-        for ext_name in extension_order:
-            try:
-                rv.append(dag.nodes[ext_name]['extension_tuple'])
-            except KeyError as e:
-                if 'extension_tuple' not in str(e):
-                    raise e
-                raise Exception(
-                    f'Could not locate an extension with the name {ext_name!r}')
-        return rv
