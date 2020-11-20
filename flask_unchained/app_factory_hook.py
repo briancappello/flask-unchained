@@ -144,17 +144,19 @@ class AppFactoryHook:
     def collect_from_bundles(self, bundles: List[Bundle]) -> Dict[str, Any]:
         """
         Collect objects where :meth:`type_check` returns ``True`` from bundles.
-        Names (keys) are expected to be unique across bundles, except for the
-        app bundle, which can override anything from other bundles.
+        Discovered names (keys, typically the class names) are expected to be unique
+        across bundle hierarchies, except for the app bundle, which can override
+        anything from other bundles.
         """
         all_objects = {}  # all discovered objects
-        key_bundles = {}  # lookup of which bundle a key came from
-        object_keys = set()  # keys in all_objects, used to ensure uniqueness
+        key_bundles = {}  # lookup of which bundle a key in all_objects came from
+        object_keys = set(all_objects.keys())  # used to ensure key name uniqueness
         for bundle in bundles:
             from_bundle = self.collect_from_bundle(bundle)
             if isinstance(bundle, AppBundle):
+                # app_bundle is last and allowed to override everything
                 all_objects.update(from_bundle)
-                break  # app_bundle is last, no need to update keys
+                return all_objects
 
             from_bundle_keys = set(from_bundle.keys())
             conflicts = object_keys.intersection(from_bundle_keys)
@@ -265,12 +267,19 @@ class AppFactoryHook:
 
     @classmethod
     def import_bundle_modules(cls, bundle: Bundle) -> List[ModuleType]:
+        """
+        Safe-import the modules in a bundle for this hook to load from.
+        """
         modules = [safe_import_module(module_name)
                    for module_name in cls.get_module_names(bundle)]
         return [m for m in modules if m]
 
     @classmethod
     def get_module_names(cls, bundle: Bundle) -> List[str]:
+        """
+        The list of fully-qualified module names for a bundle this hook should
+        load from.
+        """
         if bundle.is_single_module:
             return [bundle.module_name]
         return [bundle.module_name if name == '__init__' else f'{bundle.module_name}.{name}'
@@ -278,8 +287,11 @@ class AppFactoryHook:
 
     @classmethod
     def get_bundle_module_names(cls, bundle: Bundle) -> List[str]:
+        """
+        The list of module names inside a bundle this hook should load from.
+        """
         if bundle.is_single_module:
-            return [bundle.module_name]
+            return ['__init__']
 
         # check to make sure the hook is configured correctly
         if cls.require_exactly_one_bundle_module and cls.bundle_module_name is None:
