@@ -188,9 +188,11 @@ class AppFactoryHook:
                 found = self._collect_from_package(module)
                 name_collisions = from_this_bundle & set(found.keys())
                 if name_collisions:
-                    raise Exception(f'Name conflict: The objects named '
-                                    f'{", ".join(name_collisions)} in {module.__name__} '
-                                    f'collide with those from {last_module.__name__}')
+                    raise NameCollisionError(
+                        f'Name conflict in the {bundle.name} bundle hierarchy: '
+                        f'The objects named {", ".join(name_collisions)} '
+                        f'in {module.__name__} '
+                        f'collide with those from {last_module.__name__}')
                 members.update(found)
                 last_module = module
                 from_this_bundle.update(found.keys())
