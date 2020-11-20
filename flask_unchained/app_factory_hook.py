@@ -141,14 +141,18 @@ class AppFactoryHook:
         """
         raise NotImplementedError
 
-    def collect_from_bundles(self, bundles: List[Bundle]) -> Dict[str, Any]:
+    def collect_from_bundles(self,
+                             bundles: List[Bundle],
+                             *,
+                             _initial_objects: Optional[Dict[str, Any]] = None,
+                             ) -> Dict[str, Any]:
         """
         Collect objects where :meth:`type_check` returns ``True`` from bundles.
         Discovered names (keys, typically the class names) are expected to be unique
         across bundle hierarchies, except for the app bundle, which can override
         anything from other bundles.
         """
-        all_objects = {}  # all discovered objects
+        all_objects = _initial_objects or {}  # all discovered objects
         key_bundles = {}  # lookup of which bundle a key in all_objects came from
         object_keys = set(all_objects.keys())  # used to ensure key name uniqueness
         for bundle in bundles:

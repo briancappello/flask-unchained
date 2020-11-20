@@ -10,6 +10,7 @@
     - support using a custom subclass of `AppFactory`
     - support passing all kwargs to `Flask` by setting the same names upper-cased in `unchained_config`
     - support automatic defaults for the Flask app kwargs `root_path`, `template_folder`, `static_folder`, and `static_url_path`
+    - support extending and overriding hooks with the same consistent object-oriented patterns
     - support using a custom module name for `unchained_config` by setting the `UNCHAINED_CONFIG` environment variable
     - make it possible to define multiple modules hooks should load from (excluding config and routes, as those only make sense to live inside a single module within bundles)
         - very experimental: add `Bundle.default_load_from_module_name` to ease migration from single-file app bundles to individual modules for different types (ie grouped by base class)
