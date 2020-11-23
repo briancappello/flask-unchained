@@ -39,6 +39,7 @@ class ModelResourceMetaclass(ResourceMetaclass):
             if (method_name in exclude_methods
                     or method_name not in include_methods):
                 routes.pop(method_name, None)
+                continue
 
             route: Route = getattr(clsdict.get(method_name), FN_ROUTES_ATTR, [None])[0]
             if not route:
