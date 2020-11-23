@@ -277,6 +277,10 @@ class SQLAlchemyUnchained(BaseSQLAlchemy):
             self.relationship = sqla._relationship_type_hinter_
             self.session = Session
 
+    def init_app(self, app):
+        self.app = app
+        super().init_app(app)
+
     def _set_constraint_name(self, const, table):
         fmt = _get_convention(self.metadata.naming_convention, type(const))
         if not fmt:
