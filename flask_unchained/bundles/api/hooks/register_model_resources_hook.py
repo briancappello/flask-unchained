@@ -47,14 +47,22 @@ class RegisterModelResourcesHook(AppFactoryHook):
 
         if resource_cls.Meta.serializer is None:
             resource_cls.Meta.serializer = serializer_cls()
+        elif isinstance(resource_cls.Meta.serializer, type):
+            resource_cls.Meta.serializer = resource_cls.Meta.serializer()
 
         if resource_cls.Meta.serializer_many is None:
             resource_cls.Meta.serializer_many = self.bundle.many_by_model.get(
                 model_name, serializer_cls)(many=True)
+        elif isinstance(resource_cls.Meta.serializer_many, type):
+            resource_cls.Meta.serializer_many = \
+                resource_cls.Meta.serializer_many(many=True)
 
         if resource_cls.Meta.serializer_create is None:
             resource_cls.Meta.serializer_create = self.bundle.create_by_model.get(
                 model_name, serializer_cls)(context=dict(is_create=True))
+        elif isinstance(resource_cls.Meta.serializer_create, type):
+            resource_cls.Meta.serializer_create = \
+                resource_cls.Meta.serializer_create(context=dict(is_create=True))
 
     def type_check(self, obj):
         """

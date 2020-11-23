@@ -68,12 +68,12 @@ class ModelResourceSerializerMetaOption(MetaOption):
                     value,
                     mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
                     ) -> None:
-        if not value:
+        if not value or isinstance(value, ModelSerializer) or (
+                isinstance(value, type) and issubclass(value, ModelSerializer)
+        ):
             return
-
-        if not isinstance(value, ModelSerializer):
-            raise ValueError(
-                f'The {self.name} meta option must be an instance of ModelSerializer')
+        raise ValueError(f'The {self.name} meta option must be a subclass or '
+                         f'instance of ModelSerializer')
 
 
 class ModelResourceSerializerCreateMetaOption(MetaOption):
@@ -88,13 +88,12 @@ class ModelResourceSerializerCreateMetaOption(MetaOption):
                     value,
                     mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
                     ) -> None:
-        if not value:
+        if not value or isinstance(value, ModelSerializer) or (
+                isinstance(value, type) and issubclass(value, ModelSerializer)
+        ):
             return
-
-        if not isinstance(value, ModelSerializer):
-            raise ValueError(
-                f'The {self.name} meta option must be an instance of ModelSerializer')
-
+        raise ValueError(f'The {self.name} meta option must be a subclass or '
+                         f'instance of ModelSerializer')
 
 class ModelResourceSerializerManyMetaOption(MetaOption):
     """
@@ -108,12 +107,12 @@ class ModelResourceSerializerManyMetaOption(MetaOption):
                     value,
                     mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
                     ) -> None:
-        if not value:
+        if not value or isinstance(value, ModelSerializer) or (
+                isinstance(value, type) and issubclass(value, ModelSerializer)
+        ):
             return
-
-        if not isinstance(value, ModelSerializer):
-            raise ValueError(
-                f'The {self.name} meta option must be an instance of ModelSerializer')
+        raise ValueError(f'The {self.name} meta option must be a subclass or '
+                         f'instance of ModelSerializer')
 
 
 class ModelResourceIncludeMethodsMetaOption(MetaOption):
