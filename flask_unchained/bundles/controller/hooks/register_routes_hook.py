@@ -6,8 +6,10 @@ from flask_unchained._compat import is_local_proxy
 from typing import *
 
 from ..attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
+from ..controller import Controller
+from ..resource import Resource
 from ..route import Route
-from ..routes import _reduce_routes, _normalize_controller_routes, include
+from ..routes import _reduce_routes, controller, resource, include
 
 
 class RegisterRoutesHook(AppFactoryHook):
@@ -144,9 +146,12 @@ class RegisterRoutesHook(AppFactoryHook):
             for _, obj in inspect.getmembers(views_module, self.type_check):
                 if hasattr(obj, FN_ROUTES_ATTR):
                     yield getattr(obj, FN_ROUTES_ATTR)
+                elif issubclass(obj, Resource):
+                    yield from resource(obj)
+                elif issubclass(obj, Controller):
+                    yield from controller(obj)
                 else:
-                    routes = getattr(obj, CONTROLLER_ROUTES_ATTR).values()
-                    yield from _normalize_controller_routes(routes, obj)
+                    raise NotImplementedError
 
             try:
                 yield from include(views_module.__name__)
