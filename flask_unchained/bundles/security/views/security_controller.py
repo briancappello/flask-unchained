@@ -54,7 +54,7 @@ class SecurityController(Controller):
                 self.flash(_('flask_unchained.bundles.security:flash.login'),
                            category='success')
                 return self.redirect('SECURITY_POST_LOGIN_REDIRECT_ENDPOINT')
-        else:
+        elif form.errors:
             # FIXME-identity
             identity_attrs = app.config.SECURITY_USER_IDENTITY_ATTRIBUTES
             msg = f"Invalid {', '.join(identity_attrs)} and/or password."
