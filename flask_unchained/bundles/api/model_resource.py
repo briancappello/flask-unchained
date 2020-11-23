@@ -452,9 +452,15 @@ class ModelResource(Resource, metaclass=ModelResourceMetaclass):
         # FIXME need to support ETags
         # see https://github.com/Nobatek/flask-rest-api/blob/master/flask_rest_api/response.py
 
-        dump_fn = current_app.config.ACCEPT_HANDLERS[
-            request.headers.get('Accept', 'application/json')
-        ]
+        accept = request.headers.get('Accept', 'application/json')
+        try:
+            dump_fn = current_app.config.ACCEPT_HANDLERS[accept]
+        except KeyError as e:
+            # see if we can use JSON when there is no handler for the requested Accept header
+            if '*/*' not in accept:
+                raise e
+            dump_fn = current_app.config.ACCEPT_HANDLERS['application/json']
+
         return make_response(dump_fn(data), code, headers)
 
     def get_decorators(self, method_name):
