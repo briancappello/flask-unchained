@@ -147,6 +147,10 @@ class DeferredBundleFunctions:
             self._defer(lambda bp: bp.teardown_websocket(fn))
             return fn
 
+    def __call__(self, *args, **kwargs):
+        raise NotImplementedError("Probably you're trying to call a method at import "
+                                  "time on the Unchained extension that doesn't exist?")
+
 
 class _DeferredBundleFunctionsStore:
     """
