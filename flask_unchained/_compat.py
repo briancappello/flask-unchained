@@ -36,15 +36,15 @@ def wraps(wrapped_fn, assigned=None, updated=None):
 setattr(functools, 'wraps', wraps)
 
 
+# *************************************************************************
+# quart asyncio integration [optional]
+# *************************************************************************
+
 # FIXME can we somehow make this a callback loaded from an optional env var?
 # goals:
 # - set base class to use for FlaskUnchained
 # - set the LocalProxy class and the is_local_proxy fn
 # - a place for any other necessary monkey patching
-
-# *************************************************************************
-# quart asyncio integration [optional]
-# *************************************************************************
 
 QUART_ENABLED = False
 

@@ -68,8 +68,7 @@ class BabelBundle(Bundle):
 
     def register_blueprint(self, app: FlaskUnchained, blueprint: Blueprint, **options):
         if app.config.ENABLE_URL_LANG_CODE_PREFIX:
-            url_prefix = (options.get('url_prefix', (blueprint.url_prefix or ''))
-                                 .rstrip('/'))
+            url_prefix = options.get('url_prefix', (blueprint.url_prefix or '')).rstrip('/')
             options = dict(**options,
                            url_prefix=self.get_url_rule(url_prefix),
                            register_with_babel=False)
