@@ -62,7 +62,7 @@
 - CSRF protection is no longer enabled by default. To re-enable it:
 
 ```python
-from flask_unchained import AppBundle, BundleConfig, generate_csrf
+from flask_unchained import BundleConfig, unchained, generate_csrf
 
 class Config(BundleConfig):
     SECRET_KEY = 'some-secret-key'
@@ -71,13 +71,11 @@ class Config(BundleConfig):
 class TestConfig(Config):
     WTF_CSRF_ENABLED = False
 
-class YourAppBundle(AppBundle):
-    def after_init_app(self, app) -> None:
-        @app.after_request
-        def set_csrf_token_cookie(response):
-            if response:
-                response.set_cookie('csrf_token', generate_csrf())
-            return response
+@unchained.after_request
+def set_csrf_token_cookie(response):
+    if response:
+        response.set_cookie('csrf_token', generate_csrf())
+    return response
 ```
 
 - customizing bundle module locations changed:
