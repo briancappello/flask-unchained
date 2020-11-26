@@ -26,7 +26,7 @@ setup(
         'flask>=1.1.2',
         'flask_babelex>=0.9.4',
         'flask-wtf>=0.14.3',
-        'py-meta-utils>=0.7.6',
+        'py-meta-utils>=0.7.7',
         'pyterminalsize>=0.1.0',
         'networkx>=2.4',
         'werkzeug>=1.0.1',
@@ -34,34 +34,35 @@ setup(
     ],
     extras_require={
         'admin': [
-            'flask-admin>=1.5.6',
+            'flask-admin>=1.5.7',
         ],
         'api': [
-            'apispec>=3.3.0',
-            'flask-marshmallow>=0.12.0',
-            'marshmallow>=3.5.2',
-            'marshmallow-sqlalchemy>=0.23.0',
+            'apispec>=3.3.1,<4',
+            'flask-marshmallow>=0.14.0',
+            'marshmallow>=3.9.1',
+            'marshmallow-sqlalchemy>=0.24.1',
+        ],
+        'asyncio': [
+            'quart>=0.13.1',
         ],
         'celery': [
-            'celery>=4.4.2',
-            'dill>=0.2.8.2',
+            'celery>=4.4.7',
+            'dill>=0.3.3',
         ],
         'dev': [
             'coverage>=4.5.1',
-            'IPython>=7.1.1',
-            'mock>=2.0.0',
+            'IPython>=7.19.0',
             'pytest>=4.6.5',
             'pytest-flask>=1.0.0',
             'tox>=3.5.2',
         ],
         'docs': [
-            'IPython>=7.14.0',
-            'PyQt5>=5.14.2',
-            'qtconsole>=4.7.3',
-            'sphinx>=2.4.4,<3',
-            'sphinx-autobuild>=0.7.1',
+            'IPython>=7.19.0',
+            'PyQt5>=5.15.1',
+            'qtconsole>=4.7.7',
+            'sphinx>=2.4.4,<3',  # m2r needs a new release to support sphinx v3+
             'sphinx-click>=1.4.0',
-            'sphinx-rtd-theme>=0.4.2',
+            'sphinx-material>=0.0.32',
             'm2r>=0.2.1',
         ],
         'graphene': [
@@ -73,22 +74,22 @@ setup(
             'graphene-sqlalchemy>=2.2.2,<3',
         ],
         'mail': [
-            'beautifulsoup4>=4.9.0',
-            'lxml>=4.5.0',
+            'beautifulsoup4>=4.9.3',
+            'lxml>=4.6.1',
         ],
         'oauth': [
             'Flask-OAuthlib>=0.9.5',
         ],
         'security': [
-            'bcrypt>=3.1.4',
+            'bcrypt>=3.2.0',
             'flask-login>=0.5.0',
             'flask-principal>=0.4.0',
             'itsdangerous>=1.1.0',
-            'passlib>=1.7.1',
+            'passlib>=1.7.4',
         ],
         'session': [
-            'dill>=0.2.8.2',
-            'flask-session>=0.3.1',
+            'dill>=0.3.3',
+            'flask-session>=0.3.2',
         ],
         'sqlalchemy': [
             'factory_boy>=2.11.1',
