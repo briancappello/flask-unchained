@@ -111,7 +111,7 @@ class AppFactory(metaclass=Singleton):
         """
         Load the unchained config from the current working directory for the given
         environment. If ``env == "test"``, look for ``tests._unchained_config``,
-        otherwise check the value of the ``UNCHAINED_CONFIG`` environment variable,
+        otherwise check the value of the ``UNCHAINED`` environment variable,
         falling back to loading the ``unchained_config`` module.
         """
         if not sys.path or sys.path[0] != os.getcwd():
@@ -124,7 +124,7 @@ class AppFactory(metaclass=Singleton):
             except ImportError as e:
                 msg = f'{e.msg}: Could not find _unchained_config.py in the tests directory'
 
-        unchained_config_module_name = os.getenv('UNCHAINED_CONFIG', 'unchained_config')
+        unchained_config_module_name = os.getenv('UNCHAINED', 'unchained_config')
         try:
             return cwd_import(unchained_config_module_name)
         except ImportError as e:

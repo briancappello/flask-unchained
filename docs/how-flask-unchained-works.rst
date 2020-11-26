@@ -99,7 +99,7 @@ The Unchained Config itself doesn't actually contain a whole lot. The only requi
         'app',  # your app bundle *must* be last
     ]
 
-When ``unchained_config.py`` exists in the ``project-root`` directory, exporting ``UNCHAINED_CONFIG`` is not required, and the app can be run like so:
+When ``unchained_config.py`` exists in the ``project-root`` directory, exporting ``UNCHAINED`` is not required, and the app can be run like so:
 
 .. code-block:: shell
 
@@ -129,7 +129,7 @@ It can be run like so:
 
 .. code-block:: shell
 
-    export UNCHAINED_CONFIG="app"  # the module where the unchained config resides
+    export UNCHAINED="app"  # the module where the unchained config resides
     flask run
 
 In the above example, we're essentially telling the app factory, "just use the defaults with my app bundle". In single-file mode, the app bundle is automatically detected, so there aren't actually any Unchained Config settings in the above file. To set them looks as you would expect:
@@ -165,11 +165,11 @@ In the above example, we're essentially telling the app factory, "just use the d
         def index(self):
             return 'hello world'
 
-And once again, just be sure to ``export UNCHAINED_CONFIG="app"``:
+And once again, just be sure to ``export UNCHAINED="app"``:
 
 .. code-block:: shell
 
-    export UNCHAINED_CONFIG="app"  # the module where the unchained config resides
+    export UNCHAINED="app"  # the module where the unchained config resides
     flask run
 
 Bundle.before/after_init_app
