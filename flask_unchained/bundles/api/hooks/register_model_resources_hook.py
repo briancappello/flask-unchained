@@ -42,8 +42,8 @@ class RegisterModelResourcesHook(AppFactoryHook):
     def attach_serializers_to_resource_cls(self, model_name, resource_cls):
         try:
             serializer_cls = self.bundle.serializers_by_model[model_name]
-        except KeyError:
-            raise KeyError(f'No serializer found for the {model_name} model')
+        except KeyError as e:
+            raise KeyError(f'No serializer found for the {model_name} model') from e
 
         if resource_cls.Meta.serializer is None:
             resource_cls.Meta.serializer = serializer_cls()

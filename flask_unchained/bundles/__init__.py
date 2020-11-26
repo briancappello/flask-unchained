@@ -164,7 +164,7 @@ class Bundle(metaclass=BundleMetaclass):
     that gets created for this bundle.
 
     The :class:`~flask_unchained.Unchained` extension copies these values from the
-    :class:`DeferredBundleFunctions` instance it created for this bundle.
+    :class:`DeferredBundleBlueprintFunctions` instance it created for this bundle.
     """
 
     def before_init_app(self, app: FlaskUnchained) -> None:

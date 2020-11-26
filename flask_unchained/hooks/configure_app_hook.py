@@ -83,6 +83,9 @@ class ConfigureAppHook(AppFactoryHook):
                           bundle: Bundle,
                           env: Union[DEV, PROD, STAGING, TEST],
                           ) -> flask.Config:
+        """
+        Get the config settings from a bundle hierarchy.
+        """
         if isinstance(bundle, AppBundle):
             return self._get_bundle_config(bundle, env)
 
@@ -95,16 +98,18 @@ class ConfigureAppHook(AppFactoryHook):
                            bundle: Union[AppBundle, Bundle],
                            env: Union[DEV, PROD, STAGING, TEST],
                            ) -> flask.Config:
-        bundle_config_modules = self.import_bundle_modules(bundle)
-        if not bundle_config_modules:
-            return flask.Config('.')
+        """
+        Get the config settings from a single bundle package.
+        """
+        config = flask.Config('.')
+        try:
+            bundle_config_module = self.import_bundle_modules(bundle)[0]
+        except IndexError:
+            return config
 
-        bundle_config_module = bundle_config_modules[0]
         base_config = getattr(bundle_config_module, BASE_CONFIG_CLASS, None)
         env_config = getattr(bundle_config_module, ENV_CONFIG_CLASSES[env], None)
-
-        merged = flask.Config('.')
-        for config in [base_config, env_config]:
-            if config:
-                merged.from_object(config)
-        return merged
+        for config_cls in [base_config, env_config]:
+            if config_cls:
+                config.from_object(config_cls)
+        return config

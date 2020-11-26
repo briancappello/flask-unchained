@@ -36,7 +36,7 @@ class RegisterCommandsHook(AppFactoryHook):
                  unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> Dict[str, Union[click.Command, click.Group]]:
         """
-        Discover CLI command and command groups from bundles and register them
+        Discover CLI commands and command groups from bundles and register them
         with the app.
         """
         commands = {}
@@ -60,7 +60,7 @@ class RegisterCommandsHook(AppFactoryHook):
         # therefore we collect all the command names belonging to groups, and use that
         # in our is_click_command type-checking fn below
         group_command_names = set(itertools.chain.from_iterable(
-            g.commands.keys() for g in command_groups.values()))
+            group.commands.keys() for group in command_groups.values()))
 
         def is_click_command(obj: Any) -> bool:
             return self.is_click_command(obj) and obj.name not in group_command_names
