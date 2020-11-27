@@ -383,8 +383,8 @@ Then the corresponding folder structure would look like this:
 
    ./your_bundle
    ├── templates
-   │   └── site
-   │       └── index.html
+   │   └── site
+   │       └── index.html
    ├── __init__.py
    └── views.py
 

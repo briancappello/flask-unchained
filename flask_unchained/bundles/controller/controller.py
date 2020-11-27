@@ -280,10 +280,10 @@ class Controller(metaclass=ControllerMetaclass):
         # your_bundle_root
         ├── __init__.py
         ├── templates
-        │   └── site
-        │       ├── about_us.html
-        │       ├── contact.html
-        │       └── index.html
+        │   └── site
+        │       ├── about_us.html
+        │       ├── contact.html
+        │       └── index.html
         └── views
             └── site_controller.py
     """
