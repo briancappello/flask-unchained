@@ -51,13 +51,13 @@ setup(
         ],
         'dev': [
             'coverage>=4.5.1',
-            'IPython>=7.19.0',
+            'IPython>=7.16.0',
             'pytest>=4.6.5',
             'pytest-flask>=1.0.0',
             'tox>=3.5.2',
         ],
         'docs': [
-            'IPython>=7.19.0',
+            'IPython>=7.16.0',
             'PyQt5>=5.15.1',
             'qtconsole>=4.7.7',
             'sphinx>=2.4.4,<3',  # m2r needs a new release to support sphinx v3+
