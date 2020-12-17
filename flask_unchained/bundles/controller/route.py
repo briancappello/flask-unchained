@@ -229,6 +229,7 @@ class Route:
         elif self._unique_member_param:
             return self._unique_member_param
 
+        # FIXME should probably use the snake_case singular of the resource's model name
         ctrl_name = controller_name(self._controller_cls)
         type_, name = get_param_tuples(self._member_param)[0]
         return f'<{type_}:{ctrl_name}_{name}>'

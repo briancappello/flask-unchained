@@ -62,8 +62,13 @@ def controller_name(
         UsersMethodView -> users
         RoleResource -> role
     """
-    name = cls if isinstance(cls, str) else cls.__name__
-    remove_suffixes = _remove_suffixes or getattr(cls, REMOVE_SUFFIXES_ATTR)
+    if isinstance(cls, str):
+        name = cls
+        remove_suffixes = _remove_suffixes or ()
+    else:
+        name = cls.__name__
+        remove_suffixes = _remove_suffixes or getattr(cls, REMOVE_SUFFIXES_ATTR)
+
     for suffix in remove_suffixes:
         if name.endswith(suffix):
             name = right_replace(name, suffix, '')
