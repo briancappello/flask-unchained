@@ -204,14 +204,14 @@ class AppFactoryHook:
 
     def _collect_from_package(self,
                               module: ModuleType,
-                              type_checker: Optional[FunctionType] = None,
+                              type_checker: Optional[Callable[[Any], bool]] = None,
                               ) -> Dict[str, Any]:
         """
         Discover objects passing :meth:`type_check` by walking through all the
         child modules/packages in the given module (ie, do not require packages
         to import everything into their ``__init__.py`` for it to be discovered)
         """
-        def type_check_wrapper(obj):
+        def type_check_wrapper(obj: Any) -> bool:
             if is_local_proxy(obj):
                 return False
             return (type_checker or self.type_check)(obj)
@@ -231,7 +231,7 @@ class AppFactoryHook:
 
     def _get_members(self,
                      module: ModuleType,
-                     type_checker: FunctionType,
+                     type_checker: Callable[[Any], bool],
                      ) -> List[Tuple[str, Any]]:
         for name, obj in inspect.getmembers(module, type_checker):
             # FIXME

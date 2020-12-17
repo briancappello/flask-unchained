@@ -3,7 +3,7 @@ import inspect
 import os
 import sys
 
-from types import FunctionType, ModuleType
+from types import ModuleType
 from typing import *
 
 from py_meta_utils import Singleton
@@ -252,7 +252,7 @@ class AppFactory(metaclass=Singleton):
             return bundle_class()
 
     @classmethod
-    def _is_bundle(cls, module: ModuleType) -> FunctionType:
+    def _is_bundle(cls, module: ModuleType) -> Callable[[Any], bool]:
         return lambda obj: (isinstance(obj, type) and issubclass(obj, Bundle)
                             and obj not in {AppBundle, Bundle}
                             and obj.__module__.startswith(module.__name__))
