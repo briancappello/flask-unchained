@@ -175,7 +175,7 @@ And once again, just be sure to ``export UNCHAINED="app"``:
 Bundle.before/after_init_app
 ----------------------------
 
-The most obvious place you can hook into the app factory is with your :class:`~flask_unchained.bundles.Bundle` subclass, for example:
+The most obvious place you can hook into the app factory is with your :class:`~flask_unchained.Bundle` subclass, for example:
 
 .. code-block::
 
@@ -193,12 +193,12 @@ The most obvious place you can hook into the app factory is with your :class:`~f
             def do_stuff(response):
                 return response
 
-Using the :class:`~flask_unchained.unchained.Unchained` extension is another way to plug into the app factory, so let's look at that next.
+Using the :class:`~flask_unchained.Unchained` extension is another way to plug into the app factory, so let's look at that next.
 
 The Unchained Extension
 -----------------------
 
-As an alternative to using ``Bundle.before_init_app`` and ``Bundle.after_init_app``, the :class:`~flask_unchained.unchained.Unchained` extension also acts as a drop-in replacement for some of the public API of :class:`~flask.Flask`:
+As an alternative to using ``Bundle.before_init_app`` and ``Bundle.after_init_app``, the :class:`~flask_unchained.Unchained` extension also acts as a drop-in replacement for some of the public API of :class:`~flask.Flask`:
 
 .. code-block::
 
@@ -223,7 +223,7 @@ As an alternative to using ``Bundle.before_init_app`` and ``Bundle.after_init_ap
     @unchained.template_tag
     @unchained.template_test
 
-These decorators all work exactly the same as if you were using them from the ``app`` instance itself.
+These decorators all work exactly the same as if you were using them from the :class:`~flask.Flask` ``app`` instance itself.
 
 The ``Unchained`` extension first forwards these calls to the ``Flask`` instance itself, and then it calls ``RunHooksHook.run_hook(app, bundles)``. Hooks are where the real action of actually booting up the app happens.
 
@@ -246,7 +246,7 @@ These are some of the hooks Flask Unchained includes:
 
 :InitExtensionsHook: Discovers Flask extensions in bundles and initializes them with the app.
 
-:RegisterServicesHook: Discovers services in bundles and registers them with the :class:`~flask_unchained.unchained.Unchained` extension. Both services and extensions are dependency-injectable at runtime into just about anything that can be wrapped with the :meth:`~flask_unchained.unchained.Unchained.inject` decorator.
+:RegisterServicesHook: Discovers services in bundles and registers them with the :class:`~flask_unchained.Unchained` extension. Both services and extensions are dependency-injectable at runtime into just about anything that can be wrapped with the :meth:`~flask_unchained.Unchained.inject` decorator.
 
 :ConfigureAppHook: Discovers configuration options in bundles and registers them with the app.
 
