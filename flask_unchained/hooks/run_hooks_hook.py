@@ -9,7 +9,7 @@ from ..bundles import Bundle
 from ..flask_unchained import FlaskUnchained
 
 
-HookTuple = namedtuple('HookTuple', ('Hook', 'bundle'))
+HookTuple = namedtuple('HookTuple', ('HookClass', 'bundle'))
 
 
 class RunHooksHook(AppFactoryHook):
@@ -37,8 +37,8 @@ class RunHooksHook(AppFactoryHook):
         hook_tuples = self.collect_from_bundles(
             bundles, _initial_objects=self.collect_unchained_hooks())
 
-        for HookCls, bundle in self.resolve_hook_order(hook_tuples):
-            hook = HookCls(self.unchained, bundle)
+        for HookClass, bundle in self.resolve_hook_order(hook_tuples):
+            hook = HookClass(self.unchained, bundle)
             hook.run_hook(app, bundles, unchained_config)
             hook.update_shell_context(self.unchained._shell_ctx)
 
@@ -46,8 +46,8 @@ class RunHooksHook(AppFactoryHook):
         """
         Collect hooks from a bundle hierarchy.
         """
-        return {hook_cls_name: HookTuple(HookCls, bundle)
-                for hook_cls_name, HookCls
+        return {hook_class_name: HookTuple(HookClass, bundle)
+                for hook_class_name, HookClass
                 in super().collect_from_bundle(bundle).items()}
 
     def collect_unchained_hooks(self) -> Dict[str, HookTuple]:
@@ -55,8 +55,8 @@ class RunHooksHook(AppFactoryHook):
         Collect hooks built into Flask Unchained that should always run.
         """
         unchained_hooks_pkg = import_module('flask_unchained.hooks')
-        return {hooks_cls_name: HookTuple(HookCls, bundle=None)
-                for hooks_cls_name, HookCls
+        return {hook_class_name: HookTuple(HookClass, bundle=None)
+                for hook_class_name, HookClass
                 in self._collect_from_package(unchained_hooks_pkg).items()}
 
     def type_check(self, obj: Any) -> bool:
@@ -71,11 +71,12 @@ class RunHooksHook(AppFactoryHook):
         dag = nx.DiGraph()
 
         for hook_tuple in hook_tuples.values():
-            dag.add_node(hook_tuple.Hook.name, hook_tuple=hook_tuple)
-            for dep_name in hook_tuple.Hook.run_after:
-                dag.add_edge(hook_tuple.Hook.name, dep_name)
-            for successor_name in hook_tuple.Hook.run_before:
-                dag.add_edge(successor_name, hook_tuple.Hook.name)
+            HookClass, _ = hook_tuple
+            dag.add_node(HookClass.name, hook_tuple=hook_tuple)
+            for dep_name in HookClass.run_after:
+                dag.add_edge(HookClass.name, dep_name)
+            for successor_name in HookClass.run_before:
+                dag.add_edge(successor_name, HookClass.name)
 
         try:
             order = reversed(list(nx.topological_sort(dag)))
