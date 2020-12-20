@@ -61,7 +61,6 @@ admin bundle
 
 bucket list
 -----------
-* websockets support (probably the best bet would be to investigate compatibility with [Quart](https://gitlab.com/pgjones/quart))
 * out-of-the-box support for production deployment
    - Docker
    - Ansible

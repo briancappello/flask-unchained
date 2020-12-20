@@ -4,6 +4,7 @@
 
 ### Features
 
+- **experimental asyncio support by installing [Quart](https://gitlab.com/pgjones/quart)**
 - **major improvements to** `AppFactory` **and** `AppFactoryHook`
     - **support single-file app bundles** (just export the app bundle as `UNCHAINED`)
     - support using a custom subclass of `FlaskUnchained` using `AppFactory.APP_CLASS`
