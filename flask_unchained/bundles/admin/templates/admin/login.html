@@ -2,6 +2,9 @@
 
 {% from "admin/_macros.html" import form_errors, render_field, render_field_with_errors, render_checkbox_field %}
 
+{% block access_control %}
+{% endblock %}
+
 {% block body %}
   {{ super() }}
   <div class="row-fluid">
@@ -11,7 +14,7 @@
         <form action="{{ url_for('ADMIN_LOGIN_ENDPOINT') }}" method="POST" name="login_user_form">
           {{ form_errors(login_user_form) }}
           {{ login_user_form.hidden_tag() }}
-          {{ render_field_with_errors(login_user_form.email) }}
+          {{ render_field_with_errors(login_user_form.email, autofocus=True) }}
           {{ render_field_with_errors(login_user_form.password) }}
           {{ render_checkbox_field(login_user_form.remember) }}
           {{ render_field(login_user_form.submit, class="btn btn-primary") }}

@@ -2,6 +2,10 @@
 
 ## v0.8.1 (unreleased)
 
+### Features
+
+- upgrade Flask-Admin templates to bootstrap4
+
 ### Bug Fixes
 
 - fix default config settings for `ADMIN_LOGIN_ENDPOINT` and `ADMIN_LOGOUT_ENDPOINT`

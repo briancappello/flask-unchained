@@ -35,9 +35,9 @@ class Config(BundleConfig):
     Base template to use for other admin templates.
     """
 
-    ADMIN_TEMPLATE_MODE = 'bootstrap3'
+    ADMIN_TEMPLATE_MODE = 'bootstrap4'
     """
-    Which version of bootstrap to use. (bootstrap2 or bootstrap3)
+    Which version of bootstrap to use. (bootstrap2, bootstrap3, or bootstrap4)
     """
 
     ADMIN_CATEGORY_ICON_CLASSES = {}
@@ -45,11 +45,11 @@ class Config(BundleConfig):
     Dictionary of admin category icon classes. Keys are category names,
     and the values depend on which version of bootstrap you're using.
 
-    For example, with bootstrap3::
+    For example, with bootstrap4::
 
         ADMIN_CATEGORY_ICON_CLASSES = {
-            'Mail': 'glyphicon glyphicon-envelope',
-            'Security': 'glyphicon glyphicon-lock',
+            'Mail': 'fa fa-envelope',
+            'Security': 'fa fa-lock',
         }
     """
 
@@ -72,3 +72,5 @@ class Config(BundleConfig):
     """
     Endpoint to redirect to after the user logs out of the admin.
     """
+
+    MAPBOX_MAP_ID = None

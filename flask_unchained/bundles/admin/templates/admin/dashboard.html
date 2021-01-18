@@ -38,14 +38,14 @@
     <th>{{ layout.menu_icon(item) }} {{ item.name }}</th>
     <td>
       <a href="{{ item.get_url() }}" title="{{ 'List ' ~ item.name }}">
-        <i class="glyphicon glyphicon-list"></i> List {{ item.name }}
+        <i class="fa fa-list glyphicon glyphicon-list"></i> List {{ item.name }}
       </a>
     </td>
     <td>
       {% if view.can_create %}
         {% set create_url = url_for(view.endpoint ~ '.create_view', url=return_url) %}
-        <a href="{{ create_url }}" title="{{ 'Create New ' ~ view.Meta.model.__label__ }}">
-          <i class="glyphicon glyphicon-plus"></i> Create {{ view.Meta.model.__label__ }}
+        <a href="{{ create_url }}" title="{{ 'Create New ' ~ view.model.__label__ }}">
+          <i class="fa fa-plus glyphicon glyphicon-plus"></i> Create {{ view.model.__label__ }}
         </a>
       {% endif %}
     </td>

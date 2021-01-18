@@ -1,0 +1,67 @@
+{# alias the imported macros we want to keep the same as upstream #}
+{% from "admin/layout.html" import menu_icon as _menu_icon, menu_links as _menu_links, messages as _messages with context %}
+
+{# and re-export them with their original names #}
+{% macro menu_icon(item) %}{{ _menu_icon(item) }}{% endmacro %}
+{% macro menu_links(links=None) %}{{ _menu_links(links) }}{% endmacro %}
+{% macro messages() %}{{ _messages() }}{% endmacro %}
+
+{# overridden from upstream to fix a navbar layout bug (modified line is commented below) #}
+{% macro menu(menu_root=None) %}
+  {% set is_main_nav = menu_root == None %}
+  {% if menu_root is none %}{% set menu_root = admin_view.admin.menu() %}{% endif %}
+  {%- for item in menu_root %}
+    {%- if item.is_category() -%}
+      {% set children = item.get_children() %}
+      {%- if children %}
+        {% set class_name = item.get_class_name() or '' %}
+        {# this <li> tag is customized to not include the class-name (prevents duplicate icon) #}
+        <li class="dropdown{% if item.is_active(admin_view) %} active {% endif %}">
+          <a class="dropdown-toggle {% if is_main_nav %}nav-link{% else %}dropdown-item{% endif %}" data-toggle="dropdown" href="javascript:void(0)">
+            {% if item.class_name %}
+              <span class="{{ item.class_name }}"></span>
+            {% endif %}
+            {{ menu_icon(item) }}{{ item.name }}
+            {%- if 'dropdown-submenu' in class_name -%}
+              <i class="glyphicon glyphicon-chevron-right small"></i>
+            {%- else -%}
+              <i class="glyphicon glyphicon-chevron-down small"></i>
+            {%- endif -%}
+          </a>
+          <ul class="dropdown-menu">
+            {%- for child in children -%}
+              {%- if child.is_category() -%}
+                {{ menu(menu_root=[child]) }}
+              {% else %}
+                {% set class_name = child.get_class_name() %}
+                <li{% if class_name %} class="{{ class_name }}"{% endif %}>
+                  {%- if child.is_active(admin_view) %}
+                    <a class="dropdown-item active" href="{{ child.get_url() }}"{% if child.target %}
+                       target="{{ child.target }}"{% endif %}>
+                      {{ menu_icon(child) }}{{ child.name }}</a>
+                  {% else %}
+                    <a class="dropdown-item" href="{{ child.get_url() }}"{% if child.target %}
+                       target="{{ child.target }}"{% endif %}>
+                      {{ menu_icon(child) }}{{ child.name }}</a>
+                  {%- endif %}
+                </li>
+              {%- endif %}
+            {%- endfor %}
+          </ul>
+        </li>
+      {% endif %}
+    {%- else %}
+      {%- if item.is_accessible() and item.is_visible() -%}
+        {% set class_name = item.get_class_name() %}
+        {%- if item.is_active(admin_view) %}
+          <li class="active{% if class_name %} {{ class_name }}{% endif %}">
+        {%- else %}
+          <li{% if class_name %} class="{{ class_name }}"{% endif %}>
+        {%- endif %}
+        <a class="nav-link" href="{{ item.get_url() }}"{% if item.target %} target="{{ item.target }}"{% endif %}>
+        {{ menu_icon(item) }}{{ item.name }}</a>
+        </li>
+      {%- endif -%}
+    {% endif -%}
+  {% endfor %}
+{% endmacro %}
