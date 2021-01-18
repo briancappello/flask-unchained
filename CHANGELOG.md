@@ -2,6 +2,10 @@
 
 ## v0.8.1 (unreleased)
 
+### Bug Fixes
+
+- fix default config settings for `ADMIN_LOGIN_ENDPOINT` and `ADMIN_LOGOUT_ENDPOINT`
+
 ### Breaking Changes
 
 - rename `User.active` to `User.is_active` for compatibility with Flask-Login v0.5

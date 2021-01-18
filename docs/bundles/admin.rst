@@ -12,17 +12,28 @@ Install dependencies:
 
    pip install "flask-unchained[admin]"
 
-And enable the bundle in your ``unchained_config.py``:
+Enable the bundle in your ``unchained_config.py``:
 
 .. code:: python
 
-   # your_project_root/unchained_config.py
+   # project-root/unchained_config.py
 
    BUNDLES = [
        # ...
        'flask_unchained.bundles.admin',
        'app',
    ]
+
+And include the Admin Bundle's routes:
+
+.. code:: python
+
+    # project-root/your_app_bundle/routes.py
+
+    routes = lambda: [
+        include('flask_unchained.bundles.admin.routes'),
+        # ...
+    ]
 
 Config
 ^^^^^^

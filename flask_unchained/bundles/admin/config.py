@@ -58,12 +58,12 @@ class Config(BundleConfig):
     The name of the Role which represents an admin.
     """
 
-    ADMIN_LOGIN_ENDPOINT = 'security.login'
+    ADMIN_LOGIN_ENDPOINT = 'admin.login'
     """
     Name of the endpoint to use for the admin login view.
     """
 
-    ADMIN_LOGOUT_ENDPOINT = 'security.logout'
+    ADMIN_LOGOUT_ENDPOINT = 'admin.logout'
     """
     Name of the endpoint to use for the admin logout view.
     """
