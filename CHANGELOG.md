@@ -11,6 +11,7 @@
 
 - fix default config settings for `ADMIN_LOGIN_ENDPOINT` and `ADMIN_LOGOUT_ENDPOINT`
 - defer initialization of the Admin extension to fix template overriding
+- do not register duplicate templates folder for single-module app bundle
 
 ### Breaking Changes
 

@@ -40,7 +40,7 @@ class BundleBlueprint(BaseBlueprint):
         self.bundle = bundle
         super().__init__(bundle._blueprint_name, bundle.module_name,
                          static_url_path=bundle.static_url_path,
-                         template_folder=bundle.template_folder)
+                         template_folder=None if bundle.is_single_module else bundle.template_folder)
 
     @property
     def has_static_folder(self):
