@@ -6,6 +6,7 @@
 
 - upgrade Flask-Admin templates to bootstrap4
 - add Admin-specific post login/logout redirect endpoints
+- add default Model Admins for the User and Role models
 
 ### Bug Fixes
 

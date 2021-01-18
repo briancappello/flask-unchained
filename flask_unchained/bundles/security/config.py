@@ -304,6 +304,10 @@ class Config(AuthenticationConfig,
     ``datetime.now(timezone.utc)`` to create a timezone-aware datetime.
     """
 
+    ADMIN_CATEGORY_ICON_CLASSES = {
+        'Security': 'fa fa-lock',
+    }
+
 
 class TestConfig(Config):
     """
