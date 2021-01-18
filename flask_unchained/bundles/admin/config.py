@@ -63,12 +63,17 @@ class Config(BundleConfig):
     Name of the endpoint to use for the admin login view.
     """
 
+    ADMIN_POST_LOGIN_REDIRECT_ENDPOINT = 'admin.index'
+    """
+    Name of the endpoint to redirect to after the user logs into the admin.
+    """
+
     ADMIN_LOGOUT_ENDPOINT = 'admin.logout'
     """
     Name of the endpoint to use for the admin logout view.
     """
 
-    ADMIN_POST_LOGOUT_ENDPOINT = '/'
+    ADMIN_POST_LOGOUT_REDIRECT_ENDPOINT = 'admin.login'
     """
     Endpoint to redirect to after the user logs out of the admin.
     """

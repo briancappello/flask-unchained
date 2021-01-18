@@ -5,6 +5,7 @@
 ### Features
 
 - upgrade Flask-Admin templates to bootstrap4
+- add Admin-specific post login/logout redirect endpoints
 
 ### Bug Fixes
 
