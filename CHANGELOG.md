@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v0.8.1 (unreleased)
+## v0.8.1 (2021/01/17)
 
 ### Features
 

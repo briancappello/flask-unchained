@@ -7,7 +7,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='Flask-Unchained',
-    version='0.8.0',
+    version='0.8.1',
     description='The quickest and easiest way to build large web apps and APIs with Flask and SQLAlchemy',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -26,11 +26,12 @@ setup(
         'flask>=1.1.2',
         'flask_babelex>=0.9.4',
         'flask-wtf>=0.14.3',
-        'py-meta-utils>=0.7.7',
+        'py-meta-utils>=0.7.8',
         'pyterminalsize>=0.1.0',
         'networkx>=2.4',
         'werkzeug>=1.0.1',
-        'wtforms>=2.3.1',
+        'wtforms>=2.3.3',
+        'email-validator>=1.1.2',
     ],
     extras_require={
         'admin': [
