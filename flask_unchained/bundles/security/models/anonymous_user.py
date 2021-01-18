@@ -12,9 +12,5 @@ class AnonymousUser(AnonymousUserMixin):
     def id(self):
         return None
 
-    @property
-    def active(self):
-        return False
-
     def has_role(self, *args):
         return False

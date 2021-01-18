@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.8.1 (unreleased)
+
+### Breaking Changes
+
+- rename `User.active` to `User.is_active` for compatibility with Flask-Login v0.5
+
 ## v0.8.0 (2020/12/20)
 
 ### Features

@@ -6,14 +6,14 @@ from flask_unchained.bundles.security import current_user, AnonymousUser
 
 
 @pytest.mark.options(SECURITY_CONFIRMABLE=True)
-@pytest.mark.user(active=False, confirmed_at=None)
+@pytest.mark.user(is_active=False, confirmed_at=None)
 class TestConfirmEmail:
     def test_confirm_email(self, client, registrations, confirmations,
                            user, security_service):
         security_service.register_user(user)
         assert len(registrations) == 1
         assert user == registrations[0]['user']
-        assert not user.active
+        assert not user.is_active
         assert not user.confirmed_at
 
         confirm_token = registrations[0]['confirm_token']
@@ -24,7 +24,7 @@ class TestConfirmEmail:
         assert len(confirmations) == 1
         assert user in confirmations
 
-        assert user.active
+        assert user.is_active
         assert user.confirmed_at
         assert current_user == user
 
@@ -46,7 +46,7 @@ class TestConfirmEmail:
                'security/email/email_confirmation_instructions.html'
         assert templates[1].context.get('confirmation_link')
 
-        assert not user.active
+        assert not user.is_active
         assert not user.confirmed_at
         assert isinstance(current_user._get_current_object(), AnonymousUser)
 
@@ -63,6 +63,6 @@ class TestConfirmEmail:
         assert len(outbox) == len(templates) == 1
         assert templates[0].template.name == 'security/email/welcome.html'
 
-        assert not user.active
+        assert not user.is_active
         assert not user.confirmed_at
         assert isinstance(current_user._get_current_object(), AnonymousUser)

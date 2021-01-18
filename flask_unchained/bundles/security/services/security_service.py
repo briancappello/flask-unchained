@@ -48,7 +48,7 @@ class SecurityService(Service):
                    ) -> bool:
         """
         Logs a user in. You should pass the actual user object to this. If the
-        user's `active` property is ``False``, they will not be logged in
+        user's `is_active` property is ``False``, they will not be logged in
         unless `force` is ``True``.
 
         This will return ``True`` if the log in attempt succeeds, and ``False`` if
@@ -72,7 +72,7 @@ class SecurityService(Service):
         # this method's logic is modified from flask_login.utils.login_user
 
         if not force:
-            if not user.active:
+            if not user.is_active:
                 raise AuthenticationError(
                     _('flask_unchained.bundles.security:error.disabled_account'))
 
@@ -136,7 +136,7 @@ class SecurityService(Service):
         should_login_user = (should_login_user if allow_login is None
                              else allow_login and should_login_user)
         if should_login_user:
-            user.active = True
+            user.is_active = True
 
         # confirmation token depends on having user.id set, which requires
         # the user be committed to the database
@@ -258,7 +258,7 @@ class SecurityService(Service):
         if user.confirmed_at is not None:
             return False
         user.confirmed_at = self.security.datetime_factory()
-        user.active = True
+        user.is_active = True
         self.user_manager.save(user)
 
         user_confirmed.send(app._get_current_object(), user=user)

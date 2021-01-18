@@ -22,7 +22,7 @@ class TestUsersCommands:
         def user_line(user):
             return (f" {user.id}  "
                     f"{user.email}  "
-                    f"{user.active}    "
+                    f"{user.is_active}    "
                     f"{user.confirmed_at.strftime('%Y-%m-%d %H:%M%z')}")
 
         assert lines[-1] == user_line(users[-1])
@@ -38,7 +38,7 @@ class TestUsersCommands:
         ], input='y\n')
         assert result.exit_code == 0
         assert result.output.strip().splitlines()[-1] == \
-            "Successfully created User(id=1, email='a@a.com', active=True)"
+            "Successfully created User(id=1, email='a@a.com', is_active=True)"
         assert user_manager.get_by(email='a@a.com')
 
     def test_delete_user(self, user, cli_runner, user_manager):
@@ -46,7 +46,7 @@ class TestUsersCommands:
                                    input='y\n')
         assert result.exit_code == 0
         assert result.output.strip().splitlines()[-1] == \
-            "Successfully deleted User(id=1, email='user@example.com', active=True)"
+            "Successfully deleted User(id=1, email='user@example.com', is_active=True)"
         assert not user_manager.get_by(email='user@example.com')
 
     @pytest.mark.user(password='old-password')
@@ -58,9 +58,10 @@ class TestUsersCommands:
             '--no-email',
         ], input='y\n')
         assert result.exit_code == 0
-        assert result.output.strip().splitlines()[-1] == \
-            "Successfully updated password for " \
-            "User(id=1, email='user@example.com', active=True)"
+        assert result.output.strip().splitlines()[-1] == (
+            "Successfully updated password for "
+            "User(id=1, email='user@example.com', is_active=True)"
+        )
         assert security_utils_service.verify_password(user, 'new-password')
 
     @pytest.mark.user(confirmed_at=None)
@@ -71,31 +72,32 @@ class TestUsersCommands:
         user = user_manager.get_by(email='user@example.com')
         assert result.exit_code == 0
         assert user.confirmed_at
-        assert result.output.strip().splitlines()[-1] == \
-            "Successfully confirmed User(id=1, email='user@example.com', active=True) " \
+        assert result.output.strip().splitlines()[-1] == (
+            "Successfully confirmed User(id=1, email='user@example.com', is_active=True) "
             f"at {user.confirmed_at.strftime('%Y-%m-%d %H:%M:%S%z')}"
+        )
 
-    @pytest.mark.user(active=False)
+    @pytest.mark.user(is_active=False)
     def test_activate_user(self, user, cli_runner, user_manager):
-        assert not user.active
+        assert not user.is_active
         result = cli_runner.invoke(activate_user, args=['email=user@example.com'],
                                    input='y\n')
         user = user_manager.get_by(email='user@example.com')
         assert result.exit_code == 0
         assert result.output.strip().splitlines()[-1] == \
-            "Successfully activated User(id=1, email='user@example.com', active=True)"
-        assert user.active is True
+            "Successfully activated User(id=1, email='user@example.com', is_active=True)"
+        assert user.is_active is True
 
-    @pytest.mark.user(active=True)
+    @pytest.mark.user(is_active=True)
     def test_deactivate_user(self, user, cli_runner, user_manager):
-        assert user.active
+        assert user.is_active
         result = cli_runner.invoke(deactivate_user, args=['email=user@example.com'],
                                    input='y\n')
         user = user_manager.get_by(email='user@example.com')
         assert result.exit_code == 0
         assert result.output.strip().splitlines()[-1] == \
-            "Successfully deactivated User(id=1, email='user@example.com', active=False)"
-        assert user.active is False
+            "Successfully deactivated User(id=1, email='user@example.com', is_active=False)"
+        assert user.is_active is False
 
     @pytest.mark.user(user_role=None, _user_role=None)
     @pytest.mark.role(name='new-role')
@@ -107,9 +109,10 @@ class TestUsersCommands:
         ], input='y\n')
         user = user_manager.get_by(email='user@example.com')
         assert result.exit_code == 0
-        assert result.output.strip().splitlines()[-1] == \
-            "Successfully added Role(id=1, name='new-role') " \
-            "to User(id=1, email='user@example.com', active=True)"
+        assert result.output.strip().splitlines()[-1] == (
+            "Successfully added Role(id=1, name='new-role') "
+            "to User(id=1, email='user@example.com', is_active=True)"
+        )
         assert role in user.roles
 
     @pytest.mark.user(user_role=None)
@@ -122,7 +125,8 @@ class TestUsersCommands:
         ], input='y\n')
         user = user_manager.get_by(email='user@example.com')
         assert result.exit_code == 0
-        assert result.output.strip().splitlines()[-1] == \
-            f"Successfully removed Role(id=1, name='{role.name}') " \
-            f"from User(id=1, email='user@example.com', active=True)"
+        assert result.output.strip().splitlines()[-1] == (
+            f"Successfully removed Role(id=1, name='{role.name}') "
+            f"from User(id=1, email='user@example.com', is_active=True)"
+        )
         assert not user.roles

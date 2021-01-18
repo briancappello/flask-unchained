@@ -23,7 +23,7 @@ class UserSerializer(ma.ModelSerializer):
     class Meta:
         model = User
         exclude = ('confirmed_at', 'created_at', 'updated_at', 'user_roles')
-        dump_only = ('active', 'roles')
+        dump_only = ('is_active', 'roles')
         load_only = ('password',)
 
     @ma.validates('email')

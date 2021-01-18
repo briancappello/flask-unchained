@@ -28,7 +28,7 @@ def list_users():
             ['ID', 'Email', 'Active', 'Confirmed At'],
             [(user.id,
               user.email,
-              'True' if user.active else 'False',
+              'True' if user.is_active else 'False',
               user.confirmed_at.strftime('%Y-%m-%d %H:%M%z')
                 if user.confirmed_at else 'None',
               ) for user in users])
@@ -57,7 +57,7 @@ def create_user(email, password, active, confirmed_at, send_email):
     """
     if confirmed_at == 'now':
         confirmed_at = security.datetime_factory()
-    user = user_manager.create(email=email, password=password, active=active,
+    user = user_manager.create(email=email, password=password, is_active=active,
                                confirmed_at=confirmed_at)
     if click.confirm(f'Are you sure you want to create {user!r}?'):
         security_service.register_user(user, allow_login=False, send_email=send_email)
@@ -134,7 +134,7 @@ def activate_user(query):
     """
     user = _query_to_user(query)
     if click.confirm(f'Are you sure you want to activate {user!r}?'):
-        user.active = True
+        user.is_active = True
         user_manager.save(user, commit=True)
         click.echo(f'Successfully activated {user!r}')
     else:
@@ -151,7 +151,7 @@ def deactivate_user(query):
     """
     user = _query_to_user(query)
     if click.confirm(f'Are you sure you want to deactivate {user!r}?'):
-        user.active = False
+        user.is_active = False
         user_manager.save(user, commit=True)
         click.echo(f'Successfully deactivated {user!r}')
     else:

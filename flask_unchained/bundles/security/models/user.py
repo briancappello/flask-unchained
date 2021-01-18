@@ -9,20 +9,20 @@ MIN_PASSWORD_LENGTH = 8
 
 class User(db.Model):
     """
-    Base user model. Includes :attr:`email`, :attr:`password`, :attr:`active`,
+    Base user model. Includes :attr:`email`, :attr:`password`, :attr:`is_active`,
     and :attr:`confirmed_at` columns, and a many-to-many relationship to the
     :class:`~flask_unchained.bundles.security.Role` model via the intermediary
     :class:`~flask_unchained.bundles.security.UserRole` join table.
     """
     class Meta:
         lazy_mapped = True
-        repr = ('id', 'email', 'active')
+        repr = ('id', 'email', 'is_active')
 
     email = db.Column(db.String(64), unique=True, index=True, info=dict(
         required=_('flask_unchained.bundles.security:email_required'),
         validators=[EmailValidator]))
     _password = db.Column('password', db.String, nullable=True)
-    active = db.Column(db.Boolean(name='active'), default=False)
+    is_active = db.Column(db.Boolean(name='is_active'), default=False)
     confirmed_at = db.Column(db.DateTime(), nullable=True)
 
     user_roles = db.relationship('UserRole', back_populates='user',

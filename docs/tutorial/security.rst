@@ -52,20 +52,20 @@ Let's start with configuring our database models, because the views will be brok
 
    class User(db.Model):
        """
-       Base :class:`User` model. Includes :attr:`email`, :attr:`password`, :attr:`active`,
+       Base :class:`User` model. Includes :attr:`email`, :attr:`password`, :attr:`is_active`,
        and :attr:`confirmed_at` columns, and a many-to-many relationship to the
        :class:`Role` model via the intermediary :class:`UserRole` join table.
        """
        class Meta:
            lazy_mapped = True
-           repr = ('id', 'email', 'active')
+           repr = ('id', 'email', 'is_active')
 
        email = db.Column(db.String(64), unique=True, index=True, info=dict(
            required=_('flask_unchained.bundles.security:email_required'),
            validators=[EmailValidator]))
        _password = db.Column('password', db.String, info=dict(
            required=_('flask_unchained.bundles.security:password_required')))
-       active = db.Column(db.Boolean(name='active'), default=False)
+       is_active = db.Column(db.Boolean(name='is_active'), default=False)
        confirmed_at = db.Column(db.DateTime(), nullable=True)
 
        user_roles = db.relationship('UserRole', back_populates='user',
@@ -237,7 +237,7 @@ And review them to make sure it's going to do what we want:
        op.create_table('user',
            sa.Column('email', sa.String(length=64), nullable=False),
            sa.Column('password', sa.String(), nullable=False),
-           sa.Column('active', sa.Boolean(name='active'), nullable=False),
+           sa.Column('is_active', sa.Boolean(name='is_active'), nullable=False),
            sa.Column('confirmed_at', sqla_bundle.DateTime(timezone=True), nullable=True),
            sa.Column('id', sqla_bundle.BigInteger(), nullable=False),
            sa.Column('created_at', sqla_bundle.DateTime(timezone=True),
@@ -307,14 +307,14 @@ First we need to create our fixtures directory and files. The file names must ma
    admin:
      email: your_email@somewhere.com
      password: 'a secure password'
-     active: True
+     is_active: True
      confirmed_at: utcnow
      roles: ['Role(ROLE_ADMIN, ROLE_USER)']
 
    user:
      email: user@flaskr.com
      password: password
-     active: True
+     is_active: True
      confirmed_at: utcnow
      roles: ['Role(ROLE_USER)']
 
@@ -330,8 +330,8 @@ Running the fixtures should create two users and two roles in our dev db:
    Loading fixtures from `db/fixtures` directory
    Created ROLE_USER: Role(id=1, name='ROLE_USER')
    Created ROLE_ADMIN: Role(id=2, name='ROLE_ADMIN')
-   Created admin: User(id=1, email='your_email@somewhere.com', active=True)
-   Created user: User(id=2, email='user@flaskr.com', active=True)
+   Created admin: User(id=1, email='your_email@somewhere.com', is_active=True)
+   Created user: User(id=2, email='user@flaskr.com', is_active=True)
    Finished adding fixtures
 
 Sweet. Let's set up our views so we can actually login to our site!
@@ -482,7 +482,7 @@ Unlike all of our earlier tests, testing the security bundle views requires that
 
        email = 'user@example.com'
        password = 'password'
-       active = True
+       is_active = True
        confirmed_at = datetime.now(timezone.utc)
 
 

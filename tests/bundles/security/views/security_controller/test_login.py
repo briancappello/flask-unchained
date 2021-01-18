@@ -25,7 +25,7 @@ class TestHtmlLogin:
         assert r.path == '/'
         assert current_user == user
 
-    @pytest.mark.user(active=False)
+    @pytest.mark.user(is_active=False)
     def test_active_user_required(self, client, templates, user):
         r = client.post('security_controller.login', data=dict(email=user.email,
                                                                password='password'))
@@ -58,9 +58,8 @@ class TestApiLogin:
         assert r.json['user']['id'] == user.id
         assert current_user == user
 
-    def test_active_user_required(self, api_client, user,
-                                  session_manager: SessionManager):
-        user.active = False
+    def test_active_user_required(self, api_client, user, session_manager: SessionManager):
+        user.is_active = False
         session_manager.save(user, commit=True)
         r = api_client.post('security_api.login',
                             data=dict(email=user.email, password='password'))

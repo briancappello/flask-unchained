@@ -447,7 +447,7 @@ And add the following to the bottom of your ``project-root/app.py``:
         user = user_manager.create(email='demo@example.com',
                                    password='password',
                                    favorite_color='magenta',
-                                   active=True,
+                                   is_active=True,
                                    commit=True)
         security_service.login_user(user)
 
