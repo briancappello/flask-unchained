@@ -19,6 +19,25 @@ def shell():
         IPython.embed(header=_get_shell_banner(), user_ns=ctx)
     except ImportError:
         import code
+
+        # Site, customize, or startup script can set a hook to call when
+        # entering interactive mode. The default one sets up readline with
+        # tab and history completion.
+        interactive_hook = getattr(sys, "__interactivehook__", None)
+
+        if interactive_hook is not None:
+            try:
+                import readline
+                from rlcompleter import Completer
+            except ImportError:
+                pass
+            else:
+                # rlcompleter uses __main__.__dict__ by default, which is
+                # flask.__main__. Use the shell context instead.
+                readline.set_completer(Completer(ctx).complete)
+
+            interactive_hook()
+
         code.interact(banner=_get_shell_banner(verbose=True), local=ctx)
 
 

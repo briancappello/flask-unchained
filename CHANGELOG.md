@@ -4,6 +4,7 @@
 ## v0.8.2 (unreleased)
 
 - fix security bundle salt configuration for itsdangerous 2.0+
+- add shell readline completion (from [Flask PR 3960](https://github.com/pallets/flask/pull/3960))
 
 ## v0.8.1 (2021/01/17)
 
