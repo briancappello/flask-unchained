@@ -140,7 +140,7 @@ class FlaskCliRunner(CliRunner):
         if cli is None:
             cli = self.app.cli
         if 'obj' not in kwargs:
-            kwargs['obj'] = ScriptInfo(create_app=lambda _: self.app)
+            kwargs['obj'] = ScriptInfo(create_app=lambda _=None: self.app)
         return super().invoke(cli, args, **kwargs)
 
 
