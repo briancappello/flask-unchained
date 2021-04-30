@@ -30,6 +30,11 @@ class AuthenticationConfig:
     "Remember me?" option.
     """
 
+    SECURITY_REMEMBER_SALT = 'security-remember-salt'
+    """
+    Salt used for the remember me cookie token.
+    """
+
     SECURITY_USER_IDENTITY_ATTRIBUTES = ['email']  # FIXME-identity
     """
     List of attributes on the user model that can used for logging in with.
@@ -153,6 +158,11 @@ class ForgotPasswordConfig:
     Form class to use for the reset password form.
     """
 
+    SECURITY_RESET_SALT = 'security-reset-salt'
+    """
+    Salt used for the reset token.
+    """
+
     SECURITY_RESET_PASSWORD_WITHIN = '5 days'
     """
     Specifies the amount of time a user has before their password reset link
@@ -227,6 +237,11 @@ class RegistrationConfig:
     SECURITY_SEND_CONFIRMATION_FORM = SendConfirmationForm
     """
     Form class to use for the (re)send confirmation email form.
+    """
+
+    SECURITY_CONFIRM_SALT = 'security-confirm-salt'
+    """
+    Salt used for the confirmation token.
     """
 
     SECURITY_LOGIN_WITHOUT_CONFIRMATION = False

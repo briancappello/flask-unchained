@@ -54,7 +54,6 @@ class Security(_SecurityConfigProperties):
         self.confirm_serializer = None
         self.hashing_context = None
         self.login_manager = None
-        self.login_serializer = None
         self.principal = None
         self.pwd_context = None
         self.remember_token_serializer = None
@@ -66,7 +65,6 @@ class Security(_SecurityConfigProperties):
         self.hashing_context = self._get_hashing_context(app)
         self.login_manager = self._get_login_manager(
             app, app.config.SECURITY_ANONYMOUS_USER)
-        self.login_serializer = self._get_serializer(app, 'login')
         self.principal = self._get_principal(app)
         self.pwd_context = self._get_pwd_context(app)
         self.remember_token_serializer = self._get_serializer(app, 'remember')
@@ -231,11 +229,11 @@ class Security(_SecurityConfigProperties):
         Get a URLSafeTimedSerializer for the given serialization context name.
 
         :param app: the :class:`FlaskUnchained` instance
-        :param name: Serialization context. One of ``confirm``, ``login``,
-          ``remember``, or ``reset``
+        :param name: Serialization context. One of ``confirm``, ``remember``,
+         or ``reset``
         :return: URLSafeTimedSerializer
         """
-        salt = app.config.get('SECURITY_%s_SALT' % name.upper())
+        salt = app.config.get(f'SECURITY_{name.upper()}_SALT', f'security-{name}-salt')
         return URLSafeTimedSerializer(secret_key=app.config.SECRET_KEY, salt=salt)
 
     def _identity_loader(self) -> Union[Identity, None]:
