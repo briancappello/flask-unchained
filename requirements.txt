@@ -28,7 +28,7 @@ IPython==7.16.0
 itsdangerous==1.1.0
 jedi==0.17.2
 jinja2==2.11.2
-lxml==4.6.2
+lxml==4.6.3
 markupsafe==1.1.1
 marshmallow==3.9.1
 marshmallow-sqlalchemy==0.24.1
