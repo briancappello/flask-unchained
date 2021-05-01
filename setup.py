@@ -95,7 +95,7 @@ setup(
         'sqlalchemy': [
             'factory_boy>=2.11.1',
             'flask-migrate>=2.5.3',
-            'flask-sqlalchemy-unchained>=0.7.3',
+            'flask-sqlalchemy-unchained>=0.7.4',
             'sqlalchemy-unchained>=0.11.0',
             'wtforms_sqlalchemy>=0.2',
         ],

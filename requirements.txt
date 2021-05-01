@@ -17,7 +17,7 @@ flask_migrate==2.5.3
 flask-oauthlib==0.9.5
 flask-principal==0.4.0
 flask-session==0.3.2
-flask-sqlalchemy-unchained==0.7.3
+flask-sqlalchemy-unchained==0.7.4
 flask_wtf==0.14.3
 graphene==2.1.8
 graphene-sqlalchemy==2.3.0
