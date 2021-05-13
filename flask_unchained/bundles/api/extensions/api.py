@@ -1,7 +1,4 @@
-try:
-    from apispec.ext.marshmallow.openapi import __location_map__
-except ImportError:
-    __location_map__ = {}  # allow bundles to import from here without apispec installed
+from apispec.ext.marshmallow.openapi import __location_map__
 
 from flask_unchained import FlaskUnchained, unchained
 from flask_unchained.bundles.controller.constants import (
@@ -28,8 +25,11 @@ class Api:
     def init_app(self, app: FlaskUnchained):
         self.app = app
         app.extensions['api'] = self
-
-        self.spec = APISpec(app, plugins=app.config.API_APISPEC_PLUGINS)
+        self.spec = APISpec(title=app.config.API_TITLE or app.name,
+                            version=app.config.API_VERSION,
+                            openapi_version=app.config.API_OPENAPI_VERSION,
+                            plugins=app.config.API_APISPEC_PLUGINS,
+                            info=dict(description=app.config.API_DESCRIPTION))
 
     def register_serializer(self, serializer, name=None, **kwargs):
         """
@@ -40,7 +40,7 @@ class Api:
         :param kwargs:
         """
         name = name or serializer.Meta.model.__name__
-        self.spec.definition(name, schema=serializer, **kwargs)
+        self.spec.components.schema(name, schema=serializer, **kwargs)
 
     # FIXME need to be able to create 'fake' schemas for the query parameter
     def register_model_resource(self, resource: ModelResource):
@@ -50,7 +50,7 @@ class Api:
         :param resource:
         """
         model_name = resource.Meta.model.__name__
-        self.spec.add_tag({
+        self.spec.tag({
             'name': model_name,
             'description': resource.Meta.model.__doc__,
         })
@@ -134,39 +134,8 @@ class Api:
             routes = unchained.controller_bundle.controller_endpoints[key]
             for route in routes:
                 for rule in self.app.url_map.iter_rules(route.endpoint):
-                    self.spec.add_path(app=self.app, rule=rule, operations=docs,
-                                       view=route.view_func)
-
-    def register_converter(self, converter, conv_type, conv_format=None, *, name=None):
-        """
-        Register custom path parameter converter.
-
-        :param BaseConverter converter: Converter
-            Subclass of werkzeug's BaseConverter
-        :param str conv_type: Parameter type
-        :param str conv_format: Parameter format (optional)
-        :param str name: Name of the converter. If not None, this name is used
-            to register the converter in the Flask app.
-            Example::
-
-                api.register_converter(
-                    UUIDConverter, 'string', 'UUID', name='uuid')
-                @blp.route('/pets/{uuid:pet_id}')
-                    # ...
-                api.register_blueprint(blp)
-
-        This registers the converter in the Flask app and in the internal
-        APISpec instance.
-
-        Once the converter is registered, all paths using it will have
-        corresponding path parameter documented with the right type and format.
-        The `name` parameter need not be passed if the converter is already
-        registered in the app, for instance if it belongs to a Flask extension
-        that already registers it in the app.
-        """
-        if name:
-            self.app.url_map.converters[name] = converter
-        self.spec.register_converter(converter, conv_type, conv_format)
+                    self.spec.path(app=self.app, rule=rule, operations=docs,
+                                   view=route.view_func)
 
     def register_field(self, field, *args):
         """

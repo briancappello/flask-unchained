@@ -38,10 +38,11 @@ setup(
             'flask-admin>=1.5.7',
         ],
         'api': [
-            'apispec>=3.3.1,<4',
+            'apispec>=4.4.1,<5',
+            'apispec-webframeworks>=0.5.2',
             'flask-marshmallow>=0.14.0',
             'marshmallow>=3.9.1',
-            'marshmallow-sqlalchemy>=0.24.1',
+            'marshmallow-sqlalchemy>=0.24.3',
         ],
         'asyncio': [
             'quart>=0.13.1',

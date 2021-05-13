@@ -12,10 +12,6 @@ class Config(BundleConfig):
     API_REDOC_SOURCE_URL = \
         'https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js'
 
-    API_REDOC_URL_PREFIX = '/api-docs'
-    API_REDOC_PATH = '/'
-    API_OPENAPI_JSON_PATH = 'openapi.json'
-
     API_TITLE = None
     API_VERSION = 1
     API_DESCRIPTION = None

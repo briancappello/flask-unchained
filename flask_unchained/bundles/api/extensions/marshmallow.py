@@ -1,13 +1,8 @@
-from flask import Flask
+import marshmallow as ma
+import flask_marshmallow as flask_ma
 
-try:
-    import marshmallow as ma
-    import flask_marshmallow as flask_ma
-    from flask_marshmallow.sqla import HyperlinkRelated
-except ImportError:
-    from py_meta_utils import OptionalClass as ma
-    from py_meta_utils import OptionalClass as flask_ma
-    from py_meta_utils import OptionalClass as HyperlinkRelated
+from flask_marshmallow.sqla import HyperlinkRelated
+from flask_unchained import FlaskUnchained
 
 from ..model_serializer import ModelSerializer
 
@@ -153,7 +148,7 @@ class Marshmallow:
         self.Hyperlinks = flask_ma.fields.Hyperlinks
         self.HyperlinkRelated = HyperlinkRelated
 
-    def init_app(self, app: Flask):
+    def init_app(self, app: FlaskUnchained):
         db = app.extensions['sqlalchemy'].db
         self.ModelSerializer.OPTIONS_CLASS.session = db.session
         app.extensions['ma'] = self

@@ -47,9 +47,6 @@ class ApiBundle(Bundle):
         :meth:`~flask_unchained.bundles.api.extensions.Marshmallow.serializer`)
         """
 
-    # the template folder gets set manually by the OpenAPI bp
-    template_folder = None
-
     def after_init_app(self, app: FlaskUnchained):
         """
         Configure the JSON encoder for Flask to be able to serialize Enums,
