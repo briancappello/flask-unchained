@@ -25,7 +25,8 @@ class BundleBlueprintSetupState(BaseBlueprintSetupState):
             endpoint = _endpoint_from_view_func(view_func)
         # only automatically prefix endpoints if no prefix was explicitly provided
         if '.' not in endpoint:
-            endpoint = f'{self.name_prefix}{self.blueprint.name}.{endpoint}'
+            name_prefix = getattr(self, "name_prefix", "")
+            endpoint = f'{name_prefix}{self.blueprint.name}.{endpoint}'
         defaults = self.url_defaults
         if 'defaults' in options:
             defaults = dict(defaults, **options.pop('defaults'))
