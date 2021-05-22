@@ -1,11 +1,13 @@
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec.ext.marshmallow.openapi import __location_map__
+from apispec_webframeworks.flask import FlaskPlugin
 
 from flask_unchained import FlaskUnchained, unchained
 from flask_unchained.bundles.controller.constants import (
     CREATE, DELETE, GET, LIST, PATCH, PUT)
 from flask_unchained.string_utils import title_case, pluralize
 
-from ..apispec import APISpec
 from ..model_resource import ModelResource
 
 
@@ -20,15 +22,24 @@ class Api:
 
     def __init__(self):
         self.app: FlaskUnchained = None
+        self.flask_plugin: FlaskPlugin = None
+        self.ma_plugin: MarshmallowPlugin = None
         self.spec: APISpec = None
 
     def init_app(self, app: FlaskUnchained):
         self.app = app
         app.extensions['api'] = self
+
+        plugins = app.config.API_APISPEC_PLUGINS
+        plugins = plugins and list(plugins) or []
+        self.flask_plugin = FlaskPlugin()
+        self.ma_plugin = MarshmallowPlugin()
+        plugins.extend([self.flask_plugin, self.ma_plugin])
+
         self.spec = APISpec(title=app.config.API_TITLE or app.name,
                             version=app.config.API_VERSION,
                             openapi_version=app.config.API_OPENAPI_VERSION,
-                            plugins=app.config.API_APISPEC_PLUGINS,
+                            plugins=plugins,
                             info=dict(description=app.config.API_DESCRIPTION))
 
     def register_serializer(self, serializer, name=None, **kwargs):
@@ -39,8 +50,9 @@ class Api:
         :param name:
         :param kwargs:
         """
-        name = name or serializer.Meta.model.__name__
-        self.spec.components.schema(name, schema=serializer, **kwargs)
+        name = name or serializer.__name__
+        if name not in self.spec.components.schemas:
+            self.spec.components.schema(name, schema=serializer, **kwargs)
 
     # FIXME need to be able to create 'fake' schemas for the query parameter
     def register_model_resource(self, resource: ModelResource):
@@ -158,4 +170,4 @@ class Api:
             # Map to ('integer, 'int32')
             api.register_field(CustomIntegerField, ma.fields.Integer)
         """
-        self.spec.register_field(field, *args)
+        self.ma_plugin.map_to_openapi_type(*args)(field)

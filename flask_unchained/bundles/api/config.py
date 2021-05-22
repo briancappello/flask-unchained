@@ -8,7 +8,7 @@ class Config(BundleConfig):
     Default config settings for the API Bundle.
     """
 
-    API_OPENAPI_VERSION = '2.0'
+    API_OPENAPI_VERSION = '3.0.2'
     API_REDOC_SOURCE_URL = \
         'https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js'
 

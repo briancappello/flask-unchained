@@ -2,6 +2,7 @@ from flask_unchained import AppFactoryHook
 from flask_unchained.hooks.views_hook import ViewsHook
 
 from ..model_resource import ModelResource
+from ..extensions.api import Api
 
 
 class RegisterModelResourcesHook(AppFactoryHook):
@@ -30,6 +31,8 @@ class RegisterModelResourcesHook(AppFactoryHook):
         """
         Configures ModelSerializers on ModelResources.
         """
+        api: Api = app.extensions['api']
+
         for resource_cls in objects.values():
             if isinstance(resource_cls.Meta.model, str):
                 resource_cls.Meta.model = \
@@ -38,6 +41,7 @@ class RegisterModelResourcesHook(AppFactoryHook):
 
             self.attach_serializers_to_resource_cls(model_name, resource_cls)
             self.bundle.resources_by_model[model_name] = resource_cls
+            api.register_model_resource(resource_cls)
 
     def attach_serializers_to_resource_cls(self, model_name, resource_cls):
         try:

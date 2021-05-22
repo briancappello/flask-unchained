@@ -37,20 +37,20 @@ class RegisterModelSerializersHook(AppFactoryHook):
         """
         Registers model serializers onto the API Bundle instance.
         """
-        for name, serializer in serializers.items():
-            self.bundle.serializers[name] = serializer
+        for name, serializer_cls in serializers.items():
+            self.bundle.serializers[name] = serializer_cls
 
-            model = serializer.Meta.model
+            model = serializer_cls.Meta.model
             model_name = model if isinstance(model, str) else model.__name__
 
-            kind = getattr(serializer, '__kind__', 'all')
+            kind = getattr(serializer_cls, '__kind__', 'all')
+            api.register_serializer(serializer_cls)
             if kind == 'all':
-                self.bundle.serializers_by_model[model_name] = serializer
-                api.register_serializer(serializer, name=title_case(model_name))
+                self.bundle.serializers_by_model[model_name] = serializer_cls
             elif kind == 'create':
-                self.bundle.create_by_model[model_name] = serializer
+                self.bundle.create_by_model[model_name] = serializer_cls
             elif kind == 'many':
-                self.bundle.many_by_model[model_name] = serializer
+                self.bundle.many_by_model[model_name] = serializer_cls
 
     def type_check(self, obj: Any) -> bool:
         """

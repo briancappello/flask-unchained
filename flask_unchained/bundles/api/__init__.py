@@ -7,6 +7,7 @@ from speaklater import _LazyString
 from .extensions import Api, Marshmallow, api, ma
 from .model_resource import ModelResource
 from .model_serializer import ModelSerializer
+from .views import OpenAPIController
 
 
 class ApiBundle(Bundle):
@@ -52,14 +53,6 @@ class ApiBundle(Bundle):
         Configure the JSON encoder for Flask to be able to serialize Enums,
         LocalProxy objects, and SQLAlchemy models.
         """
-        self.set_json_encoder(app)
-        app.before_first_request(self.register_model_resources)
-
-    def register_model_resources(self):
-        for resource in unchained.api_bundle.resources_by_model.values():
-            api.register_model_resource(resource)
-
-    def set_json_encoder(self, app: FlaskUnchained):
         from flask_unchained.bundles.sqlalchemy import BaseModel
 
         class JSONEncoder(app.json_encoder):
