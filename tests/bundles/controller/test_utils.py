@@ -190,6 +190,9 @@ class TestValidateRedirectUrl:
     def test_it_fails_on_garbage(self):
         assert _validate_redirect_url(None) is False
         assert _validate_redirect_url(' ') is False
+        assert _validate_redirect_url('///evil.com') is False
+        assert _validate_redirect_url('\\\\\\evil.com') is False
+        assert _validate_redirect_url('\x00evil.com') is False
 
     def test_it_fails_with_invalid_netloc(self, app, monkeypatch):
         with app.test_request_context():
@@ -197,17 +200,30 @@ class TestValidateRedirectUrl:
             assert _validate_redirect_url('http://fail.com') is False
             monkeypatch.undo()
 
-    @pytest.mark.options(EXTERNAL_SERVER_NAME='works.com')
+    def test_it_requires_same_scheme(self, app, monkeypatch):
+        with app.test_request_context():
+            monkeypatch.setattr('flask.request.host_url', 'https://example.com')
+            assert _validate_redirect_url('http://example.com/foo') is False
+            monkeypatch.undo()
+
+    @pytest.mark.options(EXTERNAL_SERVER_NAME='http://works.com')
     def test_it_works_with_external_server_name(self, app, monkeypatch):
         with app.test_request_context():
             monkeypatch.setattr('flask.request.host_url', 'http://example.com')
             assert _validate_redirect_url('http://works.com') is True
             monkeypatch.undo()
 
+    @pytest.mark.options(EXTERNAL_SERVER_NAME='https://works.com')
+    def test_it_requires_same_external_server_name_scheme(self, app, monkeypatch):
+        with app.test_request_context():
+            monkeypatch.setattr('flask.request.host_url', 'http://example.com')
+            assert _validate_redirect_url('http://works.com') is False
+            monkeypatch.undo()
+
     def test_it_works_with_explicit_external_host(self, app, monkeypatch):
         with app.test_request_context():
             monkeypatch.setattr('flask.request.host_url', 'http://example.com')
             result = _validate_redirect_url('http://works.com',
-                                            _external_host='works.com')
+                                            _external_host='http://works.com')
             assert result is True
             monkeypatch.undo()

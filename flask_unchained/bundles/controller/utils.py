@@ -185,7 +185,7 @@ def method_name_to_url(method_name) -> str:
 
 def encode_non_url_reserved_characters(url):
     # safe url reserved characters: https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
-    return urlquote(url, safe=":/?#[]@!$&'()*+,;=")
+    return urlquote(url, safe=":/?#[]@!$&'()*+,;=<>")
 
 
 # modified from flask_security.utils.get_post_action_redirect
