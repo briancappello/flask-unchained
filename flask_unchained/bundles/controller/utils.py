@@ -6,7 +6,7 @@ from flask_unchained.string_utils import kebab_case, right_replace, snake_case
 from flask_unchained._compat import is_local_proxy
 from py_meta_utils import _missing
 from typing import *
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, quote as urlquote
 from werkzeug.routing import BuildError, UnicodeConverter
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
@@ -183,6 +183,11 @@ def method_name_to_url(method_name) -> str:
     return '/' + kebab_case(method_name).strip('-')
 
 
+def encode_non_url_reserved_characters(url):
+    # safe url reserved characters: https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
+    return urlquote(url, safe=":/?#[]@!$&'()*+,;=")
+
+
 # modified from flask_security.utils.get_post_action_redirect
 def redirect(where: Optional[str] = None,
              default: Optional[str] = None,
@@ -235,7 +240,7 @@ def redirect(where: Optional[str] = None,
 
     for url in urls:
         if _validate_redirect_url(url, _external_host):
-            return flask_redirect(url)
+            return flask_redirect(encode_non_url_reserved_characters(url))
     return flask_redirect('/')
 
 
@@ -289,15 +294,29 @@ def _url_for(endpoint: str, **values) -> Union[str, None]:
 
 # modified from flask_security.utils.validate_redirect_url
 def _validate_redirect_url(url, _external_host=None):
-    if url is None or url.strip() == '':
+    url = (url or '').strip().replace('\\', '/')
+
+    # reject empty urls and urls starting with 3+ slashes or a control character
+    if not url or url.startswith('///') or ord(url[0]) <= 32:
         return False
+
     url_next = urlsplit(url)
     url_base = urlsplit(request.host_url)
-    external_host = _external_host or current_app.config.get('EXTERNAL_SERVER_NAME', '')
-    if ((url_next.netloc or url_next.scheme)
-            and url_next.netloc != url_base.netloc
-            and url_next.netloc not in external_host):
-        return False
+    if url_next.netloc or url_next.scheme:
+        # require both netloc and scheme
+        if not url_next.netloc or not url_next.scheme:
+            return False
+
+        # if external host, require same netloc and scheme
+        external_host = _external_host or current_app.config.get('EXTERNAL_SERVER_NAME', '')
+        if external_host:
+            url_external = urlsplit(external_host)
+            if url_next.netloc == url_external.netloc and url_next.scheme == url_external.scheme:
+                return True
+
+        # require same netloc and scheme
+        if url_next.netloc != url_base.netloc or url_next.scheme != url_base.scheme:
+            return False
     return True
 
 
