@@ -6,8 +6,8 @@ factory_boy==2.12.0
 m2r==0.2.1
 mock==4.0.2
 psycopg2-binary==2.8.6
-pytest==6.1.2
-pytest-flask==1.1.0
+pytest==6.2.4
+pytest-flask==1.2.0
 sphinx>=2.4.4,<3        # m2r is not compatible with sphinx 3 yet
 sphinx-click==2.5.0
 sphinx-material==0.0.32
