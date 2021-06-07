@@ -1,9 +1,10 @@
 
 # CHANGELOG
 
-## v0.8.2 (unreleased)
+## v0.9.0 (2021/06/07)
 
 - fix security bundle salt configuration for itsdangerous 2.0+
+- fix security bundle redirect vulnerability
 - add shell readline completion (from [Flask PR 3960](https://github.com/pallets/flask/pull/3960))
 - fix `BundleBlueprint.register` to work with Flask 2.0+
 - fix compatibility with click 8.0+
