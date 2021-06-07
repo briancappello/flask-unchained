@@ -1,7 +1,6 @@
 from typing import *
 
 from flask_unchained import AppFactoryHook, FlaskUnchained
-from flask_unchained.string_utils import title_case
 
 from ..model_serializer import ModelSerializer
 from ..extensions import api
