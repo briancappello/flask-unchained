@@ -15,7 +15,7 @@ try:
     from marshmallow.class_registry import _registry
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
     from marshmallow_sqlalchemy.convert import ModelConverter as BaseModelConverter
-    from marshmallow_sqlalchemy.schema.sqlalchemy_schema import (
+    from marshmallow_sqlalchemy.schema import (
         SQLAlchemyAutoSchemaMeta as BaseModelSerializerMetaclass)
     from sqlalchemy.orm import SynonymProperty
 except ImportError:
