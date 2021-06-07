@@ -19,9 +19,7 @@ import click
 import inspect as _inspect
 
 from click import *
-from click.core import _missing
 from click.formatting import join_options as _join_options
-from click.utils import make_default_short_help as _make_default_short_help
 
 
 CLI_HELP_STRING_MAX_LEN = 120
@@ -118,9 +116,7 @@ class Command(click.Command):
 
     # overridden to set the limit parameter to always be CLI_HELP_STRING_MAX_LEN
     def get_short_help_str(self, limit=0):  # skipcq: PYL-W0613 (unused arg)
-        if self.short_help:
-            return self.short_help
-        return _make_default_short_help(self.help or '', CLI_HELP_STRING_MAX_LEN)
+        return super().get_short_help_str(limit=CLI_HELP_STRING_MAX_LEN)
 
 
 class GroupOverrideMixin:
@@ -167,9 +163,7 @@ class GroupOverrideMixin:
 
     # overridden to set the limit parameter to always be CLI_HELP_STRING_MAX_LEN
     def get_short_help_str(self, limit=0):  # skipcq: PYL-W0613 (unused arg)
-        if self.short_help:
-            return self.short_help
-        return _make_default_short_help(self.help or '', CLI_HELP_STRING_MAX_LEN)
+        return super().get_short_help_str(limit=CLI_HELP_STRING_MAX_LEN)
 
 
 class Group(GroupOverrideMixin, click.Group):
@@ -292,27 +286,6 @@ class Argument(click.Argument):
 
 
 class Option(click.Option):
-    def get_default(self, ctx):
-        # If we're a non boolean flag out default is more complex because
-        # we need to look at all flags in the same group to figure out
-        # if we're the the default one in which case we return the flag
-        # value as default.
-        if self.is_flag and not self.is_bool_flag:
-            for param in ctx.command.params:
-                if param.name == self.name and param.default:
-                    return param.flag_value
-            return None
-
-        # Otherwise go with the regular default.
-        if callable(self.default):
-            rv = self.default()
-        else:
-            rv = self.default
-
-        if isinstance(rv, (list, tuple)) and rv[0] is _missing:
-            return rv
-        return self.type_cast_value(ctx, rv)
-
     def type_cast_value(self, ctx, value):
         if isinstance(value, AutoDefault):
             return value
@@ -329,15 +302,7 @@ class Option(click.Option):
         if isinstance(default, AutoDefault):
             return self.type_cast_value(ctx, default.value)
 
-        # If this is a prompt for a flag we need to handle this
-        # differently.
-        if self.is_bool_flag:
-            return confirm(self.prompt, default)
-
-        return prompt(self.prompt, default=default,
-                      hide_input=self.hide_input,
-                      confirmation_prompt=self.confirmation_prompt,
-                      value_proc=lambda x: self.process_value(ctx, x))
+        return super().prompt_for_value(ctx)
 
 
 def command(name=None, cls=None, **attrs):
