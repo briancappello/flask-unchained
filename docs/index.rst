@@ -43,7 +43,7 @@ Flask Unchained is a fully integrated, declarative, object-oriented web framewor
 Install Flask Unchained
 -----------------------
 
-Requires **Python 3.6+**
+Requires **Python 3.7+**
 
 .. code:: shell
 
