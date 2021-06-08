@@ -12,3 +12,4 @@ sphinx>=2.4.4,<3        # m2r is not compatible with sphinx 3 yet
 sphinx-click==2.5.0
 sphinx-material==0.0.32
 tox==3.20.1
+twine==3.4.1
