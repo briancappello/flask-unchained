@@ -1,2 +1,5 @@
 from .security_controller import SecurityController
-from .user_resource import UserResource
+try:
+    from .user_resource import UserResource
+except ImportError:
+    UserResource = None

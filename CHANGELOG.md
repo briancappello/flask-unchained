@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+## v0.9.1 (unreleased)
+
+- do not require the API bundle to be enabled to use the Security Bundle
+
 ## v0.9.0 (2021/06/07)
 
 - fix security bundle salt configuration for itsdangerous 2.0+

@@ -106,6 +106,11 @@ class AppFactoryHook:
     Whether or not to search the whole bundle hierarchy for objects.
     """
 
+    discover_from_package_submodules: bool = True
+    """
+    Whether or not to search the package's child modules, or just its __init__ file.
+    """
+
     limit_discovery_to_local_declarations: bool = True
     """
     Whether or not to only include objects declared within bundles (ie not
@@ -217,6 +222,8 @@ class AppFactoryHook:
             return (type_checker or self.type_check)(obj)
 
         members = dict(self._get_members(module, type_check_wrapper))
+        if not self.discover_from_package_submodules:
+            return members
 
         # if the passed module is a package, also get members from child modules
         if importlib.util.find_spec(module.__name__).submodule_search_locations:

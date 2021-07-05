@@ -24,6 +24,7 @@ class RegisterBlueprintsHook(AppFactoryHook):
 
     bundle_override_module_names_attr = 'blueprints_module_names'
     limit_discovery_to_local_declarations = False
+    discover_from_package_submodules = False
     run_after = ['bundle_blueprints']
 
     # skipcq: PYL-W0221 (parameters mismatch in overridden method)
