@@ -3,8 +3,6 @@ from flask_unchained import AppBundle, FlaskUnchained, generate_csrf
 
 class App(AppBundle):
     def after_init_app(self, app: FlaskUnchained):
-        app.jinja_env.add_extension('jinja2_time.TimeExtension')
-
         @app.after_request
         def set_csrf_token_cookie(response):
             if response:
