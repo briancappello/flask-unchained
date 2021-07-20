@@ -5,6 +5,7 @@
 
 - do not require the API bundle to be enabled to use the Security Bundle
 - fix auto-generated imports in db migrations requiring user app code
+- add compatibility with Flask-Session 0.4.0
 
 ## v0.9.0 (2021/06/07)
 

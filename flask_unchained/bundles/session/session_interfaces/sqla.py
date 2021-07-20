@@ -14,6 +14,7 @@ class SqlAlchemySessionInterface(BaseSqlAlchemySessionInterface):
         self.key_prefix = key_prefix
         self.use_signer = use_signer
         self.permanent = permanent
+        self.has_same_site_capability = hasattr(self, "get_cookie_samesite")
 
         if model_class is not None:
             self.sql_session_model = model_class
