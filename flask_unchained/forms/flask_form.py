@@ -1,5 +1,6 @@
 from flask_unchained.string_utils import snake_case
-from flask_wtf import FlaskForm as BaseForm
+from flask_wtf.form import FlaskForm as BaseForm, _Auto
+from wtforms import FileField as _FileField
 
 
 class FlaskForm(BaseForm):
@@ -32,11 +33,15 @@ class FlaskForm(BaseForm):
     An ordered list of field names. Fields not listed here will be rendered first.
     """
 
-    def __init__(self, formdata=None, obj=None, prefix='', data=None, meta=None,
+    def __init__(self, formdata=_Auto, obj=None, prefix='', data=None, meta=None,
                  **kwargs):
         super().__init__(formdata=formdata, obj=obj, prefix=prefix, data=data, meta=meta,
                          **kwargs)
-        self._name = bytes(snake_case(self.__class__.__name__), 'utf-8')
+        self._name = snake_case(self.__class__.__name__)
+        self._enctype = 'application/x-www-form-urlencoded'
+        for field in self._fields.values():
+            if isinstance(field, _FileField):
+                self._enctype = 'multipart/form-data'
 
     def __iter__(self):
         if not self.field_order:
