@@ -90,7 +90,7 @@ class Config(DefaultFlaskConfigForSessions):
     for more information.
     """
 
-    SESSION_TYPE = 'null'
+    SESSION_TYPE = 'filesystem'
     """
     Specifies which type of session interface to use. Built-in session types:
 
