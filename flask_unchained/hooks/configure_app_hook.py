@@ -38,6 +38,7 @@ class ConfigureAppHook(AppFactoryHook):
 
     require_exactly_one_bundle_module = True
     run_after = ['register_extensions']
+    run_before = ['init_extensions']
 
     def run_hook(self,
                  app: FlaskUnchained,

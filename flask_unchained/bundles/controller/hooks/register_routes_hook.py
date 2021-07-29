@@ -31,6 +31,7 @@ class RegisterRoutesHook(AppFactoryHook):
     """
 
     require_exactly_one_bundle_module = True
+    run_after = ['commands']
     run_before = ['blueprints', 'bundle_blueprints']
 
     def run_hook(self,
