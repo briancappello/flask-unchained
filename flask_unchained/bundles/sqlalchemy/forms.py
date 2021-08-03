@@ -98,6 +98,21 @@ class ModelFieldsMetaOption(MetaOption):
                             f'must be a dictionary')
 
 
+class ModelConverterMetaOption(MetaOption):
+    def __init__(self):
+        super().__init__('model_converter', default=ModelConverter, inherit=True)
+
+    def check_value(self, value: Any, mcs_args: McsArgs):
+        if mcs_args.Meta.abstract:
+            return
+
+        if not isinstance(value, type) or not issubclass(value, ModelConverter):
+            raise TypeError(
+                f'The `model_converter` Meta option for {mcs_args.name} must be a '
+                f'subclass of {ModelConverter.__module__}.ModelConverter'
+            )
+
+
 class ModelFormMetaOptionsFactory(MetaOptionsFactory):
     _options = [
         AbstractMetaOption,
@@ -108,6 +123,7 @@ class ModelFormMetaOptionsFactory(MetaOptionsFactory):
         ExcludePrimaryKeyMetaOption,
         FieldArgsMetaOption,
         ModelFieldsMetaOption,
+        ModelConverterMetaOption,
     ]
 
 
@@ -181,7 +197,7 @@ class ModelFormMetaclass(FormMetaclass):
                                        exclude_pk=Meta.exclude_pk,
                                        field_args=Meta.field_args,
                                        db_session=db.session,
-                                       converter=ModelConverter())
+                                       converter=Meta.model_converter())
             new_clsdict.update(mcs_args.clsdict)  # user-declared fields take precedence
             mcs_args.clsdict = new_clsdict
         return super().__new__(*mcs_args)

@@ -10,6 +10,7 @@
 - move some more database code into sqlalchemy-unchained
 - allow extensions to specify optional dependent extensions
 - add compatibility with upcoming wtforms v3
+- add support for specifying the model converter class for sqlalchemy forms
 
 ## v0.9.0 (2021/06/07)
 
