@@ -1,5 +1,11 @@
 import functools
+import importlib
 import inspect
+import sys
+
+
+wtforms3_compat = importlib.import_module('flask_unchained.forms._compat')
+sys.modules['wtforms.compat'] = wtforms3_compat
 
 
 # *************************************************************************

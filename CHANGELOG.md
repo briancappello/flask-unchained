@@ -9,6 +9,7 @@
 - fix compatibility with Flask-WTF auto-population of form data on submit
 - move some more database code into sqlalchemy-unchained
 - allow extensions to specify optional dependent extensions
+- add compatibility with upcoming wtforms v3
 
 ## v0.9.0 (2021/06/07)
 
