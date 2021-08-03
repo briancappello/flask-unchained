@@ -16,4 +16,4 @@ class RoleAdmin(ModelAdmin):
     form_columns = ('name',)
     form_excluded_columns = ('role_users', 'created_at', 'updated_at')
 
-    column_details_list = ('name', 'created_at', 'updated_at')
+    column_details_list = ('id', 'name', 'created_at', 'updated_at')

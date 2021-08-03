@@ -40,6 +40,11 @@ class Config(BundleConfig):
     Which version of bootstrap to use. (bootstrap2, bootstrap3, or bootstrap4)
     """
 
+    FLASK_ADMIN_FLUID_LAYOUT = True
+    """
+    Whether or not to use the bootstrap fluid container layout.
+    """
+
     ADMIN_CATEGORY_ICON_CLASSES = {}
     """
     Dictionary of admin category icon classes. Keys are category names,

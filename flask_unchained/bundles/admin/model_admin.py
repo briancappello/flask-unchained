@@ -1,7 +1,10 @@
 from datetime import date, datetime
 
 from flask_admin.contrib.sqla import ModelView as _BaseModelAdmin
-from flask_admin.consts import ICON_TYPE_GLYPH
+from flask_admin.consts import ICON_TYPE_FONT_AWESOME
+from flask_admin.model import typefmt
+from sqlalchemy.ext.associationproxy import _AssociationList
+
 from flask_unchained.string_utils import slugify, snake_case
 
 from .forms import ReorderableForm, AdminModelFormConverter
@@ -9,9 +12,14 @@ from .macro import macro
 from .security import AdminSecurityMixin
 
 
-EXTEND_BASE_CLASS_ATTRIBUTES = (
+EXTEND_BASE_CLASS_DICT_ATTRIBUTES = (
     'column_formatters',
     'column_type_formatters',
+    'column_type_formatters_detail',
+)
+EXTEND_BASE_CLASS_LIST_ATTRIBUTES = (
+    'column_exclude_list',
+    'form_excluded_columns',
 )
 
 
@@ -50,35 +58,47 @@ class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin):
     model = None
     category_name = None
     menu_class_name = None
-    menu_icon_type = ICON_TYPE_GLYPH
+    menu_icon_type = ICON_TYPE_FONT_AWESOME
     menu_icon_value = None
 
     column_exclude_list = ('created_at', 'updated_at')
     form_excluded_columns = ('created_at', 'updated_at')
-
-    column_type_formatters = {
-        datetime: lambda view, dt: dt.strftime('%-m/%-d/%Y %-I:%M %p %Z'),
-        date: lambda view, d: d.strftime('%-m/%-d/%Y'),
-    }
 
     column_formatters = {
         'created_at': macro('column_formatters.datetime'),
         'updated_at': macro('column_formatters.datetime'),
     }
 
+    column_type_formatters = {
+        datetime: lambda view, dt: dt.strftime('%-m/%-d/%Y %-I:%M %p %Z'),
+        date: lambda view, d: d.strftime('%-m/%-d/%Y'),
+        _AssociationList: lambda view, values: ', '.join(str(v) for v in values),
+        **typefmt.BASE_FORMATTERS,
+    }
+
+    column_type_formatters_detail = {
+        datetime: lambda view, dt: dt.strftime('%-m/%-d/%Y %-I:%M %p %Z'),
+        date: lambda view, d: d.strftime('%-m/%-d/%Y'),
+        _AssociationList: lambda view, values: ', '.join(str(v) for v in values),
+        **typefmt.DETAIL_FORMATTERS,
+    }
+
     form_base_class = ReorderableForm
     model_form_converter = AdminModelFormConverter
 
     def __getattribute__(self, item):
-        """Allow class attribute names in EXTEND_BASE_CLASS_ATTRIBUTES that are
-        defined on subclasses to automatically extend the equivalently named
-        attribute on this base class
+        """Allow class attribute names in EXTEND_BASE_CLASS_DICT_ATTRIBUTES
+        that are defined on subclasses to automatically extend the equivalently
+        named attribute on this base class.
 
         (a bit of an ugly hack, but hey, it's only the admin)
         """
         value = super().__getattribute__(item)
-        if item in EXTEND_BASE_CLASS_ATTRIBUTES and value is not None:
+        if item in EXTEND_BASE_CLASS_DICT_ATTRIBUTES and isinstance(value, dict):
             base_value = getattr(ModelAdmin, item)
             base_value.update(value)
             return base_value
+        elif item in EXTEND_BASE_CLASS_LIST_ATTRIBUTES and isinstance(value, (list, tuple)):
+            base_value = getattr(ModelAdmin, item)
+            return tuple(list(value) + [v for v in base_value if v not in value])
         return value

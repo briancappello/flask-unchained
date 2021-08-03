@@ -21,7 +21,7 @@ class RegisterModelAdminsHook(AppFactoryHook):
     """
 
     run_before = ['init_extensions']
-    run_after = ['bundle_template_folders', 'register_extensions', 'models']
+    run_after = ['bundle_template_folders', 'configure_app', 'models', 'register_extensions']
 
     def process_objects(self, app, objects):
         """
@@ -34,8 +34,8 @@ class RegisterModelAdminsHook(AppFactoryHook):
         models = self.unchained.sqlalchemy_bundle.models
 
         for admin_cls in objects.values():
-            model = (admin_cls.model if not isinstance(admin_cls.model, str)
-                     else models[admin_cls.model])
+            model = (models[admin_cls.model] if isinstance(admin_cls.model, str)
+                     else models[admin_cls.model.__name__])
             admin_cls.model = model
 
             model_admin = admin_cls(

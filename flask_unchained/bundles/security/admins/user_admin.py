@@ -24,17 +24,21 @@ class UserAdmin(ModelAdmin):
     category_name = 'Security'
     menu_icon_value = 'fa fa-user'
 
-    column_list = ('email', 'is_active')
+    column_list = ('email', 'roles', 'is_active')
     column_searchable_list = ('email',)
-    column_filters = ('is_active',)
+    column_filters = ('is_active', 'roles.name')
 
-    column_details_list = ('email', 'is_active', 'confirmed_at', 'created_at', 'updated_at')
+    column_details_list = ('id',
+                           'email',
+                           'roles',
+                           'is_active',
+                           'confirmed_at',
+                           'created_at',
+                           'updated_at')
     column_editable_list = ('is_active',)
 
     column_formatters = {
         'confirmed_at': macro('column_formatters.datetime'),
-        'created_at': macro('column_formatters.datetime'),
-        'updated_at': macro('column_formatters.datetime'),
     }
 
     form_base_class = BaseUserForm
