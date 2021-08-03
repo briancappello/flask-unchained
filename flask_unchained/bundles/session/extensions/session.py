@@ -19,7 +19,7 @@ class Session(BaseSession):
     def _get_interface(self, app):
         if app.config.SESSION_TYPE == 'sqlalchemy':
             return SqlAlchemySessionInterface(
-                db=app.config.SESSION_SQLALCHEMY,
+                db=app.extensions['sqlalchemy'].db,
                 table=app.config.SESSION_SQLALCHEMY_TABLE,
                 key_prefix=app.config.SESSION_KEY_PREFIX,
                 use_signer=app.config.SESSION_USE_SIGNER,

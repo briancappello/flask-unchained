@@ -5,7 +5,7 @@ session = Session()
 
 
 EXTENSIONS = {
-    'session': session,
+    'session': (session, ['db']),
 }
 
 

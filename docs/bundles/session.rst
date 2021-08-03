@@ -41,8 +41,7 @@ SESSION_TYPE      Extra Required Options
 ``'mongodb'``     * :attr:`~flask_unchained.bundles.session.config.Config.SESSION_MONGODB`
                   * :attr:`~flask_unchained.bundles.session.config.Config.SESSION_MONGODB_DB`
                   * :attr:`~flask_unchained.bundles.session.config.Config.SESSION_MONGODB_COLLECT`
-``'sqlalchemy'``  * :attr:`~flask_unchained.bundles.session.config.Config.SESSION_SQLALCHEMY`
-                  * :attr:`~flask_unchained.bundles.session.config.Config.SESSION_SQLALCHEMY_TABLE`
+``'sqlalchemy'``  * :attr:`~flask_unchained.bundles.session.config.Config.SESSION_SQLALCHEMY_TABLE`
                   * :attr:`~flask_unchained.bundles.session.config.Config.SESSION_SQLALCHEMY_MODEL`
 ================  ================================================================================
 

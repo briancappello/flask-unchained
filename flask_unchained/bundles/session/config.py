@@ -185,11 +185,6 @@ class Config(DefaultFlaskConfigForSessions):
     Defaults to ``'sessions'``.
     """
 
-    SESSION_SQLALCHEMY = db
-    """
-    A :class:`~flask_unchained.bundles.sqlalchemy.SQLAlchemy` extension instance.
-    """
-
     SESSION_SQLALCHEMY_TABLE = 'flask_sessions'
     """
     The name of the SQL table you want to use.

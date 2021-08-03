@@ -79,10 +79,7 @@ class InitExtensionsHook(RegisterExtensionsHook):
 
         rv = []
         for ext_name in extension_order:
-            try:
-                rv.append(dag.nodes[ext_name]['extension_tuple'])
-            except KeyError as e:
-                if 'extension_tuple' not in str(e):
-                    raise e
-                raise Exception(f'Could not locate extension named {ext_name!r}')
+            extension_tuple = dag.nodes[ext_name].get('extension_tuple')
+            if extension_tuple:
+                rv.append(extension_tuple)
         return rv
