@@ -47,9 +47,108 @@ class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin):
     Base class for SQLAlchemy model admins. More or less the same as
     :class:`~flask_admin.contrib.sqla.ModelView`, except we set some
     different defaults.
+
+    # ALL VIEWS
+    # ---------
+    column_labels = dict(attr_name='Label')
+    column_descriptions = dict(attr_name='Description (tooltip help text)')
+
+    # LIST
+    # ----
+    list_template = 'admin/model/list.html'
+    column_list = ('columns', 'to', 'show')
+    column_default_sort = 'default_column_to_sort_on'
+    column_sortable_list = ('sortable', 'column', 'headers')
+    column_exclude_list = ('columns', 'to', 'exclude')
+    column_editable_list = ('columns', 'to', 'inline', 'edit', 'in', 'list', 'view')
+    column_filters = ('filterable', 'columns')  # column names or instances of BaseFilter classes
+    column_searchable_list = ('searchable', 'columns')
+    column_choices = {
+        'column_name': [
+            ('db_value', 'display_value'),
+        ],
+    }
+
+    column_formatters = dict(
+        attr_name=lambda view, context, model, attr_name: getattr(model, attr_name),
+        attr_name=macro('macro_name'),
+    )
+    column_type_formatters = dict(
+        type=lambda view, value: repr(value),
+    )
+
+    action_disallowed_list = ('disallowed', 'action', 'names')  # delete, what else?
+    column_display_actions: bool = True  # show/hide the Actions column of links in the list view
+    column_extra_row_actions = [BaseListRowActionSubclass('fa fa-whatever', 'my_view.endpoint')]
+
+    page_size = 20  # default pagination size
+    can_set_page_size: bool = False  # show a dropdown for setting pagination size
+
+    # EXPORT
+    can_export: bool = False  # allow exporting data from the list view
+    column_export_list = ('list', 'of', 'columns', 'to', 'export')
+    column_export_exclude_list = ('list', 'of', 'columns', 'to', 'exclude')
+    column_formatters_export = dict(  # same as column_formatters, however, macros aren't supported(!?)
+        column_name=lambda view, context, model, attr_name: getattr(model, attr_name),
+    )
+    column_type_formatters_export = dict(type=lambda view, value: repr(value))
+    export_max_rows = 0  # 0==unlimited (default), None==self.page_size, N=limit
+    export_types = ('csv',)  # any format supported by https://github.com/kennethreitz/tablib/
+
+    # CREATE
+    # ------
+    can_create: bool = True  # allow creation
+    create_modal: bool = False   # setting to True makes the create form a modal dialog
+    create_template = 'admin/model/create.html'
+    form_create_rules = 'https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView.form_create_rules'
+
+    # EDIT
+    # ----
+    can_edit: bool = True  # allow editing
+    edit_modal: bool = False  # setting to True shows edit form as a modal
+    edit_modal_template = 'admin/model/modals/edit.html'
+    edit_template = 'admin/model/edit.html'
+    form_edit_rules = 'https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView.form_edit_rules'
+
+    # CREATE & EDIT
+    # -------------
+    form = CustomFormClass  # completely disables automatic form scaffolding functionality
+    form_base_class = CustomFormBaseClass  # uses automatic form scaffolding functionality
+    form_columns = ('columns', 'to', 'include', 'in', 'form')  # also controls order
+    form_excluded_columns = ('columns', 'to', 'exclude', 'from', 'form')
+    form_args = {  # kwargs to pass into WTForms Field classes
+        'column_name': dict(label='Column Name', validators=[]),
+    }
+    form_overrides = {
+        'column_name': wtforms.fields.FieldClass,
+    }
+    form_widget_args = {
+        'column_name': dict(form_widget_kwarg=value),
+    }
+    form_extra_fields = dict(additional_field_name=wtforms.fields.FieldClass('Label'))
+    form_ajax_refs = dict(field_name=dict(kwargs_to_ajax_model_loader))
+    form_rules = https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView.form_rules
+
+    # DETAILS
+    # -------
+    can_view_details: bool = True  # show details tab
+    details_modal: bool = False  # setting to True shows details as a modal
+    details_modal_template = 'admin/model/modals/details.html'
+    details_template = 'admin/model/details.html'
+    column_details_list = ('columns', 'to', 'show')
+    column_details_exclude_list = ('columns', 'to', 'exclude')
+    column_formatters_detail = dict(  # same as column_formatters, however, macros aren't supported(!?)
+        column_name=lambda view, context, model, attr_name: getattr(model, attr_name),
+    )
+    column_type_formatters_detail = dict(type=lambda view, value: repr(value))
+
+    # DELETE
+    # ------
+    can_delete: bool = True  # allow deletion
     """
 
     can_view_details = True
+    named_filter_urls = True
 
     name = _ModelAdminNameDescriptor()
     endpoint = _ModelAdminEndpointDescriptor()
