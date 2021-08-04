@@ -12,6 +12,7 @@
 - add compatibility with upcoming wtforms v3
 - add support for specifying the model converter class for sqlalchemy forms
 - minor admin bundle bugfixes and improvements
+- add `flask users create-superuser` command
 
 ## v0.9.0 (2021/06/07)
 

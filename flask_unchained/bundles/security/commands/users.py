@@ -3,8 +3,9 @@ from flask_unchained.cli import cli, click, print_table
 
 from .utils import _query_to_role, _query_to_user
 from ..extensions import Security
-from ..services import SecurityService, UserManager
+from ..services import RoleManager, SecurityService, UserManager
 
+role_manager: RoleManager = unchained.get_local_proxy('role_manager')
 security: Security = unchained.get_local_proxy('security')
 security_service: SecurityService = unchained.get_local_proxy('security_service')
 user_manager: UserManager = unchained.get_local_proxy('user_manager')
@@ -49,9 +50,11 @@ def list_users():
               help='The date stamp the user was confirmed at (or enter "now") '
                    ' [default: None]',
               default=None, show_default=True)
+@click.option('--role', '-r', multiple=True, default=(), show_default=True,
+              help='A role name this user should belong to.')
 @click.option('--send-email/--no-email', default=False, show_default=True,
               help='Whether or not to send the user a welcome email.')
-def create_user(email, password, active, confirmed_at, send_email):
+def create_user(email, password, active, confirmed_at, role, send_email=False):
     """
     Create a new user.
     """
@@ -61,6 +64,42 @@ def create_user(email, password, active, confirmed_at, send_email):
                                confirmed_at=confirmed_at)
     if click.confirm(f'Are you sure you want to create {user!r}?'):
         security_service.register_user(user, allow_login=False, send_email=send_email)
+        role_names = role
+        for role_name in role_names:
+            role, _ = role_manager.get_or_create(name=role_name)
+            user.roles.append(role)
+        user_manager.save(user, commit=True)
+        click.echo(f'Successfully created {user!r}')
+    else:
+        click.echo('Cancelled.')
+
+
+@users.command('create-superuser')
+@click.option('--email', prompt='Email address',
+              help="The user's email address.")
+@click.option('--password', prompt='Password',
+              help='The user\'s password.',
+              hide_input=True, confirmation_prompt=True)
+@click.option('--active/--inactive', default=True, show_default=True,
+              help='Whether or not the new user should be active.',)
+@click.option('--confirmed-at', default="now", show_default=True,
+              help='The date stamp the user was confirmed at [default: "now"]')
+@click.option('--role', '-r', default="ROLE_ADMIN", show_default=True,
+              help='The admin role name.')
+@click.option('--send-email/--no-email', default=False, show_default=True,
+              help='Whether or not to send the user a welcome email.')
+def create_superuser(email, password, active, confirmed_at, role, send_email):
+    """
+    Create a new admin super user.
+    """
+    if confirmed_at == 'now':
+        confirmed_at = security.datetime_factory()
+    user = user_manager.create(email=email, password=password, is_active=active,
+                               confirmed_at=confirmed_at)
+    if click.confirm(f'Are you sure you want to create {user!r}?'):
+        security_service.register_user(user, allow_login=False, send_email=send_email)
+        role, _ = role_manager.get_or_create(name=role)
+        user.roles.append(role)
         user_manager.save(user, commit=True)
         click.echo(f'Successfully created {user!r}')
     else:
