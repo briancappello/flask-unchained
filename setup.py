@@ -30,7 +30,7 @@ setup(
         'pyterminalsize>=0.1.0',
         'networkx>=2.5',
         'werkzeug>=2.0.1',
-        'wtforms>=2.3.3',
+        'wtforms>=2.3.3,<3',
         'email-validator>=1.1.2',
     ],
     extras_require={
@@ -98,7 +98,7 @@ setup(
             'flask-migrate>=2.5.3',
             'flask-sqlalchemy-unchained>=0.7.6',
             'sqlalchemy>=1.3.24,<2',
-            'sqlalchemy-unchained>=0.12.0',
+            'sqlalchemy-unchained>=0.12.2',
             'wtforms_sqlalchemy>=0.2',
         ],
     },

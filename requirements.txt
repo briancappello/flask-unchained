@@ -42,7 +42,7 @@ pyterminalsize
 pyqt5==5.15.4
 speaklater==1.3
 sqlalchemy==1.3.24
-sqlalchemy-unchained==0.12.0
+sqlalchemy-unchained==0.12.2
 qtconsole==5.1.0
 werkzeug==2.0.1
 wtforms==2.3.3
