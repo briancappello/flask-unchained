@@ -16,7 +16,7 @@ class User(db.Model):
     """
     class Meta:
         lazy_mapped = True
-        repr = ('id', 'email', 'is_active')
+        repr = ('id', 'email', 'roles', 'is_active')
 
     email = db.Column(db.String(64), unique=True, index=True, info=dict(
         required=_('flask_unchained.bundles.security:email_required'),

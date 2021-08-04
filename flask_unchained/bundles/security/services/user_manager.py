@@ -10,3 +10,6 @@ class UserManager(ModelManager):
     """
     class Meta:
         model = User
+
+    def create(self, commit: bool = False, **kwargs) -> User:
+        return super().create(commit=commit, **kwargs)
