@@ -1,12 +1,12 @@
 {% macro render_field_with_errors(field) %}
   <div class="form-group">
-    {{ field.label }} {{ field(class_='form-control', **kwargs)|safe }}
+    {{ field.label }} {{ field(class_='form-control {% if field.errors %}is-invalid{% endif %}', **kwargs)|safe }}
     {% if field.errors %}
-      <ul class="errors">
+      <div class="errors">
         {% for error in field.errors %}
-          <li class="error">{{ error }}</li>
+          <div class="invalid-feedback">{{ error }}</div>
         {% endfor %}
-      </ul>
+      </div>
     {% endif %}
   </div>
 {% endmacro %}
@@ -16,22 +16,19 @@
 {% endmacro %}
 
 {% macro render_checkbox_field(field) -%}
-  <div class="form-group">
-    <div class="checkbox">
-      <label>
-        {{ field(type='checkbox', **kwargs) }} {{ field.label(style="margin-top:6px; padding-left:6px;") }}
-      </label>
-    </div>
+  <div class="form-group form-check">
+    {{ field(type='checkbox', class_='form-check-input', **kwargs) }}
+    {{ field.label(class_='form-check-label') }}
   </div>
 {%- endmacro %}
 
 {% macro form_errors(form) %}
   {% set errors = form.errors.get('_error', []) %}
   {% if errors %}
-    <ul class="errors">
+    <div class="errors">
     {% for error in errors %}
-      <li class="error">{{ error }}</li>
+      <div class="alert alert-danger">{{ error }}</div>
     {% endfor %}
-    </ul>
+    </div>
   {% endif %}
 {% endmacro %}
