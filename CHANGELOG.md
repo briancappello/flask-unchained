@@ -13,6 +13,7 @@
 - add support for specifying the model converter class for sqlalchemy forms
 - minor admin bundle bugfixes and improvements
 - add `flask users create-superuser` command
+- fix redirect when the next parameter is an url-encoded string
 
 ## v0.9.0 (2021/06/07)
 

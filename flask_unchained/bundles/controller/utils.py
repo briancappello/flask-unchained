@@ -6,7 +6,7 @@ from flask_unchained.string_utils import kebab_case, right_replace, snake_case
 from flask_unchained._compat import is_local_proxy
 from py_meta_utils import _missing
 from typing import *
-from urllib.parse import urlsplit, quote as urlquote
+from urllib.parse import urlsplit, quote as urlquote, unquote, unquote_plus
 from werkzeug.routing import BuildError, UnicodeConverter
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
@@ -229,8 +229,10 @@ def redirect(where: Optional[str] = None,
                                 _external_host=_external_host, _method=_method,
                                 _scheme=_scheme, **values)
 
-    urls = [url_for(request.args.get('next'), **flask_url_for_kwargs),
-            url_for(request.form.get('next'), **flask_url_for_kwargs)]
+    urls = [
+        url_for(unquote(request.args.get('next', '')), **flask_url_for_kwargs),
+        url_for(unquote_plus(request.form.get('next', '')), **flask_url_for_kwargs),
+    ]
     if where:
         urls.append(url_for(where, _cls=_cls, **flask_url_for_kwargs))
     if default:
