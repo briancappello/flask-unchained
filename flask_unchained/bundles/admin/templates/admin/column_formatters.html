@@ -8,11 +8,17 @@
     <script type="text/javascript">
       var {{ id }} = new Date("{{  value }}")
       var el = document.getElementById("{{ id }}")
-      el.innerText = [
-        {{ id }}.getMonth() + 1,
-        {{ id }}.getDate(),
-        {{ id }}.getFullYear(),
-      ].join('/')
+      var month = '' + ({{ id }}.getMonth() + 1)
+      var day = '' + {{ id }}.getDate()
+
+      if (month.length === 1) {
+          month = '0' + month
+      }
+      if (day.length === 1) {
+          day = '0' + day
+      }
+
+      el.innerText = [{{ id }}.getFullYear(), month, day].join('-')
     </script>
   {% endif %}
 {% endmacro %}
@@ -27,12 +33,17 @@
     <script type="text/javascript">
       var {{ id }} = new Date("{{  value }}")
       var el = document.getElementById("{{ id }}")
-      var date = [
-        {{ id }}.getMonth() + 1,
-        {{ id }}.getDate(),
-        {{ id }}.getFullYear(),
-      ].join('/')
+      var month = '' + ({{ id }}.getMonth() + 1)
+      var day = '' + {{ id }}.getDate()
 
+      if (month.length === 1) {
+          month = '0' + month
+      }
+      if (day.length === 1) {
+          day = '0' + day
+      }
+
+      var date = [{{ id }}.getFullYear(), month, day].join('-')
       var hours = {{ id }}.getHours(),
           meridian = 'am'
 
