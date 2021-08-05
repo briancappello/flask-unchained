@@ -14,6 +14,7 @@ from .security import AdminSecurityMixin
 
 EXTEND_BASE_CLASS_DICT_ATTRIBUTES = (
     'column_formatters',
+    'column_formatters_detail',
     'column_type_formatters',
     'column_type_formatters_detail',
 )
@@ -184,6 +185,23 @@ class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin):
 
     form_base_class = ReorderableForm
     model_form_converter = AdminModelFormConverter
+
+    def _refresh_cache(self):
+        super()._refresh_cache()
+
+        # details view should inherit formatters from the list view
+        self.column_formatters_detail = {
+            **self.column_formatters_detail,
+            **{k: v for k, v in self.column_formatters.items()
+               if k not in self.column_formatters_detail},
+        }
+
+        # details view should inherit formatters from the list view
+        self.column_type_formatters_detail = {
+            **self.column_type_formatters_detail,
+            **{k: v for k, v in self.column_type_formatters.items()
+               if k not in self.column_type_formatters_detail},
+        }
 
     def __getattribute__(self, item):
         """Allow class attribute names in EXTEND_BASE_CLASS_DICT_ATTRIBUTES
