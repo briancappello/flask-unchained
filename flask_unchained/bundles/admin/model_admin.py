@@ -170,17 +170,10 @@ class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin):
     }
 
     column_type_formatters = {
-        datetime: lambda view, dt: dt.strftime('%-m/%-d/%Y %-I:%M %p %Z'),
-        date: lambda view, d: d.strftime('%-m/%-d/%Y'),
+        datetime: lambda view, dt: dt.strftime('%Y-%m-%d %I:%M%p %Z'),
+        date: lambda view, d: d.strftime('%Y-%m-%d'),
         _AssociationList: lambda view, values: ', '.join(str(v) for v in values),
         **typefmt.BASE_FORMATTERS,
-    }
-
-    column_type_formatters_detail = {
-        datetime: lambda view, dt: dt.strftime('%-m/%-d/%Y %-I:%M %p %Z'),
-        date: lambda view, d: d.strftime('%-m/%-d/%Y'),
-        _AssociationList: lambda view, values: ', '.join(str(v) for v in values),
-        **typefmt.DETAIL_FORMATTERS,
     }
 
     form_base_class = ReorderableForm
