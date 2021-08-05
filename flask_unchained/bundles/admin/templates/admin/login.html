@@ -11,11 +11,10 @@
     <div class="col-sm-8 col-sm-offset-2">
       <h1>Login</h1>
       <div class="well">
-        <form action="{{ url_for('ADMIN_LOGIN_ENDPOINT', next='ADMIN_POST_LOGIN_REDIRECT_ENDPOINT') }}"
-              method="POST"
-              name="login_user_form">
+        <form method="POST" name="login_user_form">
           {{ form_errors(login_user_form) }}
-          {{ login_user_form.hidden_tag() }}
+          {{ render_field(login_user_form.next, value="ADMIN_POST_LOGIN_REDIRECT_ENDPOINT") }}
+          {{ render_field(login_user_form.csrf_token) }}
           {{ render_field_with_errors(login_user_form.email, autofocus=True) }}
           {{ render_field_with_errors(login_user_form.password) }}
           {{ render_checkbox_field(login_user_form.remember) }}
