@@ -1,4 +1,5 @@
 from flask_unchained.bundles.admin import ModelAdmin
+from flask_unchained.bundles.admin.templates import details_link, edit_link
 
 from ..models import Role
 
@@ -13,7 +14,9 @@ class RoleAdmin(ModelAdmin):
     column_searchable_list = ('name',)
     column_sortable_list = ('name',)
 
+    column_formatters = dict(name=details_link('role'))
+    column_formatters_detail = dict(name=edit_link('role'))
+
     form_columns = ('name',)
-    form_excluded_columns = ('role_users', 'created_at', 'updated_at')
 
     column_details_list = ('id', 'name', 'created_at', 'updated_at')

@@ -1,5 +1,6 @@
 from flask_unchained.bundles.admin import ModelAdmin, macro
 from flask_unchained.bundles.admin.forms import ReorderableForm
+from flask_unchained.bundles.admin.templates import details_link, edit_link
 from flask_unchained.bundles.security.forms import unique_user_email
 from flask_unchained.forms import fields, validators
 from flask_unchained.utils import utcnow
@@ -37,9 +38,14 @@ class UserAdmin(ModelAdmin):
                            'updated_at')
     column_editable_list = ('is_active',)
 
-    column_formatters = {
-        'confirmed_at': macro('column_formatters.datetime'),
-    }
+    column_formatters = dict(
+        confirmed_at=macro('column_formatters.datetime'),
+        email=details_link('user'),
+        roles=details_link('role', label='name'),
+    )
+    column_formatters_detail = dict(
+        email=edit_link('user'),
+    )
 
     form_base_class = BaseUserForm
 
@@ -47,9 +53,7 @@ class UserAdmin(ModelAdmin):
     form_excluded_columns = ('password', 'user_roles')
 
     form_overrides = dict(email=fields.EmailField)
-    form_args = dict(email={'validators': [validators.DataRequired(),
-                                           validators.Email()]},
-                     roles={'get_label': lambda role: role.name})
+    form_args = dict(email={'validators': [validators.Required(), validators.Email()]})
 
     def get_create_form(self):
         CreateForm = super().get_create_form()
