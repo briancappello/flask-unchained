@@ -196,19 +196,20 @@ class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin):
                if k not in self.column_type_formatters_detail},
         }
 
-    def __getattribute__(self, item):
+    def __getattribute__(self, attr):
         """Allow class attribute names in EXTEND_BASE_CLASS_DICT_ATTRIBUTES
         that are defined on subclasses to automatically extend the equivalently
         named attribute on this base class.
 
         (a bit of an ugly hack, but hey, it's only the admin)
         """
-        value = super().__getattribute__(item)
-        if item in EXTEND_BASE_CLASS_DICT_ATTRIBUTES and isinstance(value, dict):
-            base_value = getattr(ModelAdmin, item)
-            base_value.update(value)
-            return base_value
-        elif item in EXTEND_BASE_CLASS_LIST_ATTRIBUTES and isinstance(value, (list, tuple)):
-            base_value = getattr(ModelAdmin, item)
-            return tuple(list(value) + [v for v in base_value if v not in value])
+        value = super().__getattribute__(attr)
+        if attr in EXTEND_BASE_CLASS_DICT_ATTRIBUTES and isinstance(value, dict):
+            base_value = getattr(ModelAdmin, attr)
+            if isinstance(base_value, dict):
+                value.update(base_value)
+        elif attr in EXTEND_BASE_CLASS_LIST_ATTRIBUTES and isinstance(value, (list, tuple)):
+            base_value = getattr(ModelAdmin, attr)
+            if isinstance(base_value, (list, tuple)):
+                return tuple(list(value) + [v for v in base_value if v not in value])
         return value
