@@ -1,11 +1,7 @@
 from http import HTTPStatus
 
 from flask_unchained import request, route, lazy_gettext as _
-
-try:
-    from flask_unchained.bundles.security import SecurityController, current_user
-except ImportError:
-    from py_meta_utils import OptionalClass as SecurityController
+from flask_unchained.bundles.security import SecurityController, current_user
 
 
 class AdminSecurityController(SecurityController):
