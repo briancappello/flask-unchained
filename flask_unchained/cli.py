@@ -111,6 +111,7 @@ def cli(ctx, env, warn):
     if db_ext is not None:
         from sqlalchemy.exc import ProgrammingError
 
+        current_migration_version = None
         try:
             current_migration_version = int(db_ext.engine.execute(
                 "SELECT version_num FROM alembic_version;"
@@ -120,13 +121,16 @@ def cli(ctx, env, warn):
             TypeError,         # no rows in the alembic_version table yet
         ):
             current_migration_version = 0
+        except ValueError:     # existing migration versions use auto-generated UUIDs
+            next_migration_version = None
 
-        next_migration_version = f'{current_migration_version + 1:04}'
-        ctx.default_map['db'] = {
-            'merge': {'rev_id': next_migration_version},
-            'migrate': {'rev_id': next_migration_version},
-            'revision': {'rev_id': next_migration_version},
-        }
+        if current_migration_version is not None:
+            next_migration_version = f'{current_migration_version + 1:04}'
+            ctx.default_map['db'] = {
+                'merge': {'rev_id': next_migration_version},
+                'migrate': {'rev_id': next_migration_version},
+                'revision': {'rev_id': next_migration_version},
+            }
 
     if warn and env in PROD_ENVS:
         production_warning(env, [arg for arg in sys.argv[1:]
