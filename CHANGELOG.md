@@ -3,6 +3,7 @@
 
 ## v0.9.1 (unreleased)
 
+- automatically increment database migration version if SQLAlchemy Bundle is enabled
 - do not require the API bundle to be enabled to use the Security Bundle
 - fix auto-generated imports in db migrations requiring user app code
 - add compatibility with Flask-Session 0.4.0

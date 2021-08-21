@@ -18,7 +18,7 @@ from typing import *
 from flask.cli import with_appcontext  # skipcq (alias)
 from pyterminalsize import get_terminal_size
 
-from . import click
+from . import click, unchained
 from .app_factory import AppFactory, maybe_set_app_factory_from_env
 from .constants import DEV, PROD, STAGING, ENV_ALIASES, VALID_ENVS
 from .utils import get_boolean_env
@@ -103,7 +103,30 @@ class AppGroup(AppGroupMixin, flask_cli.AppGroup):
               help='Whether or not to warn if not running in prod/staging.')
 @click.pass_context
 def cli(ctx, env, warn):
+    ctx.default_map = ctx.default_map or {}
     ctx.obj.data['env'] = env
+
+    # automatically increment database migration version if SQLAlchemy is enabled
+    db_ext = unchained.extensions.get('db', None)
+    if db_ext is not None:
+        from sqlalchemy.exc import ProgrammingError
+
+        try:
+            current_migration_version = int(db_ext.engine.execute(
+                "SELECT version_num FROM alembic_version;"
+            ).first()[0])
+        except (
+            ProgrammingError,  # no table alembic_version yet
+            TypeError,         # no rows in the alembic_version table yet
+        ):
+            current_migration_version = 0
+
+        next_migration_version = f'{current_migration_version + 1:04}'
+        ctx.default_map['db'] = {
+            'merge': {'rev_id': next_migration_version},
+            'migrate': {'rev_id': next_migration_version},
+            'revision': {'rev_id': next_migration_version},
+        }
 
     if warn and env in PROD_ENVS:
         production_warning(env, [arg for arg in sys.argv[1:]
