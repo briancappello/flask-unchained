@@ -13,7 +13,7 @@ class Migrate(BaseMigrate):
 
     @unchained.inject('db')
     def init_app(self, app: FlaskUnchained, db=injectable):
-        alembic_config = app.config.get('ALEMBIC', {})
+        alembic_config = app.config.setdefault('ALEMBIC', {})
         alembic_config.setdefault('script_location', 'db/migrations')
 
         self.configure(Migrate.configure_alembic_template_directory)
