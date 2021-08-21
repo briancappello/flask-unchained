@@ -84,7 +84,7 @@ def on(*args, **listen_kwargs):
     return wrapper
 
 
-def slugify(field_name, slug_field_name=None, mutable=False):
+def slugify(field_name, slug_field_name='slug', mutable=False):
     """Class decorator to specify a field to slugify. Slugs are immutable by
     default unless mutable=True is passed.
 
@@ -108,8 +108,6 @@ def slugify(field_name, slug_field_name=None, mutable=False):
             title = Column(String(100))
             slug = Column(String(100))
     """
-    slug_field_name = slug_field_name or 'slug'
-
     def _set_slug(target, value, old_value, _, mutable=False):
         existing_slug = getattr(target, slug_field_name)
         if existing_slug and not mutable:
