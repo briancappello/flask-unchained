@@ -107,30 +107,33 @@ def cli(ctx, env, warn):
     ctx.obj.data['env'] = env
 
     # automatically increment database migration version if SQLAlchemy is enabled
-    db_ext = unchained.extensions.get('db', None)
-    if db_ext is not None:
-        from sqlalchemy.exc import ProgrammingError
+    migrate = unchained.extensions.get('migrate', None)
+    if migrate is not None:
+        from sqlalchemy.exc import DatabaseError
 
-        current_migration_version = None
-        try:
-            current_migration_version = int(db_ext.engine.execute(
-                "SELECT version_num FROM alembic_version;"
-            ).first()[0])
-        except (
-            ProgrammingError,  # no table alembic_version yet
-            TypeError,         # no rows in the alembic_version table yet
-        ):
-            current_migration_version = 0
-        except ValueError:     # existing migration versions use auto-generated UUIDs
-            next_migration_version = None
+        def get_next_migration_version():
+            version_table = migrate.configure_args.get('version_table',
+                                                       'alembic_version')
 
-        if current_migration_version is not None:
-            next_migration_version = f'{current_migration_version + 1:04}'
-            ctx.default_map['db'] = {
-                'merge': {'rev_id': next_migration_version},
-                'migrate': {'rev_id': next_migration_version},
-                'revision': {'rev_id': next_migration_version},
-            }
+            try:
+                current_migration_version = int(migrate.db.engine.execute(
+                    f"SELECT version_num FROM {version_table};"
+                ).first()[0])
+            except (DatabaseError, TypeError):
+                # database has no alembic_version table (or no version_num row)
+                # this is the first migration
+                return '0001'
+            except ValueError:
+                # existing migration versions use auto-generated UUIDs,
+                # return None to continue using them
+                return None
+
+            return f'{current_migration_version + 1:04}'
+
+        default_map = (ctx.default_map or {}).setdefault('db', {})
+        for cmd in ('merge', 'migrate', 'revision'):
+            default_map.setdefault(cmd, {})['rev_id'] = get_next_migration_version
+        ctx.default_map['db'] = default_map
 
     if warn and env in PROD_ENVS:
         production_warning(env, [arg for arg in sys.argv[1:]
