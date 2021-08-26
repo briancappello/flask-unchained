@@ -32,7 +32,3 @@ Commands
 .. click:: flask_unchained.commands.lint:lint
    :prog: flask lint
    :show-nested:
-
-.. click:: flask_unchained.commands.qtconsole:qtconsole
-   :prog: flask qtconsole
-   :show-nested:

@@ -16,6 +16,7 @@
 - add `flask users create-superuser` command
 - fix redirect when the next parameter is an url-encoded string
 - add helper admin column_formatter functions for easily generating links to other admin views
+- remove experimental `qtconsole` command
 
 ## v0.9.0 (2021/06/07)
 

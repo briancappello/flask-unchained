@@ -60,8 +60,6 @@ setup(
         ],
         'docs': [
             'IPython>=7.24.1',
-            'PyQt5>=5.15.1',
-            'qtconsole>=5.1.0',
             'sphinx>=2.4.4,<3',  # m2r needs a new release to support sphinx v3+
             'sphinx-click>=1.4.0',
             'sphinx-material>=0.0.32',

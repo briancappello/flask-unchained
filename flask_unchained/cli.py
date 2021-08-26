@@ -161,13 +161,11 @@ def production_warning(env, args):
 def _get_main_cli():
     # deferred imports to not cause circular dependencies
     from flask_unchained.commands import (
-        clean, lint, new, qtconsole, shell, unchained, url, urls)
+        clean, lint, new, shell, unchained, url, urls)
 
     cli.add_command(clean)
     cli.add_command(lint)
     cli.add_command(new)
-    if qtconsole:  # skipcq: PYL-W0125
-        cli.add_command(qtconsole)
     cli.add_command(flask_cli.run_command)
     cli.add_command(shell)
     cli.add_command(unchained)
