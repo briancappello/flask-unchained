@@ -107,8 +107,9 @@ def cli(ctx, env, warn):
     ctx.obj.data['env'] = env
 
     # automatically increment database migration version if SQLAlchemy is enabled
-    migrate = unchained.extensions.get('migrate', None)
+    migrate = ctx.obj.load_app().extensions.get('migrate', None)
     if migrate is not None:
+        from alembic.util import rev_id
         from sqlalchemy.exc import DatabaseError
 
         def get_next_migration_version():
@@ -116,19 +117,21 @@ def cli(ctx, env, warn):
                                                        'alembic_version')
 
             try:
-                current_migration_version = int(migrate.db.engine.execute(
-                    f"SELECT version_num FROM {version_table};"
-                ).first()[0])
+                rows = migrate.db.engine.execute(
+                    f"SELECT version_num FROM {version_table}"
+                ).fetchall()
+                versions = [int(row[0].split('_')[0]) for row in rows]
+                current_migration_version = max(versions)
             except (DatabaseError, TypeError):
                 # database has no alembic_version table (or no version_num row)
                 # this is the first migration
-                return '0001'
+                return f'001_{rev_id()[:8]}'
             except ValueError:
                 # existing migration versions use auto-generated UUIDs,
                 # return None to continue using them
                 return None
 
-            return f'{current_migration_version + 1:04}'
+            return f'{current_migration_version + 1:03}_{rev_id()[:8]}'
 
         default_map = (ctx.default_map or {}).setdefault('db', {})
         for cmd in ('merge', 'migrate', 'revision'):
