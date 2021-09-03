@@ -17,6 +17,7 @@
 - fix redirect when the next parameter is an url-encoded string
 - add helper admin column_formatter functions for easily generating links to other admin views
 - remove experimental `qtconsole` command
+- default alembic migrations to `compare_type=True`
 
 ## v0.9.0 (2021/06/07)
 

@@ -112,6 +112,7 @@ class Config(BundleConfig):
     ALEMBIC_CONTEXT = {
         'render_item': render_migration_item,
         'template_args': {'migration_variables': []},
+        'compare_type': True,
     }
     """
     Extra kwargs to pass to the constructor of the Flask-Migrate extension. If you
