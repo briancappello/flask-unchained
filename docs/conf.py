@@ -48,7 +48,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
     'sphinx_material',
-    'm2r',
+    'm2r2',
 ]
 
 autodoc_member_order = 'bysource'

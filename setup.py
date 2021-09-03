@@ -60,10 +60,10 @@ setup(
         ],
         'docs': [
             'IPython>=7.24.1',
-            'sphinx>=2.4.4,<3',  # m2r needs a new release to support sphinx v3+
-            'sphinx-click>=1.4.0',
-            'sphinx-material>=0.0.32',
-            'm2r>=0.2.1',
+            'sphinx>=4.1.2',
+            'sphinx-click>=3.0.1',
+            'sphinx-material>=0.0.34',
+            'm2r2>=0.3.1',
         ],
         'graphene': [
             'graphql-core>=2.3.1,<3',

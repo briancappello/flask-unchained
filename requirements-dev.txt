@@ -1,15 +1,15 @@
 -r requirements.txt
 
 chios==0.1.5
-coverage==5.3
-factory_boy==2.12.0
-m2r==0.2.1
-mock==4.0.2
-psycopg2-binary==2.8.6
-pytest==6.2.4
+coverage==5.5
+factory_boy==3.2.0
+m2r2==0.3.1
+mock==4.0.3
+psycopg2-binary==2.9.1
+pytest==6.2.5
 pytest-flask==1.2.0
-sphinx>=2.4.4,<3        # m2r is not compatible with sphinx 3 yet
-sphinx-click==2.5.0
-sphinx-material==0.0.32
-tox==3.20.1
-twine==3.4.1
+sphinx==4.1.2
+sphinx-click==3.0.1
+sphinx-material==0.0.34
+tox==3.24.3
+twine==3.4.2
