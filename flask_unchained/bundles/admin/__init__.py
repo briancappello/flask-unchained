@@ -1,4 +1,6 @@
 from flask_admin import helpers
+from flask_admin.base import expose
+from flask_admin.model.form import InlineFormAdmin
 from flask_unchained import Bundle, FlaskUnchained, url_for
 
 from .extensions import Admin, admin
