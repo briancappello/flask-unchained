@@ -114,3 +114,9 @@ def index_link(
                       label=label,
                       tooltip=tooltip,
                       multiline_many=multiline_many)
+
+
+def a_tag(href, *, label: Optional[str] = None, target: Optional[str] = None):
+    if target:
+        return f'<a href="{href}" target="{target}">{label or href}</a>'
+    return f'<a href="{href}">{label or href}</a>'
