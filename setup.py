@@ -31,25 +31,25 @@ setup(
         'networkx>=2.5',
         'werkzeug>=2.0.1',
         'wtforms>=2.3.3,<3',
-        'email-validator>=1.1.2',
+        'email-validator>=1.1.3',
     ],
     extras_require={
         'admin': [
-            'flask-admin>=1.5.7',
+            'flask-admin>=1.5.8',
         ],
         'api': [
             'apispec>=4.5.0,<5',
             'apispec-webframeworks>=0.5.2',
             'flask-marshmallow>=0.14.0',
-            'marshmallow>=3.12.1',
-            'marshmallow-sqlalchemy>=0.26',
+            'marshmallow>=3.13.0',
+            'marshmallow-sqlalchemy>=0.26.1',
         ],
         'asyncio': [
             'quart>=0.13.1',
         ],
         'celery': [
-            'celery>=4.4.7',
-            'dill>=0.3.3',
+            'celery>=5.2.0',
+            'dill>=0.3.4',
         ],
         'dev': [
             'coverage>=4.5.1',
@@ -75,10 +75,10 @@ setup(
         ],
         'mail': [
             'beautifulsoup4>=4.9.3',
-            'lxml>=4.6.1',
+            'lxml>=4.6.3',
         ],
         'oauth': [
-            'Flask-OAuthlib>=0.9.5',
+            'Flask-OAuthlib>=0.9.6',
         ],
         'security': [
             'bcrypt>=3.2.0',
@@ -88,12 +88,12 @@ setup(
             'passlib>=1.7.4',
         ],
         'session': [
-            'dill>=0.3.3',
-            'flask-session>=0.3.2',
+            'dill>=0.3.4',
+            'flask-session>=0.4.0',
         ],
         'sqlalchemy': [
             'factory_boy>=2.11.1',
-            'flask-migrate>=2.5.3',
+            'flask-migrate>=3.1.0',
             'flask-sqlalchemy-unchained>=0.7.6',
             'sqlalchemy>=1.3.24,<2',
             'sqlalchemy-unchained>=0.12.2',
