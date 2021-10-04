@@ -217,7 +217,7 @@ class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin, metaclass=ModelAdminMetacl
         if attr in EXTEND_BASE_CLASS_DICT_ATTRIBUTES and isinstance(value, dict):
             base_value = getattr(ModelAdmin, attr)
             if isinstance(base_value, dict):
-                value.update(base_value)
+                base_value.update(value)
         elif attr in EXTEND_BASE_CLASS_LIST_ATTRIBUTES and isinstance(value, (list, tuple)):
             base_value = getattr(ModelAdmin, attr)
             if isinstance(base_value, (list, tuple)):
