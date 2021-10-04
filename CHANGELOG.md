@@ -18,6 +18,8 @@
 - add helper admin column_formatter functions for easily generating links to other admin views
 - remove experimental `qtconsole` command
 - default alembic migrations to `compare_type=True`
+- enable dependency injection on `ModelAdmin`
+- add `DateField`, `DateTimeField`, and `IntervalField` to `AdminModelFieldConverter`
 
 ## v0.9.0 (2021/06/07)
 
