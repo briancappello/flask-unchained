@@ -1,11 +1,14 @@
 from datetime import date, datetime
 
+from flask_admin.base import AdminViewMeta as _AdminViewMeta
 from flask_admin.contrib.sqla import ModelView as _BaseModelAdmin
 from flask_admin.consts import ICON_TYPE_FONT_AWESOME
 from flask_admin.model import typefmt
 from sqlalchemy.ext.associationproxy import _AssociationList
 
+from flask_unchained.di import _set_up_class_dependency_injection
 from flask_unchained.string_utils import slugify, snake_case
+from py_meta_utils import McsArgs
 
 from .forms import ReorderableForm, AdminModelFormConverter
 from .macro import macro
@@ -43,7 +46,14 @@ class _ModelAdminSlugDescriptor:
         return slugify(cls.model.__plural_label__)
 
 
-class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin):
+class ModelAdminMetaclass(_AdminViewMeta):
+    def __new__(mcs, name, bases, clsdict):
+        mcs_args = McsArgs(mcs, name, bases, clsdict)
+        _set_up_class_dependency_injection(mcs_args)
+        return super().__new__(*mcs_args)
+
+
+class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin, metaclass=ModelAdminMetaclass):
     """
     Base class for SQLAlchemy model admins. More or less the same as
     :class:`~flask_admin.contrib.sqla.ModelView`, except we set some
