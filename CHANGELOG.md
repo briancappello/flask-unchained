@@ -7,21 +7,23 @@
 
 - support using the app bundle's config module as the `unchained_config` by setting the `FLASK_APP` environment variable to the app bundle name
 
+### SQLAlchemy Bundle
+
 - automatically increment database migration version if SQLAlchemy Bundle is enabled
-- do not require the API bundle to be enabled to use the Security Bundle
 - fix auto-generated imports in db migrations requiring user app code
-- add compatibility with Flask-Session 0.4.0
-- fix compatibility with Flask-WTF auto-population of form data on submit
 - move some more database code into sqlalchemy-unchained
-- allow extensions to specify optional dependent extensions
-- add compatibility with upcoming wtforms v3
 - add support for specifying the model converter class for sqlalchemy forms
-- minor admin bundle bugfixes and improvements
+- default alembic migrations to `compare_type=True`
+
+### Security Bundle
+
 - add `flask users create-superuser` command
+
+### Admin Bundle
+
+- minor admin bundle bugfixes and improvements
 - fix redirect when the next parameter is an url-encoded string
 - add helper admin column_formatter functions for easily generating links to other admin views
-- remove experimental `qtconsole` command
-- default alembic migrations to `compare_type=True`
 - enable dependency injection on `ModelAdmin`
 - add `DateField`, `DateTimeField`, and `IntervalField` to `AdminModelFieldConverter`
 
@@ -33,6 +35,12 @@
 
 - use custom exceptions for loading `unchained_config` to avoid catching erroneous ImportErrors
 - automatically configure sending the `csrf_token` cookie when `WTF_CSRF_ENABLED` is set to `True`
+- do not require the API bundle to be enabled to use the Security Bundle
+- add compatibility with Flask-Session 0.4.0
+- fix compatibility with Flask-WTF auto-population of form data on submit
+- allow extensions to specify optional dependent extensions
+- add compatibility with upcoming wtforms v3
+- remove experimental `qtconsole` command
 
 ## v0.9.0 (2021/06/07)
 
