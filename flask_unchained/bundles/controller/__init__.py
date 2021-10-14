@@ -1,6 +1,7 @@
 from collections import defaultdict
 from flask_unchained import Bundle, FlaskUnchained
 from flask_unchained.constants import DEV, TEST
+from flask_wtf.csrf import generate_csrf
 from typing import *
 
 from .constants import (
@@ -65,6 +66,15 @@ class ControllerBundle(Bundle):
 
         for name in ['string', 'str']:
             app.url_map.converters[name] = StringConverter
+
+    def after_init_app(self, app: FlaskUnchained) -> None:
+        if app.config.WTF_CSRF_ENABLED:
+            @app.after_request
+            def set_csrf_token_cookie(response):
+                if response:
+                    response.set_cookie(
+                        app.config.CSRF_TOKEN_COOKIE_NAME, generate_csrf())
+                return response
 
 
 __all__ = [

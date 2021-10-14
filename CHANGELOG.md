@@ -28,6 +28,7 @@
 ### Bugfixes
 
 - use custom exceptions for loading `unchained_config` to avoid catching erroneous ImportErrors
+- automatically configure sending the `csrf_token` cookie when `WTF_CSRF_ENABLED` is set to `True`
 
 ## v0.9.0 (2021/06/07)
 

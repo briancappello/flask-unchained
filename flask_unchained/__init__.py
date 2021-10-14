@@ -17,7 +17,6 @@ from . import _compat
 from flask import current_app, g, request, session, _app_ctx_stack, _request_ctx_stack
 from flask import render_template, render_template_string
 from flask import Request, Response
-from flask_wtf.csrf import generate_csrf
 from werkzeug.exceptions import abort
 
 from .app_factory import AppFactory

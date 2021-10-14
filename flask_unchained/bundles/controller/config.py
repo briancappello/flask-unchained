@@ -24,3 +24,8 @@ class Config(BundleConfig):
     """
     Whether or not to enable CSRF protection.
     """
+
+    CSRF_TOKEN_COOKIE_NAME = 'csrf_token'
+    """
+    The cookie name to set on responses for the CSRF token. Defaults to "csrf_token".
+    """
