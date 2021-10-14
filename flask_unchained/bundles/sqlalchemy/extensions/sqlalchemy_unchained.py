@@ -8,7 +8,7 @@ from sqlalchemy_unchained import (DeclarativeMeta, BaseValidator, Required,
 
 from .. import sqla
 from ..base_model import BaseModel
-from ..services import SessionManager
+from ..services import SessionManager, ModelManager
 
 from ..model_registry import UnchainedModelRegistry  # skipcq (required import)
 
@@ -186,6 +186,8 @@ class SQLAlchemyUnchained(BaseSQLAlchemy):
                          model_class=model_class)
         SessionManager.set_session_factory(
             lambda: self.session())  # skipcq: PYL-W0108 (unnecessary lambda)
+
+        self.ModelManager = ModelManager
 
         self.Column = sqla.Column
         self.BigInteger = sqla.BigInteger

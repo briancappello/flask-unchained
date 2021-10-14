@@ -14,6 +14,7 @@
 - move some more database code into sqlalchemy-unchained
 - add support for specifying the model converter class for sqlalchemy forms
 - default alembic migrations to `compare_type=True`
+- alias `ModelManager` onto the `db` extension
 
 ### Security Bundle
 
