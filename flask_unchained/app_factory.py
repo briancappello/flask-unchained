@@ -81,7 +81,8 @@ class AppFactory(metaclass=Singleton):
         unchained_config = {}
         unchained_config_module = None
         if _load_unchained_config:
-            unchained_config_module = self.load_unchained_config(env)
+            unchained_config_module = self.load_unchained_config(
+                env, flask_app_module_name=os.getenv('FLASK_APP', 'app'))
             unchained_config = {k: v for k, v in vars(unchained_config_module).items()
                                 if not k.startswith('_') and k.isupper()}
         unchained_config['_CONFIG_OVERRIDES'] = _config_overrides
@@ -107,12 +108,15 @@ class AppFactory(metaclass=Singleton):
         return app
 
     @staticmethod
-    def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]) -> ModuleType:
+    def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST],
+                              flask_app_module_name: Optional[str] = None) -> ModuleType:
         """
         Load the unchained config from the current working directory for the given
         environment. If ``env == "test"``, look for ``tests._unchained_config``,
-        otherwise check the value of the ``UNCHAINED`` environment variable,
-        falling back to loading the ``unchained_config`` module.
+        otherwise check the value of the ``UNCHAINED_CONFIG`` environment variable,
+        falling back to loading the ``unchained_config`` module. If none of those
+        are found, attempt to load the value of the ``FLASK_APP`` environment
+        variable, defaulting to the name "app".
         """
         if not sys.path or sys.path[0] != os.getcwd():
             sys.path.insert(0, os.getcwd())
@@ -124,14 +128,22 @@ class AppFactory(metaclass=Singleton):
             except ImportError as e:
                 msg = f'{e.msg}: Could not find _unchained_config.py in the tests directory'
 
-        unchained_config_module_name = os.getenv('UNCHAINED', 'unchained_config')
-        try:
-            return cwd_import(unchained_config_module_name)
-        except CWDImportError as e:
-            if not msg:
-                msg = f'{e.msg}: Could not find {unchained_config_module_name}.py ' \
-                      f'in the current working directory (are you in the project root?)'
-            raise UnchainedConfigNotFoundError(msg)
+        unchained_config_module_name = os.getenv('UNCHAINED_CONFIG', 'unchained_config')
+        potential_modules = [unchained_config_module_name]
+        if flask_app_module_name:
+            potential_modules += [f'{flask_app_module_name}.config',
+                                  flask_app_module_name]
+        for module_name in potential_modules:
+            try:
+                return cwd_import(module_name)
+            except CWDImportError:
+                pass
+
+        if not msg:
+            msg = (f'Could not find unchained_config.py in the current working '
+                   f'directory. Hints: are you in the project root? Have you set '
+                   f'the UNCHAINED_CONFIG or FLASK_APP environment variable?')
+        raise UnchainedConfigNotFoundError(msg)
 
     def get_app_kwargs(self,
                        app_kwargs: Dict[str, Any],

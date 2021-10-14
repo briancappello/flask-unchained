@@ -3,6 +3,10 @@
 
 ## v0.9.1 (unreleased)
 
+### General
+
+- support using the app bundle's config module as the `unchained_config` by setting the `FLASK_APP` environment variable to the app bundle name
+
 - automatically increment database migration version if SQLAlchemy Bundle is enabled
 - do not require the API bundle to be enabled to use the Security Bundle
 - fix auto-generated imports in db migrations requiring user app code
@@ -64,13 +68,13 @@
 
 - **experimental asyncio support by installing [Quart](https://gitlab.com/pgjones/quart)**
 - **major improvements to** `AppFactory` **and** `AppFactoryHook`
-    - **support single-file app bundles** (just export the app bundle as `UNCHAINED`)
+    - **support single-file app bundles** (just export the app bundle as `FLASK_APP`)
     - support using a custom subclass of `FlaskUnchained` using `AppFactory.APP_CLASS`
     - support using a custom subclass of `AppFactory`
     - support passing all kwargs to `Flask` by setting the same names upper-cased in `unchained_config`
     - support automatic defaults for the Flask app kwargs `root_path`, `template_folder`, `static_folder`, and `static_url_path`
     - support extending and overriding hooks with the same consistent object-oriented patterns
-    - support using a custom module name for `unchained_config` by setting the `UNCHAINED` environment variable
+    - support using a custom module name for `unchained_config` by setting the `UNCHAINED_CONFIG` environment variable
     - make it possible to define multiple modules hooks should load from (excluding config and routes, as those only make sense to live inside a single module within bundles)
         - very experimental: add `Bundle.default_load_from_module_name` to ease migration from single-file app bundles to individual modules for different types (ie grouped by base class)
 - set up automatic dependency injection on commands (use `from flask_unchained.cli import cli, click` and define command groups for your commands using `@cli.group()`)

@@ -98,7 +98,6 @@ You can run it like so:
 
 ```bash
 pip install "flask-unchained[dev]"
-export UNCHAINED="app"
 pytest app.py
 flask urls
 flask run

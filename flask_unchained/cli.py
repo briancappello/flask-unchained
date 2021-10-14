@@ -44,7 +44,8 @@ def clear_env_vars():
 
 def _should_create_basic_app(env):
     try:
-        AppFactory.load_unchained_config(env)
+        AppFactory.load_unchained_config(
+            env, flask_app_module_name=os.getenv('FLASK_APP', 'app'))
         return False
     except UnchainedConfigNotFoundError:
         return True

@@ -1,3 +1,5 @@
+import os
+
 from flask_unchained import current_app
 from flask_unchained.cli import cli, click, print_table
 
@@ -65,7 +67,8 @@ def hooks(ctx):
     from ..app_factory import AppFactory
     from ..hooks.run_hooks_hook import RunHooksHook
 
-    unchained_config = AppFactory().load_unchained_config(ctx.obj.data['env'])
+    unchained_config = AppFactory().load_unchained_config(
+        ctx.obj.data['env'], flask_app_module_name=os.getenv('FLASK_APP', 'app'))
     _, bundles = AppFactory().load_bundles(getattr(unchained_config, 'BUNDLES', []))
     hooks = RunHooksHook(None).collect_from_bundles(bundles)
 
