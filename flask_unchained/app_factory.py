@@ -81,8 +81,7 @@ class AppFactory(metaclass=Singleton):
         unchained_config = {}
         unchained_config_module = None
         if _load_unchained_config:
-            unchained_config_module = self.load_unchained_config(
-                env, flask_app_module_name=os.getenv('FLASK_APP', 'app'))
+            unchained_config_module = self.load_unchained_config(env)
             unchained_config = {k: v for k, v in vars(unchained_config_module).items()
                                 if not k.startswith('_') and k.isupper()}
         unchained_config['_CONFIG_OVERRIDES'] = _config_overrides
@@ -108,8 +107,7 @@ class AppFactory(metaclass=Singleton):
         return app
 
     @staticmethod
-    def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST],
-                              flask_app_module_name: Optional[str] = None) -> ModuleType:
+    def load_unchained_config(env: Union[DEV, PROD, STAGING, TEST]) -> ModuleType:
         """
         Load the unchained config from the current working directory for the given
         environment. If ``env == "test"``, look for ``tests._unchained_config``,
@@ -129,18 +127,20 @@ class AppFactory(metaclass=Singleton):
                 msg = f'{e.msg}: Could not find _unchained_config.py in the tests directory'
 
         unchained_config_module_name = os.getenv('UNCHAINED_CONFIG', 'unchained_config')
-        potential_modules = [unchained_config_module_name]
-        if flask_app_module_name:
-            potential_modules += [f'{flask_app_module_name}.config',
-                                  flask_app_module_name]
-        for module_name in potential_modules:
+        flask_app_module_name = os.getenv('FLASK_APP', 'app')
+        for module_name in [
+            unchained_config_module_name,
+            f'{flask_app_module_name}.config',
+            flask_app_module_name,
+        ]:
             try:
                 return cwd_import(module_name)
             except CWDImportError:
                 pass
 
         if not msg:
-            msg = (f'Could not find unchained_config.py in the current working '
+            msg = (f'Could not find the `{unchained_config_module_name}` or '
+                   f'`{flask_app_module_name}` module names in the current working '
                    f'directory. Hints: are you in the project root? Have you set '
                    f'the UNCHAINED_CONFIG or FLASK_APP environment variable?')
         raise UnchainedConfigNotFoundError(msg)

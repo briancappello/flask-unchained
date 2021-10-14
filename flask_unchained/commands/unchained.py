@@ -67,8 +67,7 @@ def hooks(ctx):
     from ..app_factory import AppFactory
     from ..hooks.run_hooks_hook import RunHooksHook
 
-    unchained_config = AppFactory().load_unchained_config(
-        ctx.obj.data['env'], flask_app_module_name=os.getenv('FLASK_APP', 'app'))
+    unchained_config = AppFactory().load_unchained_config(ctx.obj.data['env'])
     _, bundles = AppFactory().load_bundles(getattr(unchained_config, 'BUNDLES', []))
     hooks = RunHooksHook(None).collect_from_bundles(bundles)
 
