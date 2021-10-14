@@ -21,6 +21,7 @@ from pyterminalsize import get_terminal_size
 from . import click, unchained
 from .app_factory import AppFactory, maybe_set_app_factory_from_env
 from .constants import DEV, PROD, STAGING, ENV_ALIASES, VALID_ENVS
+from .exceptions import UnchainedConfigNotFoundError
 from .utils import get_boolean_env
 
 IterableOfStrings = Union[List[str], Tuple[str, ...]]
@@ -45,7 +46,7 @@ def _should_create_basic_app(env):
     try:
         AppFactory.load_unchained_config(env)
         return False
-    except ImportError:
+    except UnchainedConfigNotFoundError:
         return True
 
 

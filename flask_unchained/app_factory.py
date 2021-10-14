@@ -10,7 +10,7 @@ from py_meta_utils import Singleton
 
 from .bundles import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST, ENV_ALIASES, VALID_ENVS
-from .exceptions import BundleNotFoundError
+from .exceptions import BundleNotFoundError, CWDImportError, UnchainedConfigNotFoundError
 from .flask_unchained import FlaskUnchained
 from .unchained import unchained
 from .utils import cwd_import
@@ -127,12 +127,11 @@ class AppFactory(metaclass=Singleton):
         unchained_config_module_name = os.getenv('UNCHAINED', 'unchained_config')
         try:
             return cwd_import(unchained_config_module_name)
-        except ImportError as e:
+        except CWDImportError as e:
             if not msg:
                 msg = f'{e.msg}: Could not find {unchained_config_module_name}.py ' \
                       f'in the current working directory (are you in the project root?)'
-            e.msg = msg
-            raise e
+            raise UnchainedConfigNotFoundError(msg)
 
     def get_app_kwargs(self,
                        app_kwargs: Dict[str, Any],

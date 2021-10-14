@@ -25,6 +25,10 @@
 
 - alias `ModelResource` onto the API extension
 
+### Bugfixes
+
+- use custom exceptions for loading `unchained_config` to avoid catching erroneous ImportErrors
+
 ## v0.9.0 (2021/06/07)
 
 - fix security bundle salt configuration for itsdangerous 2.0+

@@ -7,6 +7,8 @@ from importlib import import_module
 
 from flask import current_app
 
+from .exceptions import CWDImportError
+
 
 class AttrDict(dict):
     """
@@ -81,7 +83,7 @@ def cwd_import(module_name):
     expected_path = os.path.join(os.getcwd(), module_name.replace('.', os.sep))
     expected_paths = [f'{expected_path}.py', os.path.join(expected_path, '__init__.py')]
     if module.__file__ not in expected_paths:
-        raise ImportError(f'expected {expected_paths[0]}, got {module.__file__}')
+        raise CWDImportError(f'expected {expected_paths[0]}, got {module.__file__}')
     return module
 
 
