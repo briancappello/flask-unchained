@@ -25,6 +25,7 @@ class Api:
         self.flask_plugin: FlaskPlugin = None
         self.ma_plugin: MarshmallowPlugin = None
         self.spec: APISpec = None
+        self.ModelResource = ModelResource
 
     def init_app(self, app: FlaskUnchained):
         self.app = app

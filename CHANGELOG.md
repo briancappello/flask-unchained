@@ -21,6 +21,10 @@
 - enable dependency injection on `ModelAdmin`
 - add `DateField`, `DateTimeField`, and `IntervalField` to `AdminModelFieldConverter`
 
+### API Bundle
+
+- alias `ModelResource` onto the API extension
+
 ## v0.9.0 (2021/06/07)
 
 - fix security bundle salt configuration for itsdangerous 2.0+

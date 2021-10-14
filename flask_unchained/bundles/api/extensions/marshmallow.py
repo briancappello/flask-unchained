@@ -96,7 +96,6 @@ class Marshmallow:
     """
 
     def __init__(self):
-        self.Serializer = flask_ma.Schema
         self.ModelSerializer = ModelSerializer
 
         # alias marshmallow stuffs
