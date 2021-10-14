@@ -1,10 +1,6 @@
-from flask_unchained import AppBundle, FlaskUnchained, generate_csrf
+from flask_unchained import AppBundle, FlaskUnchained
 
 
 class App(AppBundle):
-    def after_init_app(self, app: FlaskUnchained):
-        @app.after_request
-        def set_csrf_token_cookie(response):
-            if response:
-                response.set_cookie('csrf_token', generate_csrf())
-            return response
+    def before_init_app(self, app: FlaskUnchained) -> None:
+        app.url_map.strict_slashes = False
