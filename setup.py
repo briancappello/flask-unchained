@@ -52,11 +52,9 @@ setup(
             'dill>=0.3.4',
         ],
         'dev': [
-            'coverage>=4.5.1',
             'IPython>=7.24.1',
             'pytest>=4.6.5',
             'pytest-flask>=1.0.0',
-            'tox>=3.5.2',
         ],
         'docs': [
             'IPython>=7.24.1',
