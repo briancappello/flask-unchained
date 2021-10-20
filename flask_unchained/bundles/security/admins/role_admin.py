@@ -9,7 +9,7 @@ class RoleAdmin(ModelAdmin):
 
     name = 'Roles'
     category_name = 'Security'
-    menu_icon_value = 'fa fa-check'
+    menu_icon_value = 'fa fa-key'
 
     column_searchable_list = ('name',)
     column_sortable_list = ('name',)

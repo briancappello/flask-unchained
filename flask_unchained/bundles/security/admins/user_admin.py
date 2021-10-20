@@ -23,7 +23,7 @@ class UserAdmin(ModelAdmin):
 
     name = 'Users'
     category_name = 'Security'
-    menu_icon_value = 'fa fa-user'
+    menu_icon_value = 'fa fa-address-card-o'
 
     column_list = ('email', 'roles', 'is_active')
     column_searchable_list = ('email',)
