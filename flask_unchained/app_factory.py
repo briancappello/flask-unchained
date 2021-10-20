@@ -137,6 +137,10 @@ class AppFactory(metaclass=Singleton):
                 return cwd_import(module_name)
             except CWDImportError:
                 pass
+            except ModuleNotFoundError as e:
+                if (flask_app_module_name == module_name
+                        or f"No module named '{module_name}'" not in str(e)):
+                    raise e
 
         if not msg:
             msg = (f'Could not find the `{unchained_config_module_name}` or '
