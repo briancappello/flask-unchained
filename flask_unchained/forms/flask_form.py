@@ -1,6 +1,6 @@
 from flask_unchained.string_utils import snake_case
 from flask_wtf.form import FlaskForm as BaseForm, _Auto
-from wtforms import FileField as _FileField
+from wtforms import FileField as _FileField, SubmitField as _SubmitField
 
 
 class FlaskForm(BaseForm):
@@ -30,11 +30,12 @@ class FlaskForm(BaseForm):
 
     field_order = ()
     """
-    An ordered list of field names. Fields not listed here will be rendered first.
+    An ordered list of field names. Fields not listed here will be rendered last.
     """
 
-    def __init__(self, formdata=_Auto, obj=None, prefix='', data=None, meta=None,
-                 **kwargs):
+    submit = _SubmitField('Submit')
+
+    def __init__(self, formdata=_Auto, obj=None, prefix='', data=None, meta=None, **kwargs):
         super().__init__(formdata=formdata, obj=obj, prefix=prefix, data=data, meta=meta,
                          **kwargs)
         self._name = snake_case(self.__class__.__name__)
@@ -44,8 +45,23 @@ class FlaskForm(BaseForm):
                 self._enctype = 'multipart/form-data'
 
     def __iter__(self):
-        if not self.field_order:
-            return super().__iter__()
-        return iter([field for name, field in self._fields.items()
-                     if name not in self.field_order]
-                    + [self._fields[f] for f in self.field_order])
+        """
+        Overridden to always return the submit fields last (unless their
+        order is explicitly set in :attr:`field_order`)
+        """
+        fields = [self._fields[name] for name in self.field_order]
+        extra_fields = []
+        submit_fields = {}
+
+        for name, field in self._fields.items():
+            if isinstance(field, _SubmitField):
+                submit_fields[name] = field
+            elif name not in self.field_order:
+                extra_fields.append(field)
+
+        if submit_fields:
+            for name, field in submit_fields.items():
+                if name not in self.field_order:
+                    extra_fields.append(field)
+
+        return iter(fields + extra_fields)

@@ -4,6 +4,8 @@ from py_meta_utils import (
     process_factory_meta_options)
 from sqlalchemy_unchained.validation import ValidationError, ValidationErrors
 from typing import *
+from wtforms.fields import SubmitField as _SubmitField
+from wtforms.validators import Required as _RequiredValidator
 from wtforms_sqlalchemy.fields import *
 from wtforms_sqlalchemy.orm import ModelConverter as BaseModelConverter, converts
 from wtforms.form import FormMeta as FormMetaclass
@@ -132,8 +134,28 @@ class ModelConverter(BaseModelConverter):
     def handle_integer_types(self, column, field_args, **extra):
         return super().handle_integer_types(column, field_args, **extra)
 
+    @converts("MANYTOONE")
+    def conv_ManyToOne(self, field_args, model, mapper, prop, column, **extra):
+        if hasattr(prop, 'direction'):
+            field_args.update(field_args.pop('original_field_args', {}))
+            nullable = True
+            for pair in prop.local_remote_pairs:
+                if not pair[0].nullable:
+                    nullable = False
+            if not nullable and not any(
+                isinstance(v, _RequiredValidator) for v in (field_args['validators'] or ())
+            ):
+                field_args['validators'].append(_RequiredValidator())
 
-# this function is copied from wtforms_sqlalchemy, aside from one line (marked)
+        return QuerySelectField(**field_args)
+
+    @converts("MANYTOMANY", "ONETOMANY")
+    def conv_ManyToMany(self, field_args, **extra):
+        field_args.pop('original_field_args', None)
+        return QuerySelectMultipleField(**field_args)
+
+
+# this function is copied from wtforms_sqlalchemy, aside from marked lines
 def model_fields(model, db_session=None, only=None, exclude=None,
                  field_args=None, converter=None, exclude_pk=False,
                  exclude_fk=False):
@@ -163,9 +185,16 @@ def model_fields(model, db_session=None, only=None, exclude=None,
 
     field_dict = {}
     for name, prop in properties:
+        # pass the original field_args through so that custom model converter
+        # functions can have access to them (because BaseModelConverter.convert
+        # mutates the field args and has some silly defaults that are hard to override)
+        field_kwargs = field_args.get(name, {})
+        if hasattr(prop, 'direction'):
+            field_kwargs['original_field_args'] = field_kwargs.copy()
+
         field = converter.convert(
             model, mapper, prop,
-            field_args.get(name), db_session
+            field_kwargs, db_session,
         )
         if field is not None:
             field_dict[name] = field
@@ -190,6 +219,7 @@ class ModelFormMetaclass(FormMetaclass):
                 if (isinstance(e, AttributeError)
                         and not unchained._app_bundle_cls.is_single_module):
                     raise e
+
             new_clsdict = model_fields(Meta.model,
                                        only=Meta.only,
                                        exclude=Meta.exclude,
@@ -214,6 +244,8 @@ class ModelForm(FlaskForm, metaclass=ModelFormMetaclass):
     """
     class Meta:
         abstract = True
+
+    submit = _SubmitField('Submit')
 
     def __init__(self, *args, **kwargs):
         self._errors = None

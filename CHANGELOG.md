@@ -6,6 +6,7 @@
 ### General
 
 - support using the app bundle's config module as the `unchained_config` by setting the `FLASK_APP` environment variable to the app bundle name
+- add a submit field to forms by default
 
 ### SQLAlchemy Bundle
 
