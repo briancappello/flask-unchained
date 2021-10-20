@@ -215,9 +215,10 @@ class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin, metaclass=ModelAdminMetacl
         """
         value = super().__getattribute__(attr)
         if attr in EXTEND_BASE_CLASS_DICT_ATTRIBUTES and isinstance(value, dict):
-            base_value = getattr(ModelAdmin, attr)
+            base_value = (getattr(ModelAdmin, attr) or {}).copy()
             if isinstance(base_value, dict):
                 base_value.update(value)
+                return base_value
         elif attr in EXTEND_BASE_CLASS_LIST_ATTRIBUTES and isinstance(value, (list, tuple)):
             base_value = getattr(ModelAdmin, attr)
             if isinstance(base_value, (list, tuple)):
