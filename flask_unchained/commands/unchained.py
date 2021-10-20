@@ -1,5 +1,3 @@
-import os
-
 from flask_unchained import current_app
 from flask_unchained.cli import cli, click, print_table
 
@@ -69,14 +67,16 @@ def hooks(ctx):
 
     unchained_config = AppFactory().load_unchained_config(ctx.obj.data['env'])
     _, bundles = AppFactory().load_bundles(getattr(unchained_config, 'BUNDLES', []))
-    hooks = RunHooksHook(None).collect_from_bundles(bundles)
+    run_hooks = RunHooksHook(None)
+    hooks = run_hooks.collect_from_bundles(
+        bundles, _initial_objects=run_hooks.collect_unchained_hooks())
 
     header = ('Hook Name',
               'Default Bundle Module(s)',
               'Bundle Module(s) Override Attr',
               'Description')
     rows = []
-    for hook in hooks:
+    for hook, _ in run_hooks.resolve_hook_order(hooks):
         bundle_module_names = ([hook.bundle_module_name]
                                if hook.require_exactly_one_bundle_module
                                else hook.bundle_module_names)
