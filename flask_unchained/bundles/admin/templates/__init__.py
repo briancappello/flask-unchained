@@ -1,3 +1,5 @@
+import html
+
 from flask_unchained import url_for
 from markupsafe import Markup as safe
 from sqlalchemy.ext.associationproxy import _AssociationCollection
@@ -16,22 +18,42 @@ def admin_link(
     ctrl = (admin_controller
             if '_admin' in admin_controller
             else f'{admin_controller}_admin')
+    endpoint = f'{ctrl}.{view}'
 
-    def column_formatter(admin_view, ctx, model_instance, column):
+    def column_formatter(model_admin, ctx, model_instance, column):
         def get_label(obj):
             if callable(label):
                 return label(obj)
             return rec_getattr(obj, label or column)
 
         def get_title(obj, text):
-            if callable(tooltip):
-                return tooltip(obj, text)
-            return tooltip
+            return tooltip(obj, text) if callable(tooltip) else tooltip
+
+        modal = False
+        if 'edit' in endpoint and model_admin.edit_modal:
+            modal = True
+        elif 'create' in endpoint and model_admin.create_modal:
+            modal = True
+        elif 'details' in endpoint and model_admin.details_modal:
+            modal = True
 
         def a_tag(obj):
-            href = url_for(f'{ctrl}.{view}', id=getattr(obj, obj.Meta.pk))
             text = get_label(obj)
-            title = get_title(obj, text)
+            title = html.escape(get_title(obj, text))
+            if modal:
+                href = url_for(endpoint, id=getattr(obj, obj.Meta.pk),
+                               url=url_for(f'{model_admin.endpoint}.index_view'),
+                               modal=True)
+                return (
+                    f'<a href="{href}"'
+                    f'   title="{title or ""}"'
+                    '    data-toggle="modal"'
+                    '    data-target="#fa_modal_window">'
+                    f'      {text}'
+                    '</a>'
+                )
+
+            href = url_for(endpoint, id=getattr(obj, obj.Meta.pk))
             return f'<a href="{href}" title="{title or ""}">{text}</a>'
 
         column_value = rec_getattr(model_instance, column)
