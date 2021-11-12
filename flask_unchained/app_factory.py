@@ -1,5 +1,6 @@
 import importlib
 import inspect
+import networkx as nx
 import os
 import sys
 
@@ -38,7 +39,6 @@ class AppFactory(metaclass=Singleton):
     REQUIRED_BUNDLES = [
         # these are ordered by first to be loaded
         'flask_unchained.bundles.controller',
-        'flask_unchained.bundles.babel',  # requires controller bundle
     ]
 
     def create_app(self,
@@ -205,32 +205,65 @@ class AppFactory(metaclass=Singleton):
         in ``bundle_package_names``, attempt to load the app bundle from the
         unchained config.
         """
-        bundle_package_names = bundle_package_names or []
-        for bundle_name in reversed(cls.REQUIRED_BUNDLES):
-            try:
-                existing_index = bundle_package_names.index(bundle_name)
-            except ValueError:
-                pass
-            else:
-                bundle_package_names.pop(existing_index)
-            bundle_package_names.insert(0, bundle_name)
+        bundle_package_names = bundle_package_names and list(bundle_package_names) or []
+        for required_bundle in cls.REQUIRED_BUNDLES:
+            if required_bundle not in bundle_package_names:
+                bundle_package_names.insert(0, required_bundle)
 
         if not bundle_package_names:
             return None, []
 
-        bundles = []
+        bundle_modules = {}
         for bundle_package_name in bundle_package_names:
-            bundles.append(cls.load_bundle(bundle_package_name))
+            bundle_modules[bundle_package_name] = cls.load_bundle(bundle_package_name)
 
+        app_bundle = None
+        bundles = list(bundle_modules.values())
         if isinstance(bundles[-1], AppBundle):
-            return bundles[-1], bundles
+            app_bundle = bundles[-1]
+        elif unchained_config_module:
+            app_bundle = cls.bundle_from_module(unchained_config_module)
+            if app_bundle and app_bundle.module_name not in bundle_package_names:
+                bundle_modules[app_bundle.name] = app_bundle
+                bundle_package_names.append(app_bundle.name)
 
-        if unchained_config_module:
-            single_module_app_bundle = cls.bundle_from_module(unchained_config_module)
-            if single_module_app_bundle:
-                bundles.append(single_module_app_bundle)
-            return single_module_app_bundle, bundles
-        return None, bundles
+        last_bundle = app_bundle or bundles[-1]
+        last_bundle.dependencies = set([
+            x for x in bundle_package_names if x != last_bundle.module_name
+        ] + cls.REQUIRED_BUNDLES)
+
+        bundles = cls.resolve_bundle_order(bundle_package_names, bundle_modules)
+        return app_bundle, bundles
+
+    @classmethod
+    def resolve_bundle_order(cls, bundle_names, bundle_modules: Dict[str, Bundle]) -> List[Bundle]:
+        dag = nx.DiGraph()
+        reverse_deps = {}
+        for bundle_name in bundle_names:
+            dag.add_node(bundle_name)
+            for dep_name in bundle_modules[bundle_name].dependencies:
+                dag.add_edge(bundle_name, dep_name)
+                reverse_deps.setdefault(dep_name, []).append(bundle_name)
+
+        try:
+            order = list(reversed(list(nx.topological_sort(dag))))
+        except nx.NetworkXUnfeasible:
+            msg = 'Circular dependency detected between bundles'
+            problem_graph = ', '.join(f'{a} -> {b}'
+                                      for a, b in nx.find_cycle(dag))
+            raise Exception(f'{msg}: {problem_graph}')
+
+        rv = []
+        for bundle_name in order:
+            bundle = bundle_modules.get(bundle_name)
+            if not bundle or (bundle_name not in bundle_names
+                              and bundle_name not in cls.REQUIRED_BUNDLES):
+                deps = '\n'.join(reverse_deps[bundle_name])
+                raise Exception(f'"{bundle_name}" is required by the following '
+                                f'bundles:\n{deps}\n'
+                                f'Please add "{bundle_name}" to BUNDLES.')
+            rv.append(bundle)
+        return rv
 
     @classmethod
     def load_bundle(cls, bundle_package_name: str) -> Union[AppBundle, Bundle]:

@@ -27,6 +27,7 @@ def app(request, bundles, db_ext):
     app = AppFactory().create_app(TEST, bundles=bundles + [
         'flask_unchained.bundles.api',
         'flask_unchained.bundles.mail',
+        'flask_unchained.bundles.session',
         'tests.bundles.security._bundles.security',
         'tests.bundles.security._app',
     ], _config_overrides=options)

@@ -20,6 +20,11 @@ class AdminBundle(Bundle):
     The name of the Admin Bundle.
     """
 
+    dependencies = (
+        'flask_unchained.bundles.sqlalchemy',
+        'flask_unchained.bundles.security',
+    )
+
     def after_init_app(self, app: FlaskUnchained) -> None:
         admin._set_admin_index_view(app.config.ADMIN_INDEX_VIEW,
                                     url=app.config.ADMIN_BASE_URL)

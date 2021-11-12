@@ -19,6 +19,10 @@ class GrapheneBundle(Bundle):
     The name of the Graphene Bundle.
     """
 
+    dependencies = (
+        'flask_unchained.bundles.sqlalchemy',
+    )
+
     command_group_names = ['gql']
 
     root_schema: graphene.Schema = None

@@ -18,6 +18,11 @@ class ApiBundle(Bundle):
     The name of the API Bundle.
     """
 
+    dependencies = (
+        'flask_unchained.bundles.controller',
+        'flask_unchained.bundles.sqlalchemy',
+    )
+
     def __init__(self):
         self.resources_by_model = {}
         """

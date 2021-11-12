@@ -102,6 +102,11 @@ class Bundle(metaclass=BundleMetaclass):
     Name of the bundle. Defaults to the snake_cased class name.
     """
 
+    dependencies: List[str] = ()
+    """
+    A list of required bundles' modules (in dot notation).
+    """
+
     module_name: str = _BundleModuleNameDescriptor()
     """
     Top-level module name of the bundle (dot notation).
@@ -282,6 +287,17 @@ class Bundle(metaclass=BundleMetaclass):
             return
 
         raise AttributeError(name)
+
+    def __eq__(self, other):
+        return (isinstance(other, Bundle)
+                and self.__class__ == other.__class__
+                and self.module_name == other.module_name)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(f'{self.module_name}.{self.__class__.__name__}')
 
     def __repr__(self) -> str:
         return (f'<{self.__class__.__name__} '

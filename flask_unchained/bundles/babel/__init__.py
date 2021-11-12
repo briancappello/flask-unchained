@@ -29,6 +29,10 @@ class BabelBundle(Bundle):
     The name of the Babel Bundle.
     """
 
+    dependencies = (
+        'flask_unchained.bundles.controller',
+    )
+
     command_group_names = ('babel',)
     """
     Names of the command groups included in this bundle.
