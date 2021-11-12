@@ -1,5 +1,6 @@
 import marshmallow as ma
 import flask_marshmallow as flask_ma
+import marshmallow_sqlalchemy.fields as msqla_fields
 
 from flask_marshmallow.sqla import HyperlinkRelated
 from flask_unchained import FlaskUnchained
@@ -146,6 +147,8 @@ class Marshmallow:
         self.URLFor = flask_ma.fields.URLFor
         self.Hyperlinks = flask_ma.fields.Hyperlinks
         self.HyperlinkRelated = HyperlinkRelated
+        self.Related = msqla_fields.Related
+        self.RelatedList = msqla_fields.RelatedList
 
     def init_app(self, app: FlaskUnchained):
         db = app.extensions['sqlalchemy'].db
