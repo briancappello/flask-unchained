@@ -204,7 +204,11 @@ def _convert_query_params(view_kwargs: dict,
                           param_name_to_converters: dict,
                           ) -> dict:
     for name, converter in param_name_to_converters.items():
-        is_model_converter = isinstance(converter, type) and issubclass(converter, Model)
+        is_model_converter = (
+            Model is not None
+            and isinstance(converter, type)
+            and issubclass(converter, Model)
+        )
         if is_model_converter or name not in request.args:
             continue
 
