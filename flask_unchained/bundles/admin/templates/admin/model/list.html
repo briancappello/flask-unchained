@@ -1,7 +1,12 @@
 {% extends 'admin/model/list.html' %}
 
 {% block body %}
-  <h1>{{ admin_view.name }}</h1>
+  <h1>
+    {% if admin_view.menu_icon_value %}
+      <i class="{{ admin_view.menu_icon_value }}"></i>
+    {% endif %}
+    {{ admin_view.name }}
+  </h1>
   {{ super() }}
 {% endblock %}
 
