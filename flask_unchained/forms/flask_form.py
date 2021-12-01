@@ -49,7 +49,12 @@ class FlaskForm(BaseForm):
         Overridden to always return the submit fields last (unless their
         order is explicitly set in :attr:`field_order`)
         """
-        fields = [self._fields[name] for name in self.field_order]
+        name = None
+        try:
+            fields = [self._fields[name] for name in self.field_order]
+        except KeyError as e:
+            raise RuntimeError(f'{str(e)} is listed in `field_order` but the '
+                               f'field is not defined')
         extra_fields = []
         submit_fields = {}
 
