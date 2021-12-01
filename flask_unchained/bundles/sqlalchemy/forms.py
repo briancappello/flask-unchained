@@ -1,4 +1,5 @@
 from flask_unchained import FlaskForm, unchained
+from flask_unchained.di import _set_up_class_dependency_injection
 from py_meta_utils import (
     AbstractMetaOption, McsArgs, MetaOption, MetaOptionsFactory, _missing,
     process_factory_meta_options)
@@ -205,6 +206,7 @@ def model_fields(model, db_session=None, only=None, exclude=None,
 class ModelFormMetaclass(FormMetaclass):
     def __new__(mcs, name, bases, clsdict):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
+        _set_up_class_dependency_injection(mcs_args)
         Meta = process_factory_meta_options(mcs_args, ModelFormMetaOptionsFactory)
         mcs_args.clsdict['Meta'] = type('Meta', (), Meta._to_clsdict())
         if not Meta.abstract and (
@@ -304,4 +306,9 @@ class ModelForm(FlaskForm, metaclass=ModelFormMetaclass):
 
 __all__ = [
     'ModelForm',
+    'ModelConverter',
+    'QuerySelectField',
+    'QuerySelectMultipleField',
+    'QueryRadioField',
+    'QueryCheckboxField',
 ]
