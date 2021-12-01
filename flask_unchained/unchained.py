@@ -223,11 +223,11 @@ class Unchained:
         self._shell_ctx['unchained'] = self
         app.shell_context_processor(lambda: self._shell_ctx)
 
-        for deferred in self._deferred_functions:
-            deferred(app)
-
         run_hooks_hook = RunHooksHook(self)
         run_hooks_hook.run_hook(app, bundles, unchained_config)
+
+        for deferred in self._deferred_functions:
+            deferred(app)
 
         self._initialized = True
 
@@ -404,10 +404,9 @@ class Unchained:
                 continue
 
             dag.add_node(name)
-            for param_name in itertools.chain.from_iterable([
-                inspect.signature(service).parameters,
-                getattr(service, _INJECT_CLS_ATTRS)
-            ]):
+            params = set(getattr(service, _INJECT_CLS_ATTRS, []))
+            params |= set(inspect.signature(service).parameters)
+            for param_name in params:
                 if (param_name in self.services
                         or param_name in self.extensions
                         or param_name in self._services_registry):
