@@ -243,7 +243,7 @@ class AppFactory(metaclass=Singleton):
             dag.add_node(bundle_name)
             for dep_name in bundle_modules[bundle_name].dependencies:
                 dag.add_edge(bundle_name, dep_name)
-                reverse_deps.setdefault(dep_name, []).append(bundle_name)
+                reverse_deps.setdefault(dep_name, []).append(f'- {bundle_name}')
 
         try:
             order = list(reversed(list(nx.topological_sort(dag))))
