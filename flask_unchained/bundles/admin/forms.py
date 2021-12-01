@@ -79,8 +79,8 @@ class DateField(fields.DateField):
         format=DATE_FORMAT,
         **kwargs,
     ):
-        kwargs = _set_data_date_format_render_kw(kwargs)
-        super().__init__(label, validators, format, **kwargs)
+        kwargs = _set_data_date_format_render_kw(dict(**kwargs, format=format))
+        super().__init__(label, validators, **kwargs)
 
 
 class DateTimeField(admin_fields.DateTimeField):
@@ -91,8 +91,8 @@ class DateTimeField(admin_fields.DateTimeField):
         format=DATETIME_FORMAT,
         **kwargs,
     ):
-        kwargs = _set_data_date_format_render_kw(kwargs)
-        super().__init__(label, validators, format, **kwargs)
+        kwargs = _set_data_date_format_render_kw(dict(**kwargs, format=format))
+        super().__init__(label, validators, **kwargs)
 
 
 class IntervalField(Field):
