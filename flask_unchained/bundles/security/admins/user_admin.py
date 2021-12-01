@@ -53,7 +53,14 @@ class UserAdmin(ModelAdmin):
     form_excluded_columns = ('password', 'user_roles')
 
     form_overrides = dict(email=fields.EmailField)
-    form_args = dict(email={'validators': [validators.Required(), validators.Email()]})
+    form_args = dict(
+        email={
+            'validators': [
+                validators.DataRequired(),
+                validators.Email(),
+            ],
+        },
+    )
 
     def get_create_form(self):
         CreateForm = super().get_create_form()

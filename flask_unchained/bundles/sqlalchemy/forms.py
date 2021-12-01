@@ -5,7 +5,7 @@ from py_meta_utils import (
 from sqlalchemy_unchained.validation import ValidationError, ValidationErrors
 from typing import *
 from wtforms.fields import SubmitField as _SubmitField
-from wtforms.validators import Required as _RequiredValidator
+from wtforms.validators import DataRequired as _RequiredValidator
 from wtforms_sqlalchemy.fields import *
 from wtforms_sqlalchemy.orm import ModelConverter as BaseModelConverter, converts
 from wtforms.form import FormMeta as FormMetaclass

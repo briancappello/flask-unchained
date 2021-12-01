@@ -151,7 +151,9 @@ class ChangePasswordForm(BaseForm):
     def validate(self):
         result = super().validate()
 
-        if not security_utils_service.verify_password(current_user, self.password.data):
+        if (not self.password.data
+                or not security_utils_service.verify_password(current_user,
+                                                              self.password.data)):
             self.password.errors.append(
                 _('flask_unchained.bundles.security:error.invalid_password'))
             return False
