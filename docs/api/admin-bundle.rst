@@ -35,7 +35,6 @@ Admin Bundle API
     :nosignatures:
 
     ~flask_unchained.bundles.admin.forms.ReorderableForm
-    ~flask_unchained.bundles.admin.forms.EnumField
 
 **flask_unchained.bundles.admin.macro**
 

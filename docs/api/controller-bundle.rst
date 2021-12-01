@@ -79,7 +79,6 @@ Controller Bundle API
     ~flask_unchained.redirect
     ~flask_unchained.url_for
     ~flask_unchained.abort
-    ~flask_unchained.generate_csrf
 
 ControllerBundle
 ^^^^^^^^^^^^^^^^
@@ -212,7 +211,3 @@ url_for
 abort
 ~~~~~
 .. autofunction:: flask_unchained.abort
-
-generate_csrf
-~~~~~~~~~~~~~
-.. autofunction:: flask_unchained.generate_csrf
