@@ -90,7 +90,6 @@ setup(
             'flask-session>=0.4.0',
         ],
         'sqlalchemy': [
-            'factory_boy>=2.11.1',
             'flask-migrate>=3.1.0',
             'flask-sqlalchemy-unchained>=0.7.6',
             'sqlalchemy>=1.3.24,<2',
