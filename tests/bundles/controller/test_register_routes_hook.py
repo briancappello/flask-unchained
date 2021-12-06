@@ -66,8 +66,8 @@ class TestRegisterRoutesHook:
                         'three.view_three': 'view_three rendered',
                         'four.view_four': 'view_four rendered'}
 
-            # check endpoints added to store
-            assert list(hook.bundle.endpoints.keys()) == list(expected.keys())
+            # check endpoints added to bundle
+            assert set(hook.bundle.endpoints.keys()) == set(expected.keys())
             for endpoint in expected:
                 for route in hook.bundle.endpoints[endpoint]:
                     assert route.view_func() == expected[endpoint]
