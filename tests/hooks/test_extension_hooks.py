@@ -18,10 +18,10 @@ class FakeExt:
 
 
 FAKE_EXTENSIONS = {
-    'one': (FakeExt('one'), ['two', 'three']),
-    'two': (FakeExt('two'), ['four']),
-    'three': (FakeExt('three'), ['four']),
     'four': FakeExt('four'),
+    'one': (FakeExt('one'), ['two', 'three']),
+    'three': (FakeExt('three'), ['four']),
+    'two': (FakeExt('two'), ['three']),
 }
 
 
@@ -54,8 +54,8 @@ class TestRegisterExtensionsHook:
     def test_process_objects(self, app, register_hook: RegisterExtensionsHook):
         register_hook.process_objects(app, FAKE_EXTENSIONS)
 
-        registered = list(register_hook.unchained.extensions.keys())
-        assert registered == ['one', 'two', 'three', 'four']
+        registered = set(register_hook.unchained.extensions.keys())
+        assert registered == {'one', 'two', 'three', 'four'}
         for name, ext in register_hook.unchained.extensions.items():
             assert name == ext.name
             assert ext.app is None
@@ -73,15 +73,15 @@ class TestInitExtensionsHook:
     def test_process_objects(self, app, init_hook: InitExtensionsHook):
         init_hook.process_objects(app, FAKE_EXTENSIONS)
 
-        registered = list(init_hook.unchained.extensions.keys())
-        assert registered == ['four', 'two', 'three', 'one']
+        registered = set(init_hook.unchained.extensions.keys())
+        assert registered == {'four', 'three', 'two', 'one'}
         for name, ext in init_hook.unchained.extensions.items():
             assert name == ext.name
             assert ext.app == app
 
     def test_resolve_extension_order(self, init_hook: InitExtensionsHook):
         order = [ext.name for ext in init_hook.resolve_extension_order(FAKE_EXTENSIONS)]
-        assert order == ['four', 'two', 'three', 'one']
+        assert order == ['four', 'three', 'two', 'one']
 
     def test_resolve_broken_extension_order(self, init_hook: InitExtensionsHook):
         extensions = {
