@@ -224,8 +224,8 @@ class AppFactory(metaclass=Singleton):
         elif unchained_config_module:
             app_bundle = cls.bundle_from_module(unchained_config_module)
             if app_bundle and app_bundle.module_name not in bundle_package_names:
-                bundle_modules[app_bundle.name] = app_bundle
-                bundle_package_names.append(app_bundle.name)
+                bundle_modules[app_bundle.module_name] = app_bundle
+                bundle_package_names.append(app_bundle.module_name)
 
         last_bundle = app_bundle or bundles[-1]
         last_bundle.dependencies = set([
