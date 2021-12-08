@@ -10,8 +10,8 @@
 
 .. BEGIN document -------------------------------------------------------------
 
-Included Bundles
-================
+Bundles
+=======
 
 .. toctree::
     :maxdepth: 2

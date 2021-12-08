@@ -1,0 +1,347 @@
+
+Let's take a peak at some of what this baby can really do to see just how quickly you can start building something more useful:
+
+.. code:: shell
+
+    cd project-root
+    mkdir -p templates/site
+    pip install "flask-unchained[dev,sqlalchemy]"
+
+Quotes App
+^^^^^^^^^^
+
+We're going to create a simple app to store authors and quotes in an SQLite database, and to display them to the user in their browser.
+
+.. code-block::
+
+    # project-root/app.py
+    from flask_unchained import (FlaskUnchained, AppBundle, BundleConfig,
+                                 unchained, injectable, generate_csrf)
+    from flask_unchained.views import Controller, route, param_converter
+    from flask_unchained.bundles.sqlalchemy import db, ModelManager
+
+    # configuration ---------------------------------------------------------------------
+    BUNDLES = ['flask_unchained.bundles.sqlalchemy']
+
+    class Config(BundleConfig):
+        SECRET_KEY = 'super-secret-key'
+        WTF_CSRF_ENABLED = True
+        SQLALCHEMY_DATABASE_URI = 'sqlite://'  # memory
+
+    class TestConfig(Config):
+        WTF_CSRF_ENABLED = False
+
+    @unchained.after_request
+    def set_csrf_token_cookie(response):
+        if response:
+            response.set_cookie('csrf_token', generate_csrf())
+        return response
+
+
+    # database models -------------------------------------------------------------------
+    class Author(db.Model):
+        # models get a primary key (id) and created_at/updated_at columns by default
+        name = db.Column(db.String(length=64))
+        quotes = db.relationship('Quote', back_populates='author')
+
+    class Quote(db.Model):
+        text = db.Column(db.Text)
+        author = db.relationship('Author', back_populates='quotes')
+        author_id = db.foreign_key('Author', nullable=False)
+
+
+    # model managers (dependency-injectable services for database CRUD operations) ------
+    class AuthorManager(ModelManager):
+        class Meta:
+            model = Author
+
+    class QuoteManager(ModelManager):
+        class Meta:
+            model = Quote
+
+
+    # views (controllers) ---------------------------------------------------------------
+    class SiteController(Controller):
+        class Meta:
+            template_folder = 'site'  # the default, auto-determined from class name
+
+        # get the app's instance of the QuoteManager service injected into us
+        quote_manager: QuoteManager = injectable
+
+        @route('/')
+        def index(self):
+            return self.render('index', quotes=self.quote_manager.all())
+
+        @route('/authors/<int:id>')
+        @param_converter(id=Author)  # use `id` in the URL to query that Author in the DB
+        def author(self, author: Author):
+            return self.render('author', author=author)
+
+
+    # declare this module (file) is a Flask Unchained Bundle by subclassing AppBundle ---
+    class App(AppBundle):
+        def before_init_app(self, app: FlaskUnchained) -> None:
+            app.url_map.strict_slashes = False
+
+        @unchained.inject()
+        def after_init_app(self,
+                           app: FlaskUnchained,
+                           author_manager: AuthorManager = injectable,
+                           quote_manager: QuoteManager = injectable,
+                           ) -> None:
+            # typically you should use DB migrations and fixtures to perform these steps
+            db.create_all()
+            quote_manager.create(
+                text="Happiness is not a station you arrive at, "
+                     "but rather a manner of traveling.",
+                author=author_manager.create(name="Margaret Lee Runbeck"))
+            quote_manager.create(
+                text="Things won are done; joy's soul lies in the doing.",
+                author=author_manager.create(name="Shakespeare"))
+            db.session.commit()
+
+That's the complete app code right there! Hopefully this helps show what is meant by Flask Unchained minimizing plumbing and boilerplate by being *declarative* and *object-oriented*. We just need to add the template files before starting the server:
+
+.. code:: html+jinja
+
+    <!-- project-root/templates/layout.html -->
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <title>Flask Unchained Quotes</title>
+    </head>
+    <body>
+        <nav>
+            <a href="{{ url_for('site_controller.index') }}">Home</a>
+        </nav>
+        {% block body %}
+        {% endblock %}
+    </body>
+    </html>
+
+.. code:: html+jinja
+
+    <!-- project-root/templates/site/index.html -->
+    {% extends "layout.html" %}
+
+    {% block body %}
+        <h1>Flask Unchained Quotes</h1>
+        {% for quote in quotes %}
+            <blockquote>
+                {{ quote.text }}<br />
+                <a href="{{ url_for('site_controller.author', id=quote.author.id) }}">
+                    {{ quote.author.name }}
+                </a>
+            </blockquote>
+        {% endfor %}
+    {% endblock %}
+
+.. code:: html+jinja
+
+    <!-- project-root/templates/site/author.html -->
+    {% extends "layout.html" %}
+
+    {% block body %}
+        <h1>{{ author.name }} Quotes</h1>
+        {% for quote in author.quotes %}
+            <blockquote>{{ quote.text }}</blockquote>
+        {% endfor %}
+    {% endblock %}
+
+Fire it up:
+
+.. code:: shell
+
+    export FLASK_APP="app"
+    flask urls
+    Method(s)  Rule                         Endpoint                View
+    -------------------------------------------------------------------------------------------
+          GET  /                            site_controller.index   app.SiteController.index
+          GET  /authors/<int:id>            site_controller.author  app.SiteController.author
+
+.. code:: shell
+
+    export FLASK_APP="app"
+    flask run
+     * Environment: development
+     * Debug mode: on
+     * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+
+Adding a RESTful API
+^^^^^^^^^^^^^^^^^^^^
+
+Flask Unchained includes an API Bundle integrating RESTful support atop the Controller Bundle with SQLAlchemy models and Marshmallow serializers. Basic out-of-the-box usage is dead simple.
+
+Install dependencies for the API Bundle:
+
+.. code:: shell
+
+    pip install "flask-unchained[api]"
+
+And add the following code to the bottom of ``project-root/app.py``:
+
+.. code-block::
+
+    # append to project-root/app.py
+    from flask_unchained.bundles.api import ma, ModelResource, ModelSerializer
+    from flask_unchained.routes import controller, resource, prefix
+
+    BUNDLES += ['flask_unchained.bundles.api']
+
+    # db model serializers --------------------------------------------------------------
+    class AuthorSerializer(ModelSerializer):
+        class Meta:
+            model = Author
+            url_prefix = '/authors'  # the default, auto-determined from model class name
+
+        quotes = ma.Nested('QuoteSerializer', only=('id', 'text'), many=True)
+
+    class QuoteSerializer(ModelSerializer):
+        class Meta:
+            model = Quote
+
+        author = ma.Nested('AuthorSerializer', only=('id', 'name'))
+
+    # api views -------------------------------------------------------------------------
+    class AuthorResource(ModelResource):
+        class Meta:
+            model = Author
+            include_methods = ('get', 'list')
+
+    class QuoteResource(ModelResource):
+        class Meta:
+            model = Quote
+            exclude_methods = ('create', 'patch', 'put', 'delete')
+
+    # use declarative routing for specifying views with fine-grained control over URLs
+    routes = lambda: [
+        controller(SiteController),
+        prefix('/api/v1', [
+            resource(AuthorResource),
+            resource(QuoteResource),
+        ]),
+    ]
+
+We can take a look at the new URLs:
+
+.. code:: shell
+
+    flask urls
+    Method(s)  Rule                       Endpoint                View
+    -------------------------------------------------------------------------------------------
+          GET  /                          site_controller.index   app.SiteController.index
+          GET  /authors/<int:id>          site_controller.author  app.SiteController.author
+          GET  /api/v1/authors            author_resource.list    app.AuthorResource.list
+          GET  /api/v1/authors/<int:id>   author_resource.get     app.AuthorResource.get
+          GET  /api/v1/quotes             quote_resource.list     app.QuoteResource.list
+          GET  /api/v1/quotes/<int:id>    quote_resource.get      app.QuoteResource.get
+
+And run it:
+
+.. code:: shell
+
+    flask run
+     * Environment: development
+     * Debug mode: on
+     * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+
+Securing the App
+^^^^^^^^^^^^^^^^
+
+Flask Unchained also includes the Security Bundle as a foundation for handling authentication and authorization in your apps. It is designed to be extended and customized to your needs - like everything in Flask Unchained! - but it also works out-of-the-box for when all it provides is sufficient for your needs. Let's set things up to require an authenticated user to use the app's API.
+
+Install dependencies for the Security Bundle:
+
+.. code:: shell
+
+    pip install "flask-unchained[session,security]"
+
+And add the following to the bottom of your ``project-root/app.py``:
+
+.. code-block::
+
+    # append to project-root/app.py
+    from flask_unchained.bundles.security import SecurityController, auth_required
+    from flask_unchained.bundles.security import SecurityService, UserManager
+    from flask_unchained.bundles.security.models import User as BaseUser
+    from flask_unchained.bundles.sqlalchemy import db
+
+    # enable the session and security bundles
+    BUNDLES += ['flask_unchained.bundles.session',
+                'flask_unchained.bundles.security']
+
+    # configure server-side sessions
+    Config.SESSION_TYPE = 'sqlalchemy'
+    Config.SESSION_SQLALCHEMY_TABLE = 'flask_sessions'
+
+    # configure security
+    Config.SECURITY_REGISTERABLE = True  # enable user registration
+    AuthorResource.Meta.decorators = (auth_required,)
+    QuoteResource.Meta.decorators = (auth_required,)
+
+    # want to add fields to the database model for users? no problem!
+    # just subclass it, keeping the same original class name
+    class User(BaseUser):
+        favorite_color = db.Column(db.String)
+
+    # add the Security Controller views to our app
+    routes = lambda: [
+        controller(SiteController),
+        controller(SecurityController),
+        prefix('/api/v1', [
+            resource('/authors', AuthorResource),
+            resource('/quotes', QuoteResource),
+        ]),
+    ]
+
+    # create a demo user and log them in when the dev server starts
+    @unchained.before_first_request()
+    @unchained.inject()
+    def create_and_login_demo_user(user_manager: UserManager = injectable,
+                                   security_service: SecurityService = injectable):
+        user = user_manager.create(email='demo@example.com',
+                                   password='password',
+                                   favorite_color='magenta',
+                                   is_active=True,
+                                   commit=True)
+        security_service.login_user(user)
+
+By default the Security Bundle only comes with the ``/login`` and ``/logout`` URLs enabled. Let's confirm we've also enabled ``/register``:
+
+.. code:: shell
+
+    flask urls
+    Method(s)  Rule                         Endpoint                      View
+    -------------------------------------------------------------------------------------------------------------------------------
+          GET  /                         site_controller.index         quotes.SiteController.index
+          GET  /authors/<int:id>         site_controller.author        quotes.SiteController.author
+          GET  /api/v1/authors           author_resource.list          quotes.AuthorResource.list
+          GET  /api/v1/authors/<int:id>  author_resource.get           quotes.AuthorResource.get
+          GET  /api/v1/quotes            quote_resource.list           quotes.QuoteResource.list
+          GET  /api/v1/quotes/<int:id>   quote_resource.get            quotes.QuoteResource.get
+    GET, POST  /login                    security_controller.login     flask_unchained.bundles.security.SecurityController.login
+          GET  /logout                   security_controller.logout    flask_unchained.bundles.security.SecurityController.logout
+    GET, POST  /register                 security_controller.register  flask_unchained.bundles.security.SecurityController.register
+
+.. code:: shell
+
+    flask run
+     * Environment: development
+     * Debug mode: on
+     * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+
+NOTE: you'll need to logout the demo user by visiting `http://127.0.0.1:5000/logout <http://127.0.0.1:5000/logout>`_ before the login and register endpoints will work.
+
+The Production App Factory
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In development and testing the app factory is automatically used, while in production you call it yourself:
+
+.. code-block::
+
+    # project-root/wsgi.py
+    from flask_unchained import AppFactory, PROD
+
+    app = AppFactory().create_app(env=PROD)
+
+We've just shown how Flask Unchained keeps the minimal simplicity micro-frameworks like Flask are renowned for, but to really begin to grasp the power of using Flask Unchained, we need to go bigger than this simple example!

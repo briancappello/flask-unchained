@@ -6,17 +6,34 @@ Flask Unchained comes integrated with the `SQLAlchemy <http://www.sqlalchemy.org
 Install Dependencies
 ^^^^^^^^^^^^^^^^^^^^
 
-First we need to install SQLAlchemy and related dependencies:
+First we need to install the SQLAlchemy Bundle:
 
 .. code:: bash
 
-   pip install "flask-unchained[sqlalchemy]" py-yaml-fixtures
+   pip install "flask-unchained[sqlalchemy]"
 
-We also need to update our tests so that they load the pytest fixtures from the SQLAlchemy Bundle:
+And enable it in your app:
+
+.. code-block::
+
+   # app.py
+
+   # add a list named BUNDLES to the top of the file
+   BUNDLES = [
+       'flask_unchained.bundles.sqlalchemy',
+   ]
+
+   class Config(BundleConfig):
+       # ...
+
+
+We also need to update our tests so that they load the ``pytest`` fixtures from the SQLAlchemy Bundle:
 
 .. code:: bash
 
-   touch tests/conftest.py
+   mkdir tests && \
+      touch tests/__init__.py tests/conftest.py && \
+      mv test_app.py tests/test_app.py
 
 .. code:: python
 
@@ -24,20 +41,7 @@ We also need to update our tests so that they load the pytest fixtures from the 
 
    from flask_unchained.bundles.sqlalchemy.pytest import *
 
-There are two fixtures that it includes: ``db`` and ``db_session``. They're both automatically used; ``db`` is scoped ``session`` and will create/drop all necessary tables once per test session while ``db_session`` is function scoped, and thus will run for every test. Its responsibility is to create an isolated session of transactions for each individual test, to make sure that every test starts with a clean slate database without needing to drop and recreate all the tables for each and every test.
-
-Next, enable the SQLAlchemy and Py YAML Fixtures bundles so we can begin using them:
-
-.. code:: python
-
-   # unchained_config.py
-
-   BUNDLES = [
-       # ...
-       'flask_unchained.bundles.sqlalchemy',
-       'py_yaml_fixtures',
-       'app',
-   ]
+There are two fixtures that it includes: ``db`` and ``db_session``. They're both automatically used; ``db`` is ``pytest``-scoped "session" and will therefore create/drop all necessary tables once per test session. On the other hand, ``db_session`` is function scoped, and thus runs once for every test. Its responsibility is to create an isolated session of transactions for each individual test. This makes sure every test starts with a clean slate database without needing to drop and recreate all the tables for each and every test.
 
 Configuration
 ^^^^^^^^^^^^^
@@ -48,23 +52,23 @@ If you'd like to change the path, it would look like this:
 
 .. code:: python
 
-   # app/config.py
-
-   from flask_unchained import BundleConfig
+   # app.py
 
    class Config(BundleConfig):
       # ...
       SQLALCHEMY_DATABASE_URI = 'sqlite:///db/hello-flask-unchained.sqlite'
 
+   class TestConfig(Config):
+      # ...
+      SQLALCHEMY_DATABASE_URI = 'sqlite:///db/hello-flask-unchained-testing.sqlite'
+
 If you're fine using SQLite, continue to :ref:`init-migrations`.
 
-If instead you'd like to use MariaDB/MySQL or PostgreSQL, now would be the time to configure it. For example, to use PostgreSQL with ``psycopg2``:
+If instead you'd like to use PostgreSQL or MariaDB/MySQL, now would be the time to configure it. For example, to use PostgreSQL with ``psycopg2``:
 
 .. code:: python
 
-   # app/config.py
-
-   from flask_unchained import BundleConfig
+   # app.py
 
    class Config(BundleConfig):
        # ...
@@ -86,7 +90,7 @@ If instead you'd like to use MariaDB/MySQL or PostgreSQL, now would be the time 
            port=os.getenv('FLASK_DATABASE_PORT', 5432),
            db=os.getenv('FLASK_DATABASE_NAME', 'hello_fun_test'))
 
-Or for MariaDB/MySQL, replace the ``engine`` parameter with ``mysql+mysqldb`` and the ``port`` parameter with ``3306``.
+To instead use MariaDB/MySQL, replace the ``engine`` parameter with ``mysql+mysqldb`` and the ``port`` parameter with ``3306``.
 
 Note that you'll probably need to install the relevant driver package, eg:
 
@@ -105,7 +109,7 @@ See `the upstream docs on SQLAlchemy dialects <http://docs.sqlalchemy.org/en/lat
 Initialize Migrations
 ^^^^^^^^^^^^^^^^^^^^^
 
-The last step is to initialize the database migrations folder:
+The last step for setting up the SQLAlchemy Bundle is to initialize the database migrations folder:
 
 .. code:: bash
 
@@ -119,4 +123,4 @@ We should commit our changes before continuing:
    git status
    git commit -m 'install sqlalchemy and py-yaml-fixtures bundles'
 
-Next, in order to demonstrate using migrations, and also as preparation for installing the Security Bundle, let's continue to setting up :doc:`session` using the Session Bundle.
+Next, in order to demonstrate using migrations, and also as preparation for installing the Security Bundle, let's continue to setting up :doc:`04_session` using the Session Bundle.

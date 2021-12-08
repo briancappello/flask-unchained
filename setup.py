@@ -8,7 +8,7 @@ with open('README.md', encoding='utf-8') as f:
 setup(
     name='Flask-Unchained',
     version='0.9.0',
-    description='The quickest and easiest way to build large web apps and APIs with Flask and SQLAlchemy',
+    description='The quickest and easiest way to build web apps and APIs with Flask',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/briancappello/flask-unchained',
@@ -41,14 +41,14 @@ setup(
             'apispec>=4.5.0,<5',
             'apispec-webframeworks>=0.5.2',
             'flask-marshmallow>=0.14.0',
-            'marshmallow>=3.13.0',
+            'marshmallow>=3.14.1',
             'marshmallow-sqlalchemy>=0.26.1',
         ],
         'asyncio': [
             'quart>=0.13.1',
         ],
         'celery': [
-            'celery>=5.2.0',
+            'celery>=5.2.1',
             'dill>=0.3.4',
         ],
         'dev': [

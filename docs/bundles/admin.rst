@@ -10,9 +10,9 @@ Install dependencies:
 
 .. code:: bash
 
-   pip install "flask-unchained[admin]"
+   pip install "flask-unchained[sqlalchemy,session,security,admin]"
 
-Enable the bundle in your ``unchained_config.py``:
+Enable the bundle in your ``BUNDLES``:
 
 .. code:: python
 
@@ -20,6 +20,10 @@ Enable the bundle in your ``unchained_config.py``:
 
    BUNDLES = [
        # ...
+       'flask_unchained.bundles.babel',       # required by Security Bundle
+       'flask_unchained.bundles.session',     # required by Security Bundle
+       'flask_unchained.bundles.sqlalchemy',  # required by Admin Bundle
+       'flask_unchained.bundles.security',    # required by Admin Bundle
        'flask_unchained.bundles.admin',
        'app',
    ]
@@ -31,8 +35,8 @@ And include the Admin Bundle's routes:
     # project-root/your_app_bundle/routes.py
 
     routes = lambda: [
-        include('flask_unchained.bundles.admin.routes'),
         # ...
+        include('flask_unchained.bundles.admin.routes'),
     ]
 
 Config

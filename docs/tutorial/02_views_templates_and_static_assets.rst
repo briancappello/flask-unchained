@@ -5,10 +5,10 @@ So far we've been returning a raw string from our view function. This works fine
 
 .. code:: bash
 
-   mkdir -p templates static \
-     && touch templates/layout.html templates/_navbar.html templates/_flashes.html
+   mkdir -p static templates/site \
+     && touch templates/layout.html templates/_navbar.html templates/_flashes.html templates/site/index.html
 
-These directories are the standard locations the :class:`~flask.Flask` constructor expects, so they will automatically be used. (Note however that if just created either of these directories, then you will need to restart the development server for them to be picked up by it.)
+These directories are the standard locations the :class:`~flask.Flask` constructor expects, so they will automatically be used. (Note however that if you just created either of these directories, then you will need to restart the development server for them to be picked up by it.)
 
 Our site looks pretty weak as it stands. Let's add Bootstrap to spruce things up a bit:
 
@@ -21,7 +21,7 @@ Our site looks pretty weak as it stands. Let's add Bootstrap to spruce things up
 
 Layout Template
 ^^^^^^^^^^^^^^^
-In order to share as much code as possible between templates, it's best practice to abstract away the shared boilerplate into ``templates/layout.html``. Just like vanilla Flask, Flask Unchained uses the Jinja2 templating engine. If you're unfamiliar with what anything below is doing, I recommend checking out the excellent `official Jinja2 documentation <jinja.pocoo.org/docs/>`_.
+In order to share as much code as possible between templates, it's best practice to abstract away the shared boilerplate into ``templates/layout.html``. Flask Unchained uses the Jinja2 templating engine. If you're unfamiliar with what anything below is doing, I recommend checking out the excellent `official Jinja2 documentation <jinja.pocoo.org/docs/>`_.
 
 Now let's write our ``templates/layout.html`` file:
 
@@ -134,23 +134,42 @@ And also the included  ``templates/_flashes.html`` and ``templates/_navbar.html`
 
 The ``nav_link`` macro perhaps deserves some explanation. This is a small utility function that renders a navigation item in the bootstrap navbar. We do this to make our code more DRY, because every navigation link needs to contain logic to determine whether or not it is the currently active view. The ``{% if endpoint is active %}`` bit is special - Flask Unchained adds the ``active`` template test by default to make this easier.
 
-And now let's update our ``app/templates/site/index.html`` template to use our new layout template:
+Controller View Template
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The above templates are "global" in the sense that they will be used for all of our individual views. Currently we only have one view, ``SiteController.index``, which we'll update to use a template extending the layout template:
 
 .. code:: html+jinja
 
-   {# app/templates/site/index.html #}
+   {# templates/site/index.html #}
 
    {% extends 'layout.html' %}
 
-   {% block title %}Hello World!{% endblock %}
+   {% block title %}Hello Flask Unchained!{% endblock %}
 
    {% block content %}
      <div class="row">
        <div class="col">
-         <h1>Hello World!</h1>
+         <h1>Hello Flask Unchained!</h1>
        </div>
      </div>
    {% endblock %}
+
+And the corresponding update to our view to render the template:
+
+.. code-block::
+
+    # app.py
+
+    from flask_unchained import AppBundle, Controller, route
+
+    class App(AppBundle):
+        pass
+
+    class SiteController(Controller):
+        @route('/')
+        def index(self):
+            return self.render('site/index.html')
 
 Tests should still pass...
 
@@ -163,7 +182,7 @@ Tests should still pass...
    plugins: flask-0.10.0, Flask-Unchained-0.8.0
    collected 1 item
 
-   tests/app/test_views.py .                                                             [100%]
+   test_app.py .                                                                         [100%]
 
    ================================= 1 passed in 0.10 seconds =================================
 
@@ -173,7 +192,7 @@ This seems like a good place to make a commit:
 
    git add .
    git status
-   git commit -m 'refactor templates to extend a base layout template'
+   git commit -m 'use templates for views with basic bootstrap styling'
 
 Customizing Styles
 ^^^^^^^^^^^^^^^^^^
@@ -191,6 +210,8 @@ Let's update the ``stylesheets`` and ``javascripts`` blocks in our layout templa
 .. code:: html+jinja
 
    {# templates/layout.html #}
+
+   {# ... #}
 
    {% block stylesheets %}
      <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-v4.1.2.min.css') }}">
@@ -225,14 +246,16 @@ Let's commit our changes:
 Adding a Landing Page
 ^^^^^^^^^^^^^^^^^^^^^
 
-OK, let's refactor our views so we have a landing page and a separate page for the hello view. We're also going to introduce :meth:`flask_unchained.decorators.param_converter` here so that we can (optionally) customizable the name we're saying hello to via the query string:
+OK, let's refactor our views so we have a landing page and a separate page for the hello view. We're also going to introduce :meth:`param_converter` here so that we can (optionally) customizable the name we're saying hello to via the query string:
 
 .. code:: python
 
-   # app/views.py
+   # app.py
 
-   from flask_unchained import Controller, route, param_converter
+   from flask_unchained import AppBundle, Controller, route, param_converter
 
+   class App(AppBundle):
+       pass
 
    class SiteController(Controller):
        @route('/')
@@ -247,6 +270,8 @@ OK, let's refactor our views so we have a landing page and a separate page for t
 
 The ``param_converter`` converts arguments passed in via the query string to arguments that get passed to the decorated view function. It can make sure you get the right type via a callable (like here), or as we'll cover later, it can even convert unique identifiers from the URL directly into database models. But that's getting ahead of ourselves.
 
+We've also modified the calls to ``self.render`` to use the short-hand template name: the "site" folder is automatically determined from the controller class's name, and the ".html" file extension is already set as the default for all template files.
+
 Now that we've added another view/route, our templates need some work again. Let's update the navbar, move our existing ``index.html`` template to ``hello.html`` (adding support for the ``name`` template context variable), and lastly add a new ``index.html`` template for the landing page.
 
 .. code:: html+jinja
@@ -260,7 +285,7 @@ Now that we've added another view/route, our templates need some work again. Let
 
 .. code:: html+jinja
 
-   {# app/templates/site/hello.html #}
+   {# templates/site/hello.html #}
 
    {% extends 'layout.html' %}
 
@@ -276,7 +301,7 @@ Now that we've added another view/route, our templates need some work again. Let
 
 .. code:: html+jinja
 
-   {# app/templates/site/index.html #}
+   {# templates/site/index.html #}
 
    {% extends 'layout.html' %}
 
@@ -296,7 +321,7 @@ We need to update our tests:
 
 .. code:: python
 
-   # tests/app/test_views.py
+   # test_app.py
 
    class TestSiteController:
        def test_index(self, client, templates):
@@ -317,7 +342,7 @@ We need to update our tests:
            assert templates[0].template.name == 'site/hello.html'
            assert r.html.count('Hello User!') == 2
 
-A couple things to note here. Most obviously, we added another view, and therefore need to add methods to test it. Also of note is the ``templates`` pytest fixture, which we're using to verify the correct template got rendered for each of the views.
+A couple things to note here. Most obviously, we added another view, and therefore need to add methods to test it. Also of note is the ``templates`` pytest fixture, which we're using to verify the correct template gets rendered for each of the views.
 
 Let's make sure they pass:
 
@@ -330,7 +355,7 @@ Let's make sure they pass:
    plugins: flask-0.10.0, Flask-Unchained-0.8.0
    collected 3 items
 
-   tests/app/test_views.py ...                                                          [100%]
+   test_app.py ...                                                                      [100%]
 
    ================================ 3 passed in 0.17 seconds =================================
 
@@ -351,7 +376,7 @@ Let's update our hello template:
 
 .. code:: html+jinja
 
-   {# app/templates/site/hello.html #}
+   {# templates/site/hello.html #}
 
    {% extends 'layout.html' %}
 
@@ -383,13 +408,15 @@ And the corresponding view code:
 
 .. code:: python
 
-   # app/views.py
+   # app.py
 
-   # import request from flask_unchained
-   from flask_unchained import Controller, request, route, param_converter
+   from flask_unchained import AppBundle, Controller, request, route, param_converter
+
+   class App(AppBundle):
+       pass
 
    class SiteController(Controller):
-       # and update the code for our hello view
+       # update the code for our hello view
        @route('/hello', methods=['GET', 'POST'])
        @param_converter(name=str)
        def hello(self, name=None):
@@ -415,7 +442,7 @@ And let's fix our tests:
 
 .. code:: python
 
-   # tests/app/test_views.py
+   # test_app.py
 
    # add this import
    from flask_unchained import url_for
@@ -445,7 +472,7 @@ Make sure they pass,
    plugins: flask-0.10.0, Flask-Unchained-0.8.0
    collected 4 items
 
-   tests/app/test_views.py ....                                                        [100%]
+   test_app.py ....                                                                    [100%]
 
    ================================ 4 passed in 0.16 seconds ================================
 
@@ -460,44 +487,32 @@ And commit our changes once satisfied:
 Converting to a Flask-WTF Form
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The above method works, as far as it goes, but both our view code and our template code are very verbose, and the form verification/error handling is awfully manual. Luckily the Flask ecosystem has a solution to this problem, in the awesomely named ``Flask-WTF`` package (it's installed by default as a dependency of Flask Unchained). With it, our new form looks like this:
-
-.. code:: bash
-
-   touch app/forms.py
+The above method works, as far as it goes, but both our view code and our template code are very verbose, and the form verification/error handling is awfully manual. Luckily the Flask ecosystem has a solution to this problem, in the awesomely named ``Flask-WTF`` package (it's installed by default as a dependency of Flask Unchained). With it, our new form view code looks like this:
 
 .. code:: python
 
-   # app/forms.py
+   # app.py
 
+   from flask_unchained import AppBundle, Controller, route, param_converter
    from flask_unchained.forms import FlaskForm, fields, validators
 
+   class App(AppBundle):
+       pass
 
    class HelloForm(FlaskForm):
        name = fields.StringField('Name', validators=[
            validators.DataRequired('Name is required.')])
        submit = fields.SubmitField('Submit')
 
-The updated view code:
-
-.. code:: python
-
-   # app/views.py
-
-   from flask_unchained import Controller, request, route, param_converter
-
-   from .forms import HelloForm
-
-
    class SiteController(Controller):
        @route('/')
        def index(self):
            return self.render('index')
 
-       @route('/hello', methods=['GET', 'POST'])
+       @route(methods=['GET', 'POST'])
        @param_converter(name=str)
        def hello(self, name=None):
-           form = HelloForm(request.form)
+           form = HelloForm()
            if form.validate_on_submit():
                return self.redirect('hello', name=form.name.data)
            return self.render('hello', hello_form=form, name=name or 'World')
@@ -506,7 +521,7 @@ And the updated template:
 
 .. code:: html+jinja
 
-   {# app/templates/site/hello.html #}
+   {# templates/site/hello.html #}
 
    {% extends 'layout.html' %}
 
@@ -590,7 +605,7 @@ As usual, let's update our tests and make sure they pass:
 
 .. code:: python
 
-   # tests/app/test_views.py
+   # test_app.py
 
    class TestSiteController:
        # add this method
@@ -609,7 +624,7 @@ As usual, let's update our tests and make sure they pass:
    plugins: flask-0.10.0, Flask-Unchained-0.8.0
    collected 5 items
 
-   tests/app/test_views.py .....                                                       [100%]
+   test_app.py .....                                                                   [100%]
 
    ================================ 5 passed in 0.19 seconds ================================
 
@@ -624,43 +639,23 @@ Once your tests are passing, it's time to make commit:
 Enabling CSRF Protection
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, CSRF protection is disabled. However, any time you're using forms or have enabled authentication (covered later), you should also enable CSRF protection. There are two requirements:
-
-The first is to update our configuration:
-
-.. code:: bash
-
-   touch app/config.py
+By default, CSRF protection is disabled. However, any time you're using forms or have enabled authentication (covered later), you should also enable CSRF protection. There are just a few configuration options to set:
 
 .. code:: python
 
-   # app/config.py
+   # app.py
 
-   from flask_unchained import BundleConfig
+   from flask_unchained import AppBundle, BundleConfig, Controller, route, param_converter
+   from flask_unchained.forms import FlaskForm, fields, validators
 
    class Config(BundleConfig):
-       SECRET_KEY = 'some-secret-key'
+       SECRET_KEY = 'super-sekret'
        WTF_CSRF_ENABLED = True
 
    class TestConfig(Config):
        WTF_CSRF_ENABLED = False
 
-And secondly, we need to actually send the CSRF token in the cookie with every response:
-
-.. code:: python
-
-   # app/__init__.py
-
-   from flask_unchained import AppBundle, generate_csrf
-
-   class App(AppBundle):
-       def after_init_app(self, app) -> None:
-           @app.after_request
-           def set_csrf_token_cookie(response):
-               if response:
-                   response.set_cookie('csrf_token', generate_csrf())
-               return response
-
+   # ...
 
 Tests should still pass, so it's time to make commit:
 
@@ -670,4 +665,4 @@ Tests should still pass, so it's time to make commit:
    git status
    git commit -m 'enable CSRF protection'
 
-Cool. Let's move on to :doc:`db` in preparation for installing the Security Bundle.
+Cool. Let's move on to :doc:`03_db` in preparation for installing the Security Bundle.

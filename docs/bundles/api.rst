@@ -161,7 +161,7 @@ And that's it, unless you need to customize any behavior.
    * - serializer_create
      - The serializer instance to use for loading data for creation of a new model.
      - Determined automatically by the model name. Can be set manually to override the automatic discovery.
-   * - serializer_many
+   * - serializer_list
      - The serializer instance to use for (de)serializing a list of models.
      - Determined automatically by the model name. Can be set manually to override the automatic discovery.
    * - include_methods

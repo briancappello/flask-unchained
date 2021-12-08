@@ -10,16 +10,15 @@ Install Dependencies
 
    pip install "flask-unchained[session]"
 
-Enable the Session Bundle:
+Enable the Session Bundle by adding it to ``BUNDLES``:
 
 .. code:: python
 
-   # unchained_config.py
+   # app.py
 
    BUNDLES = [
        # ...
        'flask_unchained.bundles.session',
-       'app',
    ]
 
 Configuration
@@ -29,14 +28,14 @@ Let's configure the Session Bundle to use SQLAlchemy:
 
 .. code:: python
 
-   # app/config.py
+   # app.py
 
    class Config(BundleConfig):
        # ...
        SESSION_TYPE = 'sqlalchemy'
        SESSION_SQLALCHEMY_TABLE = 'flask_sessions'
 
-Because the Session Bundle is just a thin wrapper around Flask Session, configuration options are the same as documented in `the official docs <https://pythonhosted.org/Flask-Session/#configuration>`_.
+Because the Session Bundle is just a thin wrapper around the Flask Session extension, configuration options are the same as documented in `the official docs <https://pythonhosted.org/Flask-Session/#configuration>`_.
 
 Database Migrations
 ^^^^^^^^^^^^^^^^^^^
@@ -51,7 +50,7 @@ It's always a good idea to inspect the migration to make sure it's going to do e
 
 .. code:: python
 
-   # db/migrations/versions/[hash]_create_sessions_table.py
+   # db/migrations/versions/[rev_id]_create_sessions_table.py
 
    """create sessions table
 
@@ -105,4 +104,4 @@ That's it for setting up server side sessions! Let's make a commit before we con
    git status
    git commit -m 'install session bundle'
 
-And proceed to :doc:`security` using the Security Bundle.
+And proceed to :doc:`05_security` using the Security Bundle.

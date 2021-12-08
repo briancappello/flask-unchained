@@ -21,174 +21,33 @@ Let's update our test fixtures configuration file to include the fixtures provid
 
 The security bundle overrides the ``client`` and ``api_client`` test fixtures to add support for logging in and logging out.
 
-Now we can enable the Security Bundle by adding it to ``unchained_config.py``:
+Now we can enable the Security Bundle by adding it to ``BUNDLES``:
 
 .. code:: python
 
-   # unchained_config.py
+   # app.py
 
    BUNDLES = [
        # ...
+       'flask_unchained.bundles.babel',
        'flask_unchained.bundles.security',
-       'app',
    ]
+
+Note that the Security Bundle depends on the Babel Bundle, so we also need to enable that (it doesn't require any configuration of its own).
 
 Database Models and Migrations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Let's start with configuring our database models, because the views will be broken until we implement our database models and create tables in the database for them. The security bundle includes default model implementations that, for now, will be sufficient for our needs:
+Let's start with configuring our database models, because the views will be broken until we create tables in the database for them. The Security Bundle includes default model implementations for :class:`User` and :class:`Role` that will be sufficient for our needs (for now). In preparation for later customizations, let's subclass :class:`User` in our app bundle:
 
 .. code:: python
 
-   # flask_unchained/bundles/security/models/user.py
+   # app.py
 
-   from flask_unchained.bundles.sqlalchemy import db
-   from flask_unchained import unchained, injectable, lazy_gettext as _
-   from flask_unchained.bundles.security.models.user_role import UserRole
-   from flask_unchained.bundles.security.validators import EmailValidator
-
-   MIN_PASSWORD_LENGTH = 8
-
-
-   class User(db.Model):
-       """
-       Base :class:`User` model. Includes :attr:`email`, :attr:`password`, :attr:`is_active`,
-       and :attr:`confirmed_at` columns, and a many-to-many relationship to the
-       :class:`Role` model via the intermediary :class:`UserRole` join table.
-       """
-       class Meta:
-           lazy_mapped = True
-           repr = ('id', 'email', 'is_active')
-
-       email = db.Column(db.String(64), unique=True, index=True, info=dict(
-           required=_('flask_unchained.bundles.security:email_required'),
-           validators=[EmailValidator]))
-       _password = db.Column('password', db.String, info=dict(
-           required=_('flask_unchained.bundles.security:password_required')))
-       is_active = db.Column(db.Boolean(name='is_active'), default=False)
-       confirmed_at = db.Column(db.DateTime(), nullable=True)
-
-       user_roles = db.relationship('UserRole', back_populates='user',
-                                    cascade='all, delete-orphan')
-       roles = db.association_proxy('user_roles', 'role',
-                                    creator=lambda role: UserRole(role=role))
-
-       @db.hybrid_property
-       def password(self):
-           return self._password
-
-       @password.setter
-       @unchained.inject('security_utils_service')
-       def password(self, password, security_utils_service=injectable):
-           self._password = security_utils_service.hash_password(password)
-
-       @classmethod
-       def validate_password(cls, password):
-           if password and len(password) < MIN_PASSWORD_LENGTH:
-               raise db.ValidationError(f'Password must be at least '
-                                        f'{MIN_PASSWORD_LENGTH} characters long.')
-
-       @unchained.inject('security_utils_service')
-       def get_auth_token(self, security_utils_service=injectable):
-           """
-           Returns the user's authentication token.
-           """
-           return security_utils_service.get_auth_token(self)
-
-       def has_role(self, role):
-           """
-           Returns `True` if the user identifies with the specified role.
-
-           :param role: A role name or :class:`Role` instance
-           """
-           if isinstance(role, str):
-               return role in (role.name for role in self.roles)
-           else:
-               return role in self.roles
-
-       @property
-       def is_authenticated(self):
-           return True
-
-       @property
-       def is_anonymous(self):
-           return False
-
-.. code:: python
-
-   # flask_unchained/bundles/security/models/role.py
-
-   from flask_unchained.bundles.sqlalchemy import db
-   from flask_unchained.bundles.security.models.user_role import UserRole
-
-
-   class Role(db.Model):
-       """
-       Base :class`Role` model. Includes an :attr:`name` column and a many-to-many
-       relationship with the :class:`User` model via the intermediary :class:`UserRole`
-       join table.
-       """
-       class Meta:
-           lazy_mapped = True
-           repr = ('id', 'name')
-
-       name = db.Column(db.String(64), unique=True, index=True)
-
-       role_users = db.relationship('UserRole', back_populates='role',
-                                    cascade='all, delete-orphan')
-       users = db.association_proxy('role_users', 'user',
-                                    creator=lambda user: UserRole(user=user))
-
-       def __hash__(self):
-           return hash(self.name)
-
-.. code:: python
-
-   # flask_unchained/bundles/security/models/user_role.py
-
-   from flask_unchained.bundles.sqlalchemy import db
-
-
-   class UserRole(db.Model):
-       """
-       Join table between the :class:`User` and :class:`Role` models.
-       """
-       class Meta:
-           lazy_mapped = True
-           pk = None
-           repr = ('user_id', 'role_id')
-
-       user_id = db.foreign_key('User', primary_key=True)
-       user = db.relationship('User', back_populates='user_roles')
-
-       role_id = db.foreign_key('Role', primary_key=True)
-       role = db.relationship('Role', back_populates='role_users')
-
-       def __init__(self, user=None, role=None, **kwargs):
-           super().__init__(**kwargs)
-           if user:
-               self.user = user
-           if role:
-               self.role = role
-
-We're going to leave them as-is for now, but in preparation for later customizations, let's subclass :class:`User` and :class:`Role` in our app bundle:
-
-.. code:: bash
-
-   touch app/models.py
-
-.. code:: python
-
-   # app/models.py
-
-   from flask_unchained.bundles.security import User as BaseUser, Role as BaseRole, UserRole
-
+   # add the following imports and model classes
+   from flask_unchained.bundles.security import User as BaseUser, Role, UserRole
 
    class User(BaseUser):
-       pass
-
-
-   class Role(BaseRole):
        pass
 
 Time to generate some migrations:
@@ -197,11 +56,11 @@ Time to generate some migrations:
 
    flask db migrate -m 'add security bundle models'
 
-And review them to make sure it's going to do what we want:
+Review the generated file to make sure it's going to do what we want:
 
 .. code:: python
 
-   # db/migrations/versions/[hash]_add_security_bundle_models.py
+   # db/migrations/versions/[rev_id]_add_security_bundle_models.py
 
    """add security bundle models
 
@@ -282,13 +141,31 @@ Looks good.
 Seeding the Database
 ^^^^^^^^^^^^^^^^^^^^
 
-There is of course the manual method of creating users, either via the command line interface using ``flask users create``, or via the register endpoint (which we'll set up just after this). But the problem with those methods is that they're not reproducible. Database fixtures are one common solution to this problem, and the SQLAlchemy Bundle includes support for them.
+There is of course the manual method of creating users, either via the command line interface using ``flask users create``, or via the register endpoint (which we'll set up just after this). But the problem with those methods is that they're not reproducible. Database fixtures are one common solution to this problem, which we'll use the Py YAML Fixtures Bundle for.
 
-First we need to create our fixtures directory and files. The file names must match the class name of the model each fixture corresponds to (``Role`` and ``User`` in our case):
+Install :
 
 .. code:: bash
 
-   mkdir db/fixtures && touch db/fixtures/Role.yaml db/fixtures/User.yaml
+   pip install py-yaml-fixtures
+
+And enable:
+
+.. code-block::
+
+   # app.py
+
+   BUNDLES = [
+       # ...
+       'py_yaml_fixtures',
+   ]
+
+Next we need to create our fixtures directory and files. The file names must match the class name of the model each fixture corresponds to (``Role`` and ``User`` in our case):
+
+.. code:: bash
+
+   mkdir db/fixtures && \
+      touch db/fixtures/Role.yaml db/fixtures/User.yaml
 
 .. code:: yaml
 
@@ -312,15 +189,15 @@ First we need to create our fixtures directory and files. The file names must ma
      roles: ['Role(ROLE_ADMIN, ROLE_USER)']
 
    user:
-     email: user@flaskr.com
+     email: {{ faker.free_email() }}
      password: password
      is_active: True
      confirmed_at: utcnow
      roles: ['Role(ROLE_USER)']
 
-The keys in the yaml files, ``admin``, ``user``, ``ROLE_USER`` and ``ROLE_ADMIN``, must each be unique across all of your fixtures. This is because they are used to specify relationships. The syntax there is ``'ModelClassName(key1, Optional[key2, ...])'``. If the relationship is on the many side, as it is in our case, then the relationship specifier must also be surrounded by ``[]`` square brackets (yaml syntax to specify it's a list).
+The keys in the yaml files, ``admin``, ``user``, ``ROLE_USER`` and ``ROLE_ADMIN``, must each be unique across all of your fixtures. This is because they are used to specify relationships. The syntax there is ``'ModelClassName(key1, Optional[key2, ...])'``. If the relationship is on the many side, as it is in our case, then the relationship specifier must also be surrounded by ``[]`` square brackets (YAML syntax to specify it's a list).
 
-It's not shown above, but the fixture files are actually *Jinja2 templates that generate yaml*. Fixtures also have access to the excellent `faker <https://faker.readthedocs.io/en/master/>`_ library to generate random data, for example we could have written :code:`email: {{ faker.free_email() }}` in the ``user`` fixture. Between access to faker and the power of Jinja2, it's quite easy to build up a bunch of fake content when you need to quickly.
+As hinted at above, the fixture files are actually *Jinja2 templates that generate yaml*. Fixtures have access to the excellent `faker <https://faker.readthedocs.io/en/master/>`_ library to generate random data, used above to set the regular user's email address. Between access to faker and the power of Jinja2, it's quite easy to build up a bunch of fake content when you need to quickly.
 
 Running the fixtures should create two users and two roles in our dev db:
 
@@ -336,22 +213,21 @@ Running the fixtures should create two users and two roles in our dev db:
 
 Sweet. Let's set up our views so we can actually login to our site!
 
-Configuring and Customizing Views
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Configuring and Customizing Security Views
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The first thing we need to do is to include the :class:`~flask_unchained.bundles.security.views.security_controller.SecurityController` in our ``routes.py``:
+The first thing we need to do is to include the :class:`~flask_unchained.bundles.security.views.security_controller.SecurityController` in our app. This is done by using Flask Unchained's declarative routing:
 
 .. code:: python
 
-   # app/routes.py
+   # app.py
 
    from flask_unchained import (controller, resource, func, include, prefix,
                                 get, delete, post, patch, put, rule)
 
    from flask_unchained.bundles.security import SecurityController
 
-   from .views import SiteController
-
+   # ...
 
    routes = lambda: [
        controller(SiteController),
@@ -363,21 +239,19 @@ By default, Security Bundle only comes with the login and logout endpoints enabl
 .. code:: bash
 
    flask urls
-   Method(s)  Rule                            Endpoint                                     View                                                                                           Options
-   -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-         GET  /static/<path:filename>         static                                       flask.helpers :: send_static_file                                                              strict_slashes
-         GET  /                               site_controller.index                        app.views :: SiteController.index                                                              strict_slashes
-         GET  /hello                          site_controller.hello                        app.views :: SiteController.hello                                                              strict_slashes
-   GET, POST  /login                          security_controller.login                    flask_unchained.bundles.security.views.security_controller :: SecurityController.login                    strict_slashes
-         GET  /logout                         security_controller.logout                   flask_unchained.bundles.security.views.security_controller :: SecurityController.logout                   strict_slashes
+   Method(s)  Rule                      Endpoint                     View                                                                                   Options
+   -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+         GET  /static/<path:filename>   static                       flask.helpers.send_static_file                                                         strict_slashes
+         GET  /                         site_controller.index        app.SiteController.index                                                               strict_slashes
+   GET, POST  /hello                    site_controller.hello        app.SiteController.hello                                                               strict_slashes
+   GET, POST  /login                    security_controller.login    flask_unchained.bundles.security.views.security_controller.SecurityController.login    strict_slashes
+         GET  /logout                   security_controller.logout   flask_unchained.bundles.security.views.security_controller.SecurityController.logout   strict_slashes
 
-The security bundle comes with optional support for registration, required email confirmation, change password functionality, and last but not least, forgot password functionality. For now, let's just enable registration:
+The Security Bundle comes with optional support for registration, required email confirmation, change password functionality, and last but not least, forgot password functionality. For now, let's just enable registration:
 
 .. code:: python
 
-   # app/config.py
-
-   from flask_unchained import BundleConfig
+   # app.py
 
    class Config(BundleConfig):
        # ...
@@ -387,9 +261,9 @@ Rerunning :code:`flask urls`, you should see the following line added:
 
 .. code:: bash
 
-   Method(s)  Rule                            Endpoint                                     View                                                                                           Options
-   -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-   GET, POST  /register                       security_controller.register                 flask_unchained.bundles.security.views.security_controller :: SecurityController.register                 strict_slashes
+   Method(s)  Rule        Endpoint                       View                                                                                     Options
+   -------------------------------------------------------------------------------------------------------------------------------------------------------------
+   GET, POST  /register   security_controller.register   flask_unchained.bundles.security.views.security_controller.SecurityController.register   strict_slashes
 
 Let's add these routes to our navbar:
 
@@ -412,19 +286,19 @@ Let's add these routes to our navbar:
      </ul>
    </div>
 
-Cool. You should now be able to login with the credentials you created in the ``User.yaml`` fixture. If you take a look at the login and/or register views, however, you'll notice that things aren't rendering "the bootstrap way." Luckily all the default templates in the security bundle extend the ``security/layout.html`` template, so we can override just this template to fix integrating the layout of all security views into our site.
+Cool. You should now be able to login with the credentials you created in the ``User.yaml`` fixture. If you take a look at the login and/or register views, however, you'll notice that things aren't rendering "the bootstrap way." Luckily all the default templates in the Security Bundle extend the ``security/layout.html`` template, so we can override just this template to fix integrating all of the security views into our site.
 
-We're going to completely override the layout template. In order to make sure the layout works correctly, we need to wrap the content block with a row and a column. Therefore, our version looks like this:
+We're going to completely override the layout template. In order to make sure the bootstrap layout works correctly, we need to wrap the content block with a row and a column. Therefore, our version looks like this:
 
 .. code:: bash
 
-   mkdir -p app/templates/security \
-      && touch app/templates/security/layout.html \
-      && touch app/templates/security/_macros.html
+   mkdir -p templates/security \
+      && touch templates/security/layout.html \
+      && touch templates/security/_macros.html
 
 .. code:: html+jinja
 
-   {# app/templates/security/layout.html #}
+   {# templates/security/layout.html #}
 
    {% extends 'layout.html' %}
 
@@ -440,11 +314,11 @@ We're going to completely override the layout template. In order to make sure th
      </div>
    {% endblock body %}
 
-But even after this change, our forms are still using the browser's default form styling. Once again, the security bundle makes it easy to fix this, by overriding the ``render_form`` macro in the ``security/_macros.html`` template. You'll note we've already written this macro, so all we need to do is the following:
+But even after this change, our forms are still using the browser's default form styling. Once again, the Security Bundle makes it easy to fix this, by overriding the ``render_form`` macro in the ``security/_macros.html`` template. You'll note we've already written this macro, so all we need to do is the following:
 
 .. code:: html+jinja
 
-   {# app/templates/security/_macros.html #}
+   {# templates/security/_macros.html #}
 
    {% from '_macros.html' import render_form as _render_form %}
 
@@ -457,7 +331,7 @@ But even after this change, our forms are still using the browser's default form
 Testing the Security Views
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Unlike all of our earlier tests, testing the security bundle views requires that we have valid users in the database. Perhaps the most powerful way to accomplish this is by using `Factory Boy <https://factoryboy.readthedocs.io/en/latest/>`_, which Flask Unchained comes integrated with out of the box. If you aren't familiar with Factory Boy, I recommend you read more about how it works in the official docs. The short version is, it makes it incredibly easy to dynamically create and customize models on-the-fly.
+Unlike all of our earlier tests, testing the Security Bundle views requires that we have valid users in the database. Perhaps the most powerful way to accomplish this is by using `Factory Boy <https://factoryboy.readthedocs.io/en/latest/>`_, which Flask Unchained comes integrated with out of the box. If you aren't familiar with Factory Boy, I recommend you read more about how it works in the official docs. The short version is, it makes it incredibly easy to dynamically create and customize models on-the-fly.
 
 .. code:: bash
 
@@ -528,7 +402,7 @@ And our tests look like this:
 
 .. code:: python
 
-   # tests/app/test_security_controller.py
+   # tests/test_security_controller.py
 
    import pytest
 
@@ -600,12 +474,12 @@ Running them should pass:
    plugins: flask-0.10.0, Flask-Unchained-0.8.0, Flask-Security-Bundle-0.3.0
    collected 11 items
 
-   tests/app/test_views.py .....                                         [ 45%]
-   tests/security/test_security_controller.py ......                                  [100%]
+   tests/test_app.py .....                                                             [ 45%]
+   tests/test_security_controller.py ......                                            [100%]
 
    =============================== 11 passed in 0.74 seconds ================================
 
-You can learn more about how to use all of the features the security bundle supports in its documentation.
+You can learn more about how to use all of the features the Security Bundle supports in its documentation.
 
 Let's commit our changes:
 
@@ -613,4 +487,6 @@ Let's commit our changes:
 
    git add .
    git status
-   git commit -m 'install and configure security bundle'
+   git commit -m 'install and configure Security Bundle'
+
+Now that our app is beginning to grow larger, let's move on to :doc:`06_project_layout` where we'll learn about organizing our code in multiple files.

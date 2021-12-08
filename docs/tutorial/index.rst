@@ -3,7 +3,7 @@
 Tutorial
 ========
 
-This tutorial will walk you through creating a basic portfolio application for monitoring your investments. Users will be able to register, log in, create portfolios and manage the stocks in them. You will be able to package and install the application on other computers.
+This tutorial will walk you from Hello World through building a fully-featured quotes application. Users will be able to register, log in, create quotes and manage their favorites.
 
 .. FIXME: The tutorial project code is available on GitHub.
 
@@ -15,10 +15,14 @@ It is assumed you're already familiar with:
 **Table of Contents**
 
 .. toctree::
-    :maxdepth: 2
+   :maxdepth: 2
 
-    getting_started
-    views_templates_and_static_assets
-    db
-    session
-    security
+   01_getting_started
+   02_views_templates_and_static_assets
+   03_db
+   04_session
+   05_security
+   06_project_layout
+   07_modeling_authors_quotes_themes
+   08_model_forms_and_views
+   09_admin_interface
