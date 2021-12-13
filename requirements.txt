@@ -31,7 +31,7 @@ itsdangerous==2.0.1
 jedi==0.18.1
 jinja2==3.0.3
 kombu==5.2.2
-lxml==4.6.4
+lxml==4.6.5
 markupsafe==2.0.1
 marshmallow==3.14.1
 marshmallow-sqlalchemy==0.26.1
