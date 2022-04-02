@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from flask_unchained import AppFactory, TEST
 from ..sqlalchemy.conftest import *
 from flask_unchained.bundles.security.pytest import *
+from flask_unchained.bundles.sqlalchemy.model_factory import ModelFactory
 
 from tests.bundles.security._bundles.security.models import User, Role, UserRole
 

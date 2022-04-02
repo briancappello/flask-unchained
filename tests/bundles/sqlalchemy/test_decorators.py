@@ -1,7 +1,7 @@
 import pytest
 
 from flask_unchained.bundles.controller import param_converter
-from flask_unchained.bundles.sqlalchemy.pytest import ModelFactory
+from flask_unchained.bundles.sqlalchemy.model_factory import ModelFactory
 from werkzeug.exceptions import NotFound
 
 
