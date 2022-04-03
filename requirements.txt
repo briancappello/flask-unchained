@@ -4,7 +4,7 @@ apispec_webframeworks==0.5.2
 bcrypt==3.2.0
 beautifulsoup4==4.10.0
 blinker==1.4
-celery==5.2.1
+celery==5.2.2
 click==8.1.2
 dill==0.3.4
 email-validator==1.1.3
