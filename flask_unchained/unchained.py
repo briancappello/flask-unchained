@@ -201,7 +201,7 @@ class Unchained:
 
     def init_app(self,
                  app: Flask,
-                 bundles: Optional[List] = None,  # FIXME Optional[List[Bundle]] on 3.7+
+                 bundles: Optional[List[object]] = None,  # FIXME Optional[List[Bundle]]
                  unchained_config: Optional[Dict[str, Any]] = None,
                  ) -> None:
         # deferred import to prevent circular dependency

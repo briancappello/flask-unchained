@@ -49,7 +49,7 @@ class StringConverter(UnicodeConverter):
 
 
 def controller_name(
-    cls: Union[Type[object], str],  # FIXME Union[Type[Controller], str] on 3.7+
+    cls: Union[Type[object], str],  # FIXME Union[Type[Controller], str]
     _remove_suffixes: Optional[Union[List[str], Tuple[str, ...]]] = None,
 ) -> str:
     """

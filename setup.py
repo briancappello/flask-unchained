@@ -19,7 +19,7 @@ setup(
     py_modules=['flask_mail'],
     include_package_data=True,
     zip_safe=False,
-    python_requires='>=3.7',
+    python_requires='>=3.8',
     install_requires=[
         'blinker>=1.4',
         'click>=8.0.1',
@@ -28,7 +28,7 @@ setup(
         'flask-wtf>=1.0.0',
         'py-meta-utils>=0.7.8',
         'pyterminalsize>=0.1.0',
-        'networkx>=2.5',
+        'networkx>=2.7.1',
         'werkzeug>=2.0.1',
         'wtforms>=3.0.0',
         'email-validator>=1.1.3',
@@ -38,7 +38,7 @@ setup(
             'flask-admin>=1.5.8',
         ],
         'api': [
-            'apispec>=4.5.0,<5',
+            'apispec>=5.1.1',
             'apispec-webframeworks>=0.5.2',
             'flask-marshmallow>=0.14.0',
             'marshmallow>=3.14.1',
@@ -68,7 +68,7 @@ setup(
             'graphql-relay>=2.0.1,<3',
             'graphql-server-core>=1.2.0,<2',
             'flask-graphql>=2.0',
-            'graphene>=2.1.8,<3',
+            'graphene>=2.1.9,<3',
             'graphene-sqlalchemy>=2.2.2,<3',
         ],
         'mail': [
@@ -106,9 +106,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
     entry_points='''
         [console_scripts]

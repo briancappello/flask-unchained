@@ -28,7 +28,7 @@ Flask Unchained aims to improve your development experience by using simple, con
 Install Flask Unchained
 -----------------------
 
-Requires **Python 3.7+**
+Requires **Python 3.8+**
 
 .. code:: shell
 

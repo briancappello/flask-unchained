@@ -9,7 +9,7 @@ This tutorial will walk you from Hello World through building a fully-featured q
 
 It is assumed you're already familiar with:
 
-- Python 3.7+. The `official tutorial <https://docs.python.org/3/tutorial/>`_ is a great way to learn or review.
+- Python 3.8+. The `official tutorial <https://docs.python.org/3/tutorial/>`_ is a great way to learn or review.
 - The Jinja2 templating engine. See the `official docs <https://jinja.palletsprojects.com/en/2.10.x/templates/>`_ for more info.
 
 **Table of Contents**
