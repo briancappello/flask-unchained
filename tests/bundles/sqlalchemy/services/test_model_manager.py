@@ -3,10 +3,10 @@ import pytest
 from flask_unchained.bundles.sqlalchemy import ModelManager, SQLAlchemyUnchained
 from flask_unchained.bundles.sqlalchemy.model_registry import UnchainedModelRegistry
 from flask_unchained import unchained
-from sqlalchemy.orm.exc import MultipleResultsFound
+from sqlalchemy.exc import MultipleResultsFound
 
 
-def setup(db: SQLAlchemyUnchained):
+def _setup(db: SQLAlchemyUnchained):
     class Foo(db.Model):
         name = db.Column(db.String)
 
@@ -25,7 +25,7 @@ def setup(db: SQLAlchemyUnchained):
 
 class TestModelManager:
     def test_it_accepts_a_model_class(self, db: SQLAlchemyUnchained):
-        Foo, foo_manager = setup(db)
+        Foo, foo_manager = _setup(db)
 
         foo = foo_manager.create(name='foobar')
         assert isinstance(foo, Foo)
@@ -39,7 +39,7 @@ class TestModelManager:
         assert foo_manager.get_by(name='foobar') == foo
 
     def test_it_accepts_a_model_class_by_name(self, db: SQLAlchemyUnchained):
-        Foo, foo_manager = setup(db)
+        Foo, foo_manager = _setup(db)
 
         foo = foo_manager.create(name='foobar')
         assert isinstance(foo, Foo)
@@ -53,7 +53,7 @@ class TestModelManager:
         assert foo_manager.get_by(name='foobar') == foo
 
     def test_update(self, db: SQLAlchemyUnchained):
-        Foo, foo_manager = setup(db)
+        Foo, foo_manager = _setup(db)
 
         foo = foo_manager.create(name='foo')
         foo_manager.commit()
@@ -64,7 +64,7 @@ class TestModelManager:
         assert foo_manager.get_by(name='foobar') == foo
 
     def test_get(self, db: SQLAlchemyUnchained):
-        Foo, foo_manager = setup(db)
+        Foo, foo_manager = _setup(db)
 
         foo = foo_manager.create(name='foo')
         foo_manager.commit()
@@ -76,7 +76,7 @@ class TestModelManager:
         assert foo_manager.get(42) is None
 
     def test_get_or_create(self, db: SQLAlchemyUnchained):
-        Foo, foo_manager = setup(db)
+        Foo, foo_manager = _setup(db)
 
         foo, created = foo_manager.get_or_create(name='foo')
         assert created is True
@@ -98,7 +98,7 @@ class TestModelManager:
         assert created is True
 
     def test_get_by(self, db: SQLAlchemyUnchained):
-        Foo, foo_manager = setup(db)
+        Foo, foo_manager = _setup(db)
 
         foo1 = foo_manager.create(name='one')
         foo_1 = foo_manager.create(name='one')
@@ -112,7 +112,7 @@ class TestModelManager:
         assert foo_manager.get_by(name='two') == foo2
 
     def test_find_all(self, db: SQLAlchemyUnchained):
-        Foo, foo_manager = setup(db)
+        Foo, foo_manager = _setup(db)
 
         foo1 = foo_manager.create(name='one')
         foo2 = foo_manager.create(name='two')
@@ -123,7 +123,7 @@ class TestModelManager:
         assert foo_manager.all() == all_
 
     def test_find_by(self, db: SQLAlchemyUnchained):
-        Foo, foo_manager = setup(db)
+        Foo, foo_manager = _setup(db)
 
         foo1 = foo_manager.create(name='one')
         foo_1 = foo_manager.create(name='one')

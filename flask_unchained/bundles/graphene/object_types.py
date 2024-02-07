@@ -131,7 +131,7 @@ class SQLAlchemyObjectType(BaseSQLAlchemyObjectType):
 
 def _get_field_resolver(field: graphene.Field):
     def _get(self, info, **kwargs):
-        return field.type._meta.model.query.get_by(**kwargs)
+        return field.type._meta.model.query.filter_by(**kwargs).one_or_none()
 
     return _get
 
@@ -184,7 +184,7 @@ class QueriesObjectType(graphene.ObjectType, metaclass=QueriesObjectTypeMetaclas
 
             # this is what the default resolvers do, and how you would override them:
             def resolve_child(self, info, **kwargs):
-                return types.Child._meta.model.query.get_by(**kwargs)
+                return types.Child._meta.model.query.filter_by(**kwargs).one_or_none()
 
             def resolve_children(self, info, **kwargs):
                 return types.Child._meta.model.query.all()

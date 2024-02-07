@@ -96,31 +96,3 @@ class TestModelMetaOptions:
         assert Manual.Meta.table == 'manuals'
         assert Manual.Meta._mcs_args.clsdict['__tablename__'] == 'manuals'
         assert Manual.__tablename__ == 'manuals'
-
-        class AutoMV(db.MaterializedView):
-            @classmethod
-            def selectable(cls):
-                return db.select([Auto.id])
-
-        UnchainedModelRegistry().finalize_mappings()
-
-        assert AutoMV.Meta.table == 'auto_mv'
-        assert AutoMV.__table__.fullname == 'auto_mv'
-        assert AutoMV.Meta._mcs_args.clsdict['__tablename__'] == 'auto_mv'
-        assert AutoMV.__tablename__ == 'auto_mv'
-
-        class ManualMV(db.MaterializedView):
-            class Meta:
-                table = 'manual_materialized_view'
-
-            @classmethod
-            def selectable(cls):
-                return db.select([Manual.id])
-
-        UnchainedModelRegistry().finalize_mappings()
-
-        assert ManualMV.Meta.table == 'manual_materialized_view'
-        assert ManualMV.__table__.fullname == 'manual_materialized_view'
-        assert ManualMV.Meta._mcs_args.clsdict['__tablename__'] == \
-               'manual_materialized_view'
-        assert ManualMV.__tablename__ == 'manual_materialized_view'

@@ -258,8 +258,8 @@ class ModelForm(FlaskForm, metaclass=ModelFormMetaclass):
             pass
         super().__init__(*args, **kwargs)
 
-    def validate(self):
-        validation_passed = super().validate()
+    def validate(self, extra_validators=()):
+        validation_passed = super().validate(extra_validators=extra_validators)
         if not self.Meta.model:
             return validation_passed
 

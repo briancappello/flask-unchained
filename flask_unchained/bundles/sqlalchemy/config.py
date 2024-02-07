@@ -48,7 +48,7 @@ class Config(BundleConfig):
     :func:`~flask_sqlalchemy.get_debug_queries` for more information.
     """
 
-    SQLALCHEMY_BINDS = None
+    SQLALCHEMY_BINDS = {}
     """
     A dictionary that maps bind keys to SQLAlchemy connection URIs.
     """

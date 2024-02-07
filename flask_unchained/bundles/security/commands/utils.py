@@ -11,7 +11,7 @@ role_manager: RoleManager = unchained.get_local_proxy('role_manager')
 
 def _query_to_user(query):
     kwargs = _query_to_kwargs(query)
-    user = user_manager.get_by(**kwargs)
+    user = user_manager.filter_by(**kwargs).one_or_none()
     if not user:
         click.secho(f'ERROR: Could not locate a user by {_format_query(query)}',
                     fg='white', bg='red')
@@ -21,7 +21,7 @@ def _query_to_user(query):
 
 def _query_to_role(query):
     kwargs = _query_to_kwargs(query)
-    role = role_manager.get_by(**kwargs)
+    role = role_manager.filter_by(**kwargs).one_or_none()
     if not role:
         click.secho(f'ERROR: Could not locate a role by {_format_query(query)}',
                     fg='white', bg='red')

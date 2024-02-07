@@ -151,7 +151,7 @@ class Marshmallow:
         self.RelatedList = msqla_fields.RelatedList
 
     def init_app(self, app: FlaskUnchained):
-        db = app.extensions['sqlalchemy'].db
+        db = app.extensions['sqlalchemy']
         self.ModelSerializer.OPTIONS_CLASS.session = db.session
         app.extensions['ma'] = self
 

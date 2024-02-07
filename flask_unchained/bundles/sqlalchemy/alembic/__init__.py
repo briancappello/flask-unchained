@@ -1,1 +1,0 @@
-from .materialized_view import MaterializedViewMigration

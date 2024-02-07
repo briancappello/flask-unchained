@@ -91,10 +91,10 @@ setup(
         ],
         'sqlalchemy': [
             'flask-migrate>=3.1.0',
-            'flask-sqlalchemy-unchained>=0.7.6',
-            'sqlalchemy>=1.3.24,<2',
-            'sqlalchemy-unchained>=0.12.2',
-            'wtforms_sqlalchemy>=0.3',
+            'flask-sqlalchemy>=3.0,<3.1',
+            'flask-sqlalchemy-unchained>=0.8,<0.9',
+            'sqlalchemy>=1.4,<2',
+            'wtforms_sqlalchemy>=0.4',
         ],
     },
 

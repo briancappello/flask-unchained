@@ -1,4 +1,4 @@
-from flask_sqlalchemy_unchained import BaseQuery
+from flask_sqlalchemy_unchained import Query as BaseQuery
 from flask_unchained import Bundle
 from sqlalchemy_unchained import ValidationError, ValidationErrors
 

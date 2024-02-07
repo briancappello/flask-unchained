@@ -12,12 +12,14 @@
 
 ### SQLAlchemy Bundle
 
+- bump required SQLAlchemy version to 1.4
 - automatically increment database migration version if SQLAlchemy Bundle is enabled
 - fix auto-generated imports in db migrations requiring user app code
 - move some more database code into sqlalchemy-unchained
 - add support for specifying the model converter class for sqlalchemy forms
 - default alembic migrations to `compare_type=True`
 - alias `ModelManager` onto the `db` extension
+- drop `MaterialiedView`
 
 ### Security Bundle
 

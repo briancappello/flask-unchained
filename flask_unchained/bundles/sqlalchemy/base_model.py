@@ -1,4 +1,4 @@
-from flask_sqlalchemy_unchained import BaseModel as _BaseModel, BaseQuery
+from flask_sqlalchemy_unchained import BaseModel as _BaseModel, Query as BaseQuery
 from sqlalchemy.ext.declarative import declared_attr
 
 from ...bundles.babel import lazy_gettext as _

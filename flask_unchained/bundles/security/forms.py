@@ -83,8 +83,8 @@ class LoginForm(BaseForm, NextFormMixin):
             self.next.data = request.args.get('next', '')
         self.remember.default = app.config.SECURITY_DEFAULT_REMEMBER_ME
 
-    def validate(self):
-        if not super().validate():
+    def validate(self, extra_validators=()):
+        if not super().validate(extra_validators=extra_validators):
             # FIXME-identity
             if (set(self.errors.keys()) -
                     set(security_utils_service.get_identity_attributes())):
@@ -148,8 +148,8 @@ class ChangePasswordForm(BaseForm):
     submit = fields.SubmitField(
         _('flask_unchained.bundles.security:form_submit.change_password'))
 
-    def validate(self):
-        result = super().validate()
+    def validate(self, extra_validators=()):
+        result = super().validate(extra_validators=extra_validators)
 
         if (not self.password.data
                 or not security_utils_service.verify_password(current_user,
@@ -211,8 +211,8 @@ class SendConfirmationForm(BaseForm):
         if request.method == 'GET':
             self.email.data = request.args.get('email', None)
 
-    def validate(self):
-        if not super(SendConfirmationForm, self).validate():
+    def validate(self, extra_validators=()):
+        if not super().validate(extra_validators=extra_validators):
             return False
         if self.user.confirmed_at is not None:
             self.email.errors.append(

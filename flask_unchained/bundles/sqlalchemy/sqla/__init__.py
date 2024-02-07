@@ -5,9 +5,6 @@ from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property  # skipcq (alia
 
 from .column import Column
 from .events import attach_events, on, slugify
-from .materialized_view import (create_materialized_view,
-                                refresh_materialized_view,
-                                refresh_all_materialized_views)
 from .foreign_key import foreign_key
 from .types import BigInteger, DateTime
 

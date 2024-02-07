@@ -95,19 +95,6 @@ class TestRegisterModelsHookTypeCheck:
         assert hook.type_check(db.Model) is False
         assert hook.type_check(M)
 
-    @pytest.mark.options(SQLALCHEMY_DATABASE_URI=POSTGRES)
-    def test_type_check_materialized_view(self, db, hook: RegisterModelsHook):
-        class MVT(db.Model):
-            id = db.Column(db.Integer, primary_key=True)
-
-        class MV(db.MaterializedView):
-            @classmethod
-            def selectable(cls):
-                return db.select([MVT.id])
-
-        assert hook.type_check(db.MaterializedView) is False
-        assert hook.type_check(MV)
-
 
 class TestRegisterModelsHookCollectFromBundle:
     def test_it_works_vendor_one(self, db, hook: RegisterModelsHook):
