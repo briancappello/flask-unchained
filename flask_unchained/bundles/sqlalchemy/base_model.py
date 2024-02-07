@@ -1,9 +1,9 @@
 from flask_sqlalchemy_unchained import BaseModel as _BaseModel, Query as BaseQuery
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy_unchained import ModelMetaOptionsFactory
 
 from ...bundles.babel import lazy_gettext as _
 from ...string_utils import pluralize, title_case
-from .meta_options import ModelMetaOptionsFactory
 
 
 class QueryAliasDescriptor:

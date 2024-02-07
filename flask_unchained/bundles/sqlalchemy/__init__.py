@@ -1,8 +1,6 @@
-from flask_sqlalchemy_unchained import Query as BaseQuery
 from flask_unchained import Bundle
 from sqlalchemy_unchained import ValidationError, ValidationErrors
 
-from .alembic import MaterializedViewMigration
 from .base_model import BaseModel
 from .extensions import Migrate, SQLAlchemyUnchained, db, migrate
 from .forms import ModelForm, QuerySelectField, QuerySelectMultipleField
