@@ -8,13 +8,21 @@ except ImportError:
 
 
 class SqlAlchemySessionInterface(BaseSqlAlchemySessionInterface):
-    def __init__(self, db, table, key_prefix, use_signer=False,
-                 permanent=True, model_class=None):
+    def __init__(self,
+                 db,
+                 table,
+                 key_prefix,
+                 use_signer=False,
+                 permanent=True,
+                 model_class=None,
+                 sid_length=32,
+                 ):
         self.db = db
         self.key_prefix = key_prefix
         self.use_signer = use_signer
         self.permanent = permanent
         self.has_same_site_capability = hasattr(self, "get_cookie_samesite")
+        self.sid_length = sid_length
 
         if model_class is not None:
             self.sql_session_model = model_class

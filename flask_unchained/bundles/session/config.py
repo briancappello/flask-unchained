@@ -127,6 +127,8 @@ class Config(DefaultFlaskConfigForSessions):
     Defaults to ``'session:'``.
     """
 
+    SESSION_ID_LENGTH = 32
+
     SESSION_REDIS = None
     """
     A :class:`redis.Redis` instance.

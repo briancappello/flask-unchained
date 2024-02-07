@@ -87,7 +87,7 @@ setup(
         ],
         'session': [
             'dill>=0.3.4',
-            'flask-session>=0.4.0',
+            'flask-session>=0.6.0',
         ],
         'sqlalchemy': [
             'flask-migrate>=3.1.0',
