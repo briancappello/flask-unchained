@@ -10,9 +10,9 @@ class Config(BundleConfig):
     Default configuration options for the Celery Bundle.
     """
 
-    CELERY_BROKER_URL = 'redis://{host}:{port}/0'.format(
-        host=os.getenv('FLASK_REDIS_HOST', '127.0.0.1'),
-        port=int(os.getenv('FLASK_REDIS_PORT', "6379")),
+    CELERY_BROKER_URL = "redis://{host}:{port}/0".format(
+        host=os.getenv("FLASK_REDIS_HOST", "127.0.0.1"),
+        port=int(os.getenv("FLASK_REDIS_PORT", "6379")),
     )
     """
     The broker URL to connect to.
@@ -23,7 +23,7 @@ class Config(BundleConfig):
     The result backend URL to connect to.
     """
 
-    CELERY_ACCEPT_CONTENT = ('json', 'pickle', 'dill')
+    CELERY_ACCEPT_CONTENT = ("json", "pickle", "dill")
     """
     Tuple of supported serialization strategies.
     """

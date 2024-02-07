@@ -1,10 +1,18 @@
 from flask_unchained.commands.new import Token, _process_tokens
 
 
-CTX = dict(fooFalse=False, fooTrue=True, fooTrueToo=True, else_='else!',
-           foo_true_too='fooTrueToo!', foo_true_moo='fooTrueMoo!',
-           regular_comment='regular comment',
-           security=False, session=True, sqlalchemy=False)
+CTX = dict(
+    fooFalse=False,
+    fooTrue=True,
+    fooTrueToo=True,
+    else_="else!",
+    foo_true_too="fooTrueToo!",
+    foo_true_moo="fooTrueMoo!",
+    regular_comment="regular comment",
+    security=False,
+    session=True,
+    sqlalchemy=False,
+)
 
 
 SIMPLE = """
@@ -91,15 +99,15 @@ last
 class TestGenerateCommand:
     def test_process_tokens(self):
         root_token = Token()
-        root_token, _ = _process_tokens(SIMPLE.split('\n'), root_token)
+        root_token, _ = _process_tokens(SIMPLE.split("\n"), root_token)
         assert root_token.render(CTX) == SIMPLE_EXPECTED
 
     def test_process_tokens_nested(self):
         root_token = Token()
-        root_token, _ = _process_tokens(NESTED.split('\n'), root_token)
+        root_token, _ = _process_tokens(NESTED.split("\n"), root_token)
         assert root_token.render(CTX) == NESTED_EXPECTED
 
     def test_process_tokens_jinja(self):
         root_token = Token()
-        root_token, _ = _process_tokens(JINJA.split('\n'), root_token, is_jinja=True)
+        root_token, _ = _process_tokens(JINJA.split("\n"), root_token, is_jinja=True)
         assert root_token.render(CTX) == JINJA_EXPECTED

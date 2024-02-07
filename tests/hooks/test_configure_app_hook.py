@@ -15,13 +15,14 @@ def hook():
 
 
 class TestConfigureAppHook:
-    def test_later_bundle_configs_override_earlier_ones(self, app,
-                                                        hook: ConfigureAppHook):
+    def test_later_bundle_configs_override_earlier_ones(
+        self, app, hook: ConfigureAppHook
+    ):
         hook.run_hook(app, [VendorBundle(), EmptyBundle(), MyAppBundle()])
 
-        assert app.config.APP_KEY == 'app_key'
-        assert app.config.VENDOR_KEY1 == 'app_override'
-        assert app.config.VENDOR_KEY2 == 'vendor_key2'
+        assert app.config.APP_KEY == "app_key"
+        assert app.config.VENDOR_KEY1 == "app_override"
+        assert app.config.VENDOR_KEY2 == "vendor_key2"
 
     def test_the_app_bundle_config_module_is_named_config(self, hook: ConfigureAppHook):
-        assert hook.get_bundle_module_names(MyAppBundle()) == ['config']
+        assert hook.get_bundle_module_names(MyAppBundle()) == ["config"]

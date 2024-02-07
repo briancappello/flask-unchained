@@ -8,8 +8,9 @@ class ModelMetaOption(MetaOption):
     """
     The model class for a class.
     """
+
     def __init__(self):
-        super().__init__('model', default=None, inherit=True)
+        super().__init__("model", default=None, inherit=True)
 
     def get_value(self, Meta: Type[object], base_classes_meta, mcs_args: McsArgs):
         value = super().get_value(Meta, base_classes_meta, mcs_args)
@@ -22,5 +23,6 @@ class ModelMetaOption(MetaOption):
             return
 
         from .base_model import BaseModel
+
         if not (isinstance(value, type) and issubclass(value, BaseModel)):
-            raise TypeError(f'{mcs_args.name} is missing the model Meta attribute')
+            raise TypeError(f"{mcs_args.name} is missing the model Meta attribute")

@@ -13,14 +13,14 @@ def camel_case(string):
     """
     if not string:
         return string
-    parts = snake_case(string).split('_')
-    rv = ''
+    parts = snake_case(string).split("_")
+    rv = ""
     while parts:
         part = parts.pop(0)
-        rv += part or '_'
+        rv += part or "_"
         if part:
             break
-    return rv + ''.join(x.title() for x in parts)
+    return rv + "".join(x.title() for x in parts)
 
 
 def class_case(string):
@@ -31,16 +31,15 @@ def class_case(string):
     """
     if not string:
         return string
-    string = string.replace(' ', '_').replace('-', '_')
-    parts = de_camel(string, '_', _lowercase=False).split('_')
-    rv = ''
+    string = string.replace(" ", "_").replace("-", "_")
+    parts = de_camel(string, "_", _lowercase=False).split("_")
+    rv = ""
     while parts:
         part = parts.pop(0)
-        rv += part.title() or '_'
+        rv += part.title() or "_"
         if part:
             break
-    return rv + ''.join(part if part.isupper() else part.title()
-                        for part in parts)
+    return rv + "".join(part if part.isupper() else part.title() for part in parts)
 
 
 def kebab_case(string):
@@ -53,8 +52,8 @@ def kebab_case(string):
     """
     if not string:
         return string
-    string = string.replace('_', '-').replace(' ', '-')
-    return de_camel(string, '-')
+    string = string.replace("_", "-").replace(" ", "-")
+    return de_camel(string, "-")
 
 
 def right_replace(string, old, new, count=1):
@@ -77,11 +76,14 @@ def slugify(string):
     """
     if not string:
         return string
-    string = re.sub(r'[^\w\s-]', '',
-                    unicodedata.normalize('NFKD', de_camel(string, '-'))
-                    .encode('ascii', 'ignore')
-                    .decode('ascii')).strip()
-    return re.sub(r'[-_\s]+', '-', string).strip('-').lower()
+    string = re.sub(
+        r"[^\w\s-]",
+        "",
+        unicodedata.normalize("NFKD", de_camel(string, "-"))
+        .encode("ascii", "ignore")
+        .decode("ascii"),
+    ).strip()
+    return re.sub(r"[-_\s]+", "-", string).strip("-").lower()
 
 
 def snake_case(string):
@@ -92,7 +94,7 @@ def snake_case(string):
     """
     if not string:
         return string
-    string = string.replace('-', '_').replace(' ', '_')
+    string = string.replace("-", "_").replace(" ", "_")
     return de_camel(string)
 
 
@@ -104,7 +106,6 @@ def title_case(string):
     """
     if not string:
         return string
-    string = string.replace('_', ' ').replace('-', ' ')
-    parts = de_camel(string, ' ', _lowercase=False).strip().split(' ')
-    return ' '.join(part if part.isupper() else part.title()
-                    for part in parts)
+    string = string.replace("_", " ").replace("-", " ")
+    parts = de_camel(string, " ", _lowercase=False).strip().split(" ")
+    return " ".join(part if part.isupper() else part.title() for part in parts)

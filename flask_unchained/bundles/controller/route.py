@@ -7,8 +7,13 @@ from flask_unchained.flask_unchained import FlaskUnchained
 from py_meta_utils import _missing
 from werkzeug.utils import cached_property
 
-from .utils import (join, method_name_to_url, rename_parent_resource_param_name,
-                    controller_name, get_param_tuples)
+from .utils import (
+    join,
+    method_name_to_url,
+    rename_parent_resource_param_name,
+    controller_name,
+    get_param_tuples,
+)
 
 
 class Route:
@@ -28,17 +33,19 @@ class Route:
     :class:`~flask_unchained.Resource` routes include that their view_func must be
     finalized from the outside using ``TheControllerClass.method_as_view``.
     """
-    def __init__(self,
-                 rule: Union[str, None],
-                 view_func: Union[str, FunctionType],
-                 blueprint: Optional[Blueprint] = None,
-                 defaults: Optional[Dict[str, Any]] = None,
-                 endpoint: Optional[str] = None,
-                 is_member: bool = False,
-                 methods: Optional[Union[List[str], Tuple[str, ...]]] = None,
-                 only_if: Optional[Union[bool, FunctionType]] = _missing,
-                 **rule_options,
-                 ) -> None:
+
+    def __init__(
+        self,
+        rule: Union[str, None],
+        view_func: Union[str, FunctionType],
+        blueprint: Optional[Blueprint] = None,
+        defaults: Optional[Dict[str, Any]] = None,
+        endpoint: Optional[str] = None,
+        is_member: bool = False,
+        methods: Optional[Union[List[str], Tuple[str, ...]]] = None,
+        only_if: Optional[Union[bool, FunctionType]] = _missing,
+        **rule_options,
+    ) -> None:
         self._blueprint: Optional[Blueprint] = blueprint
         self._defaults: Dict[str, Any] = defaults or {}
         self._endpoint: str = endpoint
@@ -119,10 +126,10 @@ class Route:
         if self._endpoint:
             return self._endpoint
         elif self._controller_cls:
-            endpoint = f'{self._controller_cls.Meta.endpoint_prefix}.{self.method_name}'
-            return endpoint if not self.bp_name else f'{self.bp_name}.{endpoint}'
+            endpoint = f"{self._controller_cls.Meta.endpoint_prefix}.{self.method_name}"
+            return endpoint if not self.bp_name else f"{self.bp_name}.{endpoint}"
         elif self.bp_name:
-            return f'{self.bp_name}.{self.method_name}'
+            return f"{self.bp_name}.{self.method_name}"
         return self.method_name
 
     @endpoint.setter
@@ -156,7 +163,7 @@ class Route:
         """
         The HTTP methods supported by this route.
         """
-        return getattr(self.view_func, 'methods', self._methods) or ['GET']
+        return getattr(self.view_func, "methods", self._methods) or ["GET"]
 
     @methods.setter
     def methods(self, methods: Union[List[str], Tuple[str, ...]]):
@@ -180,13 +187,15 @@ class Route:
         """
         if self._rule:
             return self._rule
-        return self._make_rule(member_param=self._member_param,
-                               unique_member_param=self._unique_member_param)
+        return self._make_rule(
+            member_param=self._member_param,
+            unique_member_param=self._unique_member_param,
+        )
 
     @rule.setter
     def rule(self, rule: str):
-        if rule is not None and not rule.startswith('/'):
-            rule = '/' + rule
+        if rule is not None and not rule.startswith("/"):
+            rule = "/" + rule
         self._rule = rule
 
     @property
@@ -195,26 +204,29 @@ class Route:
         The full url rule for this route, including any blueprint prefix.
         """
         rule = self.rule
-        return join(self.bp_prefix, rule, trailing_slash=rule.endswith('/'))
+        return join(self.bp_prefix, rule, trailing_slash=rule.endswith("/"))
 
-    def _make_rule(self,
-                   url_prefix: Optional[str] = None,
-                   member_param: Optional[str] = None,
-                   unique_member_param: Optional[str] = None,
-                   ) -> str:
+    def _make_rule(
+        self,
+        url_prefix: Optional[str] = None,
+        member_param: Optional[str] = None,
+        unique_member_param: Optional[str] = None,
+    ) -> str:
         if member_param is not None:
             self._member_param = member_param
         if unique_member_param is not None:
             self._unique_member_param = unique_member_param
 
         if self._rule:
-            return join(url_prefix, self._rule, trailing_slash=(
-                self._rule != '/' and self._rule.endswith('/')
-            ))
+            return join(
+                url_prefix,
+                self._rule,
+                trailing_slash=(self._rule != "/" and self._rule.endswith("/")),
+            )
         elif self._controller_cls:
             rule = method_name_to_url(self.method_name)
             if (self._is_member or self._is_member_method) and not member_param:
-                raise Exception('member_param argument is required')
+                raise Exception("member_param argument is required")
             if self._is_member_method:
                 rule = member_param
             elif self._is_member:
@@ -232,7 +244,7 @@ class Route:
         # FIXME should probably use the snake_case singular of the resource's model name
         ctrl_name = controller_name(self._controller_cls)
         type_, name = get_param_tuples(self._member_param)[0]
-        return f'<{type_}:{ctrl_name}_{name}>'
+        return f"<{type_}:{ctrl_name}_{name}>"
 
     def copy(self):
         new = object.__new__(Route)
@@ -252,19 +264,22 @@ class Route:
         if self._controller_cls:
             module_name = self._controller_cls.__module__
             class_name = self._controller_cls.__name__
-            prefix = f'{module_name}.{class_name}'
-        return f'{prefix}.{self.method_name}'
+            prefix = f"{module_name}.{class_name}"
+        return f"{prefix}.{self.method_name}"
 
     def __repr__(self):
-        props = [prop for prop in ['full_name', 'endpoint', 'methods', 'defaults']
-                 if getattr(self, prop)]
+        props = [
+            prop
+            for prop in ["full_name", "endpoint", "methods", "defaults"]
+            if getattr(self, prop)
+        ]
         try:
-            self.rule and props.insert(0, 'rule')
+            self.rule and props.insert(0, "rule")
         except:
             pass
         return f"Route({', '.join(f'{k}={repr(getattr(self, k))}' for k in props)})"
 
 
 __all__ = [
-    'Route',
+    "Route",
 ]

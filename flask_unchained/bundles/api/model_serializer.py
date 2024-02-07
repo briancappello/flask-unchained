@@ -10,13 +10,15 @@ from speaklater import _LazyString
 try:
     from flask_marshmallow.sqla import (
         SQLAlchemyAutoSchema as BaseModelSerializer,
-        SQLAlchemyAutoSchemaOpts as BaseModelSerializerOptionsClass)
+        SQLAlchemyAutoSchemaOpts as BaseModelSerializerOptionsClass,
+    )
     from marshmallow.fields import Field
     from marshmallow.class_registry import _registry
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
     from marshmallow_sqlalchemy.convert import ModelConverter as BaseModelConverter
     from marshmallow_sqlalchemy.schema import (
-        SQLAlchemyAutoSchemaMeta as BaseModelSerializerMetaclass)
+        SQLAlchemyAutoSchemaMeta as BaseModelSerializerMetaclass,
+    )
     from sqlalchemy.orm import SynonymProperty
 except ImportError:
     _registry = {}
@@ -30,15 +32,17 @@ from .config import Config
 
 
 class ModelConverter(BaseModelConverter):
-    def fields_for_model(self,
-                         model,
-                         *,
-                         include_fk=False,
-                         include_relationships=False,
-                         fields=None,
-                         exclude=None,
-                         base_fields=None,
-                         dict_cls=dict):
+    def fields_for_model(
+        self,
+        model,
+        *,
+        include_fk=False,
+        include_relationships=False,
+        fields=None,
+        exclude=None,
+        base_fields=None,
+        dict_cls=dict,
+    ):
         """
         Overridden to correctly name hybrid_property fields, eg given::
 
@@ -61,7 +65,7 @@ class ModelConverter(BaseModelConverter):
         upstream naming convention.
         """
         # this prevents an error when building the docs
-        if not hasattr(model, '__mapper__'):
+        if not hasattr(model, "__mapper__"):
             return
 
         result = dict_cls()
@@ -73,7 +77,7 @@ class ModelConverter(BaseModelConverter):
                 continue
             if isinstance(prop, SynonymProperty):
                 continue
-            if hasattr(prop, 'columns'):
+            if hasattr(prop, "columns"):
                 if not include_fk:
                     # Only skip a column if there is no overridden column
                     # which does not have a Foreign Key.
@@ -102,9 +106,11 @@ class ModelConverter(BaseModelConverter):
         primary key, because there's no way to tell if we're generating fields
         for a create or an update).
         """
-        field = super().property2field(prop, instance=instance, field_class=field_class, **kwargs)
+        field = super().property2field(
+            prop, instance=instance, field_class=field_class, **kwargs
+        )
         # when a column is not nullable, mark the field as required
-        if hasattr(prop, 'columns'):
+        if hasattr(prop, "columns"):
             col = prop.columns[0]
             if not col.primary_key and not col.nullable:
                 field.required = True
@@ -137,7 +143,7 @@ class ModelSerializerMetaclass(BaseModelSerializerMetaclass):
         if mcs_args.is_abstract:
             return super().__new__(*mcs_args)
 
-        meta = mcs_args.getattr('Meta', None)
+        meta = mcs_args.getattr("Meta", None)
         model_missing = False
         try:
             if meta.model is None:
@@ -146,7 +152,9 @@ class ModelSerializerMetaclass(BaseModelSerializerMetaclass):
             model_missing = True
 
         if model_missing:
-            raise AttributeError(f'{name} is missing the ``class Meta`` model attribute')
+            raise AttributeError(
+                f"{name} is missing the ``class Meta`` model attribute"
+            )
 
         model = meta.model
         try:
@@ -154,7 +162,9 @@ class ModelSerializerMetaclass(BaseModelSerializerMetaclass):
         except AttributeError as e:
             # this happens when attempting to generate documentation and the
             # sqlalchemy bundle hasn't been loaded
-            safe_error = "'DeferredBundleBlueprintFunctions' object has no attribute 'models'"
+            safe_error = (
+                "'DeferredBundleBlueprintFunctions' object has no attribute 'models'"
+            )
             if safe_error not in str(e):
                 raise e
         except KeyError:
@@ -162,24 +172,25 @@ class ModelSerializerMetaclass(BaseModelSerializerMetaclass):
 
         meta_dict = dict(meta.__dict__)
 
-        additional_fields = meta_dict.pop('additional', None)
+        additional_fields = meta_dict.pop("additional", None)
         if additional_fields:
-            fields = [name for name, field in clsdict.items()
-                      if isinstance(field, Field)]
-            meta_dict['fields'] = fields + list(additional_fields)
+            fields = [
+                name for name, field in clsdict.items() if isinstance(field, Field)
+            ]
+            meta_dict["fields"] = fields + list(additional_fields)
 
-        meta_dict.pop('model', None)
-        clsdict['Meta'] = type('Meta', (_ModelSerializerMeta,), meta_dict)
-        clsdict['Meta'].model = model
+        meta_dict.pop("model", None)
+        clsdict["Meta"] = type("Meta", (_ModelSerializerMeta,), meta_dict)
+        clsdict["Meta"].model = model
 
         return super().__new__(*mcs_args)
 
     def __init__(cls, name, bases, attrs):
         if name and name in _registry:
             for existing_cls in _registry[name]:
-                fullname = f'{existing_cls.__module__}.{existing_cls.__name__}'
+                fullname = f"{existing_cls.__module__}.{existing_cls.__name__}"
                 _registry.pop(fullname, None)
-            fullname = f'{cls.__module__}.{cls.__name__}'
+            fullname = f"{cls.__module__}.{cls.__name__}"
             _registry[name] = _registry[fullname] = [cls]
         super().__init__(name, bases, attrs)
 
@@ -187,7 +198,9 @@ class ModelSerializerMetaclass(BaseModelSerializerMetaclass):
     def get_declared_fields(mcs, klass, cls_fields, inherited_fields, dict_cls):
         # overridden to fix building the docs
         try:
-            return super().get_declared_fields(klass, cls_fields, inherited_fields, dict_cls)
+            return super().get_declared_fields(
+                klass, cls_fields, inherited_fields, dict_cls
+            )
         except TypeError:
             pass
 
@@ -196,14 +209,15 @@ class ModelSerializerOptionsClass(BaseModelSerializerOptionsClass):
     """
     Sets the default ``model_converter`` to :class:`_ModelConverter`.
     """
+
     def __init__(self, meta, **kwargs):
         self._model = None
-        self.dump_key_fn = getattr(meta, 'dump_key_fn', Config.DUMP_KEY_FN)
-        self.load_key_fn = getattr(meta, 'load_key_fn', Config.LOAD_KEY_FN)
+        self.dump_key_fn = getattr(meta, "dump_key_fn", Config.DUMP_KEY_FN)
+        self.load_key_fn = getattr(meta, "load_key_fn", Config.LOAD_KEY_FN)
 
         # override the upstream default values for load_instance and model_converter
-        meta.load_instance = getattr(meta, 'load_instance', True)
-        meta.model_converter = getattr(meta, 'model_converter', ModelConverter)
+        meta.load_instance = getattr(meta, "load_instance", True)
+        meta.model_converter = getattr(meta, "model_converter", ModelConverter)
         super().__init__(meta, **kwargs)
 
     @property
@@ -218,11 +232,12 @@ class ModelSerializerOptionsClass(BaseModelSerializerOptionsClass):
         self._model = model
 
 
-def maybe_convert_keys(data: Any,
-                       key_fn: Optional[FunctionType] = None,
-                       fields: Tuple[str] = (),
-                       many: bool = False,
-                       ) -> Any:
+def maybe_convert_keys(
+    data: Any,
+    key_fn: Optional[FunctionType] = None,
+    fields: Tuple[str] = (),
+    many: bool = False,
+) -> Any:
     if not key_fn or not fields:
         return data
 
@@ -271,6 +286,7 @@ class ModelSerializer(BaseModelSerializer, metaclass=ModelSerializerMetaclass):
             created_at = fields.DateTime(dump_only=True)
             updated_at = fields.DateTime(dump_only=True)
     """
+
     __abstract__ = True
 
     OPTIONS_CLASS = ModelSerializerOptionsClass
@@ -281,7 +297,7 @@ class ModelSerializer(BaseModelSerializer, metaclass=ModelSerializerMetaclass):
         Check if we're creating a new object. Note that this context flag
         must be set from the outside, ie when the class gets instantiated.
         """
-        return self.context.get('is_create', False)
+        return self.context.get("is_create", False)
 
     def load(
         self,
@@ -322,8 +338,9 @@ class ModelSerializer(BaseModelSerializer, metaclass=ModelSerializerMetaclass):
             many=many,
         )
         try:
-            return super().load(data, many=many, partial=partial, unknown=unknown,
-                                **kwargs)
+            return super().load(
+                data, many=many, partial=partial, unknown=unknown, **kwargs
+            )
         except MarshmallowValidationError as e:
             e.messages = maybe_convert_keys(
                 e.messages,
@@ -353,25 +370,25 @@ class ModelSerializer(BaseModelSerializer, metaclass=ModelSerializerMetaclass):
             many=many,
         )
 
-    def handle_error(self,
-                     error: MarshmallowValidationError,
-                     data: Any,
-                     **kwargs
-                     ) -> None:
+    def handle_error(
+        self, error: MarshmallowValidationError, data: Any, **kwargs
+    ) -> None:
         """
         Customize the error messages for required/not-null validators with
         dynamically generated field names. This is definitely a little hacky (it
         mutates state, uses hardcoded strings), but unsure how better to do it
         """
-        required_messages = {'Missing data for required field.',
-                             'Field may not be null.'}
+        required_messages = {
+            "Missing data for required field.",
+            "Field may not be null.",
+        }
         for field_name in error.normalized_messages():
             for i, msg in enumerate(error.messages[field_name]):
                 if isinstance(msg, _LazyString):
                     msg = str(msg)
                 if msg in required_messages:
                     label = title_case(field_name)
-                    error.messages[field_name][i] = f'{label} is required.'
+                    error.messages[field_name][i] = f"{label} is required."
 
     def _init_fields(self):
         """
@@ -381,12 +398,16 @@ class ModelSerializer(BaseModelSerializer, metaclass=ModelSerializerMetaclass):
         """
         super()._init_fields()
 
-        read_only_fields = {field for field in {
-            self.Meta.model.Meta.pk,
-            'slug',
-            self.Meta.model.Meta.created_at,
-            self.Meta.model.Meta.updated_at,
-        } if field is not None}
+        read_only_fields = {
+            field
+            for field in {
+                self.Meta.model.Meta.pk,
+                "slug",
+                self.Meta.model.Meta.created_at,
+                self.Meta.model.Meta.updated_at,
+            }
+            if field is not None
+        }
 
         for name in read_only_fields:
             if name in self.fields:
@@ -397,8 +418,8 @@ class ModelSerializer(BaseModelSerializer, metaclass=ModelSerializerMetaclass):
 
 
 __all__ = [
-    'ModelConverter',
-    'ModelSerializer',
-    'ModelSerializerMetaclass',
-    'ModelSerializerOptionsClass',
+    "ModelConverter",
+    "ModelSerializer",
+    "ModelSerializerMetaclass",
+    "ModelSerializerOptionsClass",
 ]

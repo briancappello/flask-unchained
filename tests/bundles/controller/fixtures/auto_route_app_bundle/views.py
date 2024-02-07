@@ -2,27 +2,27 @@ from flask_unchained.bundles.controller import Controller, include, route
 
 
 routes = lambda: [
-    include('tests.bundles.controller.fixtures.vendor_bundle.routes'),
+    include("tests.bundles.controller.fixtures.vendor_bundle.routes"),
 ]
 
 
 class SiteController(Controller):
-    @route('/')
+    @route("/")
     def index(self):
-        return 'index rendered'
+        return "index rendered"
 
     def about(self):
-        return 'about rendered'
+        return "about rendered"
 
 
-@route(endpoint='views.view_one')
+@route(endpoint="views.view_one")
 def view_one():
-    return 'view_one rendered'
+    return "view_one rendered"
 
 
-@route('/two', endpoint='views.view_two')
+@route("/two", endpoint="views.view_two")
 def view_two():
-    return 'view_two rendered'
+    return "view_two rendered"
 
 
 def should_be_ignored():

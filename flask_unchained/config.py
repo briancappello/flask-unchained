@@ -27,11 +27,11 @@ class BundleConfig(metaclass=BundleConfigMetaclass):
 
 
 class _ConfigDefaults:
-    DEBUG = get_boolean_env('FLASK_DEBUG', False)
+    DEBUG = get_boolean_env("FLASK_DEBUG", False)
 
 
 class _DevConfigDefaults:
-    DEBUG = get_boolean_env('FLASK_DEBUG', True)
+    DEBUG = get_boolean_env("FLASK_DEBUG", True)
 
 
 class _TestConfigDefaults:
@@ -47,5 +47,5 @@ class _TestConfigDefaults:
 
 
 __all__ = [
-    'BundleConfig',
+    "BundleConfig",
 ]

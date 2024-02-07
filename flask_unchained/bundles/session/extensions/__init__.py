@@ -5,11 +5,11 @@ session = Session()
 
 
 EXTENSIONS = {
-    'session': (session, ['db']),
+    "session": (session, ["db"]),
 }
 
 
 __all__ = [
-    'session',
-    'Session',
+    "session",
+    "Session",
 ]

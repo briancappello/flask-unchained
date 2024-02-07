@@ -10,9 +10,12 @@ class Config(BundleConfig):
     The default configuration options for the SQLAlchemy Bundle.
     """
 
-    db_file = os.path.join(BundleConfig.current_app.root_path or '', 'db',
-                           f'{BundleConfig.current_app.env or "development"}.sqlite')
-    SQLALCHEMY_DATABASE_URI = f'sqlite:///{db_file}'
+    db_file = os.path.join(
+        BundleConfig.current_app.root_path or "",
+        "db",
+        f'{BundleConfig.current_app.env or "development"}.sqlite',
+    )
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{db_file}"
     """
     The database URI that should be used for the connection. Defaults to using SQLite
     with the database file stored at ``ROOT_PATH/db/<env>.sqlite``. See the
@@ -101,7 +104,7 @@ class Config(BundleConfig):
     """
 
     ALEMBIC = {
-        'script_location': 'db/migrations',
+        "script_location": "db/migrations",
     }
     """
     Used to set the directory where migrations are stored. `ALEMBIC` should be set to
@@ -110,9 +113,9 @@ class Config(BundleConfig):
     """
 
     ALEMBIC_CONTEXT = {
-        'render_item': render_migration_item,
-        'template_args': {'migration_variables': []},
-        'compare_type': True,
+        "render_item": render_migration_item,
+        "template_args": {"migration_variables": []},
+        "compare_type": True,
     }
     """
     Extra kwargs to pass to the constructor of the Flask-Migrate extension. If you
@@ -125,7 +128,7 @@ class TestConfig(Config):
     Default configuration options for testing.
     """
 
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'  # :memory:
+    SQLALCHEMY_DATABASE_URI = "sqlite://"  # :memory:
     """
     The database URI to use for testing. Defaults to SQLite in memory.
     """

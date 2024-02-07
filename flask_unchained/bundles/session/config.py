@@ -14,7 +14,7 @@ class DefaultFlaskConfigForSessions(BundleConfig):
     Default configuration options for sessions in Flask.
     """
 
-    SESSION_COOKIE_NAME = 'session'
+    SESSION_COOKIE_NAME = "session"
     """
     The name of the session cookie.
 
@@ -90,7 +90,7 @@ class Config(DefaultFlaskConfigForSessions):
     for more information.
     """
 
-    SESSION_TYPE = 'filesystem'
+    SESSION_TYPE = "filesystem"
     """
     Specifies which type of session interface to use. Built-in session types:
 
@@ -119,7 +119,7 @@ class Config(DefaultFlaskConfigForSessions):
     Defaults to ``False``.
     """
 
-    SESSION_KEY_PREFIX = 'session:'
+    SESSION_KEY_PREFIX = "session:"
     """
     A prefix that is added before all session keys. This makes it possible to use
     the same backend storage server for different apps.
@@ -143,7 +143,7 @@ class Config(DefaultFlaskConfigForSessions):
     By default, connect to ``127.0.0.1:11211``.
     """
 
-    SESSION_FILE_DIR = os.path.join(os.getcwd(), 'flask_sessions')
+    SESSION_FILE_DIR = os.path.join(os.getcwd(), "flask_sessions")
     """
     The folder where session files are stored.
 
@@ -173,21 +173,21 @@ class Config(DefaultFlaskConfigForSessions):
     By default, connect to ``127.0.0.1:27017``.
     """
 
-    SESSION_MONGODB_DB = 'flask_session'
+    SESSION_MONGODB_DB = "flask_session"
     """
     The MongoDB database you want to use.
 
     Defaults to ``'flask_session'``.
     """
 
-    SESSION_MONGODB_COLLECT = 'sessions'
+    SESSION_MONGODB_COLLECT = "sessions"
     """
     The MongoDB collection you want to use.
 
     Defaults to ``'sessions'``.
     """
 
-    SESSION_SQLALCHEMY_TABLE = 'flask_sessions'
+    SESSION_SQLALCHEMY_TABLE = "flask_sessions"
     """
     The name of the SQL table you want to use.
 

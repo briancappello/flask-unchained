@@ -5,7 +5,13 @@ from apispec_webframeworks.flask import FlaskPlugin
 
 from flask_unchained import FlaskUnchained, unchained
 from flask_unchained.bundles.controller.constants import (
-    CREATE, DELETE, GET, LIST, PATCH, PUT)
+    CREATE,
+    DELETE,
+    GET,
+    LIST,
+    PATCH,
+    PUT,
+)
 from flask_unchained.string_utils import title_case, pluralize
 
 from ..model_resource import ModelResource
@@ -29,7 +35,7 @@ class Api:
 
     def init_app(self, app: FlaskUnchained):
         self.app = app
-        app.extensions['api'] = self
+        app.extensions["api"] = self
 
         plugins = app.config.API_APISPEC_PLUGINS
         plugins = plugins and list(plugins) or []
@@ -37,11 +43,13 @@ class Api:
         self.ma_plugin = MarshmallowPlugin()
         plugins.extend([self.flask_plugin, self.ma_plugin])
 
-        self.spec = APISpec(title=app.config.API_TITLE or app.name,
-                            version=app.config.API_VERSION,
-                            openapi_version=app.config.API_OPENAPI_VERSION,
-                            plugins=plugins,
-                            info=dict(description=app.config.API_DESCRIPTION))
+        self.spec = APISpec(
+            title=app.config.API_TITLE or app.name,
+            version=app.config.API_VERSION,
+            openapi_version=app.config.API_OPENAPI_VERSION,
+            plugins=plugins,
+            info=dict(description=app.config.API_DESCRIPTION),
+        )
 
     def register_serializer(self, serializer, name=None, **kwargs):
         """
@@ -63,13 +71,15 @@ class Api:
         :param resource:
         """
         model_name = resource.Meta.model.__name__
-        self.spec.tag({
-            'name': model_name,
-            'description': resource.Meta.model.__doc__,
-        })
+        self.spec.tag(
+            {
+                "name": model_name,
+                "description": resource.Meta.model.__doc__,
+            }
+        )
 
         for method in resource.methods():
-            key = f'{resource.__name__}.{method}'
+            key = f"{resource.__name__}.{method}"
             if key not in unchained.controller_bundle.controller_endpoints:
                 continue
 
@@ -77,78 +87,95 @@ class Api:
             http_method = method
 
             if method == CREATE:
-                http_method = 'post'
+                http_method = "post"
                 docs[http_method] = dict(
-                    parameters=[{
-                        'in': __location_map__['json'],
-                        'required': True,
-                        'schema': resource.Meta.serializer_create,
-                    }],
+                    parameters=[
+                        {
+                            "in": __location_map__["json"],
+                            "required": True,
+                            "schema": resource.Meta.serializer_create,
+                        }
+                    ],
                     responses={
-                        '201': dict(description=getattr(resource, CREATE).__doc__,
-                                    schema=resource.Meta.serializer_create),
+                        "201": dict(
+                            description=getattr(resource, CREATE).__doc__,
+                            schema=resource.Meta.serializer_create,
+                        ),
                     },
                 )
             elif method == DELETE:
                 docs[http_method] = dict(
                     parameters=[],
                     responses={
-                        '204': dict(description=getattr(resource, DELETE).__doc__),
+                        "204": dict(description=getattr(resource, DELETE).__doc__),
                     },
                 )
             elif method == GET:
                 docs[http_method] = dict(
                     parameters=[],
                     responses={
-                        '200': dict(description=getattr(resource, GET).__doc__,
-                                    schema=resource.Meta.serializer),
+                        "200": dict(
+                            description=getattr(resource, GET).__doc__,
+                            schema=resource.Meta.serializer,
+                        ),
                     },
                 )
             elif method == LIST:
-                http_method = 'get'
+                http_method = "get"
                 docs[http_method] = dict(
                     parameters=[],
                     responses={
-                        '200': dict(description=getattr(resource, LIST).__doc__,
-                                    schema=resource.Meta.serializer_many),
+                        "200": dict(
+                            description=getattr(resource, LIST).__doc__,
+                            schema=resource.Meta.serializer_many,
+                        ),
                     },
                 )
             elif method == PATCH:
                 docs[http_method] = dict(
-                    parameters=[{
-                        'in': __location_map__['json'],
-                        'required': False,
-                        'schema': resource.Meta.serializer,
-                    }],
+                    parameters=[
+                        {
+                            "in": __location_map__["json"],
+                            "required": False,
+                            "schema": resource.Meta.serializer,
+                        }
+                    ],
                     responses={
-                        '200': dict(description=getattr(resource, PATCH).__doc__,
-                                    schema=resource.Meta.serializer),
+                        "200": dict(
+                            description=getattr(resource, PATCH).__doc__,
+                            schema=resource.Meta.serializer,
+                        ),
                     },
                 )
             elif method == PUT:
                 docs[http_method] = dict(
-                    parameters=[{
-                        'in': __location_map__['json'],
-                        'required': True,
-                        'schema': resource.Meta.serializer,
-                    }],
+                    parameters=[
+                        {
+                            "in": __location_map__["json"],
+                            "required": True,
+                            "schema": resource.Meta.serializer,
+                        }
+                    ],
                     responses={
-                        '200': dict(description=getattr(resource, PUT).__doc__,
-                                    schema=resource.Meta.serializer),
+                        "200": dict(
+                            description=getattr(resource, PUT).__doc__,
+                            schema=resource.Meta.serializer,
+                        ),
                     },
                 )
 
-            docs[http_method]['tags'] = [model_name]
+            docs[http_method]["tags"] = [model_name]
             display_name = title_case(model_name)
             if method == LIST:
                 display_name = pluralize(display_name)
-            docs[http_method]['summary'] = f'{http_method.upper()} {display_name}'
+            docs[http_method]["summary"] = f"{http_method.upper()} {display_name}"
 
             routes = unchained.controller_bundle.controller_endpoints[key]
             for route in routes:
                 for rule in self.app.url_map.iter_rules(route.endpoint):
-                    self.spec.path(app=self.app, rule=rule, operations=docs,
-                                   view=route.view_func)
+                    self.spec.path(
+                        app=self.app, rule=rule, operations=docs, view=route.view_func
+                    )
 
     def register_field(self, field, *args):
         """

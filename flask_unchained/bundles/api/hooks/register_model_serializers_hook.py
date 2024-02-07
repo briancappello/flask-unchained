@@ -11,12 +11,12 @@ class RegisterModelSerializersHook(AppFactoryHook):
     Registers ModelSerializers.
     """
 
-    name = 'model_serializers'
+    name = "model_serializers"
     """
     The name of this hook.
     """
 
-    bundle_module_names = ['serializers']
+    bundle_module_names = ["serializers"]
     """
     The default module this hook loads from.
 
@@ -24,14 +24,15 @@ class RegisterModelSerializersHook(AppFactoryHook):
     bundle class.
     """
 
-    bundle_override_module_names_attr = 'model_serializers_module_names'
+    bundle_override_module_names_attr = "model_serializers_module_names"
 
-    run_after = ['models']
+    run_after = ["models"]
 
-    def process_objects(self,
-                        app: FlaskUnchained,
-                        serializers: Dict[str, Type[ModelSerializer]],
-                        ) -> None:
+    def process_objects(
+        self,
+        app: FlaskUnchained,
+        serializers: Dict[str, Type[ModelSerializer]],
+    ) -> None:
         """
         Registers model serializers onto the API Bundle instance.
         """
@@ -41,13 +42,13 @@ class RegisterModelSerializersHook(AppFactoryHook):
             model = serializer_cls.Meta.model
             model_name = model if isinstance(model, str) else model.__name__
 
-            kind = getattr(serializer_cls, '__kind__', 'all')
+            kind = getattr(serializer_cls, "__kind__", "all")
             api.register_serializer(serializer_cls)
-            if kind == 'all':
+            if kind == "all":
                 self.bundle.serializers_by_model[model_name] = serializer_cls
-            elif kind == 'create':
+            elif kind == "create":
                 self.bundle.create_by_model[model_name] = serializer_cls
-            elif kind == 'many':
+            elif kind == "many":
                 self.bundle.many_by_model[model_name] = serializer_cls
 
     def type_check(self, obj: Any) -> bool:

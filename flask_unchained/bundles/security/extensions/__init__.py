@@ -4,12 +4,10 @@ from .security import Security
 security = Security()
 
 
-EXTENSIONS = {
-    'security': (security, ['csrf', 'db'])
-}
+EXTENSIONS = {"security": (security, ["csrf", "db"])}
 
 
 __all__ = [
-    'security',
-    'Security',
+    "security",
+    "Security",
 ]

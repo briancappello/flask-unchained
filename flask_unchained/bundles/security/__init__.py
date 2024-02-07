@@ -17,19 +17,19 @@ class SecurityBundle(Bundle):
     with Flask Unchained.
     """
 
-    name = 'security_bundle'
+    name = "security_bundle"
     """
     The name of the Security Bundle.
     """
 
     dependencies = (
-        'flask_unchained.bundles.controller',
-        'flask_unchained.bundles.session',
-        'flask_unchained.bundles.sqlalchemy',
-        'flask_unchained.bundles.babel',
+        "flask_unchained.bundles.controller",
+        "flask_unchained.bundles.session",
+        "flask_unchained.bundles.sqlalchemy",
+        "flask_unchained.bundles.babel",
     )
 
-    command_group_names = ['users', 'roles']
+    command_group_names = ["users", "roles"]
     """
     Click groups for the Security Bundle.
     """

@@ -8,12 +8,12 @@ class CeleryBundle(Bundle):
     The Celery Bundle.
     """
 
-    name = 'celery_bundle'
+    name = "celery_bundle"
     """
     The name of the Celery Bundle.
     """
 
-    command_group_names = ['celery']
+    command_group_names = ["celery"]
     """
     Click groups for the Celery Bundle.
     """

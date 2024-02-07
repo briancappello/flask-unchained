@@ -9,7 +9,7 @@ class RegisterBlueprintsHook(AppFactoryHook):
     Registers legacy Flask blueprints with the app.
     """
 
-    name = 'blueprints'
+    name = "blueprints"
     """
     The name of this hook.
     """
@@ -22,11 +22,10 @@ class RegisterBlueprintsHook(AppFactoryHook):
     bundle class.
     """
 
-    bundle_override_module_names_attr = 'blueprints_module_names'
+    bundle_override_module_names_attr = "blueprints_module_names"
     limit_discovery_to_local_declarations = False
     discover_from_package_submodules = False
-    run_after = ['bundle_blueprints']
-
+    run_after = ["bundle_blueprints"]
 
     def process_objects(self, app: FlaskUnchained, blueprints: List[Blueprint]):
         """
@@ -36,7 +35,7 @@ class RegisterBlueprintsHook(AppFactoryHook):
             # rstrip '/' off url_prefix because views should be declaring their
             # routes beginning with '/', and if url_prefix ends with '/', routes
             # will end up looking like '/prefix//endpoint', which is no good
-            url_prefix = (blueprint.url_prefix or '').rstrip('/')
+            url_prefix = (blueprint.url_prefix or "").rstrip("/")
             app.register_blueprint(blueprint, url_prefix=url_prefix)
 
     def collect_from_bundles(self, bundles: List[Bundle]) -> List[Blueprint]:
@@ -58,7 +57,7 @@ class RegisterBlueprintsHook(AppFactoryHook):
 
         blueprint_names = []
         for b in bundle._iter_class_hierarchy():
-            for bp_name in getattr(b, 'blueprint_names', [b.name]):
+            for bp_name in getattr(b, "blueprint_names", [b.name]):
                 if bp_name not in blueprint_names:
                     blueprint_names += [bp_name]
 
@@ -68,10 +67,13 @@ class RegisterBlueprintsHook(AppFactoryHook):
                 blueprint = bundle_blueprints[name]
             except KeyError:
                 from warnings import warn
-                warn(f'WARNING: Found a views module for the {bundle.name} '
-                     f'bundle, but there was no blueprint named {name} '
-                     f'in it. Either create one, or customize the bundle\'s '
-                     f'`blueprint_names` class attribute.')
+
+                warn(
+                    f"WARNING: Found a views module for the {bundle.name} "
+                    f"bundle, but there was no blueprint named {name} "
+                    f"in it. Either create one, or customize the bundle's "
+                    f"`blueprint_names` class attribute."
+                )
                 continue
             blueprints.append(blueprint)
         return reversed(blueprints)

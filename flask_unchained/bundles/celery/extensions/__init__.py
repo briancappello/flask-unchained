@@ -5,11 +5,11 @@ celery = Celery()
 
 
 EXTENSIONS = {
-    'celery': celery,
+    "celery": celery,
 }
 
 
 __all__ = [
-    'celery',
-    'Celery',
+    "celery",
+    "Celery",
 ]

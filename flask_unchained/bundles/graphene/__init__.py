@@ -14,16 +14,14 @@ class GrapheneBundle(Bundle):
     The Graphene Bundle. Integrates Flask-GraphQL with SQLAlchemy.
     """
 
-    name = 'graphene_bundle'
+    name = "graphene_bundle"
     """
     The name of the Graphene Bundle.
     """
 
-    dependencies = (
-        'flask_unchained.bundles.sqlalchemy',
-    )
+    dependencies = ("flask_unchained.bundles.sqlalchemy",)
 
-    command_group_names = ['gql']
+    command_group_names = ["gql"]
 
     root_schema: graphene.Schema = None
     """
@@ -39,34 +37,42 @@ class GrapheneBundle(Bundle):
     # that the way of adding graphql routes
     def after_init_app(self, app: FlaskUnchained):
         if app.config.GRAPHENE_URL:
-            app.add_url_rule(app.config.GRAPHENE_URL,
-                             view_func=csrf.exempt(GraphQLView.as_view(
-                                 'graphql',
-                                 schema=self.root_schema,
-                                 graphiql=app.config.GRAPHENE_ENABLE_GRAPHIQL,
-                                 pretty=app.config.GRAPHENE_PRETTY_JSON,
-                                 batch=False,
-                             )),
-                             methods=GraphQLView.methods,
-                             strict_slashes=False)
+            app.add_url_rule(
+                app.config.GRAPHENE_URL,
+                view_func=csrf.exempt(
+                    GraphQLView.as_view(
+                        "graphql",
+                        schema=self.root_schema,
+                        graphiql=app.config.GRAPHENE_ENABLE_GRAPHIQL,
+                        pretty=app.config.GRAPHENE_PRETTY_JSON,
+                        batch=False,
+                    )
+                ),
+                methods=GraphQLView.methods,
+                strict_slashes=False,
+            )
 
         if app.config.GRAPHENE_BATCH_URL:
-            app.add_url_rule(app.config.GRAPHENE_BATCH_URL,
-                             view_func=csrf.exempt(GraphQLView.as_view(
-                                 'graphql',
-                                 schema=self.root_schema,
-                                 graphiql=app.config.GRAPHENE_ENABLE_GRAPHIQL,
-                                 pretty=app.config.GRAPHENE_PRETTY_JSON,
-                                 batch=True,
-                             )),
-                             methods=GraphQLView.methods,
-                             strict_slashes=False)
+            app.add_url_rule(
+                app.config.GRAPHENE_BATCH_URL,
+                view_func=csrf.exempt(
+                    GraphQLView.as_view(
+                        "graphql",
+                        schema=self.root_schema,
+                        graphiql=app.config.GRAPHENE_ENABLE_GRAPHIQL,
+                        pretty=app.config.GRAPHENE_PRETTY_JSON,
+                        batch=True,
+                    )
+                ),
+                methods=GraphQLView.methods,
+                strict_slashes=False,
+            )
 
 
 __all__ = [
-    'GrapheneBundle',
-    'MutationValidationError',
-    'MutationsObjectType',
-    'QueriesObjectType',
-    'SQLAlchemyObjectType',
+    "GrapheneBundle",
+    "MutationValidationError",
+    "MutationsObjectType",
+    "QueriesObjectType",
+    "SQLAlchemyObjectType",
 ]

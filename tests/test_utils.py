@@ -5,24 +5,36 @@ from flask_unchained.utils import get_boolean_env, safe_import_module, utcnow
 
 
 def test_get_boolean_env(monkeypatch):
-    for truthy in ['TRUE', 'YES', 'True', 'Yes', 'true', 'yes', 'Y', 'y', '1']:
-        monkeypatch.setenv('MY_ENV', truthy)
-        assert get_boolean_env('MY_ENV', False) is True
+    for truthy in ["TRUE", "YES", "True", "Yes", "true", "yes", "Y", "y", "1"]:
+        monkeypatch.setenv("MY_ENV", truthy)
+        assert get_boolean_env("MY_ENV", False) is True
         monkeypatch.undo()
 
-    for falsy in ['any', 'THING', 'else', 'should', 'be', 'false', 'FALSE',
-                  'F', 'N', 'n', '0', '']:
-        monkeypatch.setenv('MY_ENV', falsy)
-        assert get_boolean_env('MY_ENV', True) is False
+    for falsy in [
+        "any",
+        "THING",
+        "else",
+        "should",
+        "be",
+        "false",
+        "FALSE",
+        "F",
+        "N",
+        "n",
+        "0",
+        "",
+    ]:
+        monkeypatch.setenv("MY_ENV", falsy)
+        assert get_boolean_env("MY_ENV", True) is False
         monkeypatch.undo()
 
 
 def test_safe_import_module():
-    assert safe_import_module('gobblygook') is None
-    assert safe_import_module('should.not.exist') is None
+    assert safe_import_module("gobblygook") is None
+    assert safe_import_module("should.not.exist") is None
 
-    module = safe_import_module('flask_unchained')
-    assert module.__name__ == 'flask_unchained'
+    module = safe_import_module("flask_unchained")
+    assert module.__name__ == "flask_unchained"
 
 
 def test_utc_now():

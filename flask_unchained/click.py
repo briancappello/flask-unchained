@@ -23,7 +23,7 @@ from click.formatting import join_options as _join_options
 
 
 CLI_HELP_STRING_MAX_LEN = 120
-DEFAULT_CONTEXT_SETTINGS = dict(help_option_names=('-h', '--help'))
+DEFAULT_CONTEXT_SETTINGS = dict(help_option_names=("-h", "--help"))
 SKIP_PROMPTING = False
 
 
@@ -76,17 +76,32 @@ class Command(click.Command):
     :param options_metavar: The options metavar to display in the usage.
                             Defaults to ``[OPTIONS]``.
     """
-    def __init__(self, name, context_settings=None, callback=None, params=None,
-                 help=None, epilog=None, short_help=None, add_help_option=True,
-                 options_metavar='[OPTIONS]'):
+
+    def __init__(
+        self,
+        name,
+        context_settings=None,
+        callback=None,
+        params=None,
+        help=None,
+        epilog=None,
+        short_help=None,
+        add_help_option=True,
+        options_metavar="[OPTIONS]",
+    ):
         from .unchained import unchained
 
         super().__init__(
-            name, callback=unchained.inject(callback), params=params,
-            help=help, epilog=epilog,
-            short_help=short_help, add_help_option=add_help_option,
+            name,
+            callback=unchained.inject(callback),
+            params=params,
+            help=help,
+            epilog=epilog,
+            short_help=short_help,
+            add_help_option=add_help_option,
             context_settings=_update_ctx_settings(context_settings),
-            options_metavar=options_metavar)
+            options_metavar=options_metavar,
+        )
 
     # overridden to support displaying args before the options metavar
     def collect_usage_pieces(self, ctx):
@@ -108,7 +123,7 @@ class Command(click.Command):
                 else:
                     opts.append(rv)
         if args:
-            with formatter.section('Arguments'):
+            with formatter.section("Arguments"):
                 formatter.write_dl(args)
         if opts:
             with formatter.section(self.options_metavar):
@@ -121,10 +136,13 @@ class Command(click.Command):
 
 class GroupOverrideMixin:
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, context_settings=_update_ctx_settings(
-            kwargs.pop('context_settings', None)), **kwargs)
-        self.subcommand_metavar = 'COMMAND [<args>...]'
-        self.subcommands_metavar = 'COMMAND1 [<args>...] [COMMAND2 [<args>...]]'
+        super().__init__(
+            *args,
+            context_settings=_update_ctx_settings(kwargs.pop("context_settings", None)),
+            **kwargs
+        )
+        self.subcommand_metavar = "COMMAND [<args>...]"
+        self.subcommands_metavar = "COMMAND1 [<args>...] [COMMAND2 [<args>...]]"
 
     def command(self, *args, **kwargs):
         """
@@ -150,7 +168,7 @@ class GroupOverrideMixin:
                                             metavar before the arguments.
                                             Defaults to False.
         """
-        kwargs.setdefault('cls', Command)
+        kwargs.setdefault("cls", Command)
         return super().command(*args, **kwargs)
 
     def collect_usage_pieces(self, ctx):
@@ -183,7 +201,7 @@ class Group(GroupOverrideMixin, click.Group):
         :param name: the name of the group (optional)
         :param commands: a dictionary of commands.
         """
-        kwargs.setdefault('cls', Group)
+        kwargs.setdefault("cls", Group)
         return super().group(*args, **kwargs)
 
 
@@ -224,6 +242,7 @@ class Argument(click.Argument):
     :param hidden: hide this option from help outputs.
                    Default is True, unless :param:`help` is given.
     """
+
     def __init__(self, param_decls, required=None, help=None, hidden=None, **attrs):
         super().__init__(param_decls, required=required, **attrs)
         self.help = help
@@ -239,12 +258,12 @@ class Argument(click.Argument):
     def make_metavar(self):
         if self.metavar is not None:
             return self.metavar
-        var = '' if self.required else '['
-        var += '<' + self.name + '>'
+        var = "" if self.required else "["
+        var += "<" + self.name + ">"
         if self.nargs != 1:
-            var += ', ...'
+            var += ", ..."
         if not self.required:
-            var += ']'
+            var += "]"
         return var
 
     # this code is 90% copied from click.Option.get_help_record
@@ -258,31 +277,31 @@ class Argument(click.Argument):
             rv, any_slashes = _join_options(opts)
             if any_slashes:
                 any_prefix_is_slash[:] = [True]
-            rv += ': ' + self.make_metavar()
+            rv += ": " + self.make_metavar()
             return rv
 
         rv = [_write_opts(self.opts)]
         if self.secondary_opts:
             rv.append(_write_opts(self.secondary_opts))
 
-        help = self.help or ''
+        help = self.help or ""
         extra = []
 
         if self.default is not None:
             if isinstance(self.default, (list, tuple)):
-                default_string = ', '.join('%s' % d for d in self.default)
+                default_string = ", ".join("%s" % d for d in self.default)
             elif _inspect.isfunction(self.default):
                 default_string = "(dynamic)"
             else:
                 default_string = self.default
-            extra.append('default: {}'.format(default_string))
+            extra.append("default: {}".format(default_string))
 
         if self.required:
-            extra.append('required')
+            extra.append("required")
         if extra:
-            help = '%s[%s]' % (help and help + '  ' or '', '; '.join(extra))
+            help = "%s[%s]" % (help and help + "  " or "", "; ".join(extra))
 
-        return ((any_prefix_is_slash and '; ' or ' / ').join(rv), help)
+        return ((any_prefix_is_slash and "; " or " / ").join(rv), help)
 
 
 class Option(click.Option):

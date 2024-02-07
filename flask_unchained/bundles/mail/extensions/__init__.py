@@ -5,11 +5,11 @@ mail = Mail()
 
 
 EXTENSIONS = {
-    'mail': mail,
+    "mail": mail,
 }
 
 
 __all__ = [
-    'mail',
-    'Mail',
+    "mail",
+    "Mail",
 ]

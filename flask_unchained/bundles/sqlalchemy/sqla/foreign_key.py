@@ -5,14 +5,15 @@ from .column import Column
 from .types import BigInteger
 
 
-def foreign_key(*args,
-                fk_col: Optional[str] = None,
-                primary_key: bool = False,
-                nullable: bool = False,
-                ondelete: Optional[str] = None,
-                onupdate: Optional[str] = None,
-                **kwargs,
-                ) -> Column:
+def foreign_key(
+    *args,
+    fk_col: Optional[str] = None,
+    primary_key: bool = False,
+    nullable: bool = False,
+    ondelete: Optional[str] = None,
+    onupdate: Optional[str] = None,
+    **kwargs,
+) -> Column:
     """
     Helper method to add a foreign key column to a model.
 
@@ -63,6 +64,11 @@ def foreign_key(*args,
     :param kwargs: Any other kwargs to pass the :class:`~sqlalchemy.Column`
                    constructor.
     """
-    return Column(*_get_fk_col_args(args, fk_col, ondelete, onupdate,
-                                    _default_col_type=BigInteger),
-                  primary_key=primary_key, nullable=nullable, **kwargs)
+    return Column(
+        *_get_fk_col_args(
+            args, fk_col, ondelete, onupdate, _default_col_type=BigInteger
+        ),
+        primary_key=primary_key,
+        nullable=nullable,
+        **kwargs,
+    )

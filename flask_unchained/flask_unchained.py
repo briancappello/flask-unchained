@@ -50,12 +50,13 @@ class FlaskUnchained(flask.Flask):
     The :class:`~flask_unchained.Unchained` extension instance.
     """
 
-    def register_blueprint(self,
-                           blueprint: flask.Blueprint,
-                           *,
-                           register_with_babel: bool = True,
-                           **options: Any,
-                           ) -> None:
+    def register_blueprint(
+        self,
+        blueprint: flask.Blueprint,
+        *,
+        register_with_babel: bool = True,
+        **options: Any,
+    ) -> None:
         """
         The same as :meth:`flask.Flask.register_blueprint`, but if
         ``register_with_babel`` is True, then we also allow the Babel Bundle an
@@ -65,15 +66,16 @@ class FlaskUnchained(flask.Flask):
             self.unchained.babel_bundle.register_blueprint(self, blueprint, **options)
         super().register_blueprint(blueprint, **options)
 
-    def add_url_rule(self,
-                     rule: str,
-                     endpoint: Optional[str] = None,
-                     view_func: Optional[FunctionType] = None,
-                     provide_automatic_options: Optional[bool] = None,
-                     *,
-                     register_with_babel: bool = False,
-                     **options: Any,
-                     ) -> None:
+    def add_url_rule(
+        self,
+        rule: str,
+        endpoint: Optional[str] = None,
+        view_func: Optional[FunctionType] = None,
+        provide_automatic_options: Optional[bool] = None,
+        *,
+        register_with_babel: bool = False,
+        **options: Any,
+    ) -> None:
         """
         The same as :meth:`flask.Flask.add_url_rule`, but if ``register_with_babel``
         is True, then we also allow the Babel Bundle an opportunity to register a
@@ -81,11 +83,20 @@ class FlaskUnchained(flask.Flask):
         """
         if self.unchained.babel_bundle and register_with_babel:
             self.unchained.babel_bundle.add_url_rule(
-                self, rule, endpoint=endpoint, view_func=view_func,
-                provide_automatic_options=provide_automatic_options, **options)
+                self,
+                rule,
+                endpoint=endpoint,
+                view_func=view_func,
+                provide_automatic_options=provide_automatic_options,
+                **options,
+            )
         super().add_url_rule(
-            rule, endpoint=endpoint, view_func=view_func,
-            provide_automatic_options=provide_automatic_options, **options)
+            rule,
+            endpoint=endpoint,
+            view_func=view_func,
+            provide_automatic_options=provide_automatic_options,
+            **options,
+        )
 
     def __str__(self):
         return f"<FlaskUnchained module={self.import_name!r}>"
@@ -95,5 +106,5 @@ class FlaskUnchained(flask.Flask):
 
 
 __all__ = [
-    'FlaskUnchained',
+    "FlaskUnchained",
 ]

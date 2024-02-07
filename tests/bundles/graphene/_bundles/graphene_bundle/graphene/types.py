@@ -8,7 +8,7 @@ from .. import models
 class Parent(SQLAlchemyObjectType):
     class Meta:
         model = models.Parent
-        only_fields = ('id', 'name', 'created_at', 'updated_at')
+        only_fields = ("id", "name", "created_at", "updated_at")
 
     children = graphene.List(lambda: Child)
 
@@ -16,6 +16,6 @@ class Parent(SQLAlchemyObjectType):
 class Child(SQLAlchemyObjectType):
     class Meta:
         model = models.Child
-        only_fields = ('id', 'name', 'created_at', 'updated_at')
+        only_fields = ("id", "name", "created_at", "updated_at")
 
     parent = graphene.Field(Parent)

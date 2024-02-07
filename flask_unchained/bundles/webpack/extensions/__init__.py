@@ -5,11 +5,11 @@ webpack = Webpack()
 
 
 EXTENSIONS = {
-    'webpack': webpack,
+    "webpack": webpack,
 }
 
 
 __all__ = [
-    'webpack',
-    'Webpack',
+    "webpack",
+    "Webpack",
 ]

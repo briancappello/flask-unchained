@@ -3,6 +3,6 @@ from .register_model_serializers_hook import RegisterModelSerializersHook
 
 
 __all__ = [
-    'RegisterModelResourcesHook',
-    'RegisterModelSerializersHook',
+    "RegisterModelResourcesHook",
+    "RegisterModelSerializersHook",
 ]

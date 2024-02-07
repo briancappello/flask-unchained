@@ -33,16 +33,19 @@ class FlaskForm(BaseForm):
     An ordered list of field names. Fields not listed here will be rendered last.
     """
 
-    submit = _SubmitField('Submit')
+    submit = _SubmitField("Submit")
 
-    def __init__(self, formdata=_Auto, obj=None, prefix='', data=None, meta=None, **kwargs):
-        super().__init__(formdata=formdata, obj=obj, prefix=prefix, data=data, meta=meta,
-                         **kwargs)
+    def __init__(
+        self, formdata=_Auto, obj=None, prefix="", data=None, meta=None, **kwargs
+    ):
+        super().__init__(
+            formdata=formdata, obj=obj, prefix=prefix, data=data, meta=meta, **kwargs
+        )
         self._name = snake_case(self.__class__.__name__)
-        self._enctype = 'application/x-www-form-urlencoded'
+        self._enctype = "application/x-www-form-urlencoded"
         for field in self._fields.values():
             if isinstance(field, _FileField):
-                self._enctype = 'multipart/form-data'
+                self._enctype = "multipart/form-data"
 
     def __iter__(self):
         """
@@ -53,8 +56,9 @@ class FlaskForm(BaseForm):
         try:
             fields = [self._fields[name] for name in self.field_order]
         except KeyError as e:
-            raise RuntimeError(f'{str(e)} is listed in `field_order` but the '
-                               f'field is not defined')
+            raise RuntimeError(
+                f"{str(e)} is listed in `field_order` but the " f"field is not defined"
+            )
         extra_fields = []
         submit_fields = {}
 

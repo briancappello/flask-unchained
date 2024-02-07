@@ -9,12 +9,12 @@ class RegisterGrapheneQueriesHook(AppFactoryHook):
     Registers Graphene Queries with the Graphene Bundle.
     """
 
-    name = 'graphene_queries'
+    name = "graphene_queries"
     """
     The name of this hook.
     """
 
-    bundle_module_names = ['graphene.queries', 'graphene.schema']
+    bundle_module_names = ["graphene.queries", "graphene.schema"]
     """
     The default module this hook loads from.
 
@@ -22,13 +22,12 @@ class RegisterGrapheneQueriesHook(AppFactoryHook):
     bundle class.
     """
 
-    bundle_override_module_names_attr = 'graphene_queries_module_names'
-    run_after = ['graphene_types']
+    bundle_override_module_names_attr = "graphene_queries_module_names"
+    run_after = ["graphene_types"]
 
-
-    def process_objects(self,
-                        app: FlaskUnchained,
-                        queries: Dict[str, QueriesObjectType]):
+    def process_objects(
+        self, app: FlaskUnchained, queries: Dict[str, QueriesObjectType]
+    ):
         """
         Register discovered queries with the Graphene Bundle.
         """
@@ -40,5 +39,8 @@ class RegisterGrapheneQueriesHook(AppFactoryHook):
         :class:`~flask_unchained.bundles.graphene.QueriesObjectType`.
         """
         is_subclass = isinstance(obj, type) and issubclass(obj, QueriesObjectType)
-        return is_subclass and obj != QueriesObjectType and (
-                not hasattr(obj, 'Meta') or not getattr(obj.Meta, 'abstract', False))
+        return (
+            is_subclass
+            and obj != QueriesObjectType
+            and (not hasattr(obj, "Meta") or not getattr(obj.Meta, "abstract", False))
+        )

@@ -14,12 +14,12 @@ class RegisterCommandsHook(AppFactoryHook):
     Registers commands and command groups from bundles.
     """
 
-    name = 'commands'
+    name = "commands"
     """
     The name of this hook.
     """
 
-    bundle_module_names = ['commands']
+    bundle_module_names = ["commands"]
     """
     The default module this hook loads from.
 
@@ -27,14 +27,15 @@ class RegisterCommandsHook(AppFactoryHook):
     bundle class.
     """
 
-    run_after = ['services']
+    run_after = ["services"]
     limit_discovery_to_local_declarations = False
 
-    def run_hook(self,
-                 app: FlaskUnchained,
-                 bundles: List[Bundle],
-                 unchained_config: Optional[Dict[str, Any]] = None,
-                 ) -> Dict[str, Union[click.Command, click.Group]]:
+    def run_hook(
+        self,
+        app: FlaskUnchained,
+        bundles: List[Bundle],
+        unchained_config: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Union[click.Command, click.Group]]:
         """
         Discover CLI commands and command groups from bundles and register them
         with the app.
@@ -52,15 +53,19 @@ class RegisterCommandsHook(AppFactoryHook):
             app.cli.add_command(command, name)
         return commands
 
-    def get_bundle_commands(self,
-                            bundle: Bundle,
-                            command_groups: Dict[str, click.Group],
-                            ) -> Dict[str, click.Command]:
+    def get_bundle_commands(
+        self,
+        bundle: Bundle,
+        command_groups: Dict[str, click.Group],
+    ) -> Dict[str, click.Command]:
         # when a command belongs to a group, we don't also want to register the command.
         # therefore we collect all the command names belonging to groups, and use that
         # in our is_click_command type-checking fn below
-        group_command_names = set(itertools.chain.from_iterable(
-            group.commands.keys() for group in command_groups.values()))
+        group_command_names = set(
+            itertools.chain.from_iterable(
+                group.commands.keys() for group in command_groups.values()
+            )
+        )
 
         def is_click_command(obj: Any) -> bool:
             return self.is_click_command(obj) and obj.name not in group_command_names
@@ -83,15 +88,17 @@ class RegisterCommandsHook(AppFactoryHook):
                 )
 
         groups = {}
-        for name in getattr(bundle, 'command_group_names', [bundle.name]):
+        for name in getattr(bundle, "command_group_names", [bundle.name]):
             try:
                 groups[name] = command_groups[name]
             except KeyError as e:
                 if module_found and not bundle.is_single_module:
-                    warn(f'WARNING: Found a commands module for the {bundle.name} '
-                         f'bundle, but there was no command group named {e.args[0]}'
-                         f' in it. Either create one, or customize the bundle\'s '
-                         f'`command_group_names` class attribute.')
+                    warn(
+                        f"WARNING: Found a commands module for the {bundle.name} "
+                        f"bundle, but there was no command group named {e.args[0]}"
+                        f" in it. Either create one, or customize the bundle's "
+                        f"`command_group_names` class attribute."
+                    )
                 continue
         return groups
 
@@ -109,6 +116,7 @@ def inherit_docstrings(new, preexisting):
             new[name].__doc__ = preexisting[name].__doc__
 
         if isinstance(new[name], click.Group):
-            new[name].commands = inherit_docstrings(new[name].commands,
-                                                    preexisting[name].commands)
+            new[name].commands = inherit_docstrings(
+                new[name].commands, preexisting[name].commands
+            )
     return new

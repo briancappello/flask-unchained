@@ -5,11 +5,11 @@ csrf = CSRFProtect()
 
 
 EXTENSIONS = {
-    'csrf': csrf,
+    "csrf": csrf,
 }
 
 
 __all__ = [
-    'csrf',
-    'CSRFProtect',
+    "csrf",
+    "CSRFProtect",
 ]

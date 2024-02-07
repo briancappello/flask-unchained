@@ -1,10 +1,21 @@
-from flask_sqlalchemy_unchained import SQLAlchemyUnchained as BaseSQLAlchemy, Query as BaseQuery
+from flask_sqlalchemy_unchained import (
+    SQLAlchemyUnchained as BaseSQLAlchemy,
+    Query as BaseQuery,
+)
 from sqlalchemy import event
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.naming import (ConventionDict, _get_convention,
-                                   conv as converted_name)
-from sqlalchemy_unchained import (DeclarativeMeta, BaseValidator, Required,
-                                  ValidationError, ValidationErrors)
+from sqlalchemy.sql.naming import (
+    ConventionDict,
+    _get_convention,
+    conv as converted_name,
+)
+from sqlalchemy_unchained import (
+    DeclarativeMeta,
+    BaseValidator,
+    Required,
+    ValidationError,
+    ValidationErrors,
+)
 
 from .. import sqla
 from ..base_model import BaseModel
@@ -231,4 +242,5 @@ class SQLAlchemyUnchained(BaseSQLAlchemy):
             return
 
         const.name = converted_name(
-            fmt % ConventionDict(const, table, self.metadata.naming_convention))
+            fmt % ConventionDict(const, table, self.metadata.naming_convention)
+        )

@@ -4,7 +4,7 @@ from flask import Blueprint
 from flask_unchained.bundles.controller import Controller
 
 
-bp = Blueprint('bp', __name__, url_prefix='/bp')
+bp = Blueprint("bp", __name__, url_prefix="/bp")
 
 
 class DefaultController(Controller):
@@ -18,18 +18,26 @@ def view_func(*args):
 
 def first(fn):
     """first other docstring"""
+
     def wrapper(*args):
-        return fn(*(list(args) + ['first']))
+        return fn(*(list(args) + ["first"]))
+
     return wrapper
-first.__module__ = 'something.else.first'
+
+
+first.__module__ = "something.else.first"
 
 
 def second(fn):
     """second other docstring"""
+
     def wrapper(*args):
-        return fn(*(list(args) + ['second']))
+        return fn(*(list(args) + ["second"]))
+
     return wrapper
-second.__module__ = 'something.else.second'
+
+
+second.__module__ = "something.else.second"
 
 
 def third(fn):
@@ -40,14 +48,17 @@ def third(fn):
     # (which correctly implemented decorators should be doing anyway)
     @functools.wraps(fn)
     def wrapper(*args):
-        return fn(*(list(args) + ['third']))
+        return fn(*(list(args) + ["third"]))
+
     return wrapper
-third.__module__ = 'something.else.third'
+
+
+third.__module__ = "something.else.third"
 
 
 class TestControllerAttributes:
     def test_auto_attributes(self):
-        assert DefaultController.Meta.template_folder == 'default'
+        assert DefaultController.Meta.template_folder == "default"
         assert DefaultController.Meta.template_file_extension is None
         assert DefaultController.Meta.url_prefix is None
         assert DefaultController.Meta.decorators is None
@@ -55,40 +66,43 @@ class TestControllerAttributes:
     def test_custom_template_folder(self):
         class FooController(Controller):
             class Meta:
-                template_folder = 'defaults'
+                template_folder = "defaults"
 
         assert FooController.Meta.url_prefix is None
-        assert FooController.Meta.template_folder == 'defaults'
+        assert FooController.Meta.template_folder == "defaults"
         assert FooController.Meta.template_file_extension is None
 
     def test_custom_template_extension(self):
         class FooController(Controller):
             class Meta:
-                template_file_extension = '.html.j2'
+                template_file_extension = ".html.j2"
 
-        assert FooController.Meta.template_file_extension == '.html.j2'
+        assert FooController.Meta.template_file_extension == ".html.j2"
 
     def test_custom_url_prefix(self):
         class FooController(Controller):
             class Meta:
-                url_prefix = 'foobar'
+                url_prefix = "foobar"
 
-        assert FooController.Meta.url_prefix == 'foobar'
+        assert FooController.Meta.url_prefix == "foobar"
 
     def test_apply_decorators(self):
         controller = DefaultController()
 
         def decorator(fn):
             """some other docstring"""
+
             def wrapper(*args, **kwargs):
-                return fn('decorator')
+                return fn("decorator")
+
             return wrapper
-        decorator.__module__ = 'something.else'
+
+        decorator.__module__ = "something.else"
 
         new_view = controller.apply_decorators(view_func, [decorator])
-        assert new_view() == ('decorator',)
-        assert new_view.__name__ == 'view_func'
-        assert new_view.__doc__ == 'view_func docstring'
+        assert new_view() == ("decorator",)
+        assert new_view.__name__ == "view_func"
+        assert new_view.__doc__ == "view_func docstring"
         assert new_view.__module__ == view_func.__module__
 
     def test_apply_no_decorators(self):
@@ -101,9 +115,9 @@ class TestControllerAttributes:
         controller = DefaultController()
 
         new_view = controller.apply_decorators(view_func, [first, second])
-        assert new_view() == ('first', 'second')
-        assert new_view.__name__ == 'view_func'
-        assert new_view.__doc__ == 'view_func docstring'
+        assert new_view() == ("first", "second")
+        assert new_view.__name__ == "view_func"
+        assert new_view.__doc__ == "view_func docstring"
         assert new_view.__module__ == view_func.__module__
 
     def test_get_decorators(self):
@@ -124,11 +138,16 @@ class TestControllerAttributes:
                 return args
 
         controller = FooController()
-        resp = controller.dispatch_request('my_method')
-        assert resp == ('first', 'second', 'third')
+        resp = controller.dispatch_request("my_method")
+        assert resp == ("first", "second", "third")
 
-        resp = controller.dispatch_request('my_method', 'a view arg')
-        assert resp == ('a view arg', 'first', 'second', 'third',)
+        resp = controller.dispatch_request("my_method", "a view arg")
+        assert resp == (
+            "a view arg",
+            "first",
+            "second",
+            "third",
+        )
 
     def test_method_as_view(self):
         class FooController(Controller):
@@ -140,53 +159,53 @@ class TestControllerAttributes:
                 """my_method docstring"""
                 return args
 
-        view = FooController.method_as_view('my_method')
-        assert view() == ('first', 'second', 'third')
-        assert view.__name__ == 'my_method'
-        assert view.__doc__ == 'my_method docstring'
+        view = FooController.method_as_view("my_method")
+        assert view() == ("first", "second", "third")
+        assert view.__name__ == "my_method"
+        assert view.__doc__ == "my_method docstring"
         assert view.__module__ == FooController.__module__
 
     def test_render(self, app, templates):
         controller = DefaultController()
 
-        resp = controller.render('index', some_ctx_var='hi')
+        resp = controller.render("index", some_ctx_var="hi")
 
-        assert 'DefaultController:index' in resp
-        assert templates[0].template.name == 'default/index.html'
-        assert templates[0].context.get('some_ctx_var') == 'hi'
+        assert "DefaultController:index" in resp
+        assert templates[0].template.name == "default/index.html"
+        assert templates[0].context.get("some_ctx_var") == "hi"
 
     def test_render_with_custom_controller_template_attrs(self, templates):
         class FooController(Controller):
             class Meta:
-                template_folder = 'foobar'
-                template_file_extension = '.html.j2'
+                template_folder = "foobar"
+                template_file_extension = ".html.j2"
 
         controller = FooController()
-        resp = controller.render('index', some_ctx_var='hi')
+        resp = controller.render("index", some_ctx_var="hi")
 
-        assert 'FoobarController:index' in resp
-        assert templates[0].template.name == 'foobar/index.html.j2'
-        assert templates[0].context.get('some_ctx_var') == 'hi'
+        assert "FoobarController:index" in resp
+        assert templates[0].template.name == "foobar/index.html.j2"
+        assert templates[0].context.get("some_ctx_var") == "hi"
 
     def test_render_with_full_filename(self, templates):
         class FooController(Controller):
             class Meta:
-                template_folder = 'foobar'
+                template_folder = "foobar"
 
         controller = FooController()
-        resp = controller.render('index.html.j2', some_ctx_var='hi')
+        resp = controller.render("index.html.j2", some_ctx_var="hi")
 
-        assert 'FoobarController:index' in resp
-        assert templates[0].template.name == 'foobar/index.html.j2'
-        assert templates[0].context.get('some_ctx_var') == 'hi'
+        assert "FoobarController:index" in resp
+        assert templates[0].template.name == "foobar/index.html.j2"
+        assert templates[0].context.get("some_ctx_var") == "hi"
 
     def test_render_with_full_path(self, templates):
         controller = DefaultController()
-        resp = controller.render('foobar/index.html.j2', some_ctx_var='hi')
+        resp = controller.render("foobar/index.html.j2", some_ctx_var="hi")
 
-        assert 'FoobarController:index' in resp
-        assert templates[0].template.name == 'foobar/index.html.j2'
-        assert templates[0].context.get('some_ctx_var') == 'hi'
+        assert "FoobarController:index" in resp
+        assert templates[0].template.name == "foobar/index.html.j2"
+        assert templates[0].context.get("some_ctx_var") == "hi"
 
     def test_default_redirect(self, app):
         controller = DefaultController()
@@ -194,82 +213,82 @@ class TestControllerAttributes:
         with app.test_request_context():
             resp = controller.redirect()
             assert resp.status_code == 302
-            assert resp.location == '/'
+            assert resp.location == "/"
 
     def test_redirect(self, app):
         controller = DefaultController()
 
         with app.test_request_context():
-            resp = controller.redirect('/path')
+            resp = controller.redirect("/path")
             assert resp.status_code == 302
-            assert resp.location == '/path'
+            assert resp.location == "/path"
 
     def test_redirect_from_config_key(self, app):
-        app.config.from_mapping({'MY_CONFIG_KEY': '/path'})
+        app.config.from_mapping({"MY_CONFIG_KEY": "/path"})
         controller = DefaultController()
 
         with app.test_request_context():
-            resp = controller.redirect('MY_CONFIG_KEY')
+            resp = controller.redirect("MY_CONFIG_KEY")
             assert resp.status_code == 302
-            assert resp.location == '/path'
+            assert resp.location == "/path"
 
     def test_redirect_override_from_config_key(self, app):
-        app.config.from_mapping({'MY_CONFIG_KEY': '/path'})
+        app.config.from_mapping({"MY_CONFIG_KEY": "/path"})
         controller = DefaultController()
 
         with app.test_request_context():
-            resp = controller.redirect('/foobar', override='MY_CONFIG_KEY')
+            resp = controller.redirect("/foobar", override="MY_CONFIG_KEY")
             assert resp.status_code == 302
-            assert resp.location == '/path'
+            assert resp.location == "/path"
 
     def test_redirect_from_query_string(self, app, monkeypatch):
         controller = DefaultController()
 
         with app.test_request_context():
-            monkeypatch.setattr('flask.request.args', {'next': '/path'})
+            monkeypatch.setattr("flask.request.args", {"next": "/path"})
             resp = controller.redirect()
             assert resp.status_code == 302
-            assert resp.location == '/path'
+            assert resp.location == "/path"
             monkeypatch.undo()
 
     def test_redirect_from_query_string_with_default(self, app, monkeypatch):
         controller = DefaultController()
 
         with app.test_request_context():
-            resp = controller.redirect('/if-not-query-string')
+            resp = controller.redirect("/if-not-query-string")
             assert resp.status_code == 302
-            assert resp.location == '/if-not-query-string'
+            assert resp.location == "/if-not-query-string"
 
-            monkeypatch.setattr('flask.request.args', {'next': '/path'})
-            resp = controller.redirect('/if-not-query-string')
+            monkeypatch.setattr("flask.request.args", {"next": "/path"})
+            resp = controller.redirect("/if-not-query-string")
             assert resp.status_code == 302
-            assert resp.location == '/path'
+            assert resp.location == "/path"
             monkeypatch.undo()
 
     def test_override_redirect_from_query_string(self, app, monkeypatch):
         controller = DefaultController()
 
         with app.test_request_context():
-            monkeypatch.setattr('flask.request.args', {'next': '/path'})
-            resp = controller.redirect(override='/my-path')
+            monkeypatch.setattr("flask.request.args", {"next": "/path"})
+            resp = controller.redirect(override="/my-path")
             assert resp.status_code == 302
-            assert resp.location == '/my-path'
+            assert resp.location == "/my-path"
             monkeypatch.undo()
 
     def test_redirect_with_endpoint(self, app):
         controller = DefaultController()
 
         with app.test_request_context():
-            app.add_url_rule('/endpoint-path', endpoint='my.endpoint')
-            resp = controller.redirect('my.endpoint')
+            app.add_url_rule("/endpoint-path", endpoint="my.endpoint")
+            resp = controller.redirect("my.endpoint")
             assert resp.status_code == 302
-            assert resp.location == '/endpoint-path'
+            assert resp.location == "/endpoint-path"
 
     def test_override_redirect_with_endpoint(self, app):
         controller = DefaultController()
 
         with app.test_request_context():
-            app.add_url_rule('/endpoint-path', endpoint='my.endpoint')
-            resp = controller.redirect('/path', override='my.endpoint')
+            app.add_url_rule("/endpoint-path", endpoint="my.endpoint")
+            resp = controller.redirect("/path", override="my.endpoint")
             assert resp.status_code == 302
-            assert resp.location == '/endpoint-path'
+            assert resp.location == "/endpoint-path"

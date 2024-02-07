@@ -15,12 +15,12 @@ class SQLAlchemyBundle(Bundle):
     with Flask Unchained.
     """
 
-    name = 'sqlalchemy_bundle'
+    name = "sqlalchemy_bundle"
     """
     The name of the SQLAlchemy Bundle.
     """
 
-    command_group_names = ['db']
+    command_group_names = ["db"]
     """
     Click groups for the SQLAlchemy Bundle.
     """

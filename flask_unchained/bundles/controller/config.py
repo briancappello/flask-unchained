@@ -15,7 +15,7 @@ class Config(BundleConfig):
     using the :func:`flask.flash` function directly will not respect this setting.
     """
 
-    TEMPLATE_FILE_EXTENSION = '.html'
+    TEMPLATE_FILE_EXTENSION = ".html"
     """
     The default file extension to use for templates.
     """
@@ -25,7 +25,7 @@ class Config(BundleConfig):
     Whether or not to enable CSRF protection.
     """
 
-    CSRF_TOKEN_COOKIE_NAME = 'csrf_token'
+    CSRF_TOKEN_COOKIE_NAME = "csrf_token"
     """
     The cookie name to set on responses for the CSRF token. Defaults to "csrf_token".
     """

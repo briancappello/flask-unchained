@@ -25,7 +25,7 @@ def auth_required_same_user(*args, **kwargs):
     Aborts with ``HTTP 403: Forbidden`` if the user-check fails.
     """
     auth_kwargs = {}
-    user_id_parameter_name = 'id'
+    user_id_parameter_name = "id"
     if not (args and callable(args[0])):
         auth_kwargs = kwargs
         if args and isinstance(args[0], str):
@@ -38,11 +38,14 @@ def auth_required_same_user(*args, **kwargs):
             try:
                 user_id = request.view_args[user_id_parameter_name]
             except KeyError:
-                raise KeyError('Unable to find the user lookup parameter '
-                               f'{user_id_parameter_name} in the url args')
+                raise KeyError(
+                    "Unable to find the user lookup parameter "
+                    f"{user_id_parameter_name} in the url args"
+                )
             if not Permission(UserNeed(user_id)).can():
                 abort(HTTPStatus.FORBIDDEN)
             return fn(*args, **kwargs)
+
         return decorated
 
     if args and callable(args[0]):

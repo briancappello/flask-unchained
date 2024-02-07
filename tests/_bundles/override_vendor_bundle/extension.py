@@ -8,12 +8,12 @@ class MyAwesomeExtension:
 
     def init_app(self, app):
         self.app = app
-        self.name = 'override_awesome'
+        self.name = "override_awesome"
 
 
 awesome = MyAwesomeExtension()
 
 
 EXTENSIONS = {
-    'awesome': awesome,
+    "awesome": awesome,
 }

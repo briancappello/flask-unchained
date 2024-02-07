@@ -7,46 +7,76 @@ from types import FunctionType
 from typing import *
 
 from flask_unchained._compat import QUART_ENABLED
+
 if QUART_ENABLED:
-    from quart import (after_this_request, current_app as app, flash, jsonify,
-                       make_response, render_template, render_template_string, request)
+    from quart import (
+        after_this_request,
+        current_app as app,
+        flash,
+        jsonify,
+        make_response,
+        render_template,
+        render_template_string,
+        request,
+    )
 else:
-    from flask import (after_this_request, current_app as app, flash, jsonify,
-                       make_response, render_template, render_template_string, request)
+    from flask import (
+        after_this_request,
+        current_app as app,
+        flash,
+        jsonify,
+        make_response,
+        render_template,
+        render_template_string,
+        request,
+    )
 
 from flask_unchained.di import _set_up_class_dependency_injection
-from py_meta_utils import (AbstractMetaOption as _ControllerAbstractMetaOption,
-                           McsArgs, MetaOption, MetaOptionsFactory, deep_getattr,
-                           _missing, process_factory_meta_options)
+from py_meta_utils import (
+    AbstractMetaOption as _ControllerAbstractMetaOption,
+    McsArgs,
+    MetaOption,
+    MetaOptionsFactory,
+    deep_getattr,
+    _missing,
+    process_factory_meta_options,
+)
 
 from ...string_utils import snake_case
 from .attr_constants import (
-    CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR, NO_ROUTES_ATTR,
-    NOT_VIEWS_ATTR, REMOVE_SUFFIXES_ATTR)
+    CONTROLLER_ROUTES_ATTR,
+    FN_ROUTES_ATTR,
+    NO_ROUTES_ATTR,
+    NOT_VIEWS_ATTR,
+    REMOVE_SUFFIXES_ATTR,
+)
 from .utils import controller_name, redirect
 from .route import Route
 
 
-CONTROLLER_REMOVE_EXTRA_SUFFIXES = ['View']
+CONTROLLER_REMOVE_EXTRA_SUFFIXES = ["View"]
 
 
 def _get_not_views(clsdict, bases):
     not_views = deep_getattr({}, bases, NOT_VIEWS_ATTR, [])
-    return ({name for name, method in clsdict.items()
-             if _is_view_func(name, method)
-             and not getattr(method, FN_ROUTES_ATTR, None)}.union(not_views))
+    return {
+        name
+        for name, method in clsdict.items()
+        if _is_view_func(name, method) and not getattr(method, FN_ROUTES_ATTR, None)
+    }.union(not_views)
 
 
 def _get_remove_suffixes(name, bases, extras):
     existing_suffixes = deep_getattr({}, bases, REMOVE_SUFFIXES_ATTR, [])
     new_suffixes = [name] + extras
-    return ([suffix for suffix in new_suffixes
-             if suffix not in existing_suffixes] + existing_suffixes)
+    return [
+        suffix for suffix in new_suffixes if suffix not in existing_suffixes
+    ] + existing_suffixes
 
 
 def _is_view_func(method_name, method):
     is_function = isinstance(method, FunctionType)
-    is_private = method_name.startswith('_')
+    is_private = method_name.startswith("_")
     has_no_routes = getattr(method, NO_ROUTES_ATTR, False)
     return is_function and not (is_private or has_no_routes)
 
@@ -61,17 +91,20 @@ class ControllerMetaclass(type):
       checking if methods were decorated with @route, otherwise
       create a new Route for each method that needs one
     """
+
     def __new__(mcs, name, bases, clsdict):
-        clsdict['_view_funcs'] = {}
+        clsdict["_view_funcs"] = {}
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         _set_up_class_dependency_injection(mcs_args)
         if mcs_args.is_abstract:
             mcs_args.clsdict[REMOVE_SUFFIXES_ATTR] = _get_remove_suffixes(
-                    name, bases, CONTROLLER_REMOVE_EXTRA_SUFFIXES)
+                name, bases, CONTROLLER_REMOVE_EXTRA_SUFFIXES
+            )
             mcs_args.clsdict[NOT_VIEWS_ATTR] = _get_not_views(clsdict, bases)
 
         process_factory_meta_options(
-            mcs_args, default_factory_class=ControllerMetaOptionsFactory)
+            mcs_args, default_factory_class=ControllerMetaOptionsFactory
+        )
 
         cls = super().__new__(*mcs_args)
         if mcs_args.is_abstract:
@@ -83,13 +116,13 @@ class ControllerMetaclass(type):
         not_views = deep_getattr({}, bases, NOT_VIEWS_ATTR)
 
         for method_name, method in clsdict.items():
-            if (method_name in not_views
-                    or not _is_view_func(method_name, method)):
+            if method_name in not_views or not _is_view_func(method_name, method):
                 controller_routes.pop(method_name, None)
                 continue
 
-            controller_routes[method_name] = getattr(method, FN_ROUTES_ATTR,
-                                                     [Route(None, method)])
+            controller_routes[method_name] = getattr(
+                method, FN_ROUTES_ATTR, [Route(None, method)]
+            )
 
         setattr(cls, CONTROLLER_ROUTES_ATTR, controller_routes)
         return cls
@@ -107,7 +140,7 @@ class ControllerDecoratorsMetaOption(MetaOption):
     """
 
     def __init__(self):
-        super().__init__('decorators', default=None, inherit=True)
+        super().__init__("decorators", default=None, inherit=True)
 
     def check_value(self, value, mcs_args: McsArgs):
         if not value:
@@ -115,7 +148,8 @@ class ControllerDecoratorsMetaOption(MetaOption):
 
         if not all(callable(x) for x in value):
             raise ValueError(
-                f'The {self.name} meta option must be a list of callables.')
+                f"The {self.name} meta option must be a list of callables."
+            )
 
 
 class ControllerTemplateFolderNameMetaOption(MetaOption):
@@ -124,8 +158,9 @@ class ControllerTemplateFolderNameMetaOption(MetaOption):
     to the class name, with the suffixes ``Controller`` or ``View`` stripped, stopping
     after the first one is found (if any). It then gets converted to snake-case.
     """
+
     def __init__(self):
-        super().__init__('template_folder', default=_missing, inherit=False)
+        super().__init__("template_folder", default=_missing, inherit=False)
 
     def get_value(self, meta, base_classes_meta, mcs_args: McsArgs):
         value = super().get_value(meta, base_classes_meta, mcs_args)
@@ -140,7 +175,8 @@ class ControllerTemplateFolderNameMetaOption(MetaOption):
 
         if not isinstance(value, str) or os.sep in value:
             raise ValueError(
-                f'The {self.name} meta option must be a string and not a full path')
+                f"The {self.name} meta option must be a string and not a full path"
+            )
 
 
 class ControllerTemplateFileExtensionMetaOption(MetaOption):
@@ -150,15 +186,16 @@ class ControllerTemplateFileExtensionMetaOption(MetaOption):
     ``app.config.TEMPLATE_FILE_EXTENSION`` setting as the default when this
     returns None.
     """
+
     def __init__(self):
-        super().__init__('template_file_extension', default=None, inherit=False)
+        super().__init__("template_file_extension", default=None, inherit=False)
 
     def check_value(self, value, mcs_args: McsArgs):
         if not value:
             return
 
         if not isinstance(value, str):
-            raise ValueError(f'The {self.name} meta option must be a string')
+            raise ValueError(f"The {self.name} meta option must be a string")
 
     # def get_value(...):
     # NOTE: the logic for returning app.config.TEMPLATE_FILE_EXTENSION must
@@ -170,19 +207,20 @@ class ControllerUrlPrefixMetaOption(MetaOption):
     """
     The url prefix to use for all routes from this controller. Defaults to None.
     """
+
     def __init__(self):
-        super().__init__('url_prefix', default=None, inherit=False)
+        super().__init__("url_prefix", default=None, inherit=False)
 
     def check_value(self, value, mcs_args: McsArgs):
         if not value:
             return
 
         if not isinstance(value, str):
-            raise ValueError(f'The {self.name} meta option must be a string')
+            raise ValueError(f"The {self.name} meta option must be a string")
 
 
 class ControllerEndpointPrefixMetaOption(MetaOption):
-    def __init__(self, name='endpoint_prefix', default=_missing, inherit=False):
+    def __init__(self, name="endpoint_prefix", default=_missing, inherit=False):
         super().__init__(name=name, default=default, inherit=inherit)
 
     def check_value(self, value: Any, mcs_args: McsArgs):
@@ -190,7 +228,7 @@ class ControllerEndpointPrefixMetaOption(MetaOption):
             return
 
         if not isinstance(value, str):
-            raise ValueError(f'The {self.name} meta option must be a string')
+            raise ValueError(f"The {self.name} meta option must be a string")
 
     def get_value(self, meta, base_classes_meta, mcs_args: McsArgs):
         value = super().get_value(meta, base_classes_meta, mcs_args)
@@ -287,6 +325,7 @@ class Controller(metaclass=ControllerMetaclass):
         └── views
             └── site_controller.py
     """
+
     _meta_options_factory_class = ControllerMetaOptionsFactory
 
     # the metaclass ensures a unique _view_funcs dict for each subclass of controller
@@ -314,23 +353,25 @@ class Controller(metaclass=ControllerMetaclass):
                               (The file extension can be omitted.)
         :param ctx: Context variables to pass into the template.
         """
-        if '.' not in template_name:
-            template_file_extension = (self.Meta.template_file_extension
-                                       or app.config.TEMPLATE_FILE_EXTENSION)
-            template_name = f'{template_name}{template_file_extension}'
+        if "." not in template_name:
+            template_file_extension = (
+                self.Meta.template_file_extension or app.config.TEMPLATE_FILE_EXTENSION
+            )
+            template_name = f"{template_name}{template_file_extension}"
         if self.Meta.template_folder and os.sep not in template_name:
-            template_name = os.path.join(self.Meta.template_folder,
-                                         template_name)
+            template_name = os.path.join(self.Meta.template_folder, template_name)
         return render_template(template_name, **ctx)
 
     def render_template_string(self, source, **ctx):
         return render_template_string(source, **ctx)
 
-    def redirect(self,
-                 where: Optional[str] = None,
-                 default: Optional[str] = None,
-                 override: Optional[str] = None,
-                 **url_kwargs):
+    def redirect(
+        self,
+        where: Optional[str] = None,
+        default: Optional[str] = None,
+        override: Optional[str] = None,
+        **url_kwargs,
+    ):
         """
         Convenience method for returning redirect responses.
 
@@ -360,11 +401,12 @@ class Controller(metaclass=ControllerMetaclass):
         """
         return redirect(where, default, override, _cls=self, **url_kwargs)
 
-    def jsonify(self,
-                data: Any,
-                code: Union[int, Tuple[int, str, str]] = HTTPStatus.OK,
-                headers: Optional[Dict[str, str]] = None,
-                ):
+    def jsonify(
+        self,
+        data: Any,
+        code: Union[int, Tuple[int, str, str]] = HTTPStatus.OK,
+        headers: Optional[Dict[str, str]] = None,
+    ):
         """
         Convenience method to return json responses.
 
@@ -374,12 +416,13 @@ class Controller(metaclass=ControllerMetaclass):
         """
         return jsonify(data), code, headers or {}
 
-    def errors(self,
-               errors: List[str],
-               code: Union[int, Tuple[int, str, str]] = HTTPStatus.BAD_REQUEST,
-               key: str = 'errors',
-               headers: Optional[Dict[str, str]] = None,
-               ):
+    def errors(
+        self,
+        errors: List[str],
+        code: Union[int, Tuple[int, str, str]] = HTTPStatus.BAD_REQUEST,
+        key: str = "errors",
+        headers: Optional[Dict[str, str]] = None,
+    ):
         """
         Convenience method to return errors as json.
 
@@ -419,17 +462,21 @@ class Controller(metaclass=ControllerMetaclass):
         #   declared in controllers
         if method_name not in cls._view_funcs:
             if QUART_ENABLED:
+
                 async def view_func(*args, **kwargs):
                     self = view_func.view_class(*class_args, **class_kwargs)
                     return await self.dispatch_request(method_name, *args, **kwargs)
+
             else:
+
                 def view_func(*args, **kwargs):
                     self = view_func.view_class(*class_args, **class_kwargs)
                     return self.dispatch_request(method_name, *args, **kwargs)
 
-            wrapper_assignments = set(functools.WRAPPER_ASSIGNMENTS) - {'__qualname__'}
-            functools.update_wrapper(view_func, getattr(cls, method_name),
-                                     assigned=list(wrapper_assignments))
+            wrapper_assignments = set(functools.WRAPPER_ASSIGNMENTS) - {"__qualname__"}
+            functools.update_wrapper(
+                view_func, getattr(cls, method_name), assigned=list(wrapper_assignments)
+            )
             view_func.view_class = cls
             cls._view_funcs[method_name] = view_func
 
@@ -437,8 +484,9 @@ class Controller(metaclass=ControllerMetaclass):
 
     def dispatch_request(self, method_name, *view_args, **view_kwargs):
         decorators = self.get_decorators(method_name)
-        view_func = self.apply_decorators(view_func=getattr(self, method_name),
-                                          decorators=decorators)
+        view_func = self.apply_decorators(
+            view_func=getattr(self, method_name), decorators=decorators
+        )
         return view_func(*view_args, **view_kwargs)
 
     def get_decorators(self, method_name):
@@ -455,7 +503,7 @@ class Controller(metaclass=ControllerMetaclass):
 
 
 __all__ = [
-    'Controller',
-    'ControllerMetaclass',
-    'ControllerMetaOptionsFactory',
+    "Controller",
+    "ControllerMetaclass",
+    "ControllerMetaOptionsFactory",
 ]

@@ -15,10 +15,12 @@ def list_loader(*decorator_args, model):
 
     :param model: The model class to query
     """
+
     def wrapped(fn):
         @wraps(fn)
         def decorated(*args, **kwargs):
             return fn(model.query.all())
+
         return decorated
 
     if decorator_args and callable(decorator_args[0]):
@@ -33,14 +35,15 @@ def patch_loader(*decorator_args, serializer):
 
     :param serializer: The ModelSerializer to use to load data from the request
     """
+
     def wrapped(fn):
         @wraps(fn)
         def decorated(*args, **kwargs):
             errors = {}
             try:
-                data = serializer.load(request.get_json(),
-                                       instance=kwargs.pop('instance'),
-                                       partial=True)
+                data = serializer.load(
+                    request.get_json(), instance=kwargs.pop("instance"), partial=True
+                )
             except ValidationError as e:
                 errors = e.normalized_messages()
                 data = e.valid_data
@@ -49,6 +52,7 @@ def patch_loader(*decorator_args, serializer):
                 abort(HTTPStatus.NOT_FOUND)
 
             return fn(data, errors)
+
         return decorated
 
     if decorator_args and callable(decorator_args[0]):
@@ -62,13 +66,15 @@ def put_loader(*decorator_args, serializer):
 
     :param serializer: The ModelSerializer to use to load data from the request
     """
+
     def wrapped(fn):
         @wraps(fn)
         def decorated(*args, **kwargs):
             errors = {}
             try:
-                data = serializer.load(request.get_json(),
-                                       instance=kwargs.pop('instance'))
+                data = serializer.load(
+                    request.get_json(), instance=kwargs.pop("instance")
+                )
             except ValidationError as e:
                 data = e.valid_data
                 errors = e.normalized_messages()
@@ -77,6 +83,7 @@ def put_loader(*decorator_args, serializer):
                 abort(HTTPStatus.NOT_FOUND)
 
             return fn(data, errors)
+
         return decorated
 
     if decorator_args and callable(decorator_args[0]):
@@ -90,6 +97,7 @@ def post_loader(*decorator_args, serializer):
 
     :param serializer: The ModelSerializer to use to load data from the request
     """
+
     def wrapped(fn):
         @wraps(fn)
         def decorated(*args, **kwargs):
@@ -100,6 +108,7 @@ def post_loader(*decorator_args, serializer):
                 errors = e.normalized_messages()
                 data = e.valid_data
             return fn(data, errors)
+
         return decorated
 
     if decorator_args and callable(decorator_args[0]):

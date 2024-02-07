@@ -13,9 +13,10 @@ def bundles(request):
             pass
     """
     try:
-        return request.node.get_closest_marker('bundles').args[0]
+        return request.node.get_closest_marker("bundles").args[0]
     except AttributeError:
         from ._unchained_config import BUNDLES
+
         return BUNDLES
 
 
@@ -28,8 +29,8 @@ def app(request, bundles):
     unchained._reset()
 
     options = {}
-    for mark in request.node.iter_markers('options'):
-        kwargs = getattr(mark, 'kwargs', {})
+    for mark in request.node.iter_markers("options"):
+        kwargs = getattr(mark, "kwargs", {})
         options.update({k.upper(): v for k, v in kwargs.items()})
 
     app = AppFactory().create_app(TEST, bundles=bundles, _config_overrides=options)

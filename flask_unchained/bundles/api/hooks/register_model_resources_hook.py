@@ -10,7 +10,7 @@ class RegisterModelResourcesHook(AppFactoryHook):
     Registers ModelResources and configures ModelSerializers on them.
     """
 
-    name = 'model_resources'
+    name = "model_resources"
     """
     The name of this hook.
     """
@@ -23,20 +23,21 @@ class RegisterModelResourcesHook(AppFactoryHook):
     bundle class.
     """
 
-    bundle_override_module_names_attr = 'model_resources_module_names'
+    bundle_override_module_names_attr = "model_resources_module_names"
 
-    run_after = ['models', 'model_serializers']
+    run_after = ["models", "model_serializers"]
 
     def process_objects(self, app, objects):
         """
         Configures ModelSerializers on ModelResources.
         """
-        api: Api = app.extensions['api']
+        api: Api = app.extensions["api"]
 
         for resource_cls in objects.values():
             if isinstance(resource_cls.Meta.model, str):
-                resource_cls.Meta.model = \
-                    self.unchained.sqlalchemy_bundle.models[resource_cls.Meta.model]
+                resource_cls.Meta.model = self.unchained.sqlalchemy_bundle.models[
+                    resource_cls.Meta.model
+                ]
             model_name = resource_cls.Meta.model.__name__
 
             self.attach_serializers_to_resource_cls(model_name, resource_cls)
@@ -47,7 +48,7 @@ class RegisterModelResourcesHook(AppFactoryHook):
         try:
             serializer_cls = self.bundle.serializers_by_model[model_name]
         except KeyError as e:
-            raise KeyError(f'No serializer found for the {model_name} model') from e
+            raise KeyError(f"No serializer found for the {model_name} model") from e
 
         if resource_cls.Meta.serializer is None:
             resource_cls.Meta.serializer = serializer_cls()
@@ -56,17 +57,21 @@ class RegisterModelResourcesHook(AppFactoryHook):
 
         if resource_cls.Meta.serializer_many is None:
             resource_cls.Meta.serializer_many = self.bundle.many_by_model.get(
-                model_name, serializer_cls)(many=True)
+                model_name, serializer_cls
+            )(many=True)
         elif isinstance(resource_cls.Meta.serializer_many, type):
-            resource_cls.Meta.serializer_many = \
-                resource_cls.Meta.serializer_many(many=True)
+            resource_cls.Meta.serializer_many = resource_cls.Meta.serializer_many(
+                many=True
+            )
 
         if resource_cls.Meta.serializer_create is None:
             resource_cls.Meta.serializer_create = self.bundle.create_by_model.get(
-                model_name, serializer_cls)(context=dict(is_create=True))
+                model_name, serializer_cls
+            )(context=dict(is_create=True))
         elif isinstance(resource_cls.Meta.serializer_create, type):
-            resource_cls.Meta.serializer_create = \
-                resource_cls.Meta.serializer_create(context=dict(is_create=True))
+            resource_cls.Meta.serializer_create = resource_cls.Meta.serializer_create(
+                context=dict(is_create=True)
+            )
 
     def type_check(self, obj):
         """

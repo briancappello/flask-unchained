@@ -12,12 +12,12 @@ class RegisterServicesHook(AppFactoryHook):
     Registers services for dependency injection.
     """
 
-    name = 'services'
+    name = "services"
     """
     The name of this hook.
     """
 
-    bundle_module_names = ['services', 'managers']
+    bundle_module_names = ["services", "managers"]
     """
     The default modules this hook loads from.
 
@@ -25,13 +25,13 @@ class RegisterServicesHook(AppFactoryHook):
     bundle class.
     """
 
-    run_after = ['init_extensions']
+    run_after = ["init_extensions"]
 
-
-    def process_objects(self,
-                        app: FlaskUnchained,
-                        services: Dict[str, Service],
-                        ) -> None:
+    def process_objects(
+        self,
+        app: FlaskUnchained,
+        services: Dict[str, Service],
+    ) -> None:
         """
         Register services with the Unchained extension, initialize them, and
         inject any requested into extensions.
@@ -43,12 +43,13 @@ class RegisterServicesHook(AppFactoryHook):
 
         # inject services into extensions
         for ext in app.unchained.extensions.values():
-            if not hasattr(ext, 'inject_services'):
+            if not hasattr(ext, "inject_services"):
                 continue
 
             services = inspect.signature(ext.inject_services).parameters
-            ext.inject_services(**{name: app.unchained.services.get(name)
-                                   for name in services})
+            ext.inject_services(
+                **{name: app.unchained.services.get(name) for name in services}
+            )
 
     def key_name(self, name, obj) -> str:
         """
@@ -63,7 +64,7 @@ class RegisterServicesHook(AppFactoryHook):
         """
         if not isinstance(obj, type):
             return False
-        return issubclass(obj, Service) and hasattr(obj, '__di_name__')
+        return issubclass(obj, Service) and hasattr(obj, "__di_name__")
 
     def update_shell_context(self, ctx: Dict[str, Any]) -> None:
         """

@@ -19,29 +19,37 @@ from .constants import TEST
 from .unchained import unchained
 
 
-RenderedTemplate = namedtuple('RenderedTemplate', 'template context')
+RenderedTemplate = namedtuple("RenderedTemplate", "template context")
 """
 A ``namedtuple`` returned by the :func:`~flask_unchained.pytest.templates` fixture.
 """
 
-ENV_BUILDER_KWARGS = {name for name, param
-                      in inspect.signature(EnvironBuilder).parameters.items()
-                      if (param.kind == param.POSITIONAL_OR_KEYWORD
-                          or param.kind == param.KEYWORD_ONLY)}
+ENV_BUILDER_KWARGS = {
+    name
+    for name, param in inspect.signature(EnvironBuilder).parameters.items()
+    if (param.kind == param.POSITIONAL_OR_KEYWORD or param.kind == param.KEYWORD_ONLY)
+}
 
 
-def optional_pytest_fixture(required_module_name, scope='function', params=None,
-                            autouse=False, ids=None, name=None):
+def optional_pytest_fixture(
+    required_module_name,
+    scope="function",
+    params=None,
+    autouse=False,
+    ids=None,
+    name=None,
+):
     def wrapper(fn):
         try:
             importlib.import_module(required_module_name)
         except (ImportError, ModuleNotFoundError):
             return pytest.fixture(name=name or fn.__name__)(lambda: None)
         return pytest.fixture(scope, params, autouse, ids, name)(fn)
+
     return wrapper
 
 
-@pytest.fixture(autouse=True, scope='session')
+@pytest.fixture(autouse=True, scope="session")
 def app(request):
     """
     Automatically used test fixture. Returns the application instance-under-test with
@@ -50,8 +58,8 @@ def app(request):
     unchained._reset()
 
     options = {}
-    for mark in request.node.iter_markers('options'):
-        kwargs = getattr(mark, 'kwargs', {})
+    for mark in request.node.iter_markers("options"):
+        kwargs = getattr(mark, "kwargs", {})
         options.update({k.upper(): v for k, v in kwargs.items()})
 
     try:
@@ -114,6 +122,7 @@ class FlaskCliRunner(CliRunner):
                        some circumstances.  Note that regular prompts
                        will automatically echo the input.
     """
+
     def __init__(self, app, **kwargs):
         super().__init__(**kwargs)
         self.app = app
@@ -139,8 +148,8 @@ class FlaskCliRunner(CliRunner):
         """
         if cli is None:
             cli = self.app.cli
-        if 'obj' not in kwargs:
-            kwargs['obj'] = ScriptInfo(create_app=lambda _=None: self.app)
+        if "obj" not in kwargs:
+            kwargs["obj"] = ScriptInfo(create_app=lambda _=None: self.app)
         return super().invoke(cli, args, **kwargs)
 
 
@@ -168,7 +177,7 @@ def _process_test_client_args(args, kwargs):
     """
     endpoint_or_url_or_config_key = args and args[0]
     url_for_kwargs = {}
-    for kwarg_name in (set(kwargs) - ENV_BUILDER_KWARGS):
+    for kwarg_name in set(kwargs) - ENV_BUILDER_KWARGS:
         url_for_kwargs[kwarg_name] = kwargs.pop(kwarg_name)
     url = url_for(endpoint_or_url_or_config_key, **url_for_kwargs)
     return (url, *args[1:]), kwargs
@@ -186,6 +195,7 @@ class HtmlTestClient(FlaskClient):
             r = client.get('site_controller.index')
             assert r.status_code == 200
     """
+
     def open(self, *args, **kwargs):
         args, kwargs = _process_test_client_args(args, kwargs)
         return super().open(*args, **kwargs)
@@ -211,12 +221,13 @@ class ApiTestClient(HtmlTestClient):
     of data, as well as setting the ``Accept`` and ``Content-Type`` headers to
     ``application/json``.
     """
-    def open(self, *args, **kwargs):
-        kwargs['data'] = json.dumps(kwargs.get('data'))
 
-        kwargs.setdefault('headers', {})
-        kwargs['headers']['Content-Type'] = 'application/json'
-        kwargs['headers']['Accept'] = 'application/json'
+    def open(self, *args, **kwargs):
+        kwargs["data"] = json.dumps(kwargs.get("data"))
+
+        kwargs.setdefault("headers", {})
+        kwargs["headers"]["Content-Type"] = "application/json"
+        kwargs["headers"]["Accept"] = "application/json"
 
         return super().open(*args, **kwargs)
 
@@ -278,7 +289,7 @@ class HtmlTestResponse(Response):
         """
         Returns the response's data parsed to a string of html.
         """
-        return self.data.decode('utf-8')
+        return self.data.decode("utf-8")
 
 
 class ApiTestResponse(HtmlTestResponse):
@@ -292,7 +303,7 @@ class ApiTestResponse(HtmlTestResponse):
         """
         Returns the response's data parsed from json.
         """
-        assert self.mimetype == 'application/json', (self.mimetype, self.data)
+        assert self.mimetype == "application/json", (self.mimetype, self.data)
         return json.loads(self.data)
 
     @cached_property
@@ -301,7 +312,7 @@ class ApiTestResponse(HtmlTestResponse):
         If the response contains the key ``errors``, return its value, otherwise
         returns an empty dictionary.
         """
-        return self.json.get('errors', {})
+        return self.json.get("errors", {})
 
 
 @pytest.fixture()
@@ -356,6 +367,7 @@ def templates(app):
 
     def record(sender, template, context, **extra):
         records.append(RenderedTemplate(template, context))
+
     template_rendered.connect(record, app)
 
     try:

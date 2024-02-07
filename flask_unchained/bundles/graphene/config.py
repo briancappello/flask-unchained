@@ -2,7 +2,7 @@ from flask_unchained import BundleConfig
 
 
 class Config(BundleConfig):
-    GRAPHENE_URL = '/graphql'
+    GRAPHENE_URL = "/graphql"
     """
     The URL where graphene should be served from. Set to ``None`` to disable.
     """

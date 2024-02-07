@@ -8,7 +8,7 @@ from .roles_accepted import roles_accepted
 from .roles_required import roles_required
 from ..utils import current_user
 
-security = unchained.get_local_proxy('security')
+security = unchained.get_local_proxy("security")
 
 
 def auth_required(decorated_fn=None, **role_rules):
@@ -31,15 +31,15 @@ def auth_required(decorated_fn=None, **role_rules):
     required_roles = []
     one_of_roles = []
     if not (decorated_fn and callable(decorated_fn)):
-        if 'role' in role_rules and 'roles' in role_rules:
-            raise RuntimeError('specify only one of `role` or `roles` kwargs')
-        elif 'role' in role_rules:
-            required_roles = [role_rules['role']]
-        elif 'roles' in role_rules:
-            required_roles = role_rules['roles']
+        if "role" in role_rules and "roles" in role_rules:
+            raise RuntimeError("specify only one of `role` or `roles` kwargs")
+        elif "role" in role_rules:
+            required_roles = [role_rules["role"]]
+        elif "roles" in role_rules:
+            required_roles = role_rules["roles"]
 
-        if 'one_of' in role_rules:
-            one_of_roles = role_rules['one_of']
+        if "one_of" in role_rules:
+            one_of_roles = role_rules["one_of"]
 
     def wrapper(fn):
         @wraps(fn)
@@ -48,6 +48,7 @@ def auth_required(decorated_fn=None, **role_rules):
         @roles_accepted(*one_of_roles)
         def decorated(*args, **kwargs):
             return fn(*args, **kwargs)
+
         return decorated
 
     if decorated_fn and callable(decorated_fn):
@@ -61,8 +62,8 @@ def _auth_required():
     """
 
     login_mechanisms = (
-        ('token', _check_token),
-        ('session', lambda: current_user.is_authenticated),
+        ("token", _check_token),
+        ("session", lambda: current_user.is_authenticated),
     )
 
     def wrapper(fn):
@@ -72,7 +73,9 @@ def _auth_required():
                 if mechanism and mechanism():
                     return fn(*args, **kwargs)
             return security._unauthorized_callback()
+
         return decorated_view
+
     return wrapper
 
 
@@ -81,8 +84,9 @@ def _check_token():
 
     if user and user.is_authenticated:
         g._login_user = user
-        identity_changed.send(current_app._get_current_object(),
-                              identity=Identity(user.id))
+        identity_changed.send(
+            current_app._get_current_object(), identity=Identity(user.id)
+        )
         return True
 
     return False

@@ -10,7 +10,8 @@ from sqlalchemy import event
 
 class _SQLAlchemyEvent:
     """Private helper class for the @attach_events and @on decorators"""
-    ATTR = '_sqlalchemy_event'
+
+    ATTR = "_sqlalchemy_event"
 
     def __init__(self, field_name, event_name, listen_kwargs=None):
         self.field_name = field_name
@@ -32,16 +33,19 @@ def attach_events(*args):
             def lowercase_email(self, new_value, old_value, initiating_event):
                 self.email = new_value.lower()
     """
+
     def wrapper(cls):
         for name, fn in cls.__dict__.items():
-            if not name.startswith('__') and hasattr(fn, _SQLAlchemyEvent.ATTR):
+            if not name.startswith("__") and hasattr(fn, _SQLAlchemyEvent.ATTR):
                 e = getattr(fn, _SQLAlchemyEvent.ATTR)
                 if e.field_name:
-                    event.listen(getattr(cls, e.field_name), e.event_name, fn,
-                                 **e.listen_kwargs)
+                    event.listen(
+                        getattr(cls, e.field_name), e.event_name, fn, **e.listen_kwargs
+                    )
                 else:
                     event.listen(cls, e.event_name, fn, **e.listen_kwargs)
         return cls
+
     if args and callable(args[0]):
         return wrapper(args[0])
     return wrapper
@@ -75,16 +79,20 @@ def on(*args, **listen_kwargs):
     elif len(args) == 2:
         field_name, event_name = args
     else:
-        raise NotImplementedError('@on accepts only one or two positional arguments')
+        raise NotImplementedError("@on accepts only one or two positional arguments")
 
     def wrapper(fn):
-        setattr(fn, _SQLAlchemyEvent.ATTR,
-                _SQLAlchemyEvent(field_name, event_name, listen_kwargs))
+        setattr(
+            fn,
+            _SQLAlchemyEvent.ATTR,
+            _SQLAlchemyEvent(field_name, event_name, listen_kwargs),
+        )
         return fn
+
     return wrapper
 
 
-def slugify(field_name, slug_field_name='slug', mutable=False):
+def slugify(field_name, slug_field_name="slug", mutable=False):
     """Class decorator to specify a field to slugify. Slugs are immutable by
     default unless mutable=True is passed.
 
@@ -108,6 +116,7 @@ def slugify(field_name, slug_field_name='slug', mutable=False):
             title = Column(String(100))
             slug = Column(String(100))
     """
+
     def _set_slug(target, value, old_value, _, mutable=False):
         existing_slug = getattr(target, slug_field_name)
         if existing_slug and not mutable:
@@ -116,7 +125,9 @@ def slugify(field_name, slug_field_name='slug', mutable=False):
             setattr(target, slug_field_name, _slugify(value))
 
     def wrapper(cls):
-        event.listen(getattr(cls, field_name), 'set',
-                     partial(_set_slug, mutable=mutable))
+        event.listen(
+            getattr(cls, field_name), "set", partial(_set_slug, mutable=mutable)
+        )
         return cls
+
     return wrapper

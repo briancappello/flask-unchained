@@ -12,9 +12,9 @@ class AdminDashboardView(AdminSecurityMixin, BaseAdminIndexView):
     def __init__(self):
         super().__init__()
 
-    @expose('/')
+    @expose("/")
     def index(self):
-        return self.render('admin/dashboard.html')
+        return self.render("admin/dashboard.html")
 
     def is_visible(self):
         """

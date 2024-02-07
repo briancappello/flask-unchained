@@ -15,10 +15,12 @@ def admin_link(
     tooltip: Union[str, Optional[Callable[[object, str], str]]] = None,
     multiline_many: bool = False,
 ):
-    ctrl = (admin_controller
-            if '_admin' in admin_controller
-            else f'{admin_controller}_admin')
-    endpoint = f'{ctrl}.{view}'
+    ctrl = (
+        admin_controller
+        if "_admin" in admin_controller
+        else f"{admin_controller}_admin"
+    )
+    endpoint = f"{ctrl}.{view}"
 
     def column_formatter(model_admin, ctx, model_instance, column):
         def get_label(obj):
@@ -30,27 +32,30 @@ def admin_link(
             return tooltip(obj, text) if callable(tooltip) else tooltip
 
         modal = False
-        if 'edit' in endpoint and model_admin.edit_modal:
+        if "edit" in endpoint and model_admin.edit_modal:
             modal = True
-        elif 'create' in endpoint and model_admin.create_modal:
+        elif "create" in endpoint and model_admin.create_modal:
             modal = True
-        elif 'details' in endpoint and model_admin.details_modal:
+        elif "details" in endpoint and model_admin.details_modal:
             modal = True
 
         def a_tag(obj):
             text = get_label(obj)
             title = html.escape(get_title(obj, text))
             if modal:
-                href = url_for(endpoint, id=getattr(obj, obj.Meta.pk),
-                               url=url_for(f'{model_admin.endpoint}.index_view'),
-                               modal=True)
+                href = url_for(
+                    endpoint,
+                    id=getattr(obj, obj.Meta.pk),
+                    url=url_for(f"{model_admin.endpoint}.index_view"),
+                    modal=True,
+                )
                 return (
                     f'<a href="{href}"'
                     f'   title="{title or ""}"'
                     '    data-toggle="modal"'
                     '    data-target="#fa_modal_window">'
-                    f'      {text}'
-                    '</a>'
+                    f"      {text}"
+                    "</a>"
                 )
 
             href = url_for(endpoint, id=getattr(obj, obj.Meta.pk))
@@ -62,8 +67,8 @@ def admin_link(
 
         a_tags = [a_tag(obj) for obj in column_value]
         if not multiline_many:
-            return safe(', '.join(a_tags))
-        return safe(''.join(f'<p>{tag}</p>' for tag in a_tags))
+            return safe(", ".join(a_tags))
+        return safe("".join(f"<p>{tag}</p>" for tag in a_tags))
 
     return column_formatter
 
@@ -75,11 +80,13 @@ def create_link(
     tooltip: Union[str, Optional[Callable[[object, str], str]]] = None,
     multiline_many: bool = False,
 ):
-    return admin_link(admin_controller,
-                      view='create_view',
-                      label=label,
-                      tooltip=tooltip,
-                      multiline_many=multiline_many)
+    return admin_link(
+        admin_controller,
+        view="create_view",
+        label=label,
+        tooltip=tooltip,
+        multiline_many=multiline_many,
+    )
 
 
 def edit_link(
@@ -89,11 +96,13 @@ def edit_link(
     tooltip: Union[str, Optional[Callable[[object, str], str]]] = None,
     multiline_many: bool = False,
 ):
-    return admin_link(admin_controller,
-                      view='edit_view',
-                      label=label,
-                      tooltip=tooltip or (lambda obj, text: f'Edit {text}'),
-                      multiline_many=multiline_many)
+    return admin_link(
+        admin_controller,
+        view="edit_view",
+        label=label,
+        tooltip=tooltip or (lambda obj, text: f"Edit {text}"),
+        multiline_many=multiline_many,
+    )
 
 
 def delete_link(
@@ -103,11 +112,13 @@ def delete_link(
     tooltip: Union[str, Optional[Callable[[object, str], str]]] = None,
     multiline_many: bool = False,
 ):
-    return admin_link(admin_controller,
-                      view='delete_view',
-                      label=label,
-                      tooltip=tooltip or (lambda obj, text: f'Delete {text}'),
-                      multiline_many=multiline_many)
+    return admin_link(
+        admin_controller,
+        view="delete_view",
+        label=label,
+        tooltip=tooltip or (lambda obj, text: f"Delete {text}"),
+        multiline_many=multiline_many,
+    )
 
 
 def details_link(
@@ -117,11 +128,13 @@ def details_link(
     tooltip: Union[str, Optional[Callable[[object, str], str]]] = None,
     multiline_many: bool = False,
 ):
-    return admin_link(admin_controller,
-                      view='details_view',
-                      label=label,
-                      tooltip=tooltip or (lambda obj, text: f'View {text} details'),
-                      multiline_many=multiline_many)
+    return admin_link(
+        admin_controller,
+        view="details_view",
+        label=label,
+        tooltip=tooltip or (lambda obj, text: f"View {text} details"),
+        multiline_many=multiline_many,
+    )
 
 
 def index_link(
@@ -131,11 +144,13 @@ def index_link(
     tooltip: Union[str, Optional[Callable[[object, str], str]]] = None,
     multiline_many: bool = False,
 ):
-    return admin_link(admin_controller,
-                      view='index_view',
-                      label=label,
-                      tooltip=tooltip,
-                      multiline_many=multiline_many)
+    return admin_link(
+        admin_controller,
+        view="index_view",
+        label=label,
+        tooltip=tooltip,
+        multiline_many=multiline_many,
+    )
 
 
 def a_tag(href, *, label: Optional[str] = None, target: Optional[str] = None):

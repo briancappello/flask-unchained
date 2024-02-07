@@ -10,6 +10,7 @@ class RoleSerializer(ma.ModelSerializer):
     """
     Marshmallow serializer for the :class:`~flask_unchained.bundles.security.Role` model.
     """
+
     class Meta:
         model = Role
-        fields = ('id', 'name')
+        fields = ("id", "name")

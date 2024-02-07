@@ -21,16 +21,17 @@ class Mail(_MailMixin, metaclass=ConfigPropertyMetaclass):
     default_sender: str = ConfigProperty()
     debug: Union[int, bool] = ConfigProperty()
     max_emails: Optional[int] = ConfigProperty()
-    suppress: bool = ConfigProperty('MAIL_SUPPRESS_SEND')
+    suppress: bool = ConfigProperty("MAIL_SUPPRESS_SEND")
     ascii_attachments: bool = ConfigProperty()
 
-    send: FunctionType = ConfigProperty('MAIL_SEND_FN')
+    send: FunctionType = ConfigProperty("MAIL_SEND_FN")
 
-
-    def send_message(self,
-                     subject_or_message: Optional[Union[Message, str]] = None,
-                     to: Optional[Union[str, List[str]]] = None,
-                     **kwargs):
+    def send_message(
+        self,
+        subject_or_message: Optional[Union[Message, str]] = None,
+        to: Optional[Union[str, List[str]]] = None,
+        **kwargs
+    ):
         """
         Send an email using the send function as configured by
         :attr:`~flask_unchained.bundles.mail.config.Config.MAIL_SEND_FN`.
@@ -40,8 +41,8 @@ class Mail(_MailMixin, metaclass=ConfigPropertyMetaclass):
         :param to: The message recipient(s).
         :param kwargs: Extra values to pass on to :class:`~flask_mail.Message`
         """
-        to = to or kwargs.pop('recipients', [])
+        to = to or kwargs.pop("recipients", [])
         return self.send(subject_or_message, to, **kwargs)
 
     def init_app(self, app: FlaskUnchained):
-        app.extensions['mail'] = self
+        app.extensions["mail"] = self

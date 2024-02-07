@@ -14,8 +14,13 @@ from ..exceptions import AuthenticationError
 from ..extensions import Security
 from ..models import User
 from ..signals import (
-    confirm_instructions_sent, reset_password_instructions_sent,
-    password_changed, password_reset, user_confirmed, user_registered)
+    confirm_instructions_sent,
+    reset_password_instructions_sent,
+    password_changed,
+    password_reset,
+    user_confirmed,
+    user_registered,
+)
 
 
 class SecurityService(Service):
@@ -39,13 +44,14 @@ class SecurityService(Service):
     def __init__(self, mail: Optional[Mail] = None):
         self.mail = mail
 
-    def login_user(self,
-                   user: User,
-                   remember: Optional[bool] = None,
-                   duration: Optional[timedelta] = None,
-                   force: bool = False,
-                   fresh: bool = True,
-                   ) -> bool:
+    def login_user(
+        self,
+        user: User,
+        remember: Optional[bool] = None,
+        duration: Optional[timedelta] = None,
+        force: bool = False,
+        fresh: bool = True,
+    ) -> bool:
         """
         Logs a user in. You should pass the actual user object to this. If the
         user's `is_active` property is ``False``, they will not be logged in
@@ -74,37 +80,43 @@ class SecurityService(Service):
         if not force:
             if not user.is_active:
                 raise AuthenticationError(
-                    _('flask_unchained.bundles.security:error.disabled_account'))
+                    _("flask_unchained.bundles.security:error.disabled_account")
+                )
 
-            if (self.security.confirmable
-                    and not user.confirmed_at
-                    and not self.security.login_without_confirmation):
+            if (
+                self.security.confirmable
+                and not user.confirmed_at
+                and not self.security.login_without_confirmation
+            ):
                 raise AuthenticationError(
-                    _('flask_unchained.bundles.security:error.confirmation_required'))
+                    _("flask_unchained.bundles.security:error.confirmation_required")
+                )
 
             if not user.password:
                 raise AuthenticationError(
-                    _('flask_unchained.bundles.security:error.password_not_set'))
+                    _("flask_unchained.bundles.security:error.password_not_set")
+                )
 
-        session['_user_id'] = getattr(user, user.Meta.pk)
-        session['_fresh'] = fresh
-        session['_id'] = app.login_manager._session_identifier_generator()
+        session["_user_id"] = getattr(user, user.Meta.pk)
+        session["_fresh"] = fresh
+        session["_id"] = app.login_manager._session_identifier_generator()
 
         if remember is None:
             remember = app.config.SECURITY_DEFAULT_REMEMBER_ME
         if remember:
-            session['_remember'] = 'set'
+            session["_remember"] = "set"
             if duration is not None:
                 try:
-                    session['_remember_seconds'] = duration.total_seconds()
+                    session["_remember_seconds"] = duration.total_seconds()
                 except AttributeError:
-                    raise Exception('duration must be a datetime.timedelta, '
-                                    'instead got: {0}'.format(duration))
+                    raise Exception(
+                        "duration must be a datetime.timedelta, "
+                        "instead got: {0}".format(duration)
+                    )
 
         self.security.login_manager._update_request_context_with_user(user)
         user_logged_in.send(app._get_current_object(), user=user)
-        identity_changed.send(app._get_current_object(),
-                              identity=Identity(user.id))
+        identity_changed.send(app._get_current_object(), identity=Identity(user.id))
         return True
 
     def logout_user(self):
@@ -115,14 +127,18 @@ class SecurityService(Service):
         Sends signal `user_logged_out` (from flask_login).
         """
 
-        for key in ('identity.name', 'identity.auth_type'):
+        for key in ("identity.name", "identity.auth_type"):
             session.pop(key, None)
         _logout_user()
-        identity_changed.send(app._get_current_object(),
-                              identity=AnonymousIdentity())
+        identity_changed.send(app._get_current_object(), identity=AnonymousIdentity())
 
-    def register_user(self, user, allow_login=None, send_email=None,
-                      _force_login_without_confirmation=False):
+    def register_user(
+        self,
+        user,
+        allow_login=None,
+        send_email=None,
+        _force_login_without_confirmation=False,
+    ):
         """
         Service method to register a user.
 
@@ -130,11 +146,16 @@ class SecurityService(Service):
 
         Returns True if the user has been logged in, False otherwise.
         """
-        should_login_user = (not self.security.confirmable
-                             or self.security.login_without_confirmation
-                             or _force_login_without_confirmation)
-        should_login_user = (should_login_user if allow_login is None
-                             else allow_login and should_login_user)
+        should_login_user = (
+            not self.security.confirmable
+            or self.security.login_without_confirmation
+            or _force_login_without_confirmation
+        )
+        should_login_user = (
+            should_login_user
+            if allow_login is None
+            else allow_login and should_login_user
+        )
         if should_login_user:
             user.is_active = True
 
@@ -145,20 +166,22 @@ class SecurityService(Service):
         confirmation_link, token = None, None
         if self.security.confirmable and not _force_login_without_confirmation:
             token = self.security_utils_service.generate_confirmation_token(user)
-            confirmation_link = url_for('security_controller.confirm_email',
-                                        token=token, _external=True)
+            confirmation_link = url_for(
+                "security_controller.confirm_email", token=token, _external=True
+            )
 
-        user_registered.send(app._get_current_object(),
-                             user=user, confirm_token=token)
+        user_registered.send(app._get_current_object(), user=user, confirm_token=token)
 
-        if (send_email or (
-                send_email is None
-                and app.config.SECURITY_SEND_REGISTER_EMAIL)):
-            self.send_mail(_('flask_unchained.bundles.security:email_subject.register'),
-                           to=user.email,
-                           template='security/email/welcome.html',
-                           user=user,
-                           confirmation_link=confirmation_link)
+        if send_email or (
+            send_email is None and app.config.SECURITY_SEND_REGISTER_EMAIL
+        ):
+            self.send_mail(
+                _("flask_unchained.bundles.security:email_subject.register"),
+                to=user.email,
+                template="security/email/welcome.html",
+                user=user,
+                confirmation_link=confirmation_link,
+            )
 
         if should_login_user:
             return self.login_user(user, force=_force_login_without_confirmation)
@@ -178,13 +201,17 @@ class SecurityService(Service):
         """
         user.password = password
         self.user_manager.save(user)
-        if send_email or (app.config.SECURITY_SEND_PASSWORD_CHANGED_EMAIL
-                          and send_email is None):
+        if send_email or (
+            app.config.SECURITY_SEND_PASSWORD_CHANGED_EMAIL and send_email is None
+        ):
             self.send_mail(
-                _('flask_unchained.bundles.security:email_subject.password_changed_notice'),
+                _(
+                    "flask_unchained.bundles.security:email_subject.password_changed_notice"
+                ),
                 to=user.email,
-                template='security/email/password_changed_notice.html',
-                user=user)
+                template="security/email/password_changed_notice.html",
+                user=user,
+            )
         password_changed.send(app._get_current_object(), user=user)
 
     def reset_password(self, user, password):
@@ -202,10 +229,13 @@ class SecurityService(Service):
         self.user_manager.save(user)
         if app.config.SECURITY_SEND_PASSWORD_RESET_NOTICE_EMAIL:
             self.send_mail(
-                _('flask_unchained.bundles.security:email_subject.password_reset_notice'),
+                _(
+                    "flask_unchained.bundles.security:email_subject.password_reset_notice"
+                ),
                 to=user.email,
-                template='security/email/password_reset_notice.html',
-                user=user)
+                template="security/email/password_reset_notice.html",
+                user=user,
+            )
         password_reset.send(app._get_current_object(), user=user)
 
     def send_email_confirmation_instructions(self, user):
@@ -217,16 +247,21 @@ class SecurityService(Service):
         :param user: The user to send the instructions to.
         """
         token = self.security_utils_service.generate_confirmation_token(user)
-        confirmation_link = url_for('security_controller.confirm_email',
-                                    token=token, _external=True)
+        confirmation_link = url_for(
+            "security_controller.confirm_email", token=token, _external=True
+        )
         self.send_mail(
-            _('flask_unchained.bundles.security:email_subject.email_confirmation_instructions'),
+            _(
+                "flask_unchained.bundles.security:email_subject.email_confirmation_instructions"
+            ),
             to=user.email,
-            template='security/email/email_confirmation_instructions.html',
+            template="security/email/email_confirmation_instructions.html",
             user=user,
-            confirmation_link=confirmation_link)
-        confirm_instructions_sent.send(app._get_current_object(), user=user,
-                                       token=token)
+            confirmation_link=confirmation_link,
+        )
+        confirm_instructions_sent.send(
+            app._get_current_object(), user=user, token=token
+        )
 
     def send_reset_password_instructions(self, user):
         """
@@ -237,16 +272,21 @@ class SecurityService(Service):
         :param user: The user to send the instructions to.
         """
         token = self.security_utils_service.generate_reset_password_token(user)
-        reset_link = url_for('security_controller.reset_password',
-                             token=token, _external=True)
+        reset_link = url_for(
+            "security_controller.reset_password", token=token, _external=True
+        )
         self.send_mail(
-            _('flask_unchained.bundles.security:email_subject.reset_password_instructions'),
+            _(
+                "flask_unchained.bundles.security:email_subject.reset_password_instructions"
+            ),
             to=user.email,
-            template='security/email/reset_password_instructions.html',
+            template="security/email/reset_password_instructions.html",
             user=user,
-            reset_link=reset_link)
-        reset_password_instructions_sent.send(app._get_current_object(),
-                                              user=user, token=token)
+            reset_link=reset_link,
+        )
+        reset_password_instructions_sent.send(
+            app._get_current_object(), user=user, token=token
+        )
 
     def confirm_user(self, user):
         """
@@ -270,10 +310,16 @@ class SecurityService(Service):
         """
         if not self.mail:
             from warnings import warn
-            warn('Attempting to send mail without the mail bundle installed! '
-                 'Please install it, or fix your configuration.')
+
+            warn(
+                "Attempting to send mail without the mail bundle installed! "
+                "Please install it, or fix your configuration."
+            )
             return
 
-        self.mail.send(subject, to, template, **dict(
-            **self.security.run_ctx_processor('mail'),
-            **template_ctx))
+        self.mail.send(
+            subject,
+            to,
+            template,
+            **dict(**self.security.run_ctx_processor("mail"), **template_ctx)
+        )

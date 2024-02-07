@@ -17,12 +17,12 @@ class RegisterRoutesHook(AppFactoryHook):
     Registers routes.
     """
 
-    name = 'routes'
+    name = "routes"
     """
     The name of this hook.
     """
 
-    bundle_module_name = 'routes'
+    bundle_module_name = "routes"
     """
     The default module this hook loads from.
 
@@ -31,14 +31,15 @@ class RegisterRoutesHook(AppFactoryHook):
     """
 
     require_exactly_one_bundle_module = True
-    run_after = ['commands']
-    run_before = ['blueprints', 'bundle_blueprints']
+    run_after = ["commands"]
+    run_before = ["blueprints", "bundle_blueprints"]
 
-    def run_hook(self,
-                 app: FlaskUnchained,
-                 bundles: List[Bundle],
-                 unchained_config: Optional[Dict[str, Any]] = None,
-                 ) -> None:
+    def run_hook(
+        self,
+        app: FlaskUnchained,
+        bundles: List[Bundle],
+        unchained_config: Optional[Dict[str, Any]] = None,
+    ) -> None:
         """
         Discover and register routes.
         """
@@ -58,7 +59,6 @@ class RegisterRoutesHook(AppFactoryHook):
 
         self.process_objects(app, routes)
 
-
     def process_objects(self, app: FlaskUnchained, routes: Iterable[Route]):
         """
         Organize routes by where they came from, and then register them with
@@ -66,25 +66,35 @@ class RegisterRoutesHook(AppFactoryHook):
         """
         for route in _reduce_routes(routes):
             if route.should_register(app):
-                existing_routes = (self.bundle.endpoints.get(route.endpoint, None)
-                                   if route.module_name else None)
+                existing_routes = (
+                    self.bundle.endpoints.get(route.endpoint, None)
+                    if route.module_name
+                    else None
+                )
                 if existing_routes:
                     import warnings
-                    warnings.warn(f'Skipping duplicate latter route: '
-                                  f'{existing_routes[0]} precedes {route}')
+
+                    warnings.warn(
+                        f"Skipping duplicate latter route: "
+                        f"{existing_routes[0]} precedes {route}"
+                    )
                     continue
 
                 self.bundle.endpoints[route.endpoint].append(route)
                 if route._controller_cls:
-                    key = f'{route._controller_cls.__name__}.{route.method_name}'
+                    key = f"{route._controller_cls.__name__}.{route.method_name}"
                     self.bundle.controller_endpoints[key].append(route)
 
         # build up a list of bundles with views:
-        bundle_module_names = []  # [tuple(top_bundle_module_name, hierarchy_module_names)]
+        bundle_module_names = (
+            []
+        )  # [tuple(top_bundle_module_name, hierarchy_module_names)]
         for bundle in app.unchained.bundles.values():
-            hierarchy = [bundle_super.module_name
-                         for bundle_super in bundle._iter_class_hierarchy()
-                         if bundle_super._has_views]
+            hierarchy = [
+                bundle_super.module_name
+                for bundle_super in bundle._iter_class_hierarchy()
+                if bundle_super._has_views
+            ]
             if hierarchy:
                 bundle_module_names.append((bundle.module_name, hierarchy))
 
@@ -107,21 +117,25 @@ class RegisterRoutesHook(AppFactoryHook):
                             break
 
         # get all the remaining routes not belonging to a bundle
-        self.bundle.other_routes = itertools.chain.from_iterable([
-            routes for endpoint, routes
-            in self.bundle.endpoints.items()
-            if endpoint not in bundle_route_endpoints
-        ])
+        self.bundle.other_routes = itertools.chain.from_iterable(
+            [
+                routes
+                for endpoint, routes in self.bundle.endpoints.items()
+                if endpoint not in bundle_route_endpoints
+            ]
+        )
 
         # we register non-bundle routes with the app here, and
         # the RegisterBundleBlueprintsHook registers the bundle routes
         for route in self.bundle.other_routes:
-            app.add_url_rule(route.full_rule,
-                             defaults=route.defaults,
-                             endpoint=route.endpoint,
-                             methods=route.methods,
-                             view_func=route.view_func,
-                             **route.rule_options)
+            app.add_url_rule(
+                route.full_rule,
+                defaults=route.defaults,
+                endpoint=route.endpoint,
+                methods=route.methods,
+                view_func=route.view_func,
+                **route.rule_options,
+            )
 
     def get_explicit_routes(self, bundle: Bundle):
         """
@@ -129,11 +143,13 @@ class RegisterRoutesHook(AppFactoryHook):
         """
         routes_module = self.import_bundle_modules(bundle)[0]
         try:
-            return getattr(routes_module, 'routes')()
+            return getattr(routes_module, "routes")()
         except AttributeError:
             module_name = self.get_module_names(bundle)[0]
-            raise AttributeError(f'Could not find a variable named `routes` '
-                                 f'in the {module_name} module!')
+            raise AttributeError(
+                f"Could not find a variable named `routes` "
+                f"in the {module_name} module!"
+            )
 
     def collect_from_bundle(self, bundle: Bundle):
         """
@@ -143,6 +159,7 @@ class RegisterRoutesHook(AppFactoryHook):
             return ()
 
         from flask_unchained.hooks.views_hook import ViewsHook
+
         for views_module in ViewsHook.import_bundle_modules(bundle):
             for _, obj in inspect.getmembers(views_module, self.type_check):
                 if hasattr(obj, FN_ROUTES_ATTR):

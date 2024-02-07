@@ -9,7 +9,7 @@ from ..bundles import Bundle
 from ..flask_unchained import FlaskUnchained
 
 
-HookTuple = namedtuple('HookTuple', ('HookClass', 'bundle'))
+HookTuple = namedtuple("HookTuple", ("HookClass", "bundle"))
 
 
 class RunHooksHook(AppFactoryHook):
@@ -17,7 +17,7 @@ class RunHooksHook(AppFactoryHook):
     An internal hook to discover and run all the other hooks.
     """
 
-    bundle_module_names = ['hooks']
+    bundle_module_names = ["hooks"]
     """
     The default module this hook loads from.
 
@@ -25,17 +25,19 @@ class RunHooksHook(AppFactoryHook):
     bundle class.
     """
 
-    def run_hook(self,
-                 app: FlaskUnchained,
-                 bundles: List[Bundle],
-                 unchained_config: Optional[Dict[str, Any]] = None,
-                 ) -> None:
+    def run_hook(
+        self,
+        app: FlaskUnchained,
+        bundles: List[Bundle],
+        unchained_config: Optional[Dict[str, Any]] = None,
+    ) -> None:
         """
         Collect hooks from Flask Unchained and the list of bundles, resolve their
         correct order, and run them in that order to build (boot) the app instance.
         """
         hook_tuples = self.collect_from_bundles(
-            bundles, _initial_objects=self.collect_unchained_hooks())
+            bundles, _initial_objects=self.collect_unchained_hooks()
+        )
 
         for HookClass, bundle in self.resolve_hook_order(hook_tuples):
             hook = HookClass(self.unchained, bundle)
@@ -46,18 +48,24 @@ class RunHooksHook(AppFactoryHook):
         """
         Collect hooks from a bundle hierarchy.
         """
-        return {hook_class_name: HookTuple(HookClass, bundle)
-                for hook_class_name, HookClass
-                in super().collect_from_bundle(bundle).items()}
+        return {
+            hook_class_name: HookTuple(HookClass, bundle)
+            for hook_class_name, HookClass in super()
+            .collect_from_bundle(bundle)
+            .items()
+        }
 
     def collect_unchained_hooks(self) -> Dict[str, HookTuple]:
         """
         Collect hooks built into Flask Unchained that should always run.
         """
-        unchained_hooks_pkg = import_module('flask_unchained.hooks')
-        return {hook_class_name: HookTuple(HookClass, bundle=None)
-                for hook_class_name, HookClass
-                in self._collect_from_package(unchained_hooks_pkg).items()}
+        unchained_hooks_pkg = import_module("flask_unchained.hooks")
+        return {
+            hook_class_name: HookTuple(HookClass, bundle=None)
+            for hook_class_name, HookClass in self._collect_from_package(
+                unchained_hooks_pkg
+            ).items()
+        }
 
     def type_check(self, obj: Any) -> bool:
         """
@@ -81,14 +89,13 @@ class RunHooksHook(AppFactoryHook):
         try:
             order = reversed(list(nx.topological_sort(dag)))
         except nx.NetworkXUnfeasible:
-            msg = 'Circular dependency detected between hooks'
-            problem_graph = ', '.join(f'{a} -> {b}'
-                                      for a, b in nx.find_cycle(dag))
-            raise Exception(f'{msg}: {problem_graph}')
+            msg = "Circular dependency detected between hooks"
+            problem_graph = ", ".join(f"{a} -> {b}" for a, b in nx.find_cycle(dag))
+            raise Exception(f"{msg}: {problem_graph}")
 
         rv = []
         for hook_name in order:
-            hook_tuple = dag.nodes[hook_name].get('hook_tuple')
+            hook_tuple = dag.nodes[hook_name].get("hook_tuple")
             if hook_tuple:
                 rv.append(hook_tuple)
         return rv

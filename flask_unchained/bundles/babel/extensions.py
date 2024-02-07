@@ -5,11 +5,11 @@ babel = Babel()
 
 
 EXTENSIONS = {
-    'babel': babel,
+    "babel": babel,
 }
 
 
 __all__ = [
-    'babel',
-    'Babel',
+    "babel",
+    "Babel",
 ]

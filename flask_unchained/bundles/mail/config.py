@@ -11,39 +11,40 @@ class Config(BundleConfig):
     Default configuration options for the mail bundle.
     """
 
-    MAIL_SERVER = os.getenv('FLASK_MAIL_SERVER', '127.0.0.1')
+    MAIL_SERVER = os.getenv("FLASK_MAIL_SERVER", "127.0.0.1")
     """
     The hostname/IP of the mail server.
     """
 
-    MAIL_PORT = int(os.getenv('FLASK_MAIL_PORT', "25"))
+    MAIL_PORT = int(os.getenv("FLASK_MAIL_PORT", "25"))
     """
     The port the mail server is running on.
     """
 
-    MAIL_USERNAME = os.getenv('FLASK_MAIL_USERNAME', None)
+    MAIL_USERNAME = os.getenv("FLASK_MAIL_USERNAME", None)
     """
     The username to connect to the mail server with, if any.
     """
 
-    MAIL_PASSWORD = os.getenv('FLASK_MAIL_PASSWORD', None)
+    MAIL_PASSWORD = os.getenv("FLASK_MAIL_PASSWORD", None)
     """
     The password to connect to the mail server with, if any.
     """
 
-    MAIL_USE_TLS = get_boolean_env('FLASK_MAIL_USE_TLS', False)
+    MAIL_USE_TLS = get_boolean_env("FLASK_MAIL_USE_TLS", False)
     """
     Whether or not to use TLS.
     """
 
-    MAIL_USE_SSL = get_boolean_env('FLASK_MAIL_USE_SSL', False)
+    MAIL_USE_SSL = get_boolean_env("FLASK_MAIL_USE_SSL", False)
     """
     Whether or not to use SSL.
     """
 
     MAIL_DEFAULT_SENDER = os.getenv(
-        'FLASK_MAIL_DEFAULT_SENDER',
-        f"Flask Mail <noreply@{os.getenv('FLASK_DOMAIN', 'localhost')}>")
+        "FLASK_MAIL_DEFAULT_SENDER",
+        f"Flask Mail <noreply@{os.getenv('FLASK_DOMAIN', 'localhost')}>",
+    )
     """
     The default sender to use, if none is specified otherwise.
     """
@@ -71,7 +72,7 @@ class Config(BundleConfig):
     The debug level to set for interactions with the mail server.
     """
 
-    MAIL_MAX_EMAILS = os.getenv('FLASK_MAIL_MAX_EMAILS', None)
+    MAIL_MAX_EMAILS = os.getenv("FLASK_MAIL_MAX_EMAILS", None)
     """
     The maximum number of emails to send per connection with the mail server.
     """
@@ -82,7 +83,7 @@ class Config(BundleConfig):
     useful for testing.
     """
 
-    MAIL_ASCII_ATTACHMENTS = get_boolean_env('FLASK_MAIL_ASCII_ATTACHMENTS', False)
+    MAIL_ASCII_ATTACHMENTS = get_boolean_env("FLASK_MAIL_ASCII_ATTACHMENTS", False)
     """
     Whether or not to coerce attachment filenames to ASCII.
     """
@@ -98,7 +99,7 @@ class DevConfig(Config):
     Set the mail server debug level to 1 in development.
     """
 
-    MAIL_PORT = int(os.getenv('FLASK_MAIL_PORT', "1025"))  # MailHog
+    MAIL_PORT = int(os.getenv("FLASK_MAIL_PORT", "1025"))  # MailHog
     """
     In development, the mail bundle is configured to connect to MailHog.
     """
@@ -109,12 +110,12 @@ class ProdConfig(Config):
     Production-specific config options for the mail bundle.
     """
 
-    MAIL_PORT = int(os.getenv('FLASK_MAIL_PORT', "465"))
+    MAIL_PORT = int(os.getenv("FLASK_MAIL_PORT", "465"))
     """
     In production, the mail bundle is configured to connect using SSL.
     """
 
-    MAIL_USE_SSL = get_boolean_env('FLASK_MAIL_USE_SSL', True)
+    MAIL_USE_SSL = get_boolean_env("FLASK_MAIL_USE_SSL", True)
     """
     Set use SSL to ``True`` in production.
     """
@@ -138,8 +139,8 @@ class TestConfig(Config):
 
 
 __all__ = [
-    'Config',
-    'DevConfig',
-    'ProdConfig',
-    'TestConfig',
+    "Config",
+    "DevConfig",
+    "ProdConfig",
+    "TestConfig",
 ]

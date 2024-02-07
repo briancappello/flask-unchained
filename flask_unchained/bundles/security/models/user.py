@@ -14,38 +14,48 @@ class User(db.Model):
     :class:`~flask_unchained.bundles.security.Role` model via the intermediary
     :class:`~flask_unchained.bundles.security.UserRole` join table.
     """
+
     class Meta:
         lazy_mapped = True
-        repr = ('id', 'email', 'roles', 'is_active')
+        repr = ("id", "email", "roles", "is_active")
 
-    email = db.Column(db.String(64), unique=True, index=True, info=dict(
-        required=_('flask_unchained.bundles.security:email_required'),
-        validators=[EmailValidator]))
-    _password = db.Column('password', db.String, nullable=True)
-    is_active = db.Column(db.Boolean(name='is_active'), default=False)
+    email = db.Column(
+        db.String(64),
+        unique=True,
+        index=True,
+        info=dict(
+            required=_("flask_unchained.bundles.security:email_required"),
+            validators=[EmailValidator],
+        ),
+    )
+    _password = db.Column("password", db.String, nullable=True)
+    is_active = db.Column(db.Boolean(name="is_active"), default=False)
     confirmed_at = db.Column(db.DateTime(), nullable=True)
 
-    user_roles = db.relationship('UserRole', back_populates='user',
-                                 cascade='all, delete-orphan')
-    roles = db.association_proxy('user_roles', 'role',
-                                 creator=lambda role: UserRole(role=role))
+    user_roles = db.relationship(
+        "UserRole", back_populates="user", cascade="all, delete-orphan"
+    )
+    roles = db.association_proxy(
+        "user_roles", "role", creator=lambda role: UserRole(role=role)
+    )
 
     @db.hybrid_property
     def password(self):
         return self._password
 
     @password.setter
-    @unchained.inject('security_utils_service')
+    @unchained.inject("security_utils_service")
     def password(self, password, security_utils_service=injectable):
         self._password = security_utils_service.hash_password(password)
 
     @classmethod
     def validate_password(cls, password):
         if password and len(password) < MIN_PASSWORD_LENGTH:
-            raise db.ValidationError(f'Password must be at least '
-                                     f'{MIN_PASSWORD_LENGTH} characters long.')
+            raise db.ValidationError(
+                f"Password must be at least " f"{MIN_PASSWORD_LENGTH} characters long."
+            )
 
-    @unchained.inject('security_utils_service')
+    @unchained.inject("security_utils_service")
     def get_auth_token(self, security_utils_service=injectable):
         """
         Returns the user's authentication token.

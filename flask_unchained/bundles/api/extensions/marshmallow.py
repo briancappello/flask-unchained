@@ -151,9 +151,9 @@ class Marshmallow:
         self.RelatedList = msqla_fields.RelatedList
 
     def init_app(self, app: FlaskUnchained):
-        db = app.extensions['sqlalchemy']
+        db = app.extensions["sqlalchemy"]
         self.ModelSerializer.OPTIONS_CLASS.session = db.session
-        app.extensions['ma'] = self
+        app.extensions["ma"] = self
 
     def serializer(self, create=False, many=False):
         """
@@ -164,11 +164,10 @@ class Marshmallow:
         :param many: Whether or not this serializer is for lists of objects.
         """
         if create and many:
-            raise Exception('Can only set one of `create` or `many` to `True`')
+            raise Exception("Can only set one of `create` or `many` to `True`")
 
         def wrapper(cls):
-            cls.__kind__ = (create and 'create'
-                            or many and 'many'
-                            or 'all')
+            cls.__kind__ = create and "create" or many and "many" or "all"
             return cls
+
         return wrapper

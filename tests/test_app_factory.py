@@ -10,13 +10,13 @@ from ._bundles.myapp import MyAppBundle
 from ._bundles.override_vendor_bundle import VendorBundle
 from ._bundles.vendor_bundle import VendorBundle as BaseVendorBundle
 
-app_bundle_in_module = 'tests._bundles.app_bundle_in_module'
-bundle_in_module = 'tests._bundles.bundle_in_module'
-empty_bundle = 'tests._bundles.empty_bundle'
-error_bundle = 'tests._bundles.error_bundle'
-myapp = 'tests._bundles.myapp'
-override_vendor_bundle = 'tests._bundles.override_vendor_bundle'
-vendor_bundle = 'tests._bundles.vendor_bundle'
+app_bundle_in_module = "tests._bundles.app_bundle_in_module"
+bundle_in_module = "tests._bundles.bundle_in_module"
+empty_bundle = "tests._bundles.empty_bundle"
+error_bundle = "tests._bundles.error_bundle"
+myapp = "tests._bundles.myapp"
+override_vendor_bundle = "tests._bundles.override_vendor_bundle"
+vendor_bundle = "tests._bundles.vendor_bundle"
 
 
 class TestLoadBundles:
@@ -35,40 +35,45 @@ class TestLoadBundles:
     def test_no_bundle_found(self):
         with pytest.raises(BundleNotFoundError) as e:
             AppFactory().load_bundles([error_bundle])
-        msg = f'Unable to find a Bundle subclass in the {error_bundle} bundle!'
+        msg = f"Unable to find a Bundle subclass in the {error_bundle} bundle!"
         assert msg in str(e.value)
 
     def test_multiple_bundles(self):
-        app_bundle, bundles = AppFactory().load_bundles([bundle_in_module,
-                                                         empty_bundle,
-                                                         vendor_bundle])
+        app_bundle, bundles = AppFactory().load_bundles(
+            [bundle_in_module, empty_bundle, vendor_bundle]
+        )
         assert app_bundle is None
         assert isinstance(bundles[-1], BaseVendorBundle)
-        assert set(bundles) == {ControllerBundle(),
-                                ModuleBundle(),
-                                EmptyBundle(),
-                                BaseVendorBundle()}
+        assert set(bundles) == {
+            ControllerBundle(),
+            ModuleBundle(),
+            EmptyBundle(),
+            BaseVendorBundle(),
+        }
 
     def test_multiple_bundles_including_app_bundle(self):
-        app_bundle, bundles = AppFactory().load_bundles([bundle_in_module,
-                                                         empty_bundle,
-                                                         override_vendor_bundle,
-                                                         myapp])
+        app_bundle, bundles = AppFactory().load_bundles(
+            [bundle_in_module, empty_bundle, override_vendor_bundle, myapp]
+        )
         assert isinstance(app_bundle, MyAppBundle)
         assert isinstance(bundles[-1], MyAppBundle)
-        assert set(bundles) == {ControllerBundle(),
-                                ModuleBundle(),
-                                EmptyBundle(),
-                                VendorBundle(),
-                                MyAppBundle()}
+        assert set(bundles) == {
+            ControllerBundle(),
+            ModuleBundle(),
+            EmptyBundle(),
+            VendorBundle(),
+            MyAppBundle(),
+        }
 
     def test_multiple_bundles_including_app_bundle_in_module(self):
-        app_bundle, bundles = AppFactory().load_bundles([bundle_in_module,
-                                                         override_vendor_bundle,
-                                                         app_bundle_in_module])
+        app_bundle, bundles = AppFactory().load_bundles(
+            [bundle_in_module, override_vendor_bundle, app_bundle_in_module]
+        )
         assert isinstance(app_bundle, AppBundleInModule)
         assert isinstance(bundles[-1], AppBundleInModule)
-        assert set(bundles) == {ControllerBundle(),
-                                ModuleBundle(),
-                                VendorBundle(),
-                                AppBundleInModule()}
+        assert set(bundles) == {
+            ControllerBundle(),
+            ModuleBundle(),
+            VendorBundle(),
+            AppBundleInModule(),
+        }

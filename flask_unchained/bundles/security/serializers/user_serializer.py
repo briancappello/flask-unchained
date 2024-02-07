@@ -18,18 +18,21 @@ class UserSerializer(ma.ModelSerializer):
 
     email = ma.Email(required=True)
     password = ma.String(required=True)
-    roles = ma.Pluck('RoleSerializer', 'name', many=True)
+    roles = ma.Pluck("RoleSerializer", "name", many=True)
 
     class Meta:
         model = User
-        exclude = ('confirmed_at', 'created_at', 'updated_at', 'user_roles')
-        dump_only = ('is_active', 'roles')
-        load_only = ('password',)
+        exclude = ("confirmed_at", "created_at", "updated_at", "user_roles")
+        dump_only = ("is_active", "roles")
+        load_only = ("password",)
 
-    @ma.validates('email')
+    @ma.validates("email")
     def validate_email(self, email):
         existing = self.user_manager.get_by(email=email)
         if existing and (self.is_create() or existing != self.instance):
             raise ma.ValidationError(
-                _('flask_unchained.bundles.security:error.email_already_associated',
-                  email=email))
+                _(
+                    "flask_unchained.bundles.security:error.email_already_associated",
+                    email=email,
+                )
+            )

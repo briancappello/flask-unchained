@@ -7,14 +7,14 @@ ma = Marshmallow()
 
 
 EXTENSIONS = {
-    'api': api,
-    'ma': (ma, ['db']),
+    "api": api,
+    "ma": (ma, ["db"]),
 }
 
 
 __all__ = [
-    'api',
-    'Api',
-    'ma',
-    'Marshmallow',
+    "api",
+    "Api",
+    "ma",
+    "Marshmallow",
 ]

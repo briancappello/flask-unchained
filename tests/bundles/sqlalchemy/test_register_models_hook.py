@@ -31,56 +31,64 @@ def _to_metadata_tables(models: Dict[str, Type[Model]]):
 
 def get_app_models():
     from ._bundles.app.models import TwoBasic
-    return {**get_vendor_one_models(), **get_vendor_two_models(),
-            **_to_dict([TwoBasic])}
+
+    return {
+        **get_vendor_one_models(),
+        **get_vendor_two_models(),
+        **_to_dict([TwoBasic]),
+    }
 
 
 def get_vendor_one_models():
     from ._bundles.vendor_one.models import (
         OneBasic,
-        OneParent, OneChild,
-        OneUserRole, OneUser, OneRole)
-    return _to_dict([OneBasic,
-                     OneParent, OneChild,
-                     OneUserRole, OneUser, OneRole])
+        OneParent,
+        OneChild,
+        OneUserRole,
+        OneUser,
+        OneRole,
+    )
+
+    return _to_dict([OneBasic, OneParent, OneChild, OneUserRole, OneUser, OneRole])
 
 
 def get_vendor_two_models():
     from ._bundles.vendor_two.models import TwoBasic
+
     return _to_dict([TwoBasic])
 
 
 def get_ext_vendor_one_models():
-    from ._bundles.ext_vendor_one.models import (
-        OneBasic, OneParent, OneUser, OneRole)
-    d = {**get_vendor_one_models(), **_to_dict([OneBasic, OneParent,
-                                                OneUser, OneRole])}
+    from ._bundles.ext_vendor_one.models import OneBasic, OneParent, OneUser, OneRole
+
+    d = {**get_vendor_one_models(), **_to_dict([OneBasic, OneParent, OneUser, OneRole])}
     # overridden OneParent has no children relationship, make sure the
     # OneChild model does not end up getting mapped
-    d.pop('OneChild')
+    d.pop("OneChild")
 
     # The overridden OneUser and OneRole classes have changed the roles
     # relationship to be one-to-many instead of many-to-many. make sure the
     # many-to-many join table does not end up getting mapped
-    d.pop('OneUserRole')
+    d.pop("OneUserRole")
     return d
 
 
 def get_ext_ext_vendor_one_models():
     from ._bundles.vendor_one.models import OneUserRole
     from ._bundles.ext_ext_vendor_one.models import OneUser, OneRole
-    return {**get_ext_vendor_one_models(),
-            **_to_dict([OneRole, OneUser, OneUserRole])}
+
+    return {**get_ext_vendor_one_models(), **_to_dict([OneRole, OneUser, OneUserRole])}
 
 
 def get_polymorphic_models():
     from ._bundles.polymorphic.models import Person, Employee
+
     return _to_dict([Person, Employee])
 
 
 class TestRegisterModelsHookTypeCheck:
     def test_type_check_on_garbage(self, hook: RegisterModelsHook):
-        assert hook.type_check('foo') is False
+        assert hook.type_check("foo") is False
         assert hook.type_check(42) is False
         assert hook.type_check(42.0) is False
         assert hook.type_check(None) is False
@@ -111,8 +119,7 @@ class TestRegisterModelsHookCollectFromBundle:
 
     def test_it_works_vendor_one_and_two(self, db, hook: RegisterModelsHook):
         hook.run_hook(None, [VendorOneBundle(), VendorTwoBundle()])
-        expected_both = {**get_vendor_one_models(),
-                         **get_vendor_two_models()}
+        expected_both = {**get_vendor_one_models(), **get_vendor_two_models()}
         assert hook.bundle.models == expected_both
         assert db.metadata.tables == _to_metadata_tables(expected_both)
 
@@ -120,7 +127,7 @@ class TestRegisterModelsHookCollectFromBundle:
         hook.run_hook(None, [ExtVendorOneBundle()])
         expected_ext_one = get_ext_vendor_one_models()
         assert hook.bundle.models == expected_ext_one
-        assert hasattr(hook.bundle.models['OneBasic'], 'ext')
+        assert hasattr(hook.bundle.models["OneBasic"], "ext")
         assert db.metadata.tables == _to_metadata_tables(expected_ext_one)
 
     def test_vendor_bundle_subsubclassing(self, db, hook: RegisterModelsHook):
@@ -132,10 +139,12 @@ class TestRegisterModelsHookCollectFromBundle:
     def test_lazy_backrefs_throw_exception(self, hook: RegisterModelsHook):
         with pytest.raises(Exception) as e:
             hook.run_hook(None, [BackrefBundle()])
-        error = 'Discovered a lazy-mapped backref `backrefs` on ' \
-                '`tests.bundles.sqlalchemy._bundles.backref.models.OneRelationship`. Currently ' \
-                'this is unsupported; please use `db.relationship` with '\
-                'the `back_populates` kwarg on both sides instead.'
+        error = (
+            "Discovered a lazy-mapped backref `backrefs` on "
+            "`tests.bundles.sqlalchemy._bundles.backref.models.OneRelationship`. Currently "
+            "this is unsupported; please use `db.relationship` with "
+            "the `back_populates` kwarg on both sides instead."
+        )
         assert error in str(e.value)
 
     def test_it_works_with_polymorphic(self, db, hook: RegisterModelsHook):

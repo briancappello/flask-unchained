@@ -1,7 +1,12 @@
 import re
 
-from flask import (Response, current_app, request, redirect as flask_redirect,
-                   url_for as flask_url_for)
+from flask import (
+    Response,
+    current_app,
+    request,
+    redirect as flask_redirect,
+    url_for as flask_url_for,
+)
 from flask_unchained.string_utils import kebab_case, right_replace, snake_case
 from flask_unchained._compat import is_local_proxy
 from py_meta_utils import _missing
@@ -12,7 +17,7 @@ from werkzeug.routing import BuildError, UnicodeConverter
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
 
 
-PARAM_NAME_RE = re.compile(r'<(\w+:)?(?P<param_name>\w+)>')
+PARAM_NAME_RE = re.compile(r"<(\w+:)?(?P<param_name>\w+)>")
 
 
 class StringConverter(UnicodeConverter):
@@ -33,6 +38,7 @@ class StringConverter(UnicodeConverter):
     :param maxlength: the maximum length of the string.
     :param length: the exact length of the string.
     """
+
     def __init__(self, map, minlength=1, maxlength=None, length=None, upper=False):
         super().__init__(map, minlength, maxlength, length)
         self.is_upper = upper
@@ -71,7 +77,7 @@ def controller_name(
 
     for suffix in remove_suffixes:
         if name.endswith(suffix):
-            name = right_replace(name, suffix, '')
+            name = right_replace(name, suffix, "")
             break
     return snake_case(name)
 
@@ -86,19 +92,19 @@ def get_param_tuples(url_rule: Union[str, None]) -> List[Tuple[str, str]]:
     """
     if not url_rule:
         return []
-    return [(type_[:-1], name) for type_, name
-            in re.findall(PARAM_NAME_RE, url_rule)]
+    return [(type_[:-1], name) for type_, name in re.findall(PARAM_NAME_RE, url_rule)]
 
 
-def url_for(endpoint_or_url_or_config_key: Union[str, None],
-            _anchor: Optional[str] = None,
-            _cls: Optional[Union[object, type]] = None,
-            _external: Optional[bool] = False,
-            _external_host: Optional[str] = None,
-            _method: Optional[str] = None,
-            _scheme: Optional[str] = None,
-            **values,
-            ) -> Union[str, None]:
+def url_for(
+    endpoint_or_url_or_config_key: Union[str, None],
+    _anchor: Optional[str] = None,
+    _cls: Optional[Union[object, type]] = None,
+    _external: Optional[bool] = False,
+    _external_host: Optional[str] = None,
+    _method: Optional[str] = None,
+    _scheme: Optional[str] = None,
+    **values,
+) -> Union[str, None]:
     """
     An improved version of flask's url_for function
 
@@ -131,15 +137,20 @@ def url_for(endpoint_or_url_or_config_key: Union[str, None],
         what = what._get_current_object()
 
     # if we already have a url (or an invalid value, eg None)
-    if not what or '/' in what:
+    if not what or "/" in what:
         return what
 
-    flask_url_for_kwargs = dict(_anchor=_anchor, _external=_external,
-                                _external_host=_external_host, _method=_method,
-                                _scheme=_scheme, **values)
+    flask_url_for_kwargs = dict(
+        _anchor=_anchor,
+        _external=_external,
+        _external_host=_external_host,
+        _method=_method,
+        _scheme=_scheme,
+        **values,
+    )
 
     # check if it's a class method name, and try that endpoint
-    if _cls and '.' not in what:
+    if _cls and "." not in what:
         controller_routes = getattr(_cls, CONTROLLER_ROUTES_ATTR)
         method_routes = controller_routes.get(what)
         try:
@@ -147,7 +158,7 @@ def url_for(endpoint_or_url_or_config_key: Union[str, None],
         except (
             BuildError,  # url not found
             IndexError,  # method_routes[0] is out-of-range (no routes on view)
-            TypeError,   # method_routes is None ("what" wasn't a view/method name)
+            TypeError,  # method_routes is None ("what" wasn't a view/method name)
         ):
             pass
 
@@ -168,19 +179,19 @@ def join(*args: Union[None, str], trailing_slash: bool = False) -> str:
 
         assert join('/foo', 'baz', None, trailing_slash=True) == '/foo/baz/'
     """
-    dirty_path = '/'.join(map(lambda x: x and x or '', args))
-    path = re.sub(r'/+', '/', dirty_path)
-    if path in {'', '/'}:
-        return '/'
-    path = path.rstrip('/')
-    return path if not trailing_slash else path + '/'
+    dirty_path = "/".join(map(lambda x: x and x or "", args))
+    path = re.sub(r"/+", "/", dirty_path)
+    if path in {"", "/"}:
+        return "/"
+    path = path.rstrip("/")
+    return path if not trailing_slash else path + "/"
 
 
 def method_name_to_url(method_name) -> str:
     """
     Converts a method name to a url.
     """
-    return '/' + kebab_case(method_name).strip('-')
+    return "/" + kebab_case(method_name).strip("-")
 
 
 def encode_non_url_reserved_characters(url):
@@ -189,17 +200,18 @@ def encode_non_url_reserved_characters(url):
 
 
 # modified from flask_security.utils.get_post_action_redirect
-def redirect(where: Optional[str] = None,
-             default: Optional[str] = None,
-             override: Optional[str] = None,
-             _anchor: Optional[str] = None,
-             _cls: Optional[Union[object, type]] = None,
-             _external: Optional[bool] = False,
-             _external_host: Optional[str] = None,
-             _method: Optional[str] = None,
-             _scheme: Optional[str] = None,
-             **values,
-             ) -> Response:
+def redirect(
+    where: Optional[str] = None,
+    default: Optional[str] = None,
+    override: Optional[str] = None,
+    _anchor: Optional[str] = None,
+    _cls: Optional[Union[object, type]] = None,
+    _external: Optional[bool] = False,
+    _external_host: Optional[str] = None,
+    _method: Optional[str] = None,
+    _scheme: Optional[str] = None,
+    **values,
+) -> Response:
     """
     An improved version of flask's redirect function
 
@@ -225,13 +237,18 @@ def redirect(where: Optional[str] = None,
       request context is available. As of Werkzeug 0.10, this also can be set
       to an empty string to build protocol-relative URLs.
     """
-    flask_url_for_kwargs = dict(_anchor=_anchor, _external=_external,
-                                _external_host=_external_host, _method=_method,
-                                _scheme=_scheme, **values)
+    flask_url_for_kwargs = dict(
+        _anchor=_anchor,
+        _external=_external,
+        _external_host=_external_host,
+        _method=_method,
+        _scheme=_scheme,
+        **values,
+    )
 
     urls = [
-        url_for(unquote(request.args.get('next', '')), **flask_url_for_kwargs),
-        url_for(unquote_plus(request.form.get('next', '')), **flask_url_for_kwargs),
+        url_for(unquote(request.args.get("next", "")), **flask_url_for_kwargs),
+        url_for(unquote_plus(request.form.get("next", "")), **flask_url_for_kwargs),
     ]
     if where:
         urls.append(url_for(where, _cls=_cls, **flask_url_for_kwargs))
@@ -243,17 +260,16 @@ def redirect(where: Optional[str] = None,
     for url in urls:
         if _validate_redirect_url(url, _external_host):
             return flask_redirect(encode_non_url_reserved_characters(url))
-    return flask_redirect('/')
+    return flask_redirect("/")
 
 
 def rename_parent_resource_param_name(route, rule: str) -> str:
     ctrl_name = controller_name(route._parent_resource_cls)
     type_, orig_name = get_param_tuples(route._parent_member_param)[0]
-    renamed_param = (route._unique_member_param
-                     or f'<{type_}:{ctrl_name}_{orig_name}>')
+    renamed_param = route._unique_member_param or f"<{type_}:{ctrl_name}_{orig_name}>"
     if renamed_param in rule:
         type_, orig_name = get_param_tuples(route.unique_member_param)[0]
-        renamed_param = f'<{type_}:{ctrl_name}_{orig_name}>'
+        renamed_param = f"<{type_}:{ctrl_name}_{orig_name}>"
     return rule.replace(route._parent_member_param, renamed_param, 1)
 
 
@@ -273,33 +289,33 @@ def _url_for(endpoint: str, **values) -> Union[str, None]:
     :param values: the variable arguments of the URL rule
     :return: a url path, or None
     """
-    _external_host = values.pop('_external_host', '')
-    is_external = bool(_external_host or values.get('_external'))
+    _external_host = values.pop("_external_host", "")
+    is_external = bool(_external_host or values.get("_external"))
     external_host = (
-        _external_host or current_app.config.get('EXTERNAL_SERVER_NAME', '')
-    ).rstrip('/')
+        _external_host or current_app.config.get("EXTERNAL_SERVER_NAME", "")
+    ).rstrip("/")
     if not external_host or not is_external:
         return flask_url_for(endpoint, **values)
 
-    values.pop('_external')  # do custom external host handling instead
-    scheme = values.pop('_scheme', 'http')
-    if '://' not in external_host:
-        external_host = f'{scheme}://{external_host}'
-    elif not external_host.startswith(f'{scheme}://'):
+    values.pop("_external")  # do custom external host handling instead
+    scheme = values.pop("_scheme", "http")
+    if "://" not in external_host:
+        external_host = f"{scheme}://{external_host}"
+    elif not external_host.startswith(f"{scheme}://"):
         external_host = f"{scheme}{external_host[external_host.find('://'):]}"
 
     url = flask_url_for(endpoint, **values)
-    if '://' in url:
-        url = url[url.find('/', url.find('://')+3):]
-    return f'{external_host}{url}'
+    if "://" in url:
+        url = url[url.find("/", url.find("://") + 3) :]
+    return f"{external_host}{url}"
 
 
 # modified from flask_security.utils.validate_redirect_url
 def _validate_redirect_url(url, _external_host=None):
-    url = (url or '').strip().replace('\\', '/')
+    url = (url or "").strip().replace("\\", "/")
 
     # reject empty urls and urls starting with 3+ slashes or a control character
-    if not url or url.startswith('///') or ord(url[0]) <= 32:
+    if not url or url.startswith("///") or ord(url[0]) <= 32:
         return False
 
     url_next = urlsplit(url)
@@ -310,10 +326,15 @@ def _validate_redirect_url(url, _external_host=None):
             return False
 
         # if external host, require same netloc and scheme
-        external_host = _external_host or current_app.config.get('EXTERNAL_SERVER_NAME', '')
+        external_host = _external_host or current_app.config.get(
+            "EXTERNAL_SERVER_NAME", ""
+        )
         if external_host:
             url_external = urlsplit(external_host)
-            if url_next.netloc == url_external.netloc and url_next.scheme == url_external.scheme:
+            if (
+                url_next.netloc == url_external.netloc
+                and url_next.scheme == url_external.scheme
+            ):
                 return True
 
         # require same netloc and scheme
@@ -323,11 +344,11 @@ def _validate_redirect_url(url, _external_host=None):
 
 
 __all__ = [
-    'controller_name',
-    'get_param_tuples',
-    'join',
-    'method_name_to_url',
-    'redirect',
-    'rename_parent_resource_param_name',
-    'url_for',
+    "controller_name",
+    "get_param_tuples",
+    "join",
+    "method_name_to_url",
+    "redirect",
+    "rename_parent_resource_param_name",
+    "url_for",
 ]

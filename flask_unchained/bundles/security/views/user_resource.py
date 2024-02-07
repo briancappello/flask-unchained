@@ -23,13 +23,13 @@ class UserResource(ModelResource):
             PATCH: [auth_required_same_user],
         }
 
-
     def create(self, user, errors):
         if errors:
             return self.errors(errors)
 
         user_logged_in = self.security_service.register_user(user)
         if user_logged_in:
-            return self.created({'token': user.get_auth_token(),
-                                 'user': user}, commit=False)
-        return self.created({'user': user}, commit=False)
+            return self.created(
+                {"token": user.get_auth_token(), "user": user}, commit=False
+            )
+        return self.created({"user": user}, commit=False)

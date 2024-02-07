@@ -13,12 +13,12 @@ class RegisterModelsHook(AppFactoryHook):
     Discovers SQLAlchemy models.
     """
 
-    name = 'models'
+    name = "models"
     """
     The name of this hook.
     """
 
-    bundle_module_names = ['models']
+    bundle_module_names = ["models"]
     """
     The default module this hook loads from.
 
@@ -26,8 +26,8 @@ class RegisterModelsHook(AppFactoryHook):
     bundle class.
     """
 
-    run_after = ['register_extensions']
-    run_before = ['configure_app', 'init_extensions', 'services']
+    run_after = ["register_extensions"]
+    run_before = ["configure_app", "init_extensions", "services"]
 
     def process_objects(self, app: FlaskUnchained, objects: Dict[str, Any]) -> None:
         """

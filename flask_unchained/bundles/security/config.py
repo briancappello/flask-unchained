@@ -30,23 +30,23 @@ class AuthenticationConfig:
     "Remember me?" option.
     """
 
-    SECURITY_REMEMBER_SALT = 'security-remember-salt'
+    SECURITY_REMEMBER_SALT = "security-remember-salt"
     """
     Salt used for the remember me cookie token.
     """
 
-    SECURITY_USER_IDENTITY_ATTRIBUTES = ['email']  # FIXME-identity
+    SECURITY_USER_IDENTITY_ATTRIBUTES = ["email"]  # FIXME-identity
     """
     List of attributes on the user model that can used for logging in with.
     Each must be unique.
     """
 
-    SECURITY_POST_LOGIN_REDIRECT_ENDPOINT = '/'
+    SECURITY_POST_LOGIN_REDIRECT_ENDPOINT = "/"
     """
     The endpoint or url to redirect to after a successful login.
     """
 
-    SECURITY_POST_LOGOUT_REDIRECT_ENDPOINT = '/'
+    SECURITY_POST_LOGOUT_REDIRECT_ENDPOINT = "/"
     """
     The endpoint or url to redirect to after a user logs out.
     """
@@ -72,8 +72,9 @@ class ChangePasswordConfig:
     Endpoint or url to redirect to after the user changes their password.
     """
 
-    SECURITY_SEND_PASSWORD_CHANGED_EMAIL = \
-        'mail_bundle' in BundleConfig.current_app.unchained.bundles
+    SECURITY_SEND_PASSWORD_CHANGED_EMAIL = (
+        "mail_bundle" in BundleConfig.current_app.unchained.bundles
+    )
     """
     Whether or not to send the user an email when their password has been changed.
     Defaults to True, and it's strongly recommended to leave this option enabled.
@@ -85,13 +86,13 @@ class EncryptionConfig:
     Config options for encryption hashing.
     """
 
-    SECURITY_PASSWORD_SALT = 'security-password-salt'
+    SECURITY_PASSWORD_SALT = "security-password-salt"
     """
     Specifies the HMAC salt. This is only used if the password hash type is
     set to something other than plain text.
     """
 
-    SECURITY_PASSWORD_HASH = 'bcrypt'
+    SECURITY_PASSWORD_HASH = "bcrypt"
     """
     Specifies the password hash algorithm to use when hashing passwords.
     Recommended values for production systems are ``argon2``, ``bcrypt``,
@@ -105,11 +106,13 @@ class EncryptionConfig:
     salt. May be useful for integrating with other applications.
     """
 
-    SECURITY_PASSWORD_SCHEMES = ['argon2',
-                                 'bcrypt',
-                                 'pbkdf2_sha512',
-                                 # and always the last one...
-                                 'plaintext']
+    SECURITY_PASSWORD_SCHEMES = [
+        "argon2",
+        "bcrypt",
+        "pbkdf2_sha512",
+        # and always the last one...
+        "plaintext",
+    ]
     """
     List of algorithms that can be used for hashing passwords.
     """
@@ -119,12 +122,12 @@ class EncryptionConfig:
     Specifies additional options to be passed to the hashing method.
     """
 
-    SECURITY_DEPRECATED_PASSWORD_SCHEMES = ['auto']
+    SECURITY_DEPRECATED_PASSWORD_SCHEMES = ["auto"]
     """
     List of deprecated algorithms for hashing passwords.
     """
 
-    SECURITY_HASHING_SCHEMES = ['sha512_crypt']
+    SECURITY_HASHING_SCHEMES = ["sha512_crypt"]
     """
     List of algorithms that can be used for creating and validating tokens.
     """
@@ -158,12 +161,12 @@ class ForgotPasswordConfig:
     Form class to use for the reset password form.
     """
 
-    SECURITY_RESET_SALT = 'security-reset-salt'
+    SECURITY_RESET_SALT = "security-reset-salt"
     """
     Salt used for the reset token.
     """
 
-    SECURITY_RESET_PASSWORD_WITHIN = '5 days'
+    SECURITY_RESET_PASSWORD_WITHIN = "5 days"
     """
     Specifies the amount of time a user has before their password reset link
     expires. Always pluralized the time unit for this value. Defaults to 5 days.
@@ -174,12 +177,12 @@ class ForgotPasswordConfig:
     Endpoint or url to redirect to after the user resets their password.
     """
 
-    SECURITY_INVALID_RESET_TOKEN_REDIRECT = 'security_controller.forgot_password'
+    SECURITY_INVALID_RESET_TOKEN_REDIRECT = "security_controller.forgot_password"
     """
     Endpoint or url to redirect to if the reset token is invalid.
     """
 
-    SECURITY_EXPIRED_RESET_TOKEN_REDIRECT = 'security_controller.forgot_password'
+    SECURITY_EXPIRED_RESET_TOKEN_REDIRECT = "security_controller.forgot_password"
     """
     Endpoint or url to redirect to if the reset token is expired.
     """
@@ -190,8 +193,9 @@ class ForgotPasswordConfig:
     view. Defaults to None, meaning no redirect. Useful for single page apps.
     """
 
-    SECURITY_SEND_PASSWORD_RESET_NOTICE_EMAIL = \
-        'mail_bundle' in BundleConfig.current_app.unchained.bundles
+    SECURITY_SEND_PASSWORD_RESET_NOTICE_EMAIL = (
+        "mail_bundle" in BundleConfig.current_app.unchained.bundles
+    )
     """
     Whether or not to send the user an email when their password has been reset.
     Defaults to True, and it's strongly recommended to leave this option enabled.
@@ -219,8 +223,9 @@ class RegistrationConfig:
     registration form.
     """
 
-    SECURITY_SEND_REGISTER_EMAIL = \
-        'mail_bundle' in BundleConfig.current_app.unchained.bundles
+    SECURITY_SEND_REGISTER_EMAIL = (
+        "mail_bundle" in BundleConfig.current_app.unchained.bundles
+    )
     """
     Whether or not send a welcome email after a user completes the
     registration form.
@@ -239,7 +244,7 @@ class RegistrationConfig:
     Form class to use for the (re)send confirmation email form.
     """
 
-    SECURITY_CONFIRM_SALT = 'security-confirm-salt'
+    SECURITY_CONFIRM_SALT = "security-confirm-salt"
     """
     Salt used for the confirmation token.
     """
@@ -250,7 +255,7 @@ class RegistrationConfig:
     only applies when :attr:`SECURITY_CONFIRMABLE` is True.)
     """
 
-    SECURITY_CONFIRM_EMAIL_WITHIN = '5 days'
+    SECURITY_CONFIRM_EMAIL_WITHIN = "5 days"
     """
     How long to wait until considering the token in confirmation emails to
     be expired.
@@ -273,12 +278,12 @@ class TokenConfig:
     Config options for token authentication.
     """
 
-    SECURITY_TOKEN_AUTHENTICATION_KEY = 'auth_token'
+    SECURITY_TOKEN_AUTHENTICATION_KEY = "auth_token"
     """
     Specifies the query string parameter to read when using token authentication.
     """
 
-    SECURITY_TOKEN_AUTHENTICATION_HEADER = 'Authentication-Token'
+    SECURITY_TOKEN_AUTHENTICATION_HEADER = "Authentication-Token"
     """
     Specifies the HTTP header to read when using token authentication.
     """
@@ -290,13 +295,15 @@ class TokenConfig:
     """
 
 
-class Config(AuthenticationConfig,
-             ChangePasswordConfig,
-             EncryptionConfig,
-             ForgotPasswordConfig,
-             RegistrationConfig,
-             TokenConfig,
-             BundleConfig):
+class Config(
+    AuthenticationConfig,
+    ChangePasswordConfig,
+    EncryptionConfig,
+    ForgotPasswordConfig,
+    RegistrationConfig,
+    TokenConfig,
+    BundleConfig,
+):
     """
     Config options for the Security Bundle.
     """
@@ -320,7 +327,7 @@ class Config(AuthenticationConfig,
     """
 
     ADMIN_CATEGORY_ICON_CLASSES = {
-        'Security': 'fa fa-lock',
+        "Security": "fa fa-lock",
     }
 
 
@@ -329,7 +336,7 @@ class TestConfig(Config):
     Default test settings for the Security Bundle.
     """
 
-    SECURITY_PASSWORD_HASH = 'plaintext'
+    SECURITY_PASSWORD_HASH = "plaintext"
     """
     Disable password-hashing in tests (shaves about 30% off the test-run time)
     """

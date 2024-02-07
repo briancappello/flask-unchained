@@ -12,7 +12,7 @@ class MethodCalled(Exception):
     pass
 
 
-@pytest.mark.usefixtures('user')
+@pytest.mark.usefixtures("user")
 class TestAuthRequired:
     def test_decorated_with_parenthesis(self):
         @auth_required()
@@ -51,7 +51,7 @@ class TestAuthRequired:
     def test_with_role(self, client):
         client.login_user()
 
-        @auth_required(role='ROLE_USER')
+        @auth_required(role="ROLE_USER")
         def method():
             raise MethodCalled
 
@@ -61,7 +61,7 @@ class TestAuthRequired:
     def test_without_role(self, client):
         client.login_user()
 
-        @auth_required(role='ROLE_FAIL')
+        @auth_required(role="ROLE_FAIL")
         def method():
             raise MethodCalled
 
@@ -71,7 +71,7 @@ class TestAuthRequired:
     def test_with_all_roles(self, client):
         client.login_user()
 
-        @auth_required(roles=['ROLE_USER', 'ROLE_USER1'])
+        @auth_required(roles=["ROLE_USER", "ROLE_USER1"])
         def method():
             raise MethodCalled
 
@@ -81,7 +81,7 @@ class TestAuthRequired:
     def test_without_all_roles(self, client):
         client.login_user()
 
-        @auth_required(roles=['ROLE_USER', 'ROLE_FAIL'])
+        @auth_required(roles=["ROLE_USER", "ROLE_FAIL"])
         def method():
             raise MethodCalled
 
@@ -91,7 +91,7 @@ class TestAuthRequired:
     def test_with_one_of_roles(self, client):
         client.login_user()
 
-        @auth_required(one_of=['ROLE_USER', 'ROLE_FAIL'])
+        @auth_required(one_of=["ROLE_USER", "ROLE_FAIL"])
         def method():
             raise MethodCalled
 
@@ -101,7 +101,7 @@ class TestAuthRequired:
     def test_without_one_of_roles(self, client):
         client.login_user()
 
-        @auth_required(one_of=['ROLE_FAIL', 'ROLE_ALSO_FAIL'])
+        @auth_required(one_of=["ROLE_FAIL", "ROLE_ALSO_FAIL"])
         def method():
             raise MethodCalled
 
@@ -111,14 +111,14 @@ class TestAuthRequired:
     def test_with_role_and_one_of_roles(self, client):
         client.login_user()
 
-        @auth_required(role='ROLE_USER', one_of=['ROLE_FAIL', 'ROLE_USER1'])
+        @auth_required(role="ROLE_USER", one_of=["ROLE_FAIL", "ROLE_USER1"])
         def method():
             raise MethodCalled
 
         with pytest.raises(MethodCalled):
             method()
 
-        @auth_required(roles=['ROLE_USER'], one_of=['ROLE_FAIL', 'ROLE_USER1'])
+        @auth_required(roles=["ROLE_USER"], one_of=["ROLE_FAIL", "ROLE_USER1"])
         def method():
             raise MethodCalled
 
@@ -128,28 +128,28 @@ class TestAuthRequired:
     def test_without_role_and_one_of_roles(self, client):
         client.login_user()
 
-        @auth_required(role='ROLE_FAIL', one_of=['ROLE_USER'])
+        @auth_required(role="ROLE_FAIL", one_of=["ROLE_USER"])
         def method():
             raise MethodCalled
 
         with pytest.raises(Forbidden):
             method()
 
-        @auth_required(roles=['ROLE_FAIL'], one_of=['ROLE_USER'])
+        @auth_required(roles=["ROLE_FAIL"], one_of=["ROLE_USER"])
         def method():
             raise MethodCalled
 
         with pytest.raises(Forbidden):
             method()
 
-        @auth_required(role='ROLE_USER', one_of=['ROLE_FAIL'])
+        @auth_required(role="ROLE_USER", one_of=["ROLE_FAIL"])
         def method():
             raise MethodCalled
 
         with pytest.raises(Forbidden):
             method()
 
-        @auth_required(roles=['ROLE_USER'], one_of=['ROLE_FAIL'])
+        @auth_required(roles=["ROLE_USER"], one_of=["ROLE_FAIL"])
         def method():
             raise MethodCalled
 
@@ -160,15 +160,17 @@ class TestAuthRequired:
         client.login_user()
 
         with pytest.raises(RuntimeError) as e:
-            @auth_required(role='ROLE_USER', roles=['ROLE_USER1'])
+
+            @auth_required(role="ROLE_USER", roles=["ROLE_USER1"])
             def method():
                 raise MethodCalled
-        assert 'specify only one of `role` or `roles` kwargs' in str(e.value)
+
+        assert "specify only one of `role` or `roles` kwargs" in str(e.value)
 
     def test_works_with_token_auth(self, client, user):
         client.login_as(user)
 
-        @auth_required(role='ROLE_USER')
+        @auth_required(role="ROLE_USER")
         def method():
             raise MethodCalled
 

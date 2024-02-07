@@ -17,9 +17,9 @@ class Session(BaseSession):
         app.session_interface.serializer = dill
 
     def _get_interface(self, app):
-        if app.config.SESSION_TYPE == 'sqlalchemy':
+        if app.config.SESSION_TYPE == "sqlalchemy":
             return SqlAlchemySessionInterface(
-                db=app.extensions['sqlalchemy'],
+                db=app.extensions["sqlalchemy"],
                 table=app.config.SESSION_SQLALCHEMY_TABLE,
                 key_prefix=app.config.SESSION_KEY_PREFIX,
                 use_signer=app.config.SESSION_USE_SIGNER,

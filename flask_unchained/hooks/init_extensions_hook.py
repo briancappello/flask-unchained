@@ -7,8 +7,7 @@ from .register_extensions_hook import RegisterExtensionsHook
 from ..flask_unchained import FlaskUnchained
 
 
-ExtensionTuple = namedtuple('ExtensionTuple',
-                            ('name', 'extension', 'dependencies'))
+ExtensionTuple = namedtuple("ExtensionTuple", ("name", "extension", "dependencies"))
 
 
 class InitExtensionsHook(RegisterExtensionsHook):
@@ -16,12 +15,12 @@ class InitExtensionsHook(RegisterExtensionsHook):
     Initializes extensions found in bundles with the current app.
     """
 
-    name = 'init_extensions'
+    name = "init_extensions"
     """
     The name of this hook.
     """
 
-    bundle_module_names = ['extensions']
+    bundle_module_names = ["extensions"]
     """
     The default module this hook loads from.
 
@@ -29,12 +28,13 @@ class InitExtensionsHook(RegisterExtensionsHook):
     bundle class.
     """
 
-    run_after = ['register_extensions']
+    run_after = ["register_extensions"]
 
-    def process_objects(self,
-                        app: FlaskUnchained,
-                        extensions: Dict[str, object],
-                        ) -> None:
+    def process_objects(
+        self,
+        app: FlaskUnchained,
+        extensions: Dict[str, object],
+    ) -> None:
         """
         Initialize each extension with ``extension.init_app(app)``.
         """
@@ -53,9 +53,10 @@ class InitExtensionsHook(RegisterExtensionsHook):
         """
         ctx.update(self.unchained.extensions)
 
-    def resolve_extension_order(self,
-                                extensions: Dict[str, object],
-                                ) -> List[ExtensionTuple]:
+    def resolve_extension_order(
+        self,
+        extensions: Dict[str, object],
+    ) -> List[ExtensionTuple]:
         extension_tuples = []
         for name, extension in extensions.items():
             dependencies = []
@@ -72,14 +73,13 @@ class InitExtensionsHook(RegisterExtensionsHook):
         try:
             extension_order = reversed(list(nx.topological_sort(dag)))
         except nx.NetworkXUnfeasible:
-            msg = 'Circular dependency detected between extensions'
-            problem_graph = ', '.join(f'{a} -> {b}'
-                                      for a, b in nx.find_cycle(dag))
-            raise Exception(f'{msg}: {problem_graph}')
+            msg = "Circular dependency detected between extensions"
+            problem_graph = ", ".join(f"{a} -> {b}" for a, b in nx.find_cycle(dag))
+            raise Exception(f"{msg}: {problem_graph}")
 
         rv = []
         for ext_name in extension_order:
-            extension_tuple = dag.nodes[ext_name].get('extension_tuple')
+            extension_tuple = dag.nodes[ext_name].get("extension_tuple")
             if extension_tuple:
                 rv.append(extension_tuple)
         return rv

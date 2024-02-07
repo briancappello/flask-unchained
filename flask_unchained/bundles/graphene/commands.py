@@ -11,7 +11,7 @@ def gql():
     """
 
 
-@gql.command('dump-schema')
+@gql.command("dump-schema")
 @click.option("--out", "-o", default="schema.json", help="The filename to dump to.")
 @click.option("--indent", default=4, help="How many spaces to indent the output by.")
 def dump_schema(out, indent):

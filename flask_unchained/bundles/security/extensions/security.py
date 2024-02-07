@@ -15,7 +15,7 @@ from ..services.user_manager import UserManager
 
 
 class _SecurityConfigProperties(metaclass=ConfigPropertyMetaclass):
-    __config_prefix__ = 'SECURITY'
+    __config_prefix__ = "SECURITY"
 
     changeable: bool = ConfigProperty()
     confirmable: bool = ConfigProperty()
@@ -31,8 +31,9 @@ class _SecurityConfigProperties(metaclass=ConfigPropertyMetaclass):
     password_salt: str = ConfigProperty()
 
     datetime_factory: FunctionType = ConfigProperty()
-    _unauthorized_callback: FunctionType = \
-        ConfigProperty('SECURITY_UNAUTHORIZED_CALLBACK')
+    _unauthorized_callback: FunctionType = ConfigProperty(
+        "SECURITY_UNAUTHORIZED_CALLBACK"
+    )
 
 
 class Security(_SecurityConfigProperties):
@@ -61,25 +62,28 @@ class Security(_SecurityConfigProperties):
 
     def init_app(self, app: FlaskUnchained):
         # NOTE: the order of these `self.get_*` calls is important!
-        self.confirm_serializer = self._get_serializer(app, 'confirm')
+        self.confirm_serializer = self._get_serializer(app, "confirm")
         self.hashing_context = self._get_hashing_context(app)
         self.login_manager = self._get_login_manager(
-            app, app.config.SECURITY_ANONYMOUS_USER)
+            app, app.config.SECURITY_ANONYMOUS_USER
+        )
         self.principal = self._get_principal(app)
         self.pwd_context = self._get_pwd_context(app)
-        self.remember_token_serializer = self._get_serializer(app, 'remember')
-        self.reset_serializer = self._get_serializer(app, 'reset')
+        self.remember_token_serializer = self._get_serializer(app, "remember")
+        self.reset_serializer = self._get_serializer(app, "reset")
 
         self.context_processor(lambda: dict(security=_SecurityConfigProperties()))
 
         # FIXME: should this be easier to customize for end users, perhaps by making
         # FIXME: the function come from a config setting?
         identity_loaded.connect_via(app)(self._on_identity_loaded)
-        app.extensions['security'] = self
+        app.extensions["security"] = self
 
-    def inject_services(self,
-                        security_utils_service: SecurityUtilsService = injectable,
-                        user_manager: UserManager = injectable):
+    def inject_services(
+        self,
+        security_utils_service: SecurityUtilsService = injectable,
+        user_manager: UserManager = injectable,
+    ):
         self.security_utils_service = security_utils_service
         self.user_manager = user_manager
 
@@ -102,7 +106,7 @@ class Security(_SecurityConfigProperties):
 
         :param fn: A function that returns a dictionary of template context variables.
         """
-        self._add_ctx_processor('forgot_password', fn)
+        self._add_ctx_processor("forgot_password", fn)
 
     def login_context_processor(self, fn):
         """
@@ -110,7 +114,7 @@ class Security(_SecurityConfigProperties):
 
         :param fn: A function that returns a dictionary of template context variables.
         """
-        self._add_ctx_processor('login', fn)
+        self._add_ctx_processor("login", fn)
 
     def register_context_processor(self, fn):
         """
@@ -118,7 +122,7 @@ class Security(_SecurityConfigProperties):
 
         :param fn: A function that returns a dictionary of template context variables.
         """
-        self._add_ctx_processor('register', fn)
+        self._add_ctx_processor("register", fn)
 
     def reset_password_context_processor(self, fn):
         """
@@ -126,7 +130,7 @@ class Security(_SecurityConfigProperties):
 
         :param fn: A function that returns a dictionary of template context variables.
         """
-        self._add_ctx_processor('reset_password', fn)
+        self._add_ctx_processor("reset_password", fn)
 
     def change_password_context_processor(self, fn):
         """
@@ -134,7 +138,7 @@ class Security(_SecurityConfigProperties):
 
         :param fn: A function that returns a dictionary of template context variables.
         """
-        self._add_ctx_processor('change_password', fn)
+        self._add_ctx_processor("change_password", fn)
 
     def send_confirmation_context_processor(self, fn):
         """
@@ -143,7 +147,7 @@ class Security(_SecurityConfigProperties):
 
         :param fn: A function that returns a dictionary of template context variables.
         """
-        self._add_ctx_processor('send_confirmation_email', fn)
+        self._add_ctx_processor("send_confirmation_email", fn)
 
     def mail_context_processor(self, fn):
         """
@@ -151,7 +155,7 @@ class Security(_SecurityConfigProperties):
 
         :param fn: A function that returns a dictionary of template context variables.
         """
-        self._add_ctx_processor('mail', fn)
+        self._add_ctx_processor("mail", fn)
 
     def run_ctx_processor(self, endpoint) -> Dict[str, Any]:
         rv = {}
@@ -174,13 +178,16 @@ class Security(_SecurityConfigProperties):
         """
         Get the token hashing (and verifying) context.
         """
-        return CryptContext(schemes=app.config.SECURITY_HASHING_SCHEMES,
-                            deprecated=app.config.SECURITY_DEPRECATED_HASHING_SCHEMES)
+        return CryptContext(
+            schemes=app.config.SECURITY_HASHING_SCHEMES,
+            deprecated=app.config.SECURITY_DEPRECATED_HASHING_SCHEMES,
+        )
 
-    def _get_login_manager(self,
-                           app: FlaskUnchained,
-                           anonymous_user: AnonymousUser,
-                           ) -> LoginManager:
+    def _get_login_manager(
+        self,
+        app: FlaskUnchained,
+        anonymous_user: AnonymousUser,
+    ) -> LoginManager:
         """
         Get an initialized instance of Flask Login's
         :class:`~flask_login.LoginManager`.
@@ -192,13 +199,15 @@ class Security(_SecurityConfigProperties):
         login_manager.user_loader(
             lambda *a, **kw: self.security_utils_service.user_loader(*a, **kw)
         )
-        login_manager.login_view = 'security_controller.login'
+        login_manager.login_view = "security_controller.login"
         login_manager.login_message = _(
-            'flask_unchained.bundles.security:error.login_required')
-        login_manager.login_message_category = 'info'
+            "flask_unchained.bundles.security:error.login_required"
+        )
+        login_manager.login_message_category = "info"
         login_manager.needs_refresh_message = _(
-            'flask_unchained.bundles.security:error.fresh_login_required')
-        login_manager.needs_refresh_message_category = 'info'
+            "flask_unchained.bundles.security:error.fresh_login_required"
+        )
+        login_manager.needs_refresh_message_category = "info"
         login_manager.init_app(app)
         return login_manager
 
@@ -218,11 +227,16 @@ class Security(_SecurityConfigProperties):
         pw_hash = app.config.SECURITY_PASSWORD_HASH
         schemes = app.config.SECURITY_PASSWORD_SCHEMES
         if pw_hash not in schemes:
-            allowed = (', '.join(schemes[:-1]) + ' and ' + schemes[-1])
-            raise ValueError(f'Invalid password hashing scheme {pw_hash}. '
-                             f'Allowed values are {allowed}.')
-        return CryptContext(schemes=schemes, default=pw_hash,
-                            deprecated=app.config.SECURITY_DEPRECATED_PASSWORD_SCHEMES)
+            allowed = ", ".join(schemes[:-1]) + " and " + schemes[-1]
+            raise ValueError(
+                f"Invalid password hashing scheme {pw_hash}. "
+                f"Allowed values are {allowed}."
+            )
+        return CryptContext(
+            schemes=schemes,
+            default=pw_hash,
+            deprecated=app.config.SECURITY_DEPRECATED_PASSWORD_SCHEMES,
+        )
 
     def _get_serializer(self, app: FlaskUnchained, name: str) -> URLSafeTimedSerializer:
         """
@@ -233,7 +247,7 @@ class Security(_SecurityConfigProperties):
          or ``reset``
         :return: URLSafeTimedSerializer
         """
-        salt = app.config.get(f'SECURITY_{name.upper()}_SALT', f'security-{name}-salt')
+        salt = app.config.get(f"SECURITY_{name.upper()}_SALT", f"security-{name}-salt")
         return URLSafeTimedSerializer(secret_key=app.config.SECRET_KEY, salt=salt)
 
     def _identity_loader(self) -> Union[Identity, None]:
@@ -248,10 +262,10 @@ class Security(_SecurityConfigProperties):
         """
         Callback that runs whenever a new identity has been loaded.
         """
-        if hasattr(current_user, 'id'):
+        if hasattr(current_user, "id"):
             identity.provides.add(UserNeed(current_user.id))
 
-        for role in getattr(current_user, 'roles', []):
+        for role in getattr(current_user, "roles", []):
             identity.provides.add(RoleNeed(role.name))
 
         identity.user = current_user
@@ -268,7 +282,9 @@ class Security(_SecurityConfigProperties):
             token = data.get(args_key, token)
 
         try:
-            data = self.remember_token_serializer.loads(token, max_age=self.token_max_age)
+            data = self.remember_token_serializer.loads(
+                token, max_age=self.token_max_age
+            )
             user = self.user_manager.get(data[0])
             if user and self.security_utils_service.verify_hash(data[1], user.password):
                 return user

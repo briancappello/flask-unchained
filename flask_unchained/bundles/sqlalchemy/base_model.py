@@ -15,6 +15,7 @@ class BaseModel(_BaseModel):
     """
     Base model class
     """
+
     _meta_options_factory_class = ModelMetaOptionsFactory
     gettext_fn = _
 

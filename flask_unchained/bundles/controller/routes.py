@@ -17,11 +17,12 @@ Methods = Union[List[str], Tuple[str], Set[str]]
 RouteGenerator = Iterable[Route]
 
 
-def controller(url_prefix_or_controller_cls: Union[str, Type[Controller]],
-               controller_cls: Optional[Type[Controller]] = None,
-               *,
-               rules: Optional[Iterable[Union[Route, RouteGenerator]]] = None,
-               ) -> RouteGenerator:
+def controller(
+    url_prefix_or_controller_cls: Union[str, Type[Controller]],
+    controller_cls: Optional[Type[Controller]] = None,
+    *,
+    rules: Optional[Iterable[Union[Route, RouteGenerator]]] = None,
+) -> RouteGenerator:
     """
     This function is used to register a controller class's routes.
 
@@ -57,7 +58,8 @@ def controller(url_prefix_or_controller_cls: Union[str, Type[Controller]],
                   from the controller
     """
     url_prefix, controller_cls = _normalize_args(
-        url_prefix_or_controller_cls, controller_cls, _is_controller_cls)
+        url_prefix_or_controller_cls, controller_cls, _is_controller_cls
+    )
     url_prefix = url_prefix or controller_cls.Meta.url_prefix
 
     routes = []
@@ -72,18 +74,21 @@ def controller(url_prefix_or_controller_cls: Union[str, Type[Controller]],
             else:
                 routes.append(route)
 
-    yield from _normalize_controller_routes(routes, controller_cls,
-                                            url_prefix=url_prefix)
+    yield from _normalize_controller_routes(
+        routes, controller_cls, url_prefix=url_prefix
+    )
 
 
-def delete(rule: str,
-           cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
-           *,
-           defaults: Optional[Defaults] = _missing,
-           endpoint: Optional[str] = _missing,
-           is_member: Optional[bool] = _missing,
-           only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
-           **rule_options) -> RouteGenerator:
+def delete(
+    rule: str,
+    cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
+    *,
+    defaults: Optional[Defaults] = _missing,
+    endpoint: Optional[str] = _missing,
+    is_member: Optional[bool] = _missing,
+    only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
+    **rule_options,
+) -> RouteGenerator:
     """
     Like :func:`rule`, except specifically for HTTP DELETE requests.
 
@@ -96,21 +101,29 @@ def delete(rule: str,
     :param rule_options: Keyword arguments that ultimately end up getting passed on to
                          :class:`~werkzeug.routing.Rule`
     """
-    rule_options.pop('methods', None)
-    yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
-                endpoint=endpoint, is_member=is_member, methods=['DELETE'],
-                only_if=only_if, **rule_options)
+    rule_options.pop("methods", None)
+    yield Route(
+        rule,
+        cls_method_name_or_view_fn,
+        defaults=defaults,
+        endpoint=endpoint,
+        is_member=is_member,
+        methods=["DELETE"],
+        only_if=only_if,
+        **rule_options,
+    )
 
 
-def func(rule_or_view_func: Union[str, Callable],
-         view_func: Optional[Callable] = _missing,
-         blueprint: Optional[Blueprint] = _missing,
-         defaults: Optional[Defaults] = _missing,
-         endpoint: Optional[str] = _missing,
-         methods: Optional[Methods] = _missing,
-         only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
-         **rule_options,
-         ) -> RouteGenerator:
+def func(
+    rule_or_view_func: Union[str, Callable],
+    view_func: Optional[Callable] = _missing,
+    blueprint: Optional[Blueprint] = _missing,
+    defaults: Optional[Defaults] = _missing,
+    endpoint: Optional[str] = _missing,
+    methods: Optional[Methods] = _missing,
+    only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
+    **rule_options,
+) -> RouteGenerator:
     """
     This function allows to register legacy view functions as routes, eg::
 
@@ -151,15 +164,26 @@ def func(rule_or_view_func: Union[str, Callable],
         existing_route = existing_routes[0]
     else:
         routes_by_rule = {route.rule: route for route in existing_routes}
-        lookup_rule = (rule if isinstance(rule, str)
-                       else method_name_to_url(view_func.__name__))
+        lookup_rule = (
+            rule if isinstance(rule, str) else method_name_to_url(view_func.__name__)
+        )
         existing_route = routes_by_rule.get(lookup_rule, None)
 
-    route = Route(rule or (existing_route.rule if existing_route
-                           else method_name_to_url(view_func.__name__)),
-                  view_func, blueprint=blueprint, defaults=defaults,
-                  endpoint=endpoint, methods=methods, only_if=only_if,
-                  **rule_options)
+    route = Route(
+        rule
+        or (
+            existing_route.rule
+            if existing_route
+            else method_name_to_url(view_func.__name__)
+        ),
+        view_func,
+        blueprint=blueprint,
+        defaults=defaults,
+        endpoint=endpoint,
+        methods=methods,
+        only_if=only_if,
+        **rule_options,
+    )
 
     if not existing_route:
         yield route
@@ -167,15 +191,16 @@ def func(rule_or_view_func: Union[str, Callable],
         yield _inherit_route_options(route, existing_route)
 
 
-def get(rule: str,
-        cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
-        *,
-        defaults: Optional[Defaults] = _missing,
-        endpoint: Optional[str] = _missing,
-        is_member: Optional[bool] = _missing,
-        only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
-        **rule_options,
-        ) -> RouteGenerator:
+def get(
+    rule: str,
+    cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
+    *,
+    defaults: Optional[Defaults] = _missing,
+    endpoint: Optional[str] = _missing,
+    is_member: Optional[bool] = _missing,
+    only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
+    **rule_options,
+) -> RouteGenerator:
     """
     Like :func:`rule`, except specifically for HTTP GET requests.
 
@@ -188,19 +213,27 @@ def get(rule: str,
     :param rule_options: Keyword arguments that ultimately end up getting passed on to
                          :class:`~werkzeug.routing.Rule`
     """
-    rule_options.pop('methods', None)
-    yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
-                endpoint=endpoint, is_member=is_member, methods=['GET'],
-                only_if=only_if, **rule_options)
+    rule_options.pop("methods", None)
+    yield Route(
+        rule,
+        cls_method_name_or_view_fn,
+        defaults=defaults,
+        endpoint=endpoint,
+        is_member=is_member,
+        methods=["GET"],
+        only_if=only_if,
+        **rule_options,
+    )
 
 
-def include(url_prefix_or_module_name: str,
-            module_name: Optional[str] = None,
-            *,
-            attr: str = 'routes',
-            exclude: Optional[Endpoints] = None,
-            only: Optional[Endpoints] = None,
-            ) -> RouteGenerator:
+def include(
+    url_prefix_or_module_name: str,
+    module_name: Optional[str] = None,
+    *,
+    attr: str = "routes",
+    exclude: Optional[Endpoints] = None,
+    only: Optional[Endpoints] = None,
+) -> RouteGenerator:
     """
     Include the routes from another module at that point in the tree. For example::
 
@@ -250,8 +283,9 @@ def include(url_prefix_or_module_name: str,
     try:
         routes = getattr(module, attr)()
     except AttributeError as e:
-        raise AttributeError(f'Could not find a variable named `{attr}` '
-                             f'in the {module_name} module!') from e
+        raise AttributeError(
+            f"Could not find a variable named `{attr}` " f"in the {module_name} module!"
+        ) from e
 
     routes = _reduce_routes(routes, exclude=exclude, only=only)
     if url_prefix:
@@ -260,15 +294,16 @@ def include(url_prefix_or_module_name: str,
         yield from routes
 
 
-def patch(rule: str,
-          cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
-          *,
-          defaults: Optional[Defaults] = _missing,
-          endpoint: Optional[str] = _missing,
-          is_member: Optional[bool] = _missing,
-          only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
-          **rule_options,
-          ) -> RouteGenerator:
+def patch(
+    rule: str,
+    cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
+    *,
+    defaults: Optional[Defaults] = _missing,
+    endpoint: Optional[str] = _missing,
+    is_member: Optional[bool] = _missing,
+    only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
+    **rule_options,
+) -> RouteGenerator:
     """
     Like :func:`rule`, except specifically for HTTP PATCH requests.
 
@@ -281,21 +316,29 @@ def patch(rule: str,
     :param rule_options: Keyword arguments that ultimately end up getting passed on to
                          :class:`~werkzeug.routing.Rule`
     """
-    rule_options.pop('methods', None)
-    yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
-                endpoint=endpoint, is_member=is_member, methods=['PATCH'],
-                only_if=only_if, **rule_options)
+    rule_options.pop("methods", None)
+    yield Route(
+        rule,
+        cls_method_name_or_view_fn,
+        defaults=defaults,
+        endpoint=endpoint,
+        is_member=is_member,
+        methods=["PATCH"],
+        only_if=only_if,
+        **rule_options,
+    )
 
 
-def post(rule: str,
-         cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
-         *,
-         defaults: Optional[Defaults] = _missing,
-         endpoint: Optional[str] = _missing,
-         is_member: Optional[bool] = _missing,
-         only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
-         **rule_options,
-         ) -> RouteGenerator:
+def post(
+    rule: str,
+    cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
+    *,
+    defaults: Optional[Defaults] = _missing,
+    endpoint: Optional[str] = _missing,
+    is_member: Optional[bool] = _missing,
+    only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
+    **rule_options,
+) -> RouteGenerator:
     """
     Like :func:`rule`, except specifically for HTTP POST requests.
 
@@ -308,15 +351,23 @@ def post(rule: str,
     :param rule_options: Keyword arguments that ultimately end up getting passed on to
                          :class:`~werkzeug.routing.Rule`
     """
-    rule_options.pop('methods', None)
-    yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
-                endpoint=endpoint, is_member=is_member, methods=['POST'],
-                only_if=only_if, **rule_options)
+    rule_options.pop("methods", None)
+    yield Route(
+        rule,
+        cls_method_name_or_view_fn,
+        defaults=defaults,
+        endpoint=endpoint,
+        is_member=is_member,
+        methods=["POST"],
+        only_if=only_if,
+        **rule_options,
+    )
 
 
-def prefix(url_prefix: str,
-           children: Iterable[Union[Route, RouteGenerator]],
-           ) -> RouteGenerator:
+def prefix(
+    url_prefix: str,
+    children: Iterable[Union[Route, RouteGenerator]],
+) -> RouteGenerator:
     """
     Sets a prefix on all of the child routes passed to it. It also supports nesting, eg::
 
@@ -336,20 +387,22 @@ def prefix(url_prefix: str,
     """
     for route in _reduce_routes(children):
         route = route.copy()
-        route.rule = join(url_prefix, route.rule,
-                          trailing_slash=route.rule.endswith('/'))
+        route.rule = join(
+            url_prefix, route.rule, trailing_slash=route.rule.endswith("/")
+        )
         yield route
 
 
-def put(rule: str,
-        cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
-        *,
-        defaults: Optional[Defaults] = _missing,
-        endpoint: Optional[str] = _missing,
-        is_member: Optional[bool] = _missing,
-        only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
-        **rule_options,
-        ) -> RouteGenerator:
+def put(
+    rule: str,
+    cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
+    *,
+    defaults: Optional[Defaults] = _missing,
+    endpoint: Optional[str] = _missing,
+    is_member: Optional[bool] = _missing,
+    only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
+    **rule_options,
+) -> RouteGenerator:
     """
     Like :func:`rule`, except specifically for HTTP PUT requests.
 
@@ -362,20 +415,28 @@ def put(rule: str,
     :param rule_options: Keyword arguments that ultimately end up getting passed on to
                          :class:`~werkzeug.routing.Rule`
     """
-    rule_options.pop('methods', None)
-    yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
-                endpoint=endpoint, is_member=is_member, methods=['PUT'],
-                only_if=only_if, **rule_options)
+    rule_options.pop("methods", None)
+    yield Route(
+        rule,
+        cls_method_name_or_view_fn,
+        defaults=defaults,
+        endpoint=endpoint,
+        is_member=is_member,
+        methods=["PUT"],
+        only_if=only_if,
+        **rule_options,
+    )
 
 
-def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
-             resource_cls: Optional[Type[Resource]] = None,
-             *,
-             member_param: Optional[str] = None,
-             unique_member_param: Optional[str] = None,
-             rules: Optional[Iterable[Union[Route, RouteGenerator]]] = None,
-             subresources: Optional[Iterable[RouteGenerator]] = None,
-             ) -> RouteGenerator:
+def resource(
+    url_prefix_or_resource_cls: Union[str, Type[Resource]],
+    resource_cls: Optional[Type[Resource]] = None,
+    *,
+    member_param: Optional[str] = None,
+    unique_member_param: Optional[str] = None,
+    rules: Optional[Iterable[Union[Route, RouteGenerator]]] = None,
+    subresources: Optional[Iterable[RouteGenerator]] = None,
+) -> RouteGenerator:
     """
     This function is used to register a :class:`Resource`'s routes.
 
@@ -423,7 +484,8 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
     :param subresources: An optional list of subresources.
     """
     url_prefix, resource_cls = _normalize_args(
-        url_prefix_or_resource_cls, resource_cls, _is_resource_cls)
+        url_prefix_or_resource_cls, resource_cls, _is_resource_cls
+    )
     member_param = member_param or resource_cls.Meta.member_param
     unique_member_param = unique_member_param or resource_cls.Meta.unique_member_param
     url_prefix = url_prefix or resource_cls.Meta.url_prefix
@@ -433,13 +495,19 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
     if rules is not None:
         routes = {route.method_name: route for route in _reduce_routes(rules)}
         for method_name, method_route in existing_routes.items():
-            if method_name not in routes and method_name in resource_cls.resource_methods:
+            if (
+                method_name not in routes
+                and method_name in resource_cls.resource_methods
+            ):
                 routes[method_name] = method_route
 
-    yield from _normalize_controller_routes(routes.values(), resource_cls,
-                                            url_prefix=url_prefix,
-                                            member_param=member_param,
-                                            unique_member_param=unique_member_param)
+    yield from _normalize_controller_routes(
+        routes.values(),
+        resource_cls,
+        url_prefix=url_prefix,
+        member_param=member_param,
+        unique_member_param=unique_member_param,
+    )
 
     for subroute in _reduce_routes(subresources):
         subroute._parent_resource_cls = resource_cls
@@ -447,21 +515,28 @@ def resource(url_prefix_or_resource_cls: Union[str, Type[Resource]],
         subroute._unique_member_param = unique_member_param
         subroute = subroute.copy()
         subroute.rule = rename_parent_resource_param_name(
-            subroute, rule=join(url_prefix, member_param, subroute.rule,
-                                trailing_slash=subroute.rule.endswith('/')))
+            subroute,
+            rule=join(
+                url_prefix,
+                member_param,
+                subroute.rule,
+                trailing_slash=subroute.rule.endswith("/"),
+            ),
+        )
         yield subroute
 
 
-def rule(rule: str,
-         cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
-         *,
-         defaults: Optional[Defaults] = _missing,
-         endpoint: Optional[str] = _missing,
-         is_member: Optional[bool] = _missing,
-         methods: Optional[Methods] = _missing,
-         only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
-         **rule_options,
-         ) -> RouteGenerator:
+def rule(
+    rule: str,
+    cls_method_name_or_view_fn: Optional[Union[str, Callable]] = None,
+    *,
+    defaults: Optional[Defaults] = _missing,
+    endpoint: Optional[str] = _missing,
+    is_member: Optional[bool] = _missing,
+    methods: Optional[Methods] = _missing,
+    only_if: Optional[Union[bool, Callable[[FlaskUnchained], bool]]] = _missing,
+    **rule_options,
+) -> RouteGenerator:
     """
     Used to specify customizations to the route settings of class-based view function.
     Unspecified kwargs will be inherited from the route decorated on each view.
@@ -494,9 +569,16 @@ def rule(rule: str,
                     register this route with the app.
     :param rule_options: Other kwargs passed on to :class:`~werkzeug.routing.Rule`.
     """
-    yield Route(rule, cls_method_name_or_view_fn, defaults=defaults,
-                endpoint=endpoint, is_member=is_member, methods=methods,
-                only_if=only_if, **rule_options)
+    yield Route(
+        rule,
+        cls_method_name_or_view_fn,
+        defaults=defaults,
+        endpoint=endpoint,
+        is_member=is_member,
+        methods=methods,
+        only_if=only_if,
+        **rule_options,
+    )
 
 
 def _inherit_route_options(parent: Route, child: Route):
@@ -517,21 +599,26 @@ def _inherit_route_options(parent: Route, child: Route):
 
 
 def _is_controller_cls(controller_cls, has_rule):
-    is_controller = (isinstance(controller_cls, type)
-                     and issubclass(controller_cls, Controller))
+    is_controller = isinstance(controller_cls, type) and issubclass(
+        controller_cls, Controller
+    )
     is_resource = is_controller and issubclass(controller_cls, Resource)
     if is_controller and not is_resource:
         return True
     elif is_resource:
-        raise TypeError(f'please use the resource function to include '
-                        f'{controller_cls}')
+        raise TypeError(
+            f"please use the resource function to include " f"{controller_cls}"
+        )
 
     if has_rule:
-        raise ValueError('the `controller_cls` argument is required when the '
-                         'first argument to controller is a url prefix')
+        raise ValueError(
+            "the `controller_cls` argument is required when the "
+            "first argument to controller is a url prefix"
+        )
     else:
-        raise ValueError('call to controller missing rule and/or '
-                         'controller_cls arguments')
+        raise ValueError(
+            "call to controller missing rule and/or " "controller_cls arguments"
+        )
 
 
 def _is_resource_cls(resource_cls, has_rule):
@@ -539,11 +626,14 @@ def _is_resource_cls(resource_cls, has_rule):
         return True
 
     if has_rule:
-        raise ValueError('the `resource_cls` argument is required when the '
-                         'first argument to resource is a url prefix')
+        raise ValueError(
+            "the `resource_cls` argument is required when the "
+            "first argument to resource is a url prefix"
+        )
     else:
-        raise ValueError('call to resource missing rule and/or '
-                         'resource_cls arguments')
+        raise ValueError(
+            "call to resource missing rule and/or " "resource_cls arguments"
+        )
 
 
 def _is_view_func(view_func, has_rule):
@@ -551,10 +641,12 @@ def _is_view_func(view_func, has_rule):
         return True
 
     if has_rule:
-        raise ValueError('the `view_func` argument is required when the '
-                         'first argument to func is a url rule')
+        raise ValueError(
+            "the `view_func` argument is required when the "
+            "first argument to func is a url rule"
+        )
     else:
-        raise ValueError('the `view_func` argument must be callable')
+        raise ValueError("the `view_func` argument must be callable")
 
 
 def _normalize_args(maybe_str, maybe_none, test):
@@ -566,15 +658,16 @@ def _normalize_args(maybe_str, maybe_none, test):
         elif test(maybe_str, has_rule=False):
             return None, maybe_str
     except ValueError as e:
-        raise ValueError(f'{str(e)} (got {maybe_str}, {maybe_none})')
+        raise ValueError(f"{str(e)} (got {maybe_str}, {maybe_none})")
 
 
-def _normalize_controller_routes(rules: Iterable[Route],
-                                 controller_cls: Type[Controller],
-                                 url_prefix: Optional[str] = None,
-                                 member_param: Optional[str] = None,
-                                 unique_member_param: Optional[str] = None,
-                                 ) -> RouteGenerator:
+def _normalize_controller_routes(
+    rules: Iterable[Route],
+    controller_cls: Type[Controller],
+    url_prefix: Optional[str] = None,
+    member_param: Optional[str] = None,
+    unique_member_param: Optional[str] = None,
+) -> RouteGenerator:
     for route in _reduce_routes(rules):
         route = route.copy()
         route._controller_cls = controller_cls
@@ -585,10 +678,11 @@ def _normalize_controller_routes(rules: Iterable[Route],
         yield route
 
 
-def _reduce_routes(routes: Iterable[Union[Route, RouteGenerator]],
-                   exclude: Optional[Endpoints] = None,
-                   only: Optional[Endpoints] = None,
-                   ) -> RouteGenerator:
+def _reduce_routes(
+    routes: Iterable[Union[Route, RouteGenerator]],
+    exclude: Optional[Endpoints] = None,
+    only: Optional[Endpoints] = None,
+) -> RouteGenerator:
     if not routes:
         return ()
 
@@ -604,21 +698,20 @@ def _reduce_routes(routes: Iterable[Union[Route, RouteGenerator]],
 
 __all__ = [
     # types
-    'Defaults',
-    'Endpoints',
-    'Methods',
-    'RouteGenerator',
-
+    "Defaults",
+    "Endpoints",
+    "Methods",
+    "RouteGenerator",
     # public api
-    'controller',
-    'resource',
-    'func',
-    'include',
-    'prefix',
-    'get',
-    'delete',
-    'post',
-    'patch',
-    'put',
-    'rule'
+    "controller",
+    "resource",
+    "func",
+    "include",
+    "prefix",
+    "get",
+    "delete",
+    "post",
+    "patch",
+    "put",
+    "rule",
 ]

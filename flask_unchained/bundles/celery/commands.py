@@ -17,8 +17,7 @@ def worker():
     """
     Start the celery worker.
     """
-    _run_until_killed('celery worker -A celery_app.celery -l debug',
-                      'celery worker')
+    _run_until_killed("celery worker -A celery_app.celery -l debug", "celery worker")
 
 
 @celery.command()
@@ -26,8 +25,7 @@ def beat():
     """
     Start the celery beat.
     """
-    _run_until_killed('celery beat -A celery_app.celery -l debug',
-                      'celery beat')
+    _run_until_killed("celery beat -A celery_app.celery -l debug", "celery beat")
 
 
 def _run_until_killed(cmd, kill_proc):
@@ -45,7 +43,7 @@ def _run_until_killed(cmd, kill_proc):
         try:
             r = p.wait(timeout=60)
         except subprocess.TimeoutExpired:
-            subprocess.run(f'pkill -9 -f {kill_proc!r}', shell=True)  # nosec
+            subprocess.run(f"pkill -9 -f {kill_proc!r}", shell=True)  # nosec
             sys.exit(1)
         else:
             sys.exit(r)

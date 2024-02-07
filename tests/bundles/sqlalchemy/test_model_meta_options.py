@@ -7,8 +7,10 @@ from tests.bundles.sqlalchemy.conftest import POSTGRES
 class TestModelMetaOptions:
     def test_defaults(self, db):
         meta = db.Model.Meta
-        assert meta._testing_ == 'this setting is only available when ' \
-                                 'os.getenv("SQLA_TESTING") == "True"'
+        assert (
+            meta._testing_ == "this setting is only available when "
+            'os.getenv("SQLA_TESTING") == "True"'
+        )
 
         assert meta.abstract is True
         assert meta.lazy_mapped is False
@@ -20,21 +22,21 @@ class TestModelMetaOptions:
         assert meta.polymorphic_on is None
         assert meta.polymorphic_identity is None
 
-        assert meta.pk == 'id'
-        assert meta.created_at == 'created_at'
-        assert meta.updated_at == 'updated_at'
+        assert meta.pk == "id"
+        assert meta.created_at == "created_at"
+        assert meta.updated_at == "updated_at"
 
     def test_overriding_defaults_with_inheritance(self, db):
         class Over(db.Model):
             class Meta:
                 relationships = {}
-                pk = 'pk'
-                created_at = 'created'
-                updated_at = 'updated'
-                _testing_ = 'over'
+                pk = "pk"
+                created_at = "created"
+                updated_at = "updated"
+                _testing_ = "over"
 
         meta = Over.Meta
-        assert meta._testing_ == 'over'
+        assert meta._testing_ == "over"
         assert meta.abstract is False
         assert meta.lazy_mapped is False
         assert meta.relationships == {}
@@ -44,29 +46,29 @@ class TestModelMetaOptions:
         assert meta.polymorphic_on is None
         assert meta.polymorphic_identity is None
 
-        assert meta.pk == 'pk'
-        assert meta.created_at == 'created'
-        assert meta.updated_at == 'updated'
+        assert meta.pk == "pk"
+        assert meta.created_at == "created"
+        assert meta.updated_at == "updated"
 
         class ExtendsOver(Over):
             class Meta:
                 lazy_mapped = True
-                updated_at = 'extends'
+                updated_at = "extends"
 
         meta = ExtendsOver.Meta
-        assert meta._testing_ == 'over'
+        assert meta._testing_ == "over"
         assert meta.abstract is False
         assert meta.lazy_mapped is True
         assert meta.relationships == {}
 
-        assert meta._base_tablename == 'over'
+        assert meta._base_tablename == "over"
         assert meta.polymorphic is False
         assert meta.polymorphic_on is None
         assert meta.polymorphic_identity is None
 
-        assert meta.pk == 'pk'
-        assert meta.created_at == 'created'
-        assert meta.updated_at == 'extends'
+        assert meta.pk == "pk"
+        assert meta.created_at == "created"
+        assert meta.updated_at == "extends"
 
     @pytest.mark.options(SQLALCHEMY_DATABASE_URI=POSTGRES)
     def test_tablename(self, db):
@@ -79,8 +81,8 @@ class TestModelMetaOptions:
             pass
 
         assert Auto.Meta.table is None
-        assert '__tablename__' not in Auto.Meta._mcs_args.clsdict
-        assert Auto.__tablename__ == 'auto'
+        assert "__tablename__" not in Auto.Meta._mcs_args.clsdict
+        assert Auto.__tablename__ == "auto"
 
         class DeclaredAttr(NotLazy):
             @db.declared_attr
@@ -88,11 +90,11 @@ class TestModelMetaOptions:
                 return cls.__name__.lower()
 
         assert DeclaredAttr.Meta.table is None
-        assert DeclaredAttr.__tablename__ == 'declaredattr'
+        assert DeclaredAttr.__tablename__ == "declaredattr"
 
         class Manual(NotLazy):
-            __tablename__ = 'manuals'
+            __tablename__ = "manuals"
 
-        assert Manual.Meta.table == 'manuals'
-        assert Manual.Meta._mcs_args.clsdict['__tablename__'] == 'manuals'
-        assert Manual.__tablename__ == 'manuals'
+        assert Manual.Meta.table == "manuals"
+        assert Manual.Meta._mcs_args.clsdict["__tablename__"] == "manuals"
+        assert Manual.__tablename__ == "manuals"

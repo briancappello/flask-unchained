@@ -27,9 +27,10 @@ class SecurityUtilsService(Service):
 
         if salt is None:
             raise RuntimeError(
-                'The configuration value `SECURITY_PASSWORD_SALT` must '
-                'not be None when the value of `SECURITY_PASSWORD_HASH` is '
-                'set to "%s"' % self.security.password_hash)
+                "The configuration value `SECURITY_PASSWORD_SALT` must "
+                "not be None when the value of `SECURITY_PASSWORD_HASH` is "
+                'set to "%s"' % self.security.password_hash
+            )
 
         h = hmac.new(encode_string(salt), encode_string(password), hashlib.sha512)
         return base64.b64encode(h.digest())
@@ -38,8 +39,10 @@ class SecurityUtilsService(Service):
         """
         Returns the user's authentication token.
         """
-        data = [str(user.id),
-                self.security.hashing_context.hash(encode_string(user._password))]
+        data = [
+            str(user.id),
+            self.security.hashing_context.hash(encode_string(user._password)),
+        ]
         return self.security.remember_token_serializer.dumps(data)
 
     def verify_password(self, user, password):
@@ -54,7 +57,8 @@ class SecurityUtilsService(Service):
         """
         if self.use_double_hash(user.password):
             verified = self.security.pwd_context.verify(
-                self.get_hmac(password), user.password)
+                self.get_hmac(password), user.password
+            )
         else:
             # Try with original password.
             verified = self.security.pwd_context.verify(password, user.password)
@@ -73,12 +77,14 @@ class SecurityUtilsService(Service):
         :param password: The plaintext password to hash
         """
         if self.use_double_hash():
-            password = self.get_hmac(password).decode('ascii')
+            password = self.get_hmac(password).decode("ascii")
 
         return self.security.pwd_context.hash(
             password,
             **current_app.config.SECURITY_PASSWORD_HASH_OPTIONS.get(
-                current_app.config.SECURITY_PASSWORD_HASH, {}))
+                current_app.config.SECURITY_PASSWORD_HASH, {}
+            )
+        )
 
     def hash_data(self, data):
         """
@@ -91,7 +97,8 @@ class SecurityUtilsService(Service):
         Verify a hash in the security token hashing context.
         """
         return self.security.hashing_context.verify(
-            encode_string(compare_data), hashed_data)
+            encode_string(compare_data), hashed_data
+        )
 
     def use_double_hash(self, password_hash=None):
         """
@@ -99,14 +106,16 @@ class SecurityUtilsService(Service):
         """
         single_hash = current_app.config.SECURITY_PASSWORD_SINGLE_HASH
         if single_hash and self.security.password_salt:
-            raise RuntimeError('You may not specify a salt with '
-                               'SECURITY_PASSWORD_SINGLE_HASH')
+            raise RuntimeError(
+                "You may not specify a salt with " "SECURITY_PASSWORD_SINGLE_HASH"
+            )
 
         if password_hash is None:
-            is_plaintext = self.security.password_hash == 'plaintext'
+            is_plaintext = self.security.password_hash == "plaintext"
         else:
-            is_plaintext = \
-                self.security.pwd_context.identify(password_hash) == 'plaintext'
+            is_plaintext = (
+                self.security.pwd_context.identify(password_hash) == "plaintext"
+            )
 
         return not (is_plaintext or single_hash)
 
@@ -129,7 +138,8 @@ class SecurityUtilsService(Service):
         :param token: The confirmation token
         """
         expired, invalid, user, token_data = self.get_token_status(
-            token, 'confirm', 'SECURITY_CONFIRM_EMAIL_WITHIN', return_data=True)
+            token, "confirm", "SECURITY_CONFIRM_EMAIL_WITHIN", return_data=True
+        )
 
         if not invalid and user:
             _, token_email_hash = token_data
@@ -157,11 +167,14 @@ class SecurityUtilsService(Service):
         :param token: The password reset token
         """
         expired, invalid, user, data = self.get_token_status(
-            token, 'reset', 'SECURITY_RESET_PASSWORD_WITHIN', return_data=True)
+            token, "reset", "SECURITY_RESET_PASSWORD_WITHIN", return_data=True
+        )
 
-        if (not invalid
-                and user.password
-                and not self.verify_hash(data[1], user.password)):
+        if (
+            not invalid
+            and user.password
+            and not self.verify_hash(data[1], user.password)
+        ):
             invalid = True
 
         return expired, invalid, user
@@ -177,7 +190,7 @@ class SecurityUtilsService(Service):
                         the following: ``SECURITY_CONFIRM_EMAIL_WITHIN`` or
                         ``SECURITY_RESET_PASSWORD_WITHIN``
         """
-        serializer = getattr(self.security, serializer + '_serializer')
+        serializer = getattr(self.security, serializer + "_serializer")
 
         td = self.get_within_delta(max_age)
         max_age = td.seconds + td.days * 24 * 3600
@@ -225,7 +238,7 @@ class SecurityUtilsService(Service):
     def get_identity_attributes():
         attrs = current_app.config.SECURITY_USER_IDENTITY_ATTRIBUTES
         try:
-            attrs = [f.strip() for f in attrs.split(',')]
+            attrs = [f.strip() for f in attrs.split(",")]
         except AttributeError:
             pass
         return attrs
@@ -249,5 +262,5 @@ def encode_string(string):
     :param string: The string to encode"""
 
     if isinstance(string, str):
-        string = string.encode('utf-8')
+        string = string.encode("utf-8")
     return string

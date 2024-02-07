@@ -20,7 +20,8 @@ class EmailValidator(BaseValidator):
     user_regex = re.compile(
         r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*\Z"  # dot-atom
         r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-\011\013\014\016-\177])*"\Z)',  # quoted-string
-        re.IGNORECASE)
+        re.IGNORECASE,
+    )
 
     def __init__(self, message=None):
         super().__init__(message)
@@ -33,12 +34,12 @@ class EmailValidator(BaseValidator):
 
         message = self.msg
         if message is None:
-            message = _('flask_unchained.bundles.security:email_invalid')
+            message = _("flask_unchained.bundles.security:email_invalid")
 
-        if not value or '@' not in value:
+        if not value or "@" not in value:
             raise ValidationError(message)
 
-        user_part, domain_part = value.rsplit('@', 1)
+        user_part, domain_part = value.rsplit("@", 1)
 
         if not self.user_regex.match(user_part):
             raise ValidationError(message)

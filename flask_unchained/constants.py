@@ -28,23 +28,23 @@ TEST
     Used to specify the test environment.
 """
 
-DEV = 'development'
-PROD = 'production'
-STAGING = 'staging'
-TEST = 'test'
+DEV = "development"
+PROD = "production"
+STAGING = "staging"
+TEST = "test"
 
-ENV_ALIASES = {'dev': DEV, 'prod': PROD}
+ENV_ALIASES = {"dev": DEV, "prod": PROD}
 VALID_ENVS = [DEV, PROD, STAGING, TEST]
 
-_INJECT_CLS_ATTRS = '__inject_cls_attrs__'
-_DI_AUTOMATICALLY_HANDLED = '__di_automatically_handled__'
+_INJECT_CLS_ATTRS = "__inject_cls_attrs__"
+_DI_AUTOMATICALLY_HANDLED = "__di_automatically_handled__"
 
 
 __all__ = [
-    'DEV',
-    'PROD',
-    'STAGING',
-    'TEST',
-    'ENV_ALIASES',
-    'VALID_ENVS',
+    "DEV",
+    "PROD",
+    "STAGING",
+    "TEST",
+    "ENV_ALIASES",
+    "VALID_ENVS",
 ]

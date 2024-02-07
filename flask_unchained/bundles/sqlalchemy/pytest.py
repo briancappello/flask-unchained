@@ -3,7 +3,7 @@ import pytest
 from .model_registry import UnchainedModelRegistry  # required import
 
 
-@pytest.fixture(autouse=True, scope='session')
+@pytest.fixture(autouse=True, scope="session")
 def db(app):
     # FIXME definitely need to create test database if it doesn't exist
     db_ext = app.unchained.extensions.db

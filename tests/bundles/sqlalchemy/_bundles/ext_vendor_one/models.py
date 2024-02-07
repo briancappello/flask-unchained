@@ -28,7 +28,7 @@ class OneUser(db.Model):
 
     name = db.Column(db.String)
 
-    roles = db.relationship('OneRole', back_populates='user')
+    roles = db.relationship("OneRole", back_populates="user")
 
 
 class OneRole(db.Model):
@@ -37,5 +37,5 @@ class OneRole(db.Model):
 
     name = db.Column(db.String)
 
-    user_id = db.foreign_key('OneUser')
-    user = db.relationship('OneUser', back_populates='roles')
+    user_id = db.foreign_key("OneUser")
+    user = db.relationship("OneUser", back_populates="roles")

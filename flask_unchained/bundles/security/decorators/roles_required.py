@@ -22,6 +22,7 @@ def roles_required(*roles):
 
     :param roles: The required roles.
     """
+
     def wrapper(fn):
         @wraps(fn)
         def decorated_view(*args, **kwargs):
@@ -30,5 +31,7 @@ def roles_required(*roles):
                 if not perm.can():
                     abort(HTTPStatus.FORBIDDEN)
             return fn(*args, **kwargs)
+
         return decorated_view
+
     return wrapper

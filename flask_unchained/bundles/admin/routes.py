@@ -4,8 +4,12 @@ from .views import AdminSecurityController
 
 
 routes = lambda: [
-    controller('/admin', AdminSecurityController, rules=[
-        rule('/login', 'login', endpoint='admin.login'),
-        rule('/logout', 'logout', endpoint='admin.logout'),
-    ]),
+    controller(
+        "/admin",
+        AdminSecurityController,
+        rules=[
+            rule("/login", "login", endpoint="admin.login"),
+            rule("/logout", "logout", endpoint="admin.logout"),
+        ],
+    ),
 ]

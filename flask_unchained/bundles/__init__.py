@@ -10,17 +10,17 @@ from ..unchained import unchained
 
 
 def _normalize_module_name(module_name):
-    if module_name.endswith('.bundle'):
-        return right_replace(module_name, '.bundle', '')
+    if module_name.endswith(".bundle"):
+        return right_replace(module_name, ".bundle", "")
     return module_name
 
 
 class BundleMetaclass(type):
     def __new__(mcs, name, bases, clsdict):
         # check if the user explicitly set module_name
-        module_name = clsdict.get('module_name')
+        module_name = clsdict.get("module_name")
         if isinstance(module_name, str):
-            clsdict['module_name'] = _normalize_module_name(module_name)
+            clsdict["module_name"] = _normalize_module_name(module_name)
         return super().__new__(mcs, name, bases, clsdict)
 
 
@@ -55,7 +55,7 @@ class _BundleNameDescriptor:
 
     def __get__(self, instance, cls):
         if self.strip_bundle_suffix:
-            return snake_case(right_replace(cls.__name__, 'Bundle', ''))
+            return snake_case(right_replace(cls.__name__, "Bundle", ""))
         return snake_case(cls.__name__)
 
 
@@ -63,8 +63,8 @@ class _BundleStaticFolderDescriptor:
     def __get__(self, instance, cls):
         if cls.is_single_module and issubclass(cls, AppBundle):
             return None  # this would be the same as the top-level static folder registered with Flask
-        if not hasattr(instance, '_static_folder'):
-            instance._static_folder = os.path.join(instance.root_path, 'static')
+        if not hasattr(instance, "_static_folder"):
+            instance._static_folder = os.path.join(instance.root_path, "static")
             if not os.path.exists(instance._static_folder):
                 instance._static_folder = None
         return instance._static_folder
@@ -73,13 +73,13 @@ class _BundleStaticFolderDescriptor:
 class _BundleStaticUrlPathDescriptor:
     def __get__(self, instance, cls):
         if instance._static_folders:
-            return f'/{slugify(cls.name)}/static'
+            return f"/{slugify(cls.name)}/static"
 
 
 class _BundleTemplateFolderDescriptor:
     def __get__(self, instance, cls):
-        if not hasattr(instance, '_template_folder'):
-            instance._template_folder = os.path.join(instance.root_path, 'templates')
+        if not hasattr(instance, "_template_folder"):
+            instance._template_folder = os.path.join(instance.root_path, "templates")
             if not os.path.exists(instance._template_folder):
                 instance._template_folder = None
         return instance._template_folder
@@ -198,8 +198,8 @@ class Bundle(metaclass=BundleMetaclass):
         :param include_self: Whether or not to yield the top-level bundle.
         :param mro: Pass True to yield bundles in Method Resolution Order.
         """
-        supers = self.__class__.__mro__[(0 if include_self else 1):]
-        for bundle_cls in (supers if mro else reversed(supers)):
+        supers = self.__class__.__mro__[(0 if include_self else 1) :]
+        for bundle_cls in supers if mro else reversed(supers):
             if bundle_cls not in {object, AppBundle, Bundle}:
                 if bundle_cls == self.__class__:
                     yield self
@@ -235,7 +235,7 @@ class Bundle(metaclass=BundleMetaclass):
 
         for i, bundle in enumerate(self._iter_class_hierarchy()):
             if bundle.__class__ == self.__class__:
-                return f'{self.name}_{i}'
+                return f"{self.name}_{i}"
 
     @property
     def _static_folders(self) -> List[str]:
@@ -249,8 +249,11 @@ class Bundle(metaclass=BundleMetaclass):
         elif not self._is_top_bundle:
             return []
 
-        return [b.static_folder for b in self._iter_class_hierarchy(mro=True)
-                if b.static_folder and b.name == self.name]
+        return [
+            b.static_folder
+            for b in self._iter_class_hierarchy(mro=True)
+            if b.static_folder and b.name == self.name
+        ]
 
     @property
     def _is_top_bundle(self) -> bool:
@@ -274,35 +277,50 @@ class Bundle(metaclass=BundleMetaclass):
             top_bundle = subclasses[0]
             subclasses = top_bundle.__subclasses__()
 
-        return any(b.name == self.name and b.__class__ != self.__class__
-                   for b in top_bundle()._iter_class_hierarchy())
+        return any(
+            b.name == self.name and b.__class__ != self.__class__
+            for b in top_bundle()._iter_class_hierarchy()
+        )
 
     def __getattr__(self, name):
-        if name in {'before_request', 'after_request', 'teardown_request',
-                    'context_processor', 'url_defaults', 'url_value_preprocessor',
-                    'errorhandler'}:
+        if name in {
+            "before_request",
+            "after_request",
+            "teardown_request",
+            "context_processor",
+            "url_defaults",
+            "url_value_preprocessor",
+            "errorhandler",
+        }:
             from warnings import warn
-            warn('The app has already been initialized. Please register '
-                 f'{name} sooner.')
+
+            warn(
+                "The app has already been initialized. Please register "
+                f"{name} sooner."
+            )
             return
 
         raise AttributeError(name)
 
     def __eq__(self, other):
-        return (isinstance(other, Bundle)
-                and self.__class__ == other.__class__
-                and self.module_name == other.module_name)
+        return (
+            isinstance(other, Bundle)
+            and self.__class__ == other.__class__
+            and self.module_name == other.module_name
+        )
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(f'{self.module_name}.{self.__class__.__name__}')
+        return hash(f"{self.module_name}.{self.__class__.__name__}")
 
     def __repr__(self) -> str:
-        return (f'<{self.__class__.__name__} '
-                f'name={self.name!r} '
-                f'module={self.module_name!r}>')
+        return (
+            f"<{self.__class__.__name__} "
+            f"name={self.name!r} "
+            f"module={self.module_name!r}>"
+        )
 
 
 class AppBundleMetaclass(BundleMetaclass):
@@ -310,6 +328,7 @@ class AppBundleMetaclass(BundleMetaclass):
     Metaclass for :class:`~flask_unchained.AppBundle` to automatically set the
     user's subclass on the :class:`~flask_unchained.Unchained` extension instance.
     """
+
     def __init__(cls, name, bases, clsdict):
         super().__init__(name, bases, clsdict)
         unchained._app_bundle_cls = cls
@@ -329,8 +348,8 @@ class AppBundle(Bundle, metaclass=AppBundleMetaclass):
 
 
 __all__ = [
-    'AppBundle',
-    'AppBundleMetaclass',
-    'Bundle',
-    'BundleMetaclass',
+    "AppBundle",
+    "AppBundleMetaclass",
+    "Bundle",
+    "BundleMetaclass",
 ]

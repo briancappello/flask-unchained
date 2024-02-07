@@ -11,16 +11,31 @@ from .types import BigInteger, DateTime
 
 # a bit of hackery to make type-hinting in PyCharm work correctly
 from sqlalchemy.orm.relationships import RelationshipProperty
+
+
 class _relationship_type_hinter_(RelationshipProperty):
     # implement __call__ to silence PyCharm's "not callable" warning
     def __call__(self, *args, **kwargs):
         pass
 
 
-def _column_type_hinter_(name=None, type=None, *args, autoincrement='auto',
-                         default=None, doc=None, key=None, index=False,
-                         info=None, nullable=False, onupdate=None,
-                         primary_key=False, server_default=None,
-                         server_onupdate=None, quote=None, unique=False,
-                         system=False):
+def _column_type_hinter_(
+    name=None,
+    type=None,
+    *args,
+    autoincrement="auto",
+    default=None,
+    doc=None,
+    key=None,
+    index=False,
+    info=None,
+    nullable=False,
+    onupdate=None,
+    primary_key=False,
+    server_default=None,
+    server_onupdate=None,
+    quote=None,
+    unique=False,
+    system=False
+):
     pass

@@ -8,12 +8,12 @@ class MyExtension:
 
     def init_app(self, app):
         self.app = app
-        self.name = 'my ext!'
+        self.name = "my ext!"
 
 
 myext = MyExtension()
 
 
 EXTENSIONS = {
-    'myext': (myext, ['awesome']),
+    "myext": (myext, ["awesome"]),
 }

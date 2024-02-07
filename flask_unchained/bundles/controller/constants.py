@@ -1,9 +1,9 @@
-CREATE = 'create'
-DELETE = 'delete'
-GET = 'get'
-LIST = 'list'
-PATCH = 'patch'
-PUT = 'put'
+CREATE = "create"
+DELETE = "delete"
+GET = "get"
+LIST = "list"
+PATCH = "patch"
+PUT = "put"
 
 RESOURCE_INDEX_METHODS = (LIST, CREATE)
 RESOURCE_MEMBER_METHODS = (GET, DELETE, PATCH, PUT)

@@ -7,7 +7,7 @@ from graphql import GraphQLError
 from . import types
 
 
-session_manager: SessionManager = unchained.get_local_proxy('session_manager')
+session_manager: SessionManager = unchained.get_local_proxy("session_manager")
 
 
 class CreateParent(graphene.Mutation):
@@ -20,10 +20,11 @@ class CreateParent(graphene.Mutation):
 
     def mutate(self, info, children, **kwargs):
         if children:
-            children = (session_manager
-                            .query(types.Child._meta.model)
-                            .filter(types.Child._meta.model.id.in_(children))
-                            .all())
+            children = (
+                session_manager.query(types.Child._meta.model)
+                .filter(types.Child._meta.model.id.in_(children))
+                .all()
+            )
         try:
             parent = types.Parent._meta.model(children=children, **kwargs)
         except ValidationErrors as e:
@@ -64,10 +65,11 @@ class EditParent(graphene.Mutation):
             raise GraphQLError(str(e))
 
         if children:
-            parent.children = (session_manager
-                                   .query(types.Child._meta.model)
-                                   .filter(types.Child._meta.model.id.in_(children))
-                                   .all())
+            parent.children = (
+                session_manager.query(types.Child._meta.model)
+                .filter(types.Child._meta.model.id.in_(children))
+                .all()
+            )
 
         session_manager.save(parent, commit=True)
         return EditParent(parent=parent, success=True)

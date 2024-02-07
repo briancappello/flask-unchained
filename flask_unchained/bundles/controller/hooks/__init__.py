@@ -4,7 +4,7 @@ from .register_routes_hook import RegisterRoutesHook
 
 
 __all__ = [
-    'RegisterBlueprintsHook',
-    'RegisterBundleBlueprintsHook',
-    'RegisterRoutesHook',
+    "RegisterBlueprintsHook",
+    "RegisterBundleBlueprintsHook",
+    "RegisterRoutesHook",
 ]

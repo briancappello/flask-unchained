@@ -1,5 +1,4 @@
-from flask_session import (
-    SqlAlchemySessionInterface as BaseSqlAlchemySessionInterface)
+from flask_session import SqlAlchemySessionInterface as BaseSqlAlchemySessionInterface
 
 try:
     from sqlalchemy import types
@@ -8,15 +7,16 @@ except ImportError:
 
 
 class SqlAlchemySessionInterface(BaseSqlAlchemySessionInterface):
-    def __init__(self,
-                 db,
-                 table,
-                 key_prefix,
-                 use_signer=False,
-                 permanent=True,
-                 model_class=None,
-                 sid_length=32,
-                 ):
+    def __init__(
+        self,
+        db,
+        table,
+        key_prefix,
+        use_signer=False,
+        permanent=True,
+        model_class=None,
+        sid_length=32,
+    ):
         self.db = db
         self.key_prefix = key_prefix
         self.use_signer = use_signer
@@ -42,6 +42,6 @@ class SqlAlchemySessionInterface(BaseSqlAlchemySessionInterface):
                 self.expiry = expiry
 
             def __repr__(self):
-                return '<Session data %s>' % self.data
+                return "<Session data %s>" % self.data
 
         self.sql_session_model = Session

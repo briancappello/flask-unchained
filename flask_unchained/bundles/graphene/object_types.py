@@ -3,12 +3,17 @@ import graphene
 from flask_unchained import unchained
 from flask_unchained.bundles.sqlalchemy.sqla.types import BigInteger
 from graphene.utils.subclass_with_meta import (
-    SubclassWithMeta_Meta as BaseObjectTypeMetaclass)
+    SubclassWithMeta_Meta as BaseObjectTypeMetaclass,
+)
 from graphene_sqlalchemy import SQLAlchemyObjectType as BaseSQLAlchemyObjectType
 from graphene_sqlalchemy.converter import (
-    convert_sqlalchemy_type, get_column_doc, is_column_nullable)
+    convert_sqlalchemy_type,
+    get_column_doc,
+    is_column_nullable,
+)
 from graphene_sqlalchemy.types import (
-    SQLAlchemyObjectTypeOptions as BaseSQLAlchemyObjectTypeOptions)
+    SQLAlchemyObjectTypeOptions as BaseSQLAlchemyObjectTypeOptions,
+)
 from sqlalchemy import types
 from sqlalchemy.orm import class_mapper
 
@@ -36,6 +41,7 @@ class SQLAlchemyObjectTypeOptions(BaseSQLAlchemyObjectTypeOptions):
     supports the same options as
     :class:`graphene_sqlalchemy.types.SQLAlchemyObjectTypeOptions`.
     """
+
     def __init__(self, class_type):
         super().__init__(class_type)
         self._model = None
@@ -99,19 +105,31 @@ class SQLAlchemyObjectType(BaseSQLAlchemyObjectType):
 
             parent = graphene.Field(Parent)
     """
+
     class Meta:
         abstract = True
 
     @classmethod
-    def __init_subclass_with_meta__(cls, model=None, registry=None,
-                                    skip_registry=False,
-                                    only_fields=(), exclude_fields=(),
-                                    connection=None, connection_class=None,
-                                    use_connection=None, interfaces=(),
-                                    id=None, _meta=None, **options):
+    def __init_subclass_with_meta__(
+        cls,
+        model=None,
+        registry=None,
+        skip_registry=False,
+        only_fields=(),
+        exclude_fields=(),
+        connection=None,
+        connection_class=None,
+        use_connection=None,
+        interfaces=(),
+        id=None,
+        _meta=None,
+        **options,
+    ):
         if _meta and not isinstance(_meta, SQLAlchemyObjectTypeOptions):
-            raise TypeError(f'Your _meta ObjectTypeOptions class must extend '
-                            f'{SQLAlchemyObjectTypeOptions.__qualname__}')
+            raise TypeError(
+                f"Your _meta ObjectTypeOptions class must extend "
+                f"{SQLAlchemyObjectTypeOptions.__qualname__}"
+            )
 
         # make sure we provide graphene the correct mapped model class
         if unchained._models_initialized:
@@ -122,11 +140,19 @@ class SQLAlchemyObjectType(BaseSQLAlchemyObjectType):
             class_mapper(model)
 
         return super().__init_subclass_with_meta__(
-            model=model, registry=registry, skip_registry=skip_registry,
-            only_fields=only_fields, exclude_fields=exclude_fields,
-            connection=connection, connection_class=connection_class,
-            use_connection=use_connection, interfaces=interfaces,
-            id=id, _meta=_meta or SQLAlchemyObjectTypeOptions(cls), **options)
+            model=model,
+            registry=registry,
+            skip_registry=skip_registry,
+            only_fields=only_fields,
+            exclude_fields=exclude_fields,
+            connection=connection,
+            connection_class=connection_class,
+            use_connection=use_connection,
+            interfaces=interfaces,
+            id=id,
+            _meta=_meta or SQLAlchemyObjectTypeOptions(cls),
+            **options,
+        )
 
 
 def _get_field_resolver(field: graphene.Field):
@@ -147,8 +173,8 @@ class QueriesObjectTypeMetaclass(BaseObjectTypeMetaclass):
     def __new__(mcs, name, bases, clsdict):
         fields, lists = [], []
         for attr, value in clsdict.items():
-            resolver = f'resolve_{attr}'
-            if attr.startswith('_') or resolver in clsdict:
+            resolver = f"resolve_{attr}"
+            if attr.startswith("_") or resolver in clsdict:
                 continue
             elif isinstance(value, graphene.Field):
                 fields.append((resolver, value))
@@ -189,6 +215,7 @@ class QueriesObjectType(graphene.ObjectType, metaclass=QueriesObjectTypeMetaclas
             def resolve_children(self, info, **kwargs):
                 return types.Child._meta.model.query.all()
     """
+
     class Meta:
         abstract = True
 
@@ -283,6 +310,7 @@ class MutationsObjectType(graphene.ObjectType):
             delete_parent = mutations.DeleteParent.Field()
             edit_parent = mutations.EditParent.Field()
     """
+
     class Meta:
         abstract = True
 

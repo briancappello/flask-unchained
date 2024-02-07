@@ -32,16 +32,18 @@ class TestRegisterRoutesHook:
 
         with pytest.raises(AttributeError) as e:
             hook.get_explicit_routes(EmptyBundle())
-        assert 'Could not find a variable named `routes`' in str(e.value)
+        assert "Could not find a variable named `routes`" in str(e.value)
 
     def test_run_hook_with_explicit_routes(self, app, hook: RegisterRoutesHook):
         with app.test_request_context():
             hook.run_hook(app, [VendorBundle(), AppBundle()])
 
-            expected = {'one.view_one': 'view_one rendered',
-                        'two.view_two': 'view_two rendered',
-                        'three.view_three': 'view_three rendered',
-                        'four.view_four': 'view_four rendered'}
+            expected = {
+                "one.view_one": "view_one rendered",
+                "two.view_two": "view_two rendered",
+                "three.view_three": "view_three rendered",
+                "four.view_four": "view_four rendered",
+            }
 
             # check endpoints added to store
             assert list(hook.bundle.endpoints.keys()) == list(expected.keys())
@@ -59,12 +61,14 @@ class TestRegisterRoutesHook:
         with app.test_request_context():
             hook.run_hook(app, [VendorBundle(), AutoRouteAppBundle()])
 
-            expected = {'site_controller.index': 'index rendered',
-                        'site_controller.about': 'about rendered',
-                        'views.view_one': 'view_one rendered',
-                        'views.view_two': 'view_two rendered',
-                        'three.view_three': 'view_three rendered',
-                        'four.view_four': 'view_four rendered'}
+            expected = {
+                "site_controller.index": "index rendered",
+                "site_controller.about": "about rendered",
+                "views.view_one": "view_one rendered",
+                "views.view_two": "view_two rendered",
+                "three.view_three": "view_three rendered",
+                "four.view_four": "view_four rendered",
+            }
 
             # check endpoints added to bundle
             assert set(hook.bundle.endpoints.keys()) == set(expected.keys())

@@ -8,7 +8,7 @@
     :license: MIT, see LICENSE for more details
 """
 
-__version__ = '0.9.0'
+__version__ = "0.9.0"
 
 # must be first
 from . import _compat
@@ -27,8 +27,19 @@ from .constants import DEV, PROD, STAGING, TEST
 from .di import Service, injectable
 from .flask_unchained import FlaskUnchained
 from .forms import FlaskForm
-from .routes import (controller, resource, func, include, prefix,
-                     delete, get, patch, post, put, rule)
+from .routes import (
+    controller,
+    resource,
+    func,
+    include,
+    prefix,
+    delete,
+    get,
+    patch,
+    post,
+    put,
+    rule,
+)
 from .unchained import Unchained, unchained
 from .utils import get_boolean_env
 from .views import Controller, Resource

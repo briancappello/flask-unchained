@@ -11,16 +11,20 @@ from py_meta_utils import Singleton
 
 from .bundles import AppBundle, Bundle
 from .constants import DEV, PROD, STAGING, TEST, ENV_ALIASES, VALID_ENVS
-from .exceptions import BundleNotFoundError, CWDImportError, UnchainedConfigNotFoundError
+from .exceptions import (
+    BundleNotFoundError,
+    CWDImportError,
+    UnchainedConfigNotFoundError,
+)
 from .flask_unchained import FlaskUnchained
 from .unchained import unchained
 from .utils import cwd_import
 
 
 def maybe_set_app_factory_from_env():
-    app_factory = os.getenv('UNCHAINED_APP_FACTORY', None)
+    app_factory = os.getenv("UNCHAINED_APP_FACTORY", None)
     if app_factory:
-        module_name, class_name = app_factory.rsplit('.', 1)
+        module_name, class_name = app_factory.rsplit(".", 1)
         app_factory_cls = getattr(cwd_import(module_name), class_name)
         AppFactory.set_singleton_class(app_factory_cls)
 
@@ -38,17 +42,18 @@ class AppFactory(metaclass=Singleton):
 
     REQUIRED_BUNDLES = [
         # these are ordered by first to be loaded
-        'flask_unchained.bundles.controller',
+        "flask_unchained.bundles.controller",
     ]
 
-    def create_app(self,
-                   env: Union[DEV, PROD, STAGING, TEST],
-                   bundles: Optional[List[str]] = None,
-                   *,
-                   _config_overrides: Optional[Dict[str, Any]] = None,
-                   _load_unchained_config: bool = True,
-                   **app_kwargs,
-                   ) -> FlaskUnchained:
+    def create_app(
+        self,
+        env: Union[DEV, PROD, STAGING, TEST],
+        bundles: Optional[List[str]] = None,
+        *,
+        _config_overrides: Optional[Dict[str, Any]] = None,
+        _load_unchained_config: bool = True,
+        **app_kwargs,
+    ) -> FlaskUnchained:
         """
         Flask Unchained Application Factory. Returns an instance of
         :attr:`APP_CLASS` (by default, :class:`~flask_unchained.FlaskUnchained`).
@@ -75,25 +80,34 @@ class AppFactory(metaclass=Singleton):
         """
         env = ENV_ALIASES.get(env, env)
         if env not in VALID_ENVS:
-            valid_envs = [f'{x!r}' for x in VALID_ENVS]
+            valid_envs = [f"{x!r}" for x in VALID_ENVS]
             raise ValueError(f"env must be one of {', '.join(valid_envs)}")
 
         unchained_config = {}
         unchained_config_module = None
         if _load_unchained_config:
             unchained_config_module = self.load_unchained_config(env)
-            unchained_config = {k: v for k, v in vars(unchained_config_module).items()
-                                if not k.startswith('_') and k.isupper()}
-        unchained_config['_CONFIG_OVERRIDES'] = _config_overrides
+            unchained_config = {
+                k: v
+                for k, v in vars(unchained_config_module).items()
+                if not k.startswith("_") and k.isupper()
+            }
+        unchained_config["_CONFIG_OVERRIDES"] = _config_overrides
 
         _, bundles = self.load_bundles(
-            bundle_package_names=bundles or unchained_config.get('BUNDLES', []),
-            unchained_config_module=unchained_config_module)
+            bundle_package_names=bundles or unchained_config.get("BUNDLES", []),
+            unchained_config_module=unchained_config_module,
+        )
 
-        app_import_name = (bundles[-1].module_name.split('.')[0] if bundles
-                           else ('tests' if env == TEST else 'dev_app'))
-        app = self.APP_CLASS(app_import_name, **self.get_app_kwargs(
-            app_kwargs, bundles, env, unchained_config))
+        app_import_name = (
+            bundles[-1].module_name.split(".")[0]
+            if bundles
+            else ("tests" if env == TEST else "dev_app")
+        )
+        app = self.APP_CLASS(
+            app_import_name,
+            **self.get_app_kwargs(app_kwargs, bundles, env, unchained_config),
+        )
         app.env = env
 
         for bundle in bundles:
@@ -122,15 +136,15 @@ class AppFactory(metaclass=Singleton):
         msg = None
         if env == TEST:
             try:
-                return cwd_import('tests._unchained_config')
+                return cwd_import("tests._unchained_config")
             except ImportError as e:
-                msg = f'{e.msg}: Could not find _unchained_config.py in the tests directory'
+                msg = f"{e.msg}: Could not find _unchained_config.py in the tests directory"
 
-        unchained_config_module_name = os.getenv('UNCHAINED_CONFIG', 'unchained_config')
-        flask_app_module_name = os.getenv('FLASK_APP', 'app')
+        unchained_config_module_name = os.getenv("UNCHAINED_CONFIG", "unchained_config")
+        flask_app_module_name = os.getenv("FLASK_APP", "app")
         for module_name in [
             unchained_config_module_name,
-            f'{flask_app_module_name}.config',
+            f"{flask_app_module_name}.config",
             flask_app_module_name,
         ]:
             try:
@@ -138,48 +152,60 @@ class AppFactory(metaclass=Singleton):
             except CWDImportError:
                 pass
             except ModuleNotFoundError as e:
-                if (flask_app_module_name == module_name
-                        or f"No module named '{module_name}'" not in str(e)):
+                if (
+                    flask_app_module_name == module_name
+                    or f"No module named '{module_name}'" not in str(e)
+                ):
                     raise e
 
         if not msg:
-            msg = (f'Could not find the `{unchained_config_module_name}` or '
-                   f'`{flask_app_module_name}` module names in the current working '
-                   f'directory. Hints: are you in the project root? Have you set '
-                   f'the UNCHAINED_CONFIG or FLASK_APP environment variable?')
+            msg = (
+                f"Could not find the `{unchained_config_module_name}` or "
+                f"`{flask_app_module_name}` module names in the current working "
+                f"directory. Hints: are you in the project root? Have you set "
+                f"the UNCHAINED_CONFIG or FLASK_APP environment variable?"
+            )
         raise UnchainedConfigNotFoundError(msg)
 
-    def get_app_kwargs(self,
-                       app_kwargs: Dict[str, Any],
-                       bundles: List[Bundle],
-                       env: Union[DEV, PROD, STAGING, TEST],
-                       unchained_config: Dict[str, Any],
-                       ) -> Dict[str, Any]:
+    def get_app_kwargs(
+        self,
+        app_kwargs: Dict[str, Any],
+        bundles: List[Bundle],
+        env: Union[DEV, PROD, STAGING, TEST],
+        unchained_config: Dict[str, Any],
+    ) -> Dict[str, Any]:
         """
         Returns ``app_kwargs`` with default settings applied from ``unchained_config``.
         """
         # this is for developing standalone bundles (as opposed to regular apps)
         if not isinstance(bundles[-1], AppBundle) and env != TEST:
-            app_kwargs['template_folder'] = os.path.join(
-                os.path.dirname(__file__), 'templates')
+            app_kwargs["template_folder"] = os.path.join(
+                os.path.dirname(__file__), "templates"
+            )
 
         # set kwargs to pass to Flask from the unchained_config
         params = inspect.signature(self.APP_CLASS).parameters
-        valid_app_kwargs = [name for i, (name, param) in enumerate(params.items())
-                            if i > 0 and (param.kind == param.POSITIONAL_OR_KEYWORD
-                                          or param.kind == param.KEYWORD_ONLY)]
+        valid_app_kwargs = [
+            name
+            for i, (name, param) in enumerate(params.items())
+            if i > 0
+            and (
+                param.kind == param.POSITIONAL_OR_KEYWORD
+                or param.kind == param.KEYWORD_ONLY
+            )
+        ]
         for kw in valid_app_kwargs:
             config_key = kw.upper()
             if config_key in unchained_config:
                 app_kwargs.setdefault(kw, unchained_config[config_key])
 
         # set up the root static/templates folders (if any)
-        root_path = app_kwargs.get('root_path')
+        root_path = app_kwargs.get("root_path")
         if not root_path and bundles:
             root_path = bundles[-1].root_path
             if not bundles[-1].is_single_module:
                 root_path = os.path.dirname(root_path)
-            app_kwargs['root_path'] = root_path
+            app_kwargs["root_path"] = root_path
 
         def root_folder_or_none(folder_name):
             if not root_path:
@@ -187,18 +213,19 @@ class AppFactory(metaclass=Singleton):
             folder = os.path.join(root_path, folder_name)
             return folder if os.path.isdir(folder) else None
 
-        app_kwargs.setdefault('template_folder', root_folder_or_none('templates'))
-        app_kwargs.setdefault('static_folder', root_folder_or_none('static'))
-        if app_kwargs['static_folder'] and not app_kwargs.get('static_url_path'):
-            app_kwargs.setdefault('static_url_path', '/static')
+        app_kwargs.setdefault("template_folder", root_folder_or_none("templates"))
+        app_kwargs.setdefault("static_folder", root_folder_or_none("static"))
+        if app_kwargs["static_folder"] and not app_kwargs.get("static_url_path"):
+            app_kwargs.setdefault("static_url_path", "/static")
 
         return app_kwargs
 
     @classmethod
-    def load_bundles(cls,
-                     bundle_package_names: Optional[List[str]] = None,
-                     unchained_config_module: Optional[ModuleType] = None,
-                     ) -> Tuple[Union[None, AppBundle], List[Bundle]]:
+    def load_bundles(
+        cls,
+        bundle_package_names: Optional[List[str]] = None,
+        unchained_config_module: Optional[ModuleType] = None,
+    ) -> Tuple[Union[None, AppBundle], List[Bundle]]:
         """
         Load bundle instances from the given list of bundle packages. If
         ``unchained_config_module`` is given and there was no app bundle listed
@@ -228,40 +255,46 @@ class AppFactory(metaclass=Singleton):
                 bundle_package_names.append(app_bundle.module_name)
 
         last_bundle = app_bundle or bundles[-1]
-        last_bundle.dependencies = set([
-            x for x in bundle_package_names if x != last_bundle.module_name
-        ] + cls.REQUIRED_BUNDLES)
+        last_bundle.dependencies = set(
+            [x for x in bundle_package_names if x != last_bundle.module_name]
+            + cls.REQUIRED_BUNDLES
+        )
 
         bundles = cls.resolve_bundle_order(bundle_package_names, bundle_modules)
         return app_bundle, bundles
 
     @classmethod
-    def resolve_bundle_order(cls, bundle_names, bundle_modules: Dict[str, Bundle]) -> List[Bundle]:
+    def resolve_bundle_order(
+        cls, bundle_names, bundle_modules: Dict[str, Bundle]
+    ) -> List[Bundle]:
         dag = nx.DiGraph()
         reverse_deps = {}
         for bundle_name in bundle_names:
             dag.add_node(bundle_name)
             for dep_name in bundle_modules[bundle_name].dependencies:
                 dag.add_edge(bundle_name, dep_name)
-                reverse_deps.setdefault(dep_name, []).append(f'- {bundle_name}')
+                reverse_deps.setdefault(dep_name, []).append(f"- {bundle_name}")
 
         try:
             order = list(reversed(list(nx.topological_sort(dag))))
         except nx.NetworkXUnfeasible:
-            msg = 'Circular dependency detected between bundles'
-            problem_graph = ', '.join(f'{a} -> {b}'
-                                      for a, b in nx.find_cycle(dag))
-            raise Exception(f'{msg}: {problem_graph}')
+            msg = "Circular dependency detected between bundles"
+            problem_graph = ", ".join(f"{a} -> {b}" for a, b in nx.find_cycle(dag))
+            raise Exception(f"{msg}: {problem_graph}")
 
         rv = []
         for bundle_name in order:
             bundle = bundle_modules.get(bundle_name)
-            if not bundle or (bundle_name not in bundle_names
-                              and bundle_name not in cls.REQUIRED_BUNDLES):
-                deps = '\n'.join(reverse_deps[bundle_name])
-                raise Exception(f'"{bundle_name}" is required by the following '
-                                f'bundles:\n{deps}\n'
-                                f'Please add "{bundle_name}" to BUNDLES.')
+            if not bundle or (
+                bundle_name not in bundle_names
+                and bundle_name not in cls.REQUIRED_BUNDLES
+            ):
+                deps = "\n".join(reverse_deps[bundle_name])
+                raise Exception(
+                    f'"{bundle_name}" is required by the following '
+                    f"bundles:\n{deps}\n"
+                    f'Please add "{bundle_name}" to BUNDLES.'
+                )
             rv.append(bundle)
         return rv
 
@@ -270,7 +303,7 @@ class AppFactory(metaclass=Singleton):
         """
         Attempt to load the bundle instance from the given package.
         """
-        for module_name in [f'{bundle_package_name}.bundle', bundle_package_name]:
+        for module_name in [f"{bundle_package_name}.bundle", bundle_package_name]:
             try:
                 module = importlib.import_module(module_name)
             except ImportError as e:
@@ -283,9 +316,10 @@ class AppFactory(metaclass=Singleton):
                 return bundle
 
         raise BundleNotFoundError(
-            f'Unable to find a Bundle subclass in the {bundle_package_name} bundle!'
-            ' Please make sure this bundle is installed and that there is a Bundle'
-            ' subclass in the packages\'s __init__.py (or bundle.py) file.')
+            f"Unable to find a Bundle subclass in the {bundle_package_name} bundle!"
+            " Please make sure this bundle is installed and that there is a Bundle"
+            " subclass in the packages's __init__.py (or bundle.py) file."
+        )
 
     @classmethod
     def bundle_from_module(cls, module: ModuleType) -> Union[AppBundle, Bundle, None]:
@@ -301,12 +335,15 @@ class AppFactory(metaclass=Singleton):
 
     @classmethod
     def _is_bundle(cls, module: ModuleType) -> Callable[[Any], bool]:
-        return lambda obj: (isinstance(obj, type) and issubclass(obj, Bundle)
-                            and obj not in {AppBundle, Bundle}
-                            and obj.__module__.startswith(module.__name__))
+        return lambda obj: (
+            isinstance(obj, type)
+            and issubclass(obj, Bundle)
+            and obj not in {AppBundle, Bundle}
+            and obj.__module__.startswith(module.__name__)
+        )
 
 
 __all__ = [
-    'AppFactory',
-    'maybe_set_app_factory_from_env',
+    "AppFactory",
+    "maybe_set_app_factory_from_env",
 ]

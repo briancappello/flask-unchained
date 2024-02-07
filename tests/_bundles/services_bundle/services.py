@@ -3,13 +3,15 @@ from flask_unchained import Service, injectable, unchained
 
 class OneService(Service):
     """one_service"""
+
     def __init__(self):
         """one_service __init__"""
-        self.bundle = 'services'
+        self.bundle = "services"
 
 
 class TwoService(Service):
     """two_service"""
+
     def __init__(self, one_service: OneService = injectable):
         """two_service __init__"""
         self.one_service = one_service
@@ -25,20 +27,23 @@ class FourService(Service):
 
 class FunkyService(Service):
     """funky_service"""
+
     @unchained.inject()
     def __init__(self, two_service: TwoService = injectable):
         """funky_service __init__"""
         self.two_service = two_service
 
-    @unchained.inject('one_service')
-    def explicit_funky(self, one_service: OneService = injectable,
-                       two_service: TwoService = injectable):
+    @unchained.inject("one_service")
+    def explicit_funky(
+        self, one_service: OneService = injectable, two_service: TwoService = injectable
+    ):
         """explicit_funky"""
         return one_service, two_service
 
     @unchained.inject()
-    def implicit_funky(self, one_service: OneService = injectable,
-                       two_service: TwoService = injectable):
+    def implicit_funky(
+        self, one_service: OneService = injectable, two_service: TwoService = injectable
+    ):
         """implicit funky"""
         return one_service, two_service
 
@@ -96,8 +101,8 @@ class NotAutomaticWithInitExtended(NotAutomaticWithInit):
 @unchained.inject()
 class NotAutomaticInjectableMethods:
     def __init__(self):
-        self.one_service = 'constructor_default'
-        self.two_service = 'constructor_default'
+        self.one_service = "constructor_default"
+        self.two_service = "constructor_default"
 
     def one(self, one_service: OneService = injectable):
         self.one_service = one_service
@@ -106,7 +111,7 @@ class NotAutomaticInjectableMethods:
         self.two_service = two_service
 
 
-@unchained.inject('one_service')
+@unchained.inject("one_service")
 class ExplicitArgsForClassAttributes:
     one_service: OneService = injectable
     two_service: TwoService = injectable

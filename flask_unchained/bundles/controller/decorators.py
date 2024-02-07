@@ -15,8 +15,16 @@ from .attr_constants import FN_ROUTES_ATTR, NO_ROUTES_ATTR
 from .route import Route
 
 
-def route(rule=None, blueprint=None, defaults=None, endpoint=None,
-          is_member=False, methods=None, only_if=_missing, **rule_options):
+def route(
+    rule=None,
+    blueprint=None,
+    defaults=None,
+    endpoint=None,
+    is_member=False,
+    methods=None,
+    only_if=_missing,
+    **rule_options
+):
     """
     Decorator to set default route rules for a view function. The arguments this
     function accepts are very similar to Flask's :meth:`~flask.Flask.route`,
@@ -55,11 +63,20 @@ def route(rule=None, blueprint=None, defaults=None, endpoint=None,
                     register this route with the app.
     :param rule_options: Other kwargs passed on to :class:`~werkzeug.routing.Rule`.
     """
+
     def wrapper(fn):
         fn_routes = getattr(fn, FN_ROUTES_ATTR, [])
-        route = Route(rule, fn, blueprint=blueprint, defaults=defaults,
-                      endpoint=endpoint, is_member=is_member, methods=methods,
-                      only_if=only_if, **rule_options)
+        route = Route(
+            rule,
+            fn,
+            blueprint=blueprint,
+            defaults=defaults,
+            endpoint=endpoint,
+            is_member=is_member,
+            methods=methods,
+            only_if=only_if,
+            **rule_options
+        )
         setattr(fn, FN_ROUTES_ATTR, fn_routes + [route])
         return fn
 
@@ -104,6 +121,7 @@ def no_route(arg=None):
     NOTE: The perhaps more Pythonic way to accomplish this is to make all non-route
     methods protected by prefixing them with an underscore, eg ``_utility_method``.
     """
+
     def wrapper(fn):
         setattr(fn, NO_ROUTES_ATTR, True)
         return fn
@@ -154,6 +172,7 @@ def param_converter(*decorator_args, **decorator_kwargs):
         def show_post(user_arg_name, post_arg_name):
             # do stuff
     """
+
     def wrapped(fn):
         @wraps(fn)
         def decorated(*view_args, **view_kwargs):
@@ -161,6 +180,7 @@ def param_converter(*decorator_args, **decorator_kwargs):
                 view_kwargs = _convert_models(view_kwargs, decorator_kwargs)
             view_kwargs = _convert_query_params(view_kwargs, decorator_kwargs)
             return fn(*view_args, **view_kwargs)
+
         return decorated
 
     if decorator_args and callable(decorator_args[0]):
@@ -168,9 +188,10 @@ def param_converter(*decorator_args, **decorator_kwargs):
     return wrapped
 
 
-def _convert_models(view_kwargs: dict,
-                    url_param_names_to_models: dict,
-                    ) -> dict:
+def _convert_models(
+    view_kwargs: dict,
+    url_param_names_to_models: dict,
+) -> dict:
     for url_param_name, model_mapping in url_param_names_to_models.items():
         if url_param_name not in view_kwargs and url_param_name not in request.args:
             continue
@@ -186,11 +207,14 @@ def _convert_models(view_kwargs: dict,
         if not arg_name:
             arg_name = snake_case(model.__name__)
 
-        filter_by = url_param_name.replace(
-            snake_case(model.__name__) + '_', '')
-        instance = model.query.filter_by(**{
-            filter_by: view_kwargs.pop(url_param_name, request.args.get(url_param_name)),
-        }).first()
+        filter_by = url_param_name.replace(snake_case(model.__name__) + "_", "")
+        instance = model.query.filter_by(
+            **{
+                filter_by: view_kwargs.pop(
+                    url_param_name, request.args.get(url_param_name)
+                ),
+            }
+        ).first()
 
         if not instance:
             abort(HTTPStatus.NOT_FOUND)
@@ -200,9 +224,10 @@ def _convert_models(view_kwargs: dict,
     return view_kwargs
 
 
-def _convert_query_params(view_kwargs: dict,
-                          param_name_to_converters: dict,
-                          ) -> dict:
+def _convert_query_params(
+    view_kwargs: dict,
+    param_name_to_converters: dict,
+) -> dict:
     for name, converter in param_name_to_converters.items():
         is_model_converter = (
             Model is not None
@@ -226,7 +251,7 @@ def _convert_query_params(view_kwargs: dict,
 
 
 __all__ = [
-    'no_route',
-    'param_converter',
-    'route',
+    "no_route",
+    "param_converter",
+    "route",
 ]

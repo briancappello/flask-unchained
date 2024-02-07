@@ -7,14 +7,16 @@ from flask_unchained import Bundle, FlaskUnchained, DEV, TEST
 from speaklater import make_lazy_string
 from typing import *
 
-from .config import (Config as BabelBundleConfig,
-                     DevConfig as BabelBundleDevConfig,
-                     ProdConfig as BabelBundleProdConfig)
+from .config import (
+    Config as BabelBundleConfig,
+    DevConfig as BabelBundleDevConfig,
+    ProdConfig as BabelBundleProdConfig,
+)
 from .extensions import Babel, babel
 
 
-TRANSLATION_KEY_RE = re.compile(r'^(?P<domain>[a-z_.]+):[a-z_.]+$')
-PLURAL_TRANSLATION_KEY_RE = re.compile(r'^(?P<domain>[a-z_.]+):[a-z_.]+\.plural$')
+TRANSLATION_KEY_RE = re.compile(r"^(?P<domain>[a-z_.]+):[a-z_.]+$")
+PLURAL_TRANSLATION_KEY_RE = re.compile(r"^(?P<domain>[a-z_.]+):[a-z_.]+\.plural$")
 
 
 class BabelBundle(Bundle):
@@ -24,21 +26,19 @@ class BabelBundle(Bundle):
     URLs (if enabled).
     """
 
-    name = 'babel_bundle'
+    name = "babel_bundle"
     """
     The name of the Babel Bundle.
     """
 
-    dependencies = (
-        'flask_unchained.bundles.controller',
-    )
+    dependencies = ("flask_unchained.bundles.controller",)
 
-    command_group_names = ('babel',)
+    command_group_names = ("babel",)
     """
     Names of the command groups included in this bundle.
     """
 
-    language_code_key = 'lang_code'
+    language_code_key = "lang_code"
     """
     Default Werkzeug parameter name to be used when registering language-specific URLs.
     """
@@ -46,46 +46,59 @@ class BabelBundle(Bundle):
     _has_views = False
 
     def before_init_app(self, app: FlaskUnchained):
-        app.jinja_env.add_extension('jinja2.ext.i18n')
+        app.jinja_env.add_extension("jinja2.ext.i18n")
         babel.locale_selector_func = self.get_locale
 
         # FIXME: this setting needs to be pulled from an env var instead
-        if app.config.get('ENABLE_URL_LANG_CODE_PREFIX',
-                          BabelBundleConfig.ENABLE_URL_LANG_CODE_PREFIX):
+        if app.config.get(
+            "ENABLE_URL_LANG_CODE_PREFIX", BabelBundleConfig.ENABLE_URL_LANG_CODE_PREFIX
+        ):
             app.url_value_preprocessor(self.lang_code_url_value_preprocessor)
             app.url_defaults(self.set_url_defaults)
 
     def after_init_app(self, app: FlaskUnchained):
         if not app.config.get(
-                'LAZY_TRANSLATIONS',
-                BabelBundleDevConfig.LAZY_TRANSLATIONS if app.env in {DEV, TEST}
-                else BabelBundleProdConfig.LAZY_TRANSLATIONS):
+            "LAZY_TRANSLATIONS",
+            (
+                BabelBundleDevConfig.LAZY_TRANSLATIONS
+                if app.env in {DEV, TEST}
+                else BabelBundleProdConfig.LAZY_TRANSLATIONS
+            ),
+        ):
             app.jinja_env.install_gettext_callables(gettext, ngettext, newstyle=True)
         else:
-            app.jinja_env.install_gettext_callables(lazy_gettext, lazy_ngettext,
-                                                    newstyle=True)
+            app.jinja_env.install_gettext_callables(
+                lazy_gettext, lazy_ngettext, newstyle=True
+            )
 
     def get_url_rule(self, rule: Optional[str]):
         if not rule:
-            return f'/<{self.language_code_key}>'
-        return f'/<{self.language_code_key}>' + rule
+            return f"/<{self.language_code_key}>"
+        return f"/<{self.language_code_key}>" + rule
 
     def register_blueprint(self, app: FlaskUnchained, blueprint: Blueprint, **options):
         if app.config.ENABLE_URL_LANG_CODE_PREFIX:
-            url_prefix = options.get('url_prefix', (blueprint.url_prefix or '')).rstrip('/')
-            options = dict(**options,
-                           url_prefix=self.get_url_rule(url_prefix),
-                           register_with_babel=False)
+            url_prefix = options.get("url_prefix", (blueprint.url_prefix or "")).rstrip(
+                "/"
+            )
+            options = dict(
+                **options,
+                url_prefix=self.get_url_rule(url_prefix),
+                register_with_babel=False,
+            )
             app.register_blueprint(blueprint, **options)
 
     def add_url_rule(self, app: FlaskUnchained, rule: str, **kwargs):
         if app.config.ENABLE_URL_LANG_CODE_PREFIX:
-            app.add_url_rule(self.get_url_rule(rule), register_with_babel=False, **kwargs)
+            app.add_url_rule(
+                self.get_url_rule(rule), register_with_babel=False, **kwargs
+            )
 
     def get_locale(self):
         languages = current_app.config.LANGUAGES
-        return g.get(self.language_code_key,
-                     request.accept_languages.best_match(languages))
+        return g.get(
+            self.language_code_key, request.accept_languages.best_match(languages)
+        )
 
     def set_url_defaults(self, endpoint: str, values: Dict[str, Any]):
         if self.language_code_key in values or not g.get(self.language_code_key, None):
@@ -157,10 +170,10 @@ def lazy_ngettext(*args, **kwargs):
 
 
 def _get_domain(match):
-    domain_name = match.groupdict()['domain']
+    domain_name = match.groupdict()["domain"]
     try:
-        domain_resources = pkg_resources.resource_filename(domain_name, 'translations')
+        domain_resources = pkg_resources.resource_filename(domain_name, "translations")
     except ImportError:
-        return current_app.extensions['babel']._default_domain
+        return current_app.extensions["babel"]._default_domain
 
     return Domain(domain_resources, domain=domain_name)

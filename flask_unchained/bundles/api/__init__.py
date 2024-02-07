@@ -15,14 +15,14 @@ from .views import OpenAPIController
 class ApiBundle(Bundle):
     """The API Bundle."""
 
-    name = 'api_bundle'
+    name = "api_bundle"
     """
     The name of the API Bundle.
     """
 
     dependencies = (
-        'flask_unchained.bundles.controller',
-        'flask_unchained.bundles.sqlalchemy',
+        "flask_unchained.bundles.controller",
+        "flask_unchained.bundles.sqlalchemy",
     )
 
     def __init__(self):
@@ -80,18 +80,20 @@ class ApiBundle(Bundle):
                 if serializer_cls:
                     return serializer_cls().dump(obj)
 
-            elif (obj and isinstance(obj, (list, tuple))
-                  and isinstance(obj[0], BaseModel)):
+            elif (
+                obj and isinstance(obj, (list, tuple)) and isinstance(obj[0], BaseModel)
+            ):
                 model_name = obj[0].__class__.__name__
                 serializer_cls = api_bundle.many_by_model.get(
-                    model_name,
-                    api_bundle.serializers_by_model.get(model_name))
+                    model_name, api_bundle.serializers_by_model.get(model_name)
+                )
                 if serializer_cls:
                     return serializer_cls(many=True).dump(obj)
 
-            raise TypeError(f'Unable to serialize {obj!r} ({type(obj)} to JSON')
+            raise TypeError(f"Unable to serialize {obj!r} ({type(obj)} to JSON")
 
-        if hasattr(app, 'json_encoder'):
+        if hasattr(app, "json_encoder"):
+
             class JSONEncoder(app.json_encoder):
                 def default(self, obj):
                     try:

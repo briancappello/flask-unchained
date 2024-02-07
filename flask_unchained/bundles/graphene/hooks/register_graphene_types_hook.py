@@ -9,12 +9,12 @@ class RegisterGrapheneTypesHook(AppFactoryHook):
     Registers SQLAlchemyObjectTypes with the Graphene Bundle.
     """
 
-    name = 'graphene_types'
+    name = "graphene_types"
     """
     The name of this hook.
     """
 
-    bundle_module_names = ['graphene.types', 'graphene.schema']
+    bundle_module_names = ["graphene.types", "graphene.schema"]
     """
     The default module this hook loads from.
 
@@ -22,16 +22,18 @@ class RegisterGrapheneTypesHook(AppFactoryHook):
     bundle class.
     """
 
-    bundle_override_module_names_attr = 'graphene_types_module_names'
-    run_after = ['models', 'services']
+    bundle_override_module_names_attr = "graphene_types_module_names"
+    run_after = ["models", "services"]
 
-
-    def process_objects(self,
-                        app: FlaskUnchained,
-                        types: Dict[str, SQLAlchemyObjectType]):
+    def process_objects(
+        self, app: FlaskUnchained, types: Dict[str, SQLAlchemyObjectType]
+    ):
         self.bundle.types = types
 
     def type_check(self, obj: Any):
         is_subclass = isinstance(obj, type) and issubclass(obj, SQLAlchemyObjectType)
-        return is_subclass and obj != SQLAlchemyObjectType and (
-                not hasattr(obj, 'Meta') or not getattr(obj.Meta, 'abstract', False))
+        return (
+            is_subclass
+            and obj != SQLAlchemyObjectType
+            and (not hasattr(obj, "Meta") or not getattr(obj.Meta, "abstract", False))
+        )

@@ -9,12 +9,12 @@ class Config(BundleConfig):
     this bundle supports, and their default values.
     """
 
-    ADMIN_NAME = 'Admin'
+    ADMIN_NAME = "Admin"
     """
     The title of the admin section of the site.
     """
 
-    ADMIN_BASE_URL = '/admin'
+    ADMIN_BASE_URL = "/admin"
     """
     Base url of the admin section of the site.
     """
@@ -30,12 +30,12 @@ class Config(BundleConfig):
     Subdomain of the admin section of the site.
     """
 
-    ADMIN_BASE_TEMPLATE = 'admin/base.html'
+    ADMIN_BASE_TEMPLATE = "admin/base.html"
     """
     Base template to use for other admin templates.
     """
 
-    ADMIN_TEMPLATE_MODE = 'bootstrap4'
+    ADMIN_TEMPLATE_MODE = "bootstrap4"
     """
     Which version of bootstrap to use. (bootstrap2, bootstrap3, or bootstrap4)
     """
@@ -58,27 +58,27 @@ class Config(BundleConfig):
         }
     """
 
-    ADMIN_ADMIN_ROLE_NAME = 'ROLE_ADMIN'
+    ADMIN_ADMIN_ROLE_NAME = "ROLE_ADMIN"
     """
     The name of the Role which represents an admin.
     """
 
-    ADMIN_LOGIN_ENDPOINT = 'admin.login'
+    ADMIN_LOGIN_ENDPOINT = "admin.login"
     """
     Name of the endpoint to use for the admin login view.
     """
 
-    ADMIN_POST_LOGIN_REDIRECT_ENDPOINT = 'admin.index'
+    ADMIN_POST_LOGIN_REDIRECT_ENDPOINT = "admin.index"
     """
     Name of the endpoint to redirect to after the user logs into the admin.
     """
 
-    ADMIN_LOGOUT_ENDPOINT = 'admin.logout'
+    ADMIN_LOGOUT_ENDPOINT = "admin.logout"
     """
     Name of the endpoint to use for the admin logout view.
     """
 
-    ADMIN_POST_LOGOUT_REDIRECT_ENDPOINT = 'admin.login'
+    ADMIN_POST_LOGOUT_REDIRECT_ENDPOINT = "admin.login"
     """
     Endpoint to redirect to after the user logs out of the admin.
     """

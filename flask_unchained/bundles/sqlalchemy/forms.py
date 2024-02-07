@@ -1,8 +1,13 @@
 from flask_unchained import FlaskForm, unchained
 from flask_unchained.di import _set_up_class_dependency_injection
 from py_meta_utils import (
-    AbstractMetaOption, McsArgs, MetaOption, MetaOptionsFactory, _missing,
-    process_factory_meta_options)
+    AbstractMetaOption,
+    McsArgs,
+    MetaOption,
+    MetaOptionsFactory,
+    _missing,
+    process_factory_meta_options,
+)
 from sqlalchemy_unchained.validation import ValidationError, ValidationErrors
 from typing import *
 from wtforms.fields import SubmitField as _SubmitField
@@ -17,93 +22,110 @@ from .meta_options import ModelMetaOption
 
 class OnlyMetaOption(MetaOption):
     def __init__(self):
-        super().__init__('only', default=None, inherit=True)
+        super().__init__("only", default=None, inherit=True)
 
     def check_value(self, value: Any, mcs_args: McsArgs):
         if mcs_args.Meta.abstract or value is None:
             return
 
-        if (not isinstance(value, (list, tuple))
-                or not all(isinstance(x, str) for x in value)):
-            raise TypeError(f'The `only` Meta option for {mcs_args.name} must be '
-                            f'a list (or tuple) of strings')
+        if not isinstance(value, (list, tuple)) or not all(
+            isinstance(x, str) for x in value
+        ):
+            raise TypeError(
+                f"The `only` Meta option for {mcs_args.name} must be "
+                f"a list (or tuple) of strings"
+            )
 
 
 class ExcludeMetaOption(MetaOption):
     def __init__(self):
-        super().__init__('exclude', default=_missing, inherit=True)
+        super().__init__("exclude", default=_missing, inherit=True)
 
     def get_value(self, Meta: Type[object], base_classes_meta, mcs_args: McsArgs):
         value = super().get_value(Meta, base_classes_meta, mcs_args)
         if not mcs_args.Meta.abstract and value is _missing:
-            value = (mcs_args.Meta.model.Meta.created_at, mcs_args.Meta.model.Meta.updated_at)
+            value = (
+                mcs_args.Meta.model.Meta.created_at,
+                mcs_args.Meta.model.Meta.updated_at,
+            )
         return value
 
     def check_value(self, value: Any, mcs_args: McsArgs):
         if mcs_args.Meta.abstract or value is None:
             return
 
-        if (not isinstance(value, (list, tuple))
-                or not all(isinstance(x, str) for x in value)):
-            raise TypeError(f'The `exclude` Meta option for {mcs_args.name} must be '
-                            f'a list (or tuple) of strings')
+        if not isinstance(value, (list, tuple)) or not all(
+            isinstance(x, str) for x in value
+        ):
+            raise TypeError(
+                f"The `exclude` Meta option for {mcs_args.name} must be "
+                f"a list (or tuple) of strings"
+            )
 
 
 class FieldArgsMetaOption(MetaOption):
     def __init__(self):
-        super().__init__('field_args', default=None, inherit=True)
+        super().__init__("field_args", default=None, inherit=True)
 
     def check_value(self, value: Any, mcs_args: McsArgs):
         if mcs_args.Meta.abstract or value is None:
             return
 
         if not isinstance(value, dict):
-            raise TypeError(f'The `field_args` Meta option for {mcs_args.name} '
-                            f'must be a dictionary')
+            raise TypeError(
+                f"The `field_args` Meta option for {mcs_args.name} "
+                f"must be a dictionary"
+            )
 
 
 class ExcludePrimaryKeyMetaOption(MetaOption):
     def __init__(self):
-        super().__init__('exclude_pk', default=True, inherit=True)
+        super().__init__("exclude_pk", default=True, inherit=True)
 
     def check_value(self, value: Any, mcs_args: McsArgs):
         if mcs_args.Meta.abstract:
             return
 
         if not isinstance(value, bool):
-            raise TypeError(f'The `exclude_pk` Meta option for {mcs_args.name} '
-                            f'must be a boolean')
+            raise TypeError(
+                f"The `exclude_pk` Meta option for {mcs_args.name} "
+                f"must be a boolean"
+            )
 
 
 class ExcludeForeignKeyMetaOption(MetaOption):
     def __init__(self):
-        super().__init__('exclude_fk', default=True, inherit=True)
+        super().__init__("exclude_fk", default=True, inherit=True)
 
     def check_value(self, value: Any, mcs_args: McsArgs):
         if mcs_args.Meta.abstract:
             return
 
         if not isinstance(value, bool):
-            raise TypeError(f'The `exclude_fk` Meta option for {mcs_args.name} '
-                            f'must be a boolean')
+            raise TypeError(
+                f"The `exclude_fk` Meta option for {mcs_args.name} "
+                f"must be a boolean"
+            )
 
 
 class ModelFieldsMetaOption(MetaOption):
     def __init__(self):
-        super().__init__('model_fields', default=None, inherit=True)
+        super().__init__("model_fields", default=None, inherit=True)
 
     def check_value(self, value: Any, mcs_args: McsArgs):
         if mcs_args.Meta.abstract or value is None:
             return
 
         if not isinstance(value, dict):
-            raise TypeError(f'The `model_fields` Meta option for {mcs_args.name} '
-                            f'must be a dictionary')
+            raise TypeError(
+                f"The `model_fields` Meta option for {mcs_args.name} "
+                f"must be a dictionary"
+            )
 
 
 class ModelConverterMetaOption(MetaOption):
     def __init__(self):
-        super().__init__('model_converter', default=ModelConverter, inherit=True)
+        super().__init__("model_converter", default=ModelConverter, inherit=True)
 
     def check_value(self, value: Any, mcs_args: McsArgs):
         if mcs_args.Meta.abstract:
@@ -111,8 +133,8 @@ class ModelConverterMetaOption(MetaOption):
 
         if not isinstance(value, type) or not issubclass(value, ModelConverter):
             raise TypeError(
-                f'The `model_converter` Meta option for {mcs_args.name} must be a '
-                f'subclass of {ModelConverter.__module__}.ModelConverter'
+                f"The `model_converter` Meta option for {mcs_args.name} must be a "
+                f"subclass of {ModelConverter.__module__}.ModelConverter"
             )
 
 
@@ -131,35 +153,43 @@ class ModelFormMetaOptionsFactory(MetaOptionsFactory):
 
 
 class ModelConverter(BaseModelConverter):
-    @converts('Integer', 'SmallInteger', 'BigInteger')
+    @converts("Integer", "SmallInteger", "BigInteger")
     def handle_integer_types(self, column, field_args, **extra):
         return super().handle_integer_types(column, field_args, **extra)
 
     @converts("MANYTOONE")
     def conv_ManyToOne(self, field_args, model, mapper, prop, column, **extra):
-        if hasattr(prop, 'direction'):
-            field_args.update(field_args.pop('original_field_args', {}))
+        if hasattr(prop, "direction"):
+            field_args.update(field_args.pop("original_field_args", {}))
             nullable = True
             for pair in prop.local_remote_pairs:
                 if not pair[0].nullable:
                     nullable = False
             if not nullable and not any(
-                isinstance(v, _RequiredValidator) for v in (field_args['validators'] or ())
+                isinstance(v, _RequiredValidator)
+                for v in (field_args["validators"] or ())
             ):
-                field_args['validators'].append(_RequiredValidator())
+                field_args["validators"].append(_RequiredValidator())
 
         return QuerySelectField(**field_args)
 
     @converts("MANYTOMANY", "ONETOMANY")
     def conv_ManyToMany(self, field_args, **extra):
-        field_args.pop('original_field_args', None)
+        field_args.pop("original_field_args", None)
         return QuerySelectMultipleField(**field_args)
 
 
 # this function is copied from wtforms_sqlalchemy, aside from marked lines
-def model_fields(model, db_session=None, only=None, exclude=None,
-                 field_args=None, converter=None, exclude_pk=False,
-                 exclude_fk=False):
+def model_fields(
+    model,
+    db_session=None,
+    only=None,
+    exclude=None,
+    field_args=None,
+    converter=None,
+    exclude_pk=False,
+    exclude_fk=False,
+):
     """
     Generate a dictionary of fields for a given SQLAlchemy model.
 
@@ -171,7 +201,7 @@ def model_fields(model, db_session=None, only=None, exclude=None,
     properties = []
 
     for prop in mapper.iterate_properties:
-        if getattr(prop, 'columns', None):
+        if getattr(prop, "columns", None):
             if exclude_fk and prop.columns[0].foreign_keys:
                 continue
             elif exclude_pk and prop.columns[0].primary_key:
@@ -190,12 +220,15 @@ def model_fields(model, db_session=None, only=None, exclude=None,
         # functions can have access to them (because BaseModelConverter.convert
         # mutates the field args and has some silly defaults that are hard to override)
         field_kwargs = field_args.get(name, {})
-        if hasattr(prop, 'direction'):
-            field_kwargs['original_field_args'] = field_kwargs.copy()
+        if hasattr(prop, "direction"):
+            field_kwargs["original_field_args"] = field_kwargs.copy()
 
         field = converter.convert(
-            model, mapper, prop,
-            field_kwargs, db_session,
+            model,
+            mapper,
+            prop,
+            field_kwargs,
+            db_session,
         )
         if field is not None:
             field_dict[name] = field
@@ -208,28 +241,32 @@ class ModelFormMetaclass(FormMetaclass):
         mcs_args = McsArgs(mcs, name, bases, clsdict)
         _set_up_class_dependency_injection(mcs_args)
         Meta = process_factory_meta_options(mcs_args, ModelFormMetaOptionsFactory)
-        mcs_args.clsdict['Meta'] = type('Meta', (), Meta._to_clsdict())
+        mcs_args.clsdict["Meta"] = type("Meta", (), Meta._to_clsdict())
         if not Meta.abstract and (
             unchained._models_initialized or unchained._app_bundle_cls.is_single_module
         ):
             try:
                 Meta.model = unchained.sqlalchemy_bundle.models[Meta.model.__name__]
             except (
-                KeyError,        # models not initialized yet
+                KeyError,  # models not initialized yet
                 AttributeError,  # unchained not initialized yet
             ) as e:
-                if (isinstance(e, AttributeError)
-                        and not unchained._app_bundle_cls.is_single_module):
+                if (
+                    isinstance(e, AttributeError)
+                    and not unchained._app_bundle_cls.is_single_module
+                ):
                     raise e
 
-            new_clsdict = model_fields(Meta.model,
-                                       only=Meta.only,
-                                       exclude=Meta.exclude,
-                                       exclude_fk=Meta.exclude_fk,
-                                       exclude_pk=Meta.exclude_pk,
-                                       field_args=Meta.field_args,
-                                       db_session=db.session,
-                                       converter=Meta.model_converter())
+            new_clsdict = model_fields(
+                Meta.model,
+                only=Meta.only,
+                exclude=Meta.exclude,
+                exclude_fk=Meta.exclude_fk,
+                exclude_pk=Meta.exclude_pk,
+                field_args=Meta.field_args,
+                db_session=db.session,
+                converter=Meta.model_converter(),
+            )
             new_clsdict.update(mcs_args.clsdict)  # user-declared fields take precedence
             mcs_args.clsdict = new_clsdict
         return super().__new__(*mcs_args)
@@ -244,10 +281,11 @@ class ModelForm(FlaskForm, metaclass=ModelFormMetaclass):
     """
     Base class for SQLAlchemy model forms.
     """
+
     class Meta:
         abstract = True
 
-    submit = _SubmitField('Submit')
+    submit = _SubmitField("Submit")
 
     def __init__(self, *args, **kwargs):
         self._errors = None
@@ -264,8 +302,9 @@ class ModelForm(FlaskForm, metaclass=ModelFormMetaclass):
             return validation_passed
 
         try:
-            self.Meta.model.validate_values(**{k: v for k, v in self.data.items()
-                                               if hasattr(self.Meta.model, k)})
+            self.Meta.model.validate_values(
+                **{k: v for k, v in self.data.items() if hasattr(self.Meta.model, k)}
+            )
         except ValidationErrors as e:
             for col_name, errors in e.errors.items():
                 field = self._fields[col_name]
@@ -305,10 +344,10 @@ class ModelForm(FlaskForm, metaclass=ModelFormMetaclass):
 
 
 __all__ = [
-    'ModelForm',
-    'ModelConverter',
-    'QuerySelectField',
-    'QuerySelectMultipleField',
-    'QueryRadioField',
-    'QueryCheckboxField',
+    "ModelForm",
+    "ModelConverter",
+    "QuerySelectField",
+    "QuerySelectMultipleField",
+    "QueryRadioField",
+    "QueryCheckboxField",
 ]

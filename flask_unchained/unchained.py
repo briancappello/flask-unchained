@@ -10,8 +10,14 @@ from py_meta_utils import _missing
 from typing import *
 
 from ._compat import QUART_ENABLED, LocalProxy
-from .constants import (DEV, PROD, STAGING, TEST,
-                        _DI_AUTOMATICALLY_HANDLED, _INJECT_CLS_ATTRS)
+from .constants import (
+    DEV,
+    PROD,
+    STAGING,
+    TEST,
+    _DI_AUTOMATICALLY_HANDLED,
+    _INJECT_CLS_ATTRS,
+)
 from .di import _ensure_service_name, _get_injected_value, injectable, _inject_cls_attrs
 from .exceptions import ServiceUsageError
 from .utils import AttrDict
@@ -120,12 +126,15 @@ class DeferredBundleBlueprintFunctions:
 
         Otherwise works as the :meth:`flask.Blueprint.errorhandler` decorator.
         """
+
         def decorator(fn):
             self._defer(lambda bp: bp.register_error_handler(code_or_exception, fn))
             return fn
+
         return decorator
 
     if QUART_ENABLED:
+
         def before_websocket(self, fn=None):
             if fn is None:
                 return self.before_websocket
@@ -148,8 +157,10 @@ class DeferredBundleBlueprintFunctions:
             return fn
 
     def __call__(self, *args, **kwargs):
-        raise NotImplementedError("Probably you're trying to call a method at import "
-                                  "time on the Unchained extension that doesn't exist?")
+        raise NotImplementedError(
+            "Probably you're trying to call a method at import "
+            "time on the Unchained extension that doesn't exist?"
+        )
 
 
 class _DeferredBundleBlueprintFunctionsStore:
@@ -158,6 +169,7 @@ class _DeferredBundleBlueprintFunctionsStore:
     return an instance of :class:`~flask_unchained.DeferredBundleBlueprintFunctions`
     for each bundle name lookup on us (implements a dict-like readonly interface).
     """
+
     def __init__(self):
         self._bundles = {}
 
@@ -199,28 +211,30 @@ class Unchained:
         self._services_registry = {}
         self._shell_ctx = {}
 
-    def init_app(self,
-                 app: Flask,
-                 bundles: Optional[List[object]] = None,  # FIXME Optional[List[Bundle]]
-                 unchained_config: Optional[Dict[str, Any]] = None,
-                 ) -> None:
+    def init_app(
+        self,
+        app: Flask,
+        bundles: Optional[List[object]] = None,  # FIXME Optional[List[Bundle]]
+        unchained_config: Optional[Dict[str, Any]] = None,
+    ) -> None:
         # deferred import to prevent circular dependency
         from .hooks.run_hooks_hook import RunHooksHook
 
         self.env = app.env or self.env
-        app.extensions['unchained'] = self
+        app.extensions["unchained"] = self
         app.unchained = self
         self._app = app
 
         bundles = bundles or []
         for bundle in bundles:
-            bundle._deferred_functions = \
-                self._deferred_bundle_functions[bundle.name]._deferred_functions
+            bundle._deferred_functions = self._deferred_bundle_functions[
+                bundle.name
+            ]._deferred_functions
         self.bundles = AttrDict({b.name: b for b in bundles})
-        self.babel_bundle = self.bundles.get('babel_bundle', None)
+        self.babel_bundle = self.bundles.get("babel_bundle", None)
 
         self._shell_ctx = {b.name: b for b in bundles}
-        self._shell_ctx['unchained'] = self
+        self._shell_ctx["unchained"] = self
         app.shell_context_processor(lambda: self._shell_ctx)
 
         run_hooks_hook = RunHooksHook(self)
@@ -236,10 +250,13 @@ class Unchained:
         Returns a :class:`~werkzeug.local.LocalProxy` to the extension or service
         with ``name`` as registered with the current app.
         """
+
         def get_extension_or_service_by_name():
             value = _get_injected_value(current_app.unchained, name, throw=False)
             if value is _missing:
-                raise KeyError(f'No extension or service was found with the name {name}.')
+                raise KeyError(
+                    f"No extension or service was found with the name {name}."
+                )
             return value
 
         return LocalProxy(get_extension_or_service_by_name)
@@ -250,13 +267,17 @@ class Unchained:
         """
         if self._services_initialized:
             from warnings import warn
-            warn('Services have already been initialized. Please register '
-                 f'{name} sooner.')
+
+            warn(
+                "Services have already been initialized. Please register "
+                f"{name} sooner."
+            )
             return lambda x: x
 
         def wrapper(service):
             self.register_service(name, service)
             return service
+
         return wrapper
 
     def register_service(self, name: str, service: Any):
@@ -264,15 +285,18 @@ class Unchained:
         Method to register a service.
         """
         if not isinstance(service, type):
-            if hasattr(service, '__class__'):
+            if hasattr(service, "__class__"):
                 _ensure_service_name(service.__class__, name)
             self.services[name] = service
             return
 
         if self._services_initialized:
             from warnings import warn
-            warn('Services have already been initialized. Please register '
-                 f'{name} sooner.')
+
+            warn(
+                "Services have already been initialized. Please register "
+                f"{name} sooner."
+            )
             return
 
         self._services_registry[_ensure_service_name(service, name)] = service
@@ -313,15 +337,15 @@ class Unchained:
                 fn = cls.__init__
 
             # check if the fn/class has already been wrapped with inject
-            if hasattr(fn, '__signature__'):
+            if hasattr(fn, "__signature__"):
                 if not cls:
                     return fn
-                if not hasattr(cls, '__signature__'):
+                if not hasattr(cls, "__signature__"):
                     # this happens when both the class and its __init__ method
                     # were decorated with @inject. which would be silly, but,
                     # it should still work regardless
                     cls.__signature__ = fn.__signature__
-            if cls and hasattr(cls, '__di_name__'):
+            if cls and hasattr(cls, "__di_name__"):
                 return cls
 
             sig = inspect.signature(fn)
@@ -335,10 +359,15 @@ class Unchained:
                 required = set(sig.parameters.keys())
                 have = set(bound_args.arguments.keys())
                 need = required - have
-                to_inject = need & (set(args) if has_explicit_args
-                                    else {k for k, v in sig.parameters.items()
-                                          if isinstance(v.default, str)
-                                          and v.default == injectable})
+                to_inject = need & (
+                    set(args)
+                    if has_explicit_args
+                    else {
+                        k
+                        for k, v in sig.parameters.items()
+                        if isinstance(v.default, str) and v.default == injectable
+                    }
+                )
 
                 # try to inject needed params from extensions or services
                 for param_name in to_inject:
@@ -359,20 +388,23 @@ class Unchained:
                 for k, v in bound_args.arguments.items():
                     if isinstance(v, str) and v == injectable:
                         di_name = dependency_injector.__di_name__
-                        is_constructor = ('.' not in di_name
-                                          and di_name != di_name.lower())
-                        action = 'initialized' if is_constructor else 'called'
+                        is_constructor = (
+                            "." not in di_name and di_name != di_name.lower()
+                        )
+                        action = "initialized" if is_constructor else "called"
                         raise ServiceUsageError(
-                            f'{di_name} was {action} without the {k} parameter. '
-                            f'Please supply it manually, or make sure it gets injected.'
+                            f"{di_name} was {action} without the {k} parameter. "
+                            f"Please supply it manually, or make sure it gets injected."
                         )
 
                 if cls and not getattr(cls, _DI_AUTOMATICALLY_HANDLED, False):
                     cls_attrs_to_inject = getattr(cls, _INJECT_CLS_ATTRS, [])
                     for attr, value in vars(cls).items():
-                        if (isinstance(value, str)
-                                and value == injectable
-                                and attr not in cls_attrs_to_inject):
+                        if (
+                            isinstance(value, str)
+                            and value == injectable
+                            and attr not in cls_attrs_to_inject
+                        ):
                             cls_attrs_to_inject.append(attr)
 
                     if has_explicit_args:
@@ -384,7 +416,7 @@ class Unchained:
                 return fn(*bound_args.args, **bound_args.kwargs)
 
             dependency_injector.__signature__ = sig
-            dependency_injector.__di_name__ = getattr(fn, '__di_name__', fn.__name__)
+            dependency_injector.__di_name__ = getattr(fn, "__di_name__", fn.__name__)
 
             if cls:
                 cls.__init__ = dependency_injector
@@ -407,30 +439,33 @@ class Unchained:
             params = set(getattr(service, _INJECT_CLS_ATTRS, []))
             params |= set(inspect.signature(service).parameters)
             for param_name in params:
-                if (param_name in self.services
-                        or param_name in self.extensions
-                        or param_name in self._services_registry):
+                if (
+                    param_name in self.services
+                    or param_name in self.extensions
+                    or param_name in self._services_registry
+                ):
                     dag.add_edge(name, param_name)
 
         try:
             instantiation_order = reversed(list(nx.topological_sort(dag)))
         except nx.NetworkXUnfeasible:
-            msg = 'Circular dependency detected between services'
-            problem_graph = ', '.join(f'{a} -> {b}'
-                                      for a, b in nx.find_cycle(dag))
-            raise Exception(f'{msg}: {problem_graph}')
+            msg = "Circular dependency detected between services"
+            problem_graph = ", ".join(f"{a} -> {b}" for a, b in nx.find_cycle(dag))
+            raise Exception(f"{msg}: {problem_graph}")
 
         for name in instantiation_order:
             if name in self.services or name in self.extensions:
                 continue
 
             service = self._services_registry[name]
-            params = {n: self.extensions.get(n, self.services.get(n))
-                      for n in dag.successors(name)
-                      if n not in getattr(service, _INJECT_CLS_ATTRS)
-                      and (n in self.extensions or n in self.services)}
-            if 'config' in inspect.signature(service).parameters:
-                params['config'] = self._app.config
+            params = {
+                n: self.extensions.get(n, self.services.get(n))
+                for n in dag.successors(name)
+                if n not in getattr(service, _INJECT_CLS_ATTRS)
+                and (n in self.extensions or n in self.services)
+            }
+            if "config" in inspect.signature(service).parameters:
+                params["config"] = self._app.config
 
             if not isinstance(service, type):
                 self.services[name] = functools.partial(service, **params)
@@ -440,10 +475,12 @@ class Unchained:
                 except TypeError as e:
                     # FIXME this exception is too generic, need to better parse
                     # its string repr (eg, got unexpected keyword argument)
-                    missing = str(e).rsplit(': ')[-1]
-                    requester = f'{service.__module__}.{service.__name__}'
-                    raise Exception(f'No service found with the name {missing} '
-                                    f'(required by {requester})')
+                    missing = str(e).rsplit(": ")[-1]
+                    requester = f"{service.__module__}.{service.__name__}"
+                    raise Exception(
+                        f"No service found with the name {missing} "
+                        f"(required by {requester})"
+                    )
 
         self._services_initialized = True
 
@@ -473,8 +510,11 @@ class Unchained:
     def _defer(self, fn):
         if self._initialized:
             from warnings import warn
-            warn('The app has already been initialized. '
-                 f'Please register {fn.__name__} sooner.')
+
+            warn(
+                "The app has already been initialized. "
+                f"Please register {fn.__name__} sooner."
+            )
             return
         self._deferred_functions.append(fn)
 
@@ -482,10 +522,11 @@ class Unchained:
         """
         Register a new url rule. Acts the same as :meth:`flask.Flask.add_url_rule`.
         """
-        self._defer(lambda app: app.add_url_rule(rule,
-                                                 endpoint=endpoint,
-                                                 view_func=view_func,
-                                                 **options))
+        self._defer(
+            lambda app: app.add_url_rule(
+                rule, endpoint=endpoint, view_func=view_func, **options
+            )
+        )
 
     def before_request(self, fn=None):
         """
@@ -669,19 +710,22 @@ class Unchained:
         :param code_or_exception: the code as integer for the handler, or
                                   an arbitrary exception
         """
+
         def decorator(fn):
             self._defer(lambda app: app.register_error_handler(code_or_exception, fn))
             return fn
+
         return decorator
 
-    def template_filter(self,
-                        arg: Optional[Callable] = None,
-                        *,
-                        name: Optional[str] = None,
-                        pass_context: bool = False,
-                        inject: Optional[Union[bool, Iterable[str]]] = None,
-                        safe: bool = False,
-                        ) -> Callable:
+    def template_filter(
+        self,
+        arg: Optional[Callable] = None,
+        *,
+        name: Optional[str] = None,
+        pass_context: bool = False,
+        inject: Optional[Union[bool, Iterable[str]]] = None,
+        safe: bool = False,
+    ) -> Callable:
         """
         Decorator to mark a function as a Jinja template filter.
 
@@ -691,6 +735,7 @@ class Unchained:
         :param inject: Whether or not this filter needs any dependencies injected.
         :param safe: Whether or not to mark the output of this filter as html-safe.
         """
+
         def wrapper(fn):
             fn = _inject(fn, inject)
             if safe:
@@ -704,14 +749,15 @@ class Unchained:
             return wrapper(arg)
         return wrapper
 
-    def template_global(self,
-                        arg: Optional[Callable] = None,
-                        *,
-                        name: Optional[str] = None,
-                        pass_context: bool = False,
-                        inject: Optional[Union[bool, Iterable[str]]] = None,
-                        safe: bool = False,
-                        ) -> Callable:
+    def template_global(
+        self,
+        arg: Optional[Callable] = None,
+        *,
+        name: Optional[str] = None,
+        pass_context: bool = False,
+        inject: Optional[Union[bool, Iterable[str]]] = None,
+        safe: bool = False,
+    ) -> Callable:
         """
         Decorator to mark a function as a Jinja template global (tag).
 
@@ -721,6 +767,7 @@ class Unchained:
         :param inject: Whether or not this tag needs any dependencies injected.
         :param safe: Whether or not to mark the output of this tag as html-safe.
         """
+
         def wrapper(fn):
             fn = _inject(fn, inject)
             if safe:
@@ -734,14 +781,15 @@ class Unchained:
             return wrapper(arg)
         return wrapper
 
-    def template_tag(self,
-                     arg: Optional[Callable] = None,
-                     *,
-                     name: Optional[str] = None,
-                     pass_context: bool = False,
-                     inject: Optional[Union[bool, Iterable[str]]] = None,
-                     safe: bool = False,
-                     ) -> Callable:
+    def template_tag(
+        self,
+        arg: Optional[Callable] = None,
+        *,
+        name: Optional[str] = None,
+        pass_context: bool = False,
+        inject: Optional[Union[bool, Iterable[str]]] = None,
+        safe: bool = False,
+    ) -> Callable:
         """
         Alias for :meth:`template_global`.
 
@@ -751,16 +799,18 @@ class Unchained:
         :param inject: Whether or not this tag needs any dependencies injected.
         :param safe: Whether or not to mark the output of this tag as html-safe.
         """
-        return self.template_global(arg, name=name, pass_context=pass_context,
-                                    inject=inject, safe=safe)
+        return self.template_global(
+            arg, name=name, pass_context=pass_context, inject=inject, safe=safe
+        )
 
-    def template_test(self,
-                      arg: Optional[Callable] = None,
-                      *,
-                      name: Optional[str] = None,
-                      inject: Optional[Union[bool, Iterable[str]]] = None,
-                      safe: bool = False,
-                      ) -> Callable:
+    def template_test(
+        self,
+        arg: Optional[Callable] = None,
+        *,
+        name: Optional[str] = None,
+        inject: Optional[Union[bool, Iterable[str]]] = None,
+        safe: bool = False,
+    ) -> Callable:
         """
         Decorator to mark a function as a Jinja template test.
 
@@ -768,6 +818,7 @@ class Unchained:
         :param inject: Whether or not this test needs any dependencies injected.
         :param safe: Whether or not to mark the output of this test as html-safe.
         """
+
         def wrapper(fn):
             fn = _inject(fn, inject)
             if safe:
@@ -798,6 +849,7 @@ class Unchained:
         self._shell_ctx = {}
 
     if QUART_ENABLED:
+
         def add_websocket(
             self,
             path: str,
@@ -809,15 +861,17 @@ class Unchained:
             *,
             strict_slashes: Optional[bool] = None,
         ):
-            self._defer(lambda app: app.add_websocket(
-                path,
-                endpoint=endpoint,
-                view_func=view_func,
-                defaults=defaults,
-                host=host,
-                subdomain=subdomain,
-                strict_slashes=strict_slashes,
-            ))
+            self._defer(
+                lambda app: app.add_websocket(
+                    path,
+                    endpoint=endpoint,
+                    view_func=view_func,
+                    defaults=defaults,
+                    host=host,
+                    subdomain=subdomain,
+                    strict_slashes=strict_slashes,
+                )
+            )
 
         def before_serving(self, fn=None):
             if fn is None:
@@ -882,6 +936,7 @@ def _make_safe(fn):
     @functools.wraps(fn)
     def safe_fn(*args, **kwargs):
         return markupsafe.Markup(fn(*args, **kwargs))
+
     return safe_fn
 
 
@@ -889,6 +944,6 @@ unchained = Unchained()
 
 
 __all__ = [
-    'unchained',
-    'Unchained',
+    "unchained",
+    "Unchained",
 ]

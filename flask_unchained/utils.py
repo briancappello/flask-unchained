@@ -14,6 +14,7 @@ class AttrDict(dict):
     """
     A dictionary that allows using the dot operator to get and set keys.
     """
+
     def __getattr__(self, key):
         return self[key]
 
@@ -21,7 +22,7 @@ class AttrDict(dict):
         self[key] = value
 
     def __repr__(self):
-        return f'{self.__class__.__name__}({dict.__repr__(self)})'
+        return f"{self.__class__.__name__}({dict.__repr__(self)})"
 
 
 class ConfigProperty:
@@ -32,6 +33,7 @@ class ConfigProperty:
     If key is left unspecified, in will be injected by ``ConfigPropertyMetaclass``,
     defaulting to ``f'{ext_class_name}_{property_name}'.upper()``.
     """
+
     def __init__(self, key=None):
         self.key = key
 
@@ -61,12 +63,13 @@ class ConfigPropertyMetaclass(type):
         my_extension.foobar == current_app.config.MY_EXTENSION_FOOBAR
         my_extension._custom == current_app.config.MY_EXTENSION_CUSTOM
     """
+
     def __init__(cls, class_name, bases, clsdict):
         super().__init__(class_name, bases, clsdict)
-        config_prefix = clsdict.get('__config_prefix__', class_name).rstrip('_')
+        config_prefix = clsdict.get("__config_prefix__", class_name).rstrip("_")
         for property_name, descriptor in clsdict.items():
             if isinstance(descriptor, ConfigProperty) and not descriptor.key:
-                descriptor.key = f'{config_prefix}_{property_name}'.upper()
+                descriptor.key = f"{config_prefix}_{property_name}".upper()
 
 
 def cwd_import(module_name):
@@ -80,10 +83,10 @@ def cwd_import(module_name):
         sys.path.insert(0, os.getcwd())
 
     module = import_module(module_name)
-    expected_path = os.path.join(os.getcwd(), module_name.replace('.', os.sep))
-    expected_paths = [f'{expected_path}.py', os.path.join(expected_path, '__init__.py')]
+    expected_path = os.path.join(os.getcwd(), module_name.replace(".", os.sep))
+    expected_paths = [f"{expected_path}.py", os.path.join(expected_path, "__init__.py")]
     if module.__file__ not in expected_paths:
-        raise CWDImportError(f'expected {expected_paths[0]}, got {module.__file__}')
+        raise CWDImportError(f"expected {expected_paths[0]}, got {module.__file__}")
     return module
 
 
@@ -93,8 +96,8 @@ def format_docstring(docstring):
     all sequential occurrences of whitespace with a single space).
     """
     if not docstring:
-        return ''
-    return re.sub(r'\s+', ' ', docstring).strip()
+        return ""
+    return re.sub(r"\s+", " ", docstring).strip()
 
 
 def get_boolean_env(name, default):
@@ -102,8 +105,8 @@ def get_boolean_env(name, default):
     Converts environment variables to boolean values. Truthy is defined as:
     ``value.lower() in {'true', 'yes', 'y', '1'}`` (everything else is falsy).
     """
-    default = 'true' if default else 'false'
-    return os.getenv(name, default).lower() in {'true', 'yes', 'y', '1'}
+    default = "true" if default else "false"
+    return os.getenv(name, default).lower() in {"true", "yes", "y", "1"}
 
 
 def safe_import_module(module_name):
@@ -128,12 +131,12 @@ def utcnow():
 
 
 __all__ = [
-    'AttrDict',
-    'ConfigProperty',
-    'ConfigPropertyMetaclass',
-    'cwd_import',
-    'format_docstring',
-    'get_boolean_env',
-    'safe_import_module',
-    'utcnow',
+    "AttrDict",
+    "ConfigProperty",
+    "ConfigPropertyMetaclass",
+    "cwd_import",
+    "format_docstring",
+    "get_boolean_env",
+    "safe_import_module",
+    "utcnow",
 ]

@@ -10,7 +10,7 @@ year, month, day, hour = 2000, 1, 1, 1
 
 class TestDateTime:
     def test_process_bind_param_converts_to_utc(self):
-        dt = datetime(year, month, day, hour, tzinfo=tz.gettz('America/New_York'))
+        dt = datetime(year, month, day, hour, tzinfo=tz.gettz("America/New_York"))
         value = types.DateTime().process_bind_param(dt)
         assert dt == value
         assert value.tzinfo == timezone.utc
@@ -19,7 +19,7 @@ class TestDateTime:
         dt = datetime(year, month, day, hour)
         with pytest.raises(ValueError) as e:
             types.DateTime().process_bind_param(dt)
-        assert 'Cannot persist timezone-naive datetime' in str(e.value)
+        assert "Cannot persist timezone-naive datetime" in str(e.value)
 
     def test_process_result_value(self):
         dt = datetime(year, month, day, hour, tzinfo=timezone.utc)
@@ -28,7 +28,7 @@ class TestDateTime:
         assert value.tzinfo == timezone.utc
 
     def test_process_result_value_as_utc(self):
-        dt = datetime(year, month, day, hour, tzinfo=tz.gettz('America/New_York'))
+        dt = datetime(year, month, day, hour, tzinfo=tz.gettz("America/New_York"))
         value = types.DateTime().process_result_value(dt)
         assert dt == value
         assert value.tzinfo == timezone.utc
@@ -46,8 +46,9 @@ class TestDateTime:
 
         db.create_all()
 
-        instance = Timestamp(dt=datetime(year, month, day, hour,
-                                         tzinfo=tz.gettz('America/New_York')))
+        instance = Timestamp(
+            dt=datetime(year, month, day, hour, tzinfo=tz.gettz("America/New_York"))
+        )
         session_manager.save(instance, commit=True)
 
         queried = Timestamp.query.first()

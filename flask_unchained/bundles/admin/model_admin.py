@@ -16,14 +16,14 @@ from .security import AdminSecurityMixin
 
 
 EXTEND_BASE_CLASS_DICT_ATTRIBUTES = (
-    'column_formatters',
-    'column_formatters_detail',
-    'column_type_formatters',
-    'column_type_formatters_detail',
+    "column_formatters",
+    "column_formatters_detail",
+    "column_type_formatters",
+    "column_type_formatters_detail",
 )
 EXTEND_BASE_CLASS_LIST_ATTRIBUTES = (
-    'column_exclude_list',
-    'form_excluded_columns',
+    "column_exclude_list",
+    "form_excluded_columns",
 )
 
 
@@ -176,18 +176,18 @@ class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin, metaclass=ModelAdminMetacl
     menu_icon_type = ICON_TYPE_FONT_AWESOME
     menu_icon_value = None
 
-    column_exclude_list = ('created_at', 'updated_at')
-    form_excluded_columns = ('created_at', 'updated_at')
+    column_exclude_list = ("created_at", "updated_at")
+    form_excluded_columns = ("created_at", "updated_at")
 
     column_formatters = {
-        'created_at': macro('column_formatters.datetime'),
-        'updated_at': macro('column_formatters.datetime'),
+        "created_at": macro("column_formatters.datetime"),
+        "updated_at": macro("column_formatters.datetime"),
     }
 
     column_type_formatters = {
-        datetime: lambda view, dt: dt.strftime('%Y-%m-%d %I:%M%p %Z'),
-        date: lambda view, d: d.strftime('%Y-%m-%d'),
-        _AssociationList: lambda view, values: ', '.join(str(v) for v in values),
+        datetime: lambda view, dt: dt.strftime("%Y-%m-%d %I:%M%p %Z"),
+        date: lambda view, d: d.strftime("%Y-%m-%d"),
+        _AssociationList: lambda view, values: ", ".join(str(v) for v in values),
         **typefmt.BASE_FORMATTERS,
     }
 
@@ -200,15 +200,21 @@ class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin, metaclass=ModelAdminMetacl
         # details view should inherit formatters from the list view
         self.column_formatters_detail = {
             **self.column_formatters_detail,
-            **{k: v for k, v in self.column_formatters.items()
-               if k not in self.column_formatters_detail},
+            **{
+                k: v
+                for k, v in self.column_formatters.items()
+                if k not in self.column_formatters_detail
+            },
         }
 
         # details view should inherit formatters from the list view
         self.column_type_formatters_detail = {
             **self.column_type_formatters_detail,
-            **{k: v for k, v in self.column_type_formatters.items()
-               if k not in self.column_type_formatters_detail},
+            **{
+                k: v
+                for k, v in self.column_type_formatters.items()
+                if k not in self.column_type_formatters_detail
+            },
         }
 
     def __getattribute__(self, attr):
@@ -224,7 +230,9 @@ class ModelAdmin(AdminSecurityMixin, _BaseModelAdmin, metaclass=ModelAdminMetacl
             if isinstance(base_value, dict):
                 base_value.update(value)
                 return base_value
-        elif attr in EXTEND_BASE_CLASS_LIST_ATTRIBUTES and isinstance(value, (list, tuple)):
+        elif attr in EXTEND_BASE_CLASS_LIST_ATTRIBUTES and isinstance(
+            value, (list, tuple)
+        ):
             base_value = getattr(ModelAdmin, attr)
             if isinstance(base_value, (list, tuple)):
                 return tuple(list(value) + [v for v in base_value if v not in value])

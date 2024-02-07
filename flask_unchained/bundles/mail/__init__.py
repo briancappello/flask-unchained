@@ -8,12 +8,12 @@ class MailBundle(Bundle):
     The Mail Bundle.
     """
 
-    name = 'mail_bundle'
+    name = "mail_bundle"
     """
     The name of the Mail Bundle.
     """
 
-    command_group_names = ['mail']
+    command_group_names = ["mail"]
     """
     Click groups for the Mail Bundle.
     """

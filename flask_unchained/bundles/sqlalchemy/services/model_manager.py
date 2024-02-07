@@ -1,13 +1,15 @@
 from flask_unchained import Service, unchained
 from flask_unchained.di import ServiceMetaclass, ServiceMetaOptionsFactory
-from sqlalchemy_unchained.model_manager import (ModelManager as BaseModelManager,
-                                                ModelManagerMetaclass as BaseModelManagerMetaclass)
+from sqlalchemy_unchained.model_manager import (
+    ModelManager as BaseModelManager,
+    ModelManagerMetaclass as BaseModelManagerMetaclass,
+)
 
 from ..meta_options import ModelMetaOption
 
 
 class ModelManagerMetaOptionsFactory(ServiceMetaOptionsFactory):
-    _allowed_properties = ['model']
+    _allowed_properties = ["model"]
     _options = ServiceMetaOptionsFactory._options + [ModelMetaOption]
 
     def __init__(self):
@@ -34,6 +36,7 @@ class ModelManager(BaseModelManager, Service, metaclass=ModelManagerMetaclass):
     """
     Base class for database model manager services.
     """
+
     _meta_options_factory_class = ModelManagerMetaOptionsFactory
 
     class Meta:
@@ -42,7 +45,7 @@ class ModelManager(BaseModelManager, Service, metaclass=ModelManagerMetaclass):
 
 
 __all__ = [
-    'ModelManager',
-    'ModelManagerMetaclass',
-    'ModelManagerMetaOptionsFactory',
+    "ModelManager",
+    "ModelManagerMetaclass",
+    "ModelManagerMetaOptionsFactory",
 ]

@@ -10,12 +10,10 @@ class ModelFactory(factory.Factory):
         abstract = True
 
     @classmethod
-    @unchained.inject('session_manager')
-    def _create(cls,
-                model_class,
-                *args,
-                session_manager: SessionManager = injectable,
-                **kwargs):
+    @unchained.inject("session_manager")
+    def _create(
+        cls, model_class, *args, session_manager: SessionManager = injectable, **kwargs
+    ):
         # make sure we get the correct mapped class
         model_class = unchained.sqlalchemy_bundle.models[model_class.__name__]
 
@@ -27,13 +25,18 @@ class ModelFactory(factory.Factory):
 
         # otherwise try by all simple type values
         if not filter_kwargs:
-            filter_kwargs = {k: v for k, v in kwargs.items()
-                             if '__' not in k
-                             and (v is None
-                                  or isinstance(v, (bool, int, str, float)))}
+            filter_kwargs = {
+                k: v
+                for k, v in kwargs.items()
+                if "__" not in k
+                and (v is None or isinstance(v, (bool, int, str, float)))
+            }
 
-        instance = (model_class.query.filter_by(**filter_kwargs).one_or_none()
-                    if filter_kwargs else None)
+        instance = (
+            model_class.query.filter_by(**filter_kwargs).one_or_none()
+            if filter_kwargs
+            else None
+        )
 
         if not instance:
             instance = model_class(*args, **kwargs)

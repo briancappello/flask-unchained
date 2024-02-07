@@ -7,14 +7,14 @@ migrate = Migrate()
 
 
 EXTENSIONS = {
-    'db': db,
-    'migrate': (migrate, ['db']),
+    "db": db,
+    "migrate": (migrate, ["db"]),
 }
 
 
 __all__ = [
-    'db',
-    'SQLAlchemyUnchained',
-    'migrate',
-    'Migrate',
+    "db",
+    "SQLAlchemyUnchained",
+    "migrate",
+    "Migrate",
 ]

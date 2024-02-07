@@ -18,10 +18,10 @@ class FakeExt:
 
 
 FAKE_EXTENSIONS = {
-    'four': FakeExt('four'),
-    'one': (FakeExt('one'), ['two', 'three']),
-    'three': (FakeExt('three'), ['four']),
-    'two': (FakeExt('two'), ['three']),
+    "four": FakeExt("four"),
+    "one": (FakeExt("one"), ["two", "three"]),
+    "three": (FakeExt("three"), ["four"]),
+    "two": (FakeExt("two"), ["three"]),
 }
 
 
@@ -41,21 +41,21 @@ class TestRegisterExtensionsHook:
 
         vendor_extensions = register_hook.collect_from_bundle(VendorBundle())
         assert len(vendor_extensions) == 1
-        assert 'awesome' in vendor_extensions
-        vendor_ext = vendor_extensions['awesome']
+        assert "awesome" in vendor_extensions
+        vendor_ext = vendor_extensions["awesome"]
         assert vendor_ext == awesome
 
         app_extensions = register_hook.collect_from_bundle(MyAppBundle())
         assert len(app_extensions) == 1
-        assert 'myext' in app_extensions
-        vendor_ext = app_extensions['myext']
-        assert vendor_ext == (myext, ['awesome'])
+        assert "myext" in app_extensions
+        vendor_ext = app_extensions["myext"]
+        assert vendor_ext == (myext, ["awesome"])
 
     def test_process_objects(self, app, register_hook: RegisterExtensionsHook):
         register_hook.process_objects(app, FAKE_EXTENSIONS)
 
         registered = set(register_hook.unchained.extensions.keys())
-        assert registered == {'one', 'two', 'three', 'four'}
+        assert registered == {"one", "two", "three", "four"}
         for name, ext in register_hook.unchained.extensions.items():
             assert name == ext.name
             assert ext.app is None
@@ -65,7 +65,7 @@ class TestRegisterExtensionsHook:
 
         registered = list(register_hook.unchained.extensions.keys())
         extensions = list(register_hook.unchained.extensions.values())
-        assert registered == ['awesome', 'myext']
+        assert registered == ["awesome", "myext"]
         assert extensions == [awesome, myext]
 
 
@@ -74,37 +74,34 @@ class TestInitExtensionsHook:
         init_hook.process_objects(app, FAKE_EXTENSIONS)
 
         registered = set(init_hook.unchained.extensions.keys())
-        assert registered == {'four', 'three', 'two', 'one'}
+        assert registered == {"four", "three", "two", "one"}
         for name, ext in init_hook.unchained.extensions.items():
             assert name == ext.name
             assert ext.app == app
 
     def test_resolve_extension_order(self, init_hook: InitExtensionsHook):
         order = [ext.name for ext in init_hook.resolve_extension_order(FAKE_EXTENSIONS)]
-        assert order == ['four', 'three', 'two', 'one']
+        assert order == ["four", "three", "two", "one"]
 
     def test_resolve_broken_extension_order(self, init_hook: InitExtensionsHook):
-        extensions = {
-            'one': (None, ['two']),
-            'two': (None, ['one'])
-        }
+        extensions = {"one": (None, ["two"]), "two": (None, ["one"])}
         with pytest.raises(Exception) as e:
             init_hook.resolve_extension_order(extensions)
-        assert 'Circular dependency detected' in str(e.value)
+        assert "Circular dependency detected" in str(e.value)
 
     def test_run_hook(self, app, init_hook: InitExtensionsHook):
         init_hook.run_hook(app, [EmptyBundle(), VendorBundle(), MyAppBundle()])
 
         registered = list(init_hook.unchained.extensions.keys())
         extensions = list(init_hook.unchained.extensions.values())
-        assert registered == ['awesome', 'myext']
+        assert registered == ["awesome", "myext"]
         assert extensions == [awesome, myext]
         assert awesome.app == app
         assert myext.app == app
 
     def test_update_shell_context(self, init_hook: InitExtensionsHook):
         ctx = {}
-        data = {'one': 1, 'two': 2, 'three': 3}
+        data = {"one": 1, "two": 2, "three": 3}
         init_hook.unchained.extensions = data
         init_hook.update_shell_context(ctx)
         assert ctx == data

@@ -8,27 +8,30 @@ from .many_to_many_table import index_equities
 class Asset(db.Model):
     class Meta:
         polymorphic = True
-        repr = ('id', 'ticker')
+        repr = ("id", "ticker")
 
     ticker = db.Column(db.String(16), index=True, unique=True)
 
-    market_id = db.foreign_key('Market')
-    market = db.relationship('Market', back_populates='assets')
-    exchange = db.association_proxy('market', 'exchange')
+    market_id = db.foreign_key("Market")
+    market = db.relationship("Market", back_populates="assets")
+    exchange = db.association_proxy("market", "exchange")
 
-    asset_data_vendors = db.relationship('AssetDataVendor',
-                                         back_populates='asset',
-                                         cascade='all, delete-orphan')
+    asset_data_vendors = db.relationship(
+        "AssetDataVendor", back_populates="asset", cascade="all, delete-orphan"
+    )
     data_vendors = db.association_proxy(
-        'asset_data_vendors', 'data_vendor',
-        creator=lambda data_vendor: AssetDataVendor(data_vendor=data_vendor))
+        "asset_data_vendors",
+        "data_vendor",
+        creator=lambda data_vendor: AssetDataVendor(data_vendor=data_vendor),
+    )
 
 
 class Equity(Asset):
     class Meta:
-        repr = ('id', 'ticker', 'company_name')
+        repr = ("id", "ticker", "company_name")
 
     company_name = db.Column(db.String(64), index=True)
 
-    indexes = db.relationship('Index', secondary=index_equities,
-                              lazy='subquery', back_populates='equities')
+    indexes = db.relationship(
+        "Index", secondary=index_equities, lazy="subquery", back_populates="equities"
+    )

@@ -17,13 +17,14 @@ from ._compat import is_local_proxy
 class _BundleOverrideModuleNamesAttrDescriptor:
     def __get__(self, instance, cls):
         if cls.require_exactly_one_bundle_module:
-            return f'{cls.bundle_module_name}_module_name'
+            return f"{cls.bundle_module_name}_module_name"
         elif cls.bundle_module_names:
-            return f'{cls.bundle_module_names[0]}_module_names'.replace('.', '_')
+            return f"{cls.bundle_module_names[0]}_module_names".replace(".", "_")
         elif cls.bundle_module_name:
             raise RuntimeError(
-                f'To use `bundle_module_name` on {cls.__name__}, you must also set '
-                f'`{cls.__name__}.require_exactly_one_bundle_module = True`')
+                f"To use `bundle_module_name` on {cls.__name__}, you must also set "
+                f"`{cls.__name__}.require_exactly_one_bundle_module = True`"
+            )
         return None
 
 
@@ -128,11 +129,12 @@ class AppFactoryHook:
         The :class:`~flask_unchained.Bundle` instance this hook is from (if any).
         """
 
-    def run_hook(self,
-                 app: FlaskUnchained,
-                 bundles: List[Bundle],
-                 unchained_config: Optional[Dict[str, Any]] = None,
-                 ) -> None:
+    def run_hook(
+        self,
+        app: FlaskUnchained,
+        bundles: List[Bundle],
+        unchained_config: Optional[Dict[str, Any]] = None,
+    ) -> None:
         """
         Hook entry point. Override to disable standard behavior of iterating
         over bundles to discover objects and processing them.
@@ -146,11 +148,12 @@ class AppFactoryHook:
         """
         raise NotImplementedError
 
-    def collect_from_bundles(self,
-                             bundles: List[Bundle],
-                             *,
-                             _initial_objects: Optional[Dict[str, Any]] = None,
-                             ) -> Dict[str, Any]:
+    def collect_from_bundles(
+        self,
+        bundles: List[Bundle],
+        *,
+        _initial_objects: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
         """
         Collect objects where :meth:`type_check` returns ``True`` from bundles.
         Discovered names (keys, typically the class names) are expected to be unique
@@ -170,11 +173,13 @@ class AppFactoryHook:
             from_bundle_keys = set(from_bundle.keys())
             conflicts = object_keys.intersection(from_bundle_keys)
             if conflicts:
-                msg = [f'{self.name} from {bundle.name} conflict with '
-                       f'previously registered {self.name}:']
+                msg = [
+                    f"{self.name} from {bundle.name} conflict with "
+                    f"previously registered {self.name}:"
+                ]
                 for key in conflicts:
-                    msg.append(f'{key} from {key_bundles[key].name}')
-                raise NameCollisionError('\n'.join(msg))
+                    msg.append(f"{key} from {key_bundles[key].name}")
+                raise NameCollisionError("\n".join(msg))
 
             all_objects.update(from_bundle)
             object_keys = object_keys.union(from_bundle_keys)
@@ -188,8 +193,11 @@ class AppFactoryHook:
         Bundle subclasses can override objects discovered in superclass bundles.
         """
         members = {}
-        hierarchy = ([bundle] if not self.discover_from_bundle_superclasses
-                     else bundle._iter_class_hierarchy())
+        hierarchy = (
+            [bundle]
+            if not self.discover_from_bundle_superclasses
+            else bundle._iter_class_hierarchy()
+        )
         for b in hierarchy:
             last_module = None
             from_this_bundle = set()
@@ -198,24 +206,27 @@ class AppFactoryHook:
                 name_collisions = from_this_bundle & set(found.keys())
                 if name_collisions:
                     raise NameCollisionError(
-                        f'Name conflict in the {bundle.name} bundle hierarchy: '
+                        f"Name conflict in the {bundle.name} bundle hierarchy: "
                         f'The objects named {", ".join(name_collisions)} '
-                        f'in {module.__name__} '
-                        f'collide with those from {last_module.__name__}')
+                        f"in {module.__name__} "
+                        f"collide with those from {last_module.__name__}"
+                    )
                 members.update(found)
                 last_module = module
                 from_this_bundle.update(found.keys())
         return members
 
-    def _collect_from_package(self,
-                              module: ModuleType,
-                              type_checker: Optional[Callable[[Any], bool]] = None,
-                              ) -> Dict[str, Any]:
+    def _collect_from_package(
+        self,
+        module: ModuleType,
+        type_checker: Optional[Callable[[Any], bool]] = None,
+    ) -> Dict[str, Any]:
         """
         Discover objects passing :meth:`type_check` by walking through all the
         child modules/packages in the given module (ie, do not require packages
         to import everything into their ``__init__.py`` for it to be discovered)
         """
+
         def type_check_wrapper(obj: Any) -> bool:
             if is_local_proxy(obj):
                 return False
@@ -228,7 +239,7 @@ class AppFactoryHook:
         # if the passed module is a package, also get members from child modules
         if importlib.util.find_spec(module.__name__).submodule_search_locations:
             for _, name, _ in pkgutil.walk_packages(module.__path__):
-                child_module_name = f'{module.__package__}.{name}'
+                child_module_name = f"{module.__package__}.{name}"
                 child_module = importlib.import_module(child_module_name)
                 for key, obj in self._get_members(child_module, type_check_wrapper):
                     if key not in members:
@@ -236,10 +247,11 @@ class AppFactoryHook:
 
         return members
 
-    def _get_members(self,
-                     module: ModuleType,
-                     type_checker: Callable[[Any], bool],
-                     ) -> List[Tuple[str, Any]]:
+    def _get_members(
+        self,
+        module: ModuleType,
+        type_checker: Callable[[Any], bool],
+    ) -> List[Tuple[str, Any]]:
         for name, obj in inspect.getmembers(module, type_checker):
             # FIXME
             # currently, no hooks depend on this working correctly, however
@@ -262,10 +274,11 @@ class AppFactoryHook:
             if is_local_declaration or not self.limit_discovery_to_local_declarations:
                 yield self.key_name(name, obj), obj
 
-    def key_name(self,
-                 name: str,
-                 obj: Any,
-                 ) -> str:
+    def key_name(
+        self,
+        name: str,
+        obj: Any,
+    ) -> str:
         """
         Override to use a custom key to determine uniqueness/overriding.
         """
@@ -283,8 +296,10 @@ class AppFactoryHook:
         """
         Safe-import the modules in a bundle for this hook to load from.
         """
-        modules = [safe_import_module(module_name)
-                   for module_name in cls.get_module_names(bundle)]
+        modules = [
+            safe_import_module(module_name)
+            for module_name in cls.get_module_names(bundle)
+        ]
         return [m for m in modules if m]
 
     @classmethod
@@ -295,8 +310,10 @@ class AppFactoryHook:
         """
         if bundle.is_single_module:
             return [bundle.module_name]
-        return [bundle.module_name if name == '__init__' else f'{bundle.module_name}.{name}'
-                for name in cls.get_bundle_module_names(bundle)]
+        return [
+            bundle.module_name if name == "__init__" else f"{bundle.module_name}.{name}"
+            for name in cls.get_bundle_module_names(bundle)
+        ]
 
     @classmethod
     def get_bundle_module_names(cls, bundle: Bundle) -> List[str]:
@@ -304,15 +321,22 @@ class AppFactoryHook:
         The list of module names inside a bundle this hook should load from.
         """
         if bundle.is_single_module:
-            return ['__init__']
+            return ["__init__"]
 
         # check to make sure the hook is configured correctly
         if cls.require_exactly_one_bundle_module and cls.bundle_module_name is None:
-            raise RuntimeError(f'you must set the `bundle_module_name` class attribute '
-                               f'on {cls.__module__}.{cls.__name__} to use this feature.')
-        elif not cls.require_exactly_one_bundle_module and cls.bundle_module_names is None:
-            raise RuntimeError(f'you must set the `bundle_module_names` class attribute '
-                               f'on {cls.__module__}.{cls.__name__} to use this feature.')
+            raise RuntimeError(
+                f"you must set the `bundle_module_name` class attribute "
+                f"on {cls.__module__}.{cls.__name__} to use this feature."
+            )
+        elif (
+            not cls.require_exactly_one_bundle_module
+            and cls.bundle_module_names is None
+        ):
+            raise RuntimeError(
+                f"you must set the `bundle_module_names` class attribute "
+                f"on {cls.__module__}.{cls.__name__} to use this feature."
+            )
 
         module_names = getattr(bundle, cls.bundle_override_module_names_attr, None)
         if module_names is None:
@@ -325,9 +349,11 @@ class AppFactoryHook:
 
         # check to make sure the user's bundle override module name(s) attribute is correct
         if cls.require_exactly_one_bundle_module and not isinstance(module_names, str):
-            raise ValueError(f'The {cls.bundle_override_module_names_attr} attribute '
-                             f'on {bundle.module_name}.{bundle.__class__.__name__} '
-                             f'must be a string for exactly one module name.')
+            raise ValueError(
+                f"The {cls.bundle_override_module_names_attr} attribute "
+                f"on {bundle.module_name}.{bundle.__class__.__name__} "
+                f"must be a string for exactly one module name."
+            )
 
         if isinstance(module_names, str):
             return [module_names]
@@ -341,5 +367,5 @@ class AppFactoryHook:
 
 
 __all__ = [
-    'AppFactoryHook',
+    "AppFactoryHook",
 ]

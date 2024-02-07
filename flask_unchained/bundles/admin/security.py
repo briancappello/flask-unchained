@@ -15,13 +15,15 @@ class AdminSecurityMixin:
     """
 
     def is_accessible(self):
-        if (user.is_active
-                and user.is_authenticated
-                and user.has_role(current_app.config.ADMIN_ADMIN_ROLE_NAME)):
+        if (
+            user.is_active
+            and user.is_authenticated
+            and user.has_role(current_app.config.ADMIN_ADMIN_ROLE_NAME)
+        ):
             return True
         return False
 
     def inaccessible_callback(self, name, **kwargs):
         if not user.is_authenticated:
-            return redirect(url_for('ADMIN_LOGIN_ENDPOINT', next=request.url))
+            return redirect(url_for("ADMIN_LOGIN_ENDPOINT", next=request.url))
         return abort(HTTPStatus.FORBIDDEN)

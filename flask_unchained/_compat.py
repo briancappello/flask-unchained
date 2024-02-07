@@ -4,28 +4,30 @@ import inspect
 import sys
 
 
-wtforms3_compat = importlib.import_module('flask_unchained.forms._compat')
-sys.modules['wtforms.compat'] = wtforms3_compat
+wtforms3_compat = importlib.import_module("flask_unchained.forms._compat")
+sys.modules["wtforms.compat"] = wtforms3_compat
 
 
 # *************************************************************************
 # monkey patch functools.wraps to assign __signature__ by default
 # *************************************************************************
 
-def update_wrapper(wrapper,
-                   wrapped,
-                   assigned=None,
-                   updated=None):
+
+def update_wrapper(wrapper, wrapped, assigned=None, updated=None):
     wrapper = functools.update_wrapper(
         wrapper,
         wrapped,
-        assigned or tuple(list(functools.WRAPPER_ASSIGNMENTS) + [
-            '__signature__',
-        ]),
+        assigned
+        or tuple(
+            list(functools.WRAPPER_ASSIGNMENTS)
+            + [
+                "__signature__",
+            ]
+        ),
         updated or functools.WRAPPER_UPDATES,
     )
 
-    if not hasattr(wrapper, '__signature__'):
+    if not hasattr(wrapper, "__signature__"):
         try:
             wrapper.__signature__ = inspect.signature(wrapped)
         except ValueError:
@@ -35,11 +37,12 @@ def update_wrapper(wrapper,
 
 
 def wraps(wrapped_fn, assigned=None, updated=None):
-    return functools.partial(update_wrapper, wrapped=wrapped_fn,
-                             assigned=assigned, updated=updated)
+    return functools.partial(
+        update_wrapper, wrapped=wrapped_fn, assigned=assigned, updated=updated
+    )
 
 
-setattr(functools, 'wraps', wraps)
+setattr(functools, "wraps", wraps)
 
 
 # *************************************************************************
@@ -55,13 +58,14 @@ setattr(functools, 'wraps', wraps)
 QUART_ENABLED = False
 
 from werkzeug.local import LocalProxy as WerkzeugLocalProxy
+
 LocalProxy = WerkzeugLocalProxy
 
 try:
     import quart.flask_patch
     from quart.local import LocalProxy as QuartLocalProxy
 except ImportError:
-    QuartLocalProxy = type('QuartLocalProxy', (), {})
+    QuartLocalProxy = type("QuartLocalProxy", (), {})
 else:
     QUART_ENABLED = True
     LocalProxy = QuartLocalProxy

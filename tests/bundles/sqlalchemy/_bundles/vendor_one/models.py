@@ -15,7 +15,7 @@ class OneParent(db.Model):
 
     name = db.Column(db.String)
 
-    children = db.relationship('OneChild', back_populates='parent')
+    children = db.relationship("OneChild", back_populates="parent")
 
 
 class OneChild(db.Model):
@@ -25,23 +25,24 @@ class OneChild(db.Model):
 
     name = db.Column(db.String)
 
-    parent_id = db.foreign_key('OneParent')
-    parent = db.relationship('OneParent', back_populates='children')
+    parent_id = db.foreign_key("OneParent")
+    parent = db.relationship("OneParent", back_populates="children")
 
 
 class OneUserRole(db.Model):
     """Join table between User and Role"""
+
     class Meta:
         lazy_mapped = True
         # relationships = {'OneUser': 'user', 'OneRole': 'role'}
 
-    user_id = db.foreign_key('OneUser', primary_key=True)
-    user = db.relationship('OneUser', back_populates='user_roles')
+    user_id = db.foreign_key("OneUser", primary_key=True)
+    user = db.relationship("OneUser", back_populates="user_roles")
 
-    role_id = db.foreign_key('OneRole', primary_key=True)
-    role = db.relationship('OneRole', back_populates='role_users')
+    role_id = db.foreign_key("OneRole", primary_key=True)
+    role = db.relationship("OneRole", back_populates="role_users")
 
-    __repr_props__ = ('user_id', 'role_id')
+    __repr_props__ = ("user_id", "role_id")
 
     def __init__(self, user=None, role=None, **kwargs):
         super().__init__(**kwargs)
@@ -58,10 +59,12 @@ class OneUser(db.Model):
 
     name = db.Column(db.String)
 
-    user_roles = db.relationship('OneUserRole', back_populates='user',
-                                 cascade='all, delete-orphan')
-    roles = db.association_proxy('user_roles', 'role',
-                                 creator=lambda role: OneUserRole(role=role))
+    user_roles = db.relationship(
+        "OneUserRole", back_populates="user", cascade="all, delete-orphan"
+    )
+    roles = db.association_proxy(
+        "user_roles", "role", creator=lambda role: OneUserRole(role=role)
+    )
 
 
 class OneRole(db.Model):
@@ -71,9 +74,11 @@ class OneRole(db.Model):
 
     name = db.Column(db.String, unique=True, index=True)
 
-    role_users = db.relationship('OneUserRole', back_populates='role',
-                                 cascade='all, delete-orphan')
-    users = db.association_proxy('role_users', 'user',
-                                 creator=lambda user: OneUserRole(user=user))
+    role_users = db.relationship(
+        "OneUserRole", back_populates="role", cascade="all, delete-orphan"
+    )
+    users = db.association_proxy(
+        "role_users", "user", creator=lambda user: OneUserRole(user=user)
+    )
 
-    __repr_props__ = ('id', 'name')
+    __repr_props__ = ("id", "name")

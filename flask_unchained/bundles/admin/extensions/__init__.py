@@ -5,11 +5,11 @@ admin = Admin()
 
 
 EXTENSIONS = {
-    'admin': admin,
+    "admin": admin,
 }
 
 
 __all__ = [
-    'admin',
-    'Admin',
+    "admin",
+    "Admin",
 ]

@@ -2,6 +2,6 @@ from flask_unchained import Controller, route
 
 
 class SiteController(Controller):
-    @route('/')
+    @route("/")
     def index(self):
-        return self.render('index')
+        return self.render("index")

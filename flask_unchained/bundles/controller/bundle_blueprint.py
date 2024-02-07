@@ -1,6 +1,7 @@
 from flask import Blueprint as BaseBlueprint
 from flask import send_from_directory as _send_from_directory
 from flask.blueprints import BlueprintSetupState as BaseBlueprintSetupState
+
 try:
     from flask.blueprints import _endpoint_from_view_func
 except (ImportError, ModuleNotFoundError):
@@ -23,16 +24,16 @@ class BundleBlueprintSetupState(BaseBlueprintSetupState):
                 rule = "/".join((self.url_prefix.rstrip("/"), rule.lstrip("/")))
             else:
                 rule = self.url_prefix
-        options.setdefault('subdomain', self.subdomain)
+        options.setdefault("subdomain", self.subdomain)
         if endpoint is None:
             endpoint = _endpoint_from_view_func(view_func)
         # only automatically prefix endpoints if no prefix was explicitly provided
-        if '.' not in endpoint:
+        if "." not in endpoint:
             name_prefix = getattr(self, "name_prefix", "")
-            endpoint = f'{name_prefix}{self.blueprint.name}.{endpoint}'
+            endpoint = f"{name_prefix}{self.blueprint.name}.{endpoint}"
         defaults = self.url_defaults
-        if 'defaults' in options:
-            defaults = dict(defaults, **options.pop('defaults'))
+        if "defaults" in options:
+            defaults = dict(defaults, **options.pop("defaults"))
         self.app.add_url_rule(rule, endpoint, view_func, defaults=defaults, **options)
 
     def register_deferred_bundle_functions(self):
@@ -50,6 +51,7 @@ class BundleBlueprint(BaseBlueprint):
     will get registered *only* with the :class:`BundleBlueprint` for the *top-most*
     bundle in the hierarchy.
     """
+
     url_prefix = None
 
     def __init__(self, bundle: Bundle):
@@ -71,14 +73,15 @@ class BundleBlueprint(BaseBlueprint):
 
     def send_static_file(self, filename):
         if not self.has_static_folder:
-            raise RuntimeError(f'No static folder found for {self.bundle.name}')
+            raise RuntimeError(f"No static folder found for {self.bundle.name}")
         # Ensure get_send_file_max_age is called in all cases.
         # Here, we ensure get_send_file_max_age is called for Blueprints.
         cache_timeout = self.get_send_file_max_age(filename)
         for directory in self.bundle._static_folders:
             try:
-                return _send_from_directory(directory, filename,
-                                            cache_timeout=cache_timeout)
+                return _send_from_directory(
+                    directory, filename, cache_timeout=cache_timeout
+                )
             except NotFound:
                 continue
         raise NotFound()
@@ -90,13 +93,16 @@ class BundleBlueprint(BaseBlueprint):
         """
         Like :meth:`~flask.Flask.add_url_rule` but for a blueprint.
         """
-        self.record(lambda s: s.add_url_rule(rule, endpoint, view_func,
-                                             register_with_babel=False, **options))
+        self.record(
+            lambda s: s.add_url_rule(
+                rule, endpoint, view_func, register_with_babel=False, **options
+            )
+        )
 
     def __repr__(self):
-        return f'BundleBlueprint(name={self.name!r}, bundle={self.bundle!r})'
+        return f"BundleBlueprint(name={self.name!r}, bundle={self.bundle!r})"
 
 
 __all__ = [
-    'BundleBlueprint',
+    "BundleBlueprint",
 ]

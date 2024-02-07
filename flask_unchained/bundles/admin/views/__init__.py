@@ -3,6 +3,6 @@ from .dashboard import AdminDashboardView
 
 
 __all__ = [
-    'AdminDashboardView',
-    'AdminSecurityController',
+    "AdminDashboardView",
+    "AdminSecurityController",
 ]

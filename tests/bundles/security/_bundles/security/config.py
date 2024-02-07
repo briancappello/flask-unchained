@@ -1,5 +1,5 @@
 class TestConfig:
     TESTING = True
-    SECURITY_PASSWORD_SALT = 'not-secret-salt'
+    SECURITY_PASSWORD_SALT = "not-secret-salt"
 
-    SESSION_TYPE = 'sqlalchemy'
+    SESSION_TYPE = "sqlalchemy"

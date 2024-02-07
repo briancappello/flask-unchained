@@ -9,13 +9,13 @@ from ..constants import DEV, PROD, STAGING, TEST
 from ..flask_unchained import FlaskUnchained
 
 
-BASE_CONFIG_CLASS = 'Config'
+BASE_CONFIG_CLASS = "Config"
 
 ENV_CONFIG_CLASSES = {
-    DEV: 'DevConfig',
-    PROD: 'ProdConfig',
-    STAGING: 'StagingConfig',
-    TEST: 'TestConfig',
+    DEV: "DevConfig",
+    PROD: "ProdConfig",
+    STAGING: "StagingConfig",
+    TEST: "TestConfig",
 }
 
 
@@ -24,12 +24,12 @@ class ConfigureAppHook(AppFactoryHook):
     Updates ``app.config`` with the settings from each bundle.
     """
 
-    name = 'configure_app'
+    name = "configure_app"
     """
     The name of this hook.
     """
 
-    bundle_module_name = 'config'
+    bundle_module_name = "config"
     """
     The default module this hook loads from.
 
@@ -37,14 +37,15 @@ class ConfigureAppHook(AppFactoryHook):
     """
 
     require_exactly_one_bundle_module = True
-    run_after = ['register_extensions']
-    run_before = ['init_extensions']
+    run_after = ["register_extensions"]
+    run_before = ["init_extensions"]
 
-    def run_hook(self,
-                 app: FlaskUnchained,
-                 bundles: List[Bundle],
-                 unchained_config: Optional[Dict[str, Any]] = None,
-                 ) -> None:
+    def run_hook(
+        self,
+        app: FlaskUnchained,
+        bundles: List[Bundle],
+        unchained_config: Optional[Dict[str, Any]] = None,
+    ) -> None:
         """
         For each bundle in ``unchained_config.BUNDLES``, iterate through that
         bundle's class hierarchy, starting from the base-most bundle. For each
@@ -59,15 +60,17 @@ class ConfigureAppHook(AppFactoryHook):
         for bundle in bundles:
             app.config.from_mapping(self.get_bundle_config(bundle, app.env))
 
-        _config_overrides = (unchained_config.get('_CONFIG_OVERRIDES')
-                             if unchained_config else None)
+        _config_overrides = (
+            unchained_config.get("_CONFIG_OVERRIDES") if unchained_config else None
+        )
         if _config_overrides and isinstance(_config_overrides, dict):
             app.config.from_mapping(_config_overrides)
 
-    def apply_default_config(self,
-                             app: FlaskUnchained,
-                             app_bundle: Optional[Bundle] = None,
-                             ) -> None:
+    def apply_default_config(
+        self,
+        app: FlaskUnchained,
+        app_bundle: Optional[Bundle] = None,
+    ) -> None:
         from .. import config
 
         app.config.from_object(config._ConfigDefaults)
@@ -80,29 +83,31 @@ class ConfigureAppHook(AppFactoryHook):
             app_bundle_config = self.get_bundle_config(app_bundle, app.env)
             app.config.from_mapping(app_bundle_config)
 
-    def get_bundle_config(self,
-                          bundle: Bundle,
-                          env: Union[DEV, PROD, STAGING, TEST],
-                          ) -> flask.Config:
+    def get_bundle_config(
+        self,
+        bundle: Bundle,
+        env: Union[DEV, PROD, STAGING, TEST],
+    ) -> flask.Config:
         """
         Get the config settings from a bundle hierarchy.
         """
         if isinstance(bundle, AppBundle):
             return self._get_bundle_config(bundle, env)
 
-        config = flask.Config('.')
+        config = flask.Config(".")
         for bundle_ in bundle._iter_class_hierarchy():
             config.update(self._get_bundle_config(bundle_, env))
         return config
 
-    def _get_bundle_config(self,
-                           bundle: Union[AppBundle, Bundle],
-                           env: Union[DEV, PROD, STAGING, TEST],
-                           ) -> flask.Config:
+    def _get_bundle_config(
+        self,
+        bundle: Union[AppBundle, Bundle],
+        env: Union[DEV, PROD, STAGING, TEST],
+    ) -> flask.Config:
         """
         Get the config settings from a single bundle package.
         """
-        config = flask.Config('.')
+        config = flask.Config(".")
         try:
             bundle_config_module = self.import_bundle_modules(bundle)[0]
         except IndexError:

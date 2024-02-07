@@ -5,11 +5,11 @@ oauth = OAuth()
 
 
 EXTENSIONS = {
-    'oauth': (oauth, ['security']),
+    "oauth": (oauth, ["security"]),
 }
 
 
 __all__ = [
-    'oauth',
-    'OAuth',
+    "oauth",
+    "OAuth",
 ]

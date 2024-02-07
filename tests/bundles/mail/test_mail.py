@@ -6,25 +6,25 @@ from flask_unchained.bundles.mail import mail
 from flask_unchained.bundles.mail.utils import _send_mail
 
 
-subject = 'hello world'
-recipient = 'foo@example.com'
-sender = 'noreply@example.com'
-body = 'one fine body'
-html = '''\
+subject = "hello world"
+recipient = "foo@example.com"
+sender = "noreply@example.com"
+body = "one fine body"
+html = """\
 <html>
 <body>
   <p>one fine body</p>
 </body>
-</html>'''
+</html>"""
 
 
-@pytest.mark.bundles(['flask_unchained.bundles.mail'])
+@pytest.mark.bundles(["flask_unchained.bundles.mail"])
 @pytest.mark.options(MAIL_DEFAULT_SENDER=sender)
 class TestMail:
     def test_send_mail(self, outbox, templates):
-        _send_mail(subject, recipient, 'send_mail.html')
+        _send_mail(subject, recipient, "send_mail.html")
         assert len(outbox) == len(templates) == 1
-        assert templates[0].template.name == 'send_mail.html'
+        assert templates[0].template.name == "send_mail.html"
         msg = outbox[0]
         assert msg.subject == subject
         assert msg.recipients == [recipient]
@@ -40,8 +40,7 @@ class TestMail:
         assert msg.sender == sender
 
     def test_send_message(self, outbox):
-        mail.send_message(subject=subject, recipients=[recipient],
-                          body=body, html=html)
+        mail.send_message(subject=subject, recipients=[recipient], body=body, html=html)
         assert len(outbox) == 1
         msg = outbox[0]
         assert msg.subject == subject

@@ -18,24 +18,24 @@ class TestSessionManager:
     def test_save(self, db: SQLAlchemyUnchained):
         Foo, session_manager = _setup(db)
 
-        foo = Foo(name='foo')
+        foo = Foo(name="foo")
         session_manager.save(foo)
 
         # check it's added to the session but not committed
         assert foo in db.session
         with db.session.no_autoflush:
-            assert Foo.q.filter_by(name='foo').one_or_none() is None
+            assert Foo.q.filter_by(name="foo").one_or_none() is None
 
         # check the commit kwarg works
         session_manager.save(foo, commit=True)
-        assert Foo.q.filter_by(name='foo').one() == foo
+        assert Foo.q.filter_by(name="foo").one() == foo
 
     def test_save_all(self, db: SQLAlchemyUnchained):
         Foo, session_manager = _setup(db)
 
-        foo1 = Foo(name='one')
-        foo2 = Foo(name='two')
-        foo3 = Foo(name='three')
+        foo1 = Foo(name="one")
+        foo2 = Foo(name="two")
+        foo3 = Foo(name="three")
         all_ = [foo1, foo2, foo3]
 
         session_manager.save_all(all_)
@@ -51,8 +51,8 @@ class TestSessionManager:
     def test_delete(self, db: SQLAlchemyUnchained):
         Foo, session_manager = _setup(db)
 
-        foo1 = Foo(name='one')
-        foo2 = Foo(name='two')
+        foo1 = Foo(name="one")
+        foo2 = Foo(name="two")
         all_ = [foo1, foo2]
         session_manager.save_all(all_, commit=True)
 
@@ -62,6 +62,6 @@ class TestSessionManager:
 
         session_manager.delete(foo1, commit=True)
         assert foo1 not in db.session
-        assert Foo.q.filter_by(name='one').one_or_none() is None
+        assert Foo.q.filter_by(name="one").one_or_none() is None
         assert foo2 in db.session
-        assert Foo.q.filter_by(name='two').one() == foo2
+        assert Foo.q.filter_by(name="two").one() == foo2
