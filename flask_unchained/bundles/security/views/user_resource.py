@@ -23,7 +23,7 @@ class UserResource(ModelResource):
             PATCH: [auth_required_same_user],
         }
 
-    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
+
     def create(self, user, errors):
         if errors:
             return self.errors(errors)

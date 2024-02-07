@@ -568,7 +568,7 @@ class _MailMixin:
 
         outbox = []
 
-        def _record(message, app):  # skipcq: PYL-W0613 (unused arg)
+        def _record(message, app):
             outbox.append(message)
 
         email_dispatched.connect(_record)

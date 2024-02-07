@@ -1,6 +1,6 @@
 import pytest
 
-from .model_registry import UnchainedModelRegistry  # skipcq (required import)
+from .model_registry import UnchainedModelRegistry  # required import
 
 
 @pytest.fixture(autouse=True, scope='session')

@@ -355,7 +355,7 @@ class ModelSerializer(BaseModelSerializer, metaclass=ModelSerializerMetaclass):
 
     def handle_error(self,
                      error: MarshmallowValidationError,
-                     data: Any,  # skipcq: PYL-W0613 (unused arg)
+                     data: Any,
                      **kwargs
                      ) -> None:
         """

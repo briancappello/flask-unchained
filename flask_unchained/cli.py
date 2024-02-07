@@ -15,7 +15,7 @@ import time
 from traceback import format_exc
 from typing import *
 
-from flask.cli import with_appcontext  # skipcq (alias)
+from flask.cli import with_appcontext
 from pyterminalsize import get_terminal_size
 
 from . import click, unchained

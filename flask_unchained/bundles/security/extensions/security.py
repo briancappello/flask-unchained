@@ -190,8 +190,8 @@ class Security(_SecurityConfigProperties):
         login_manager.localize_callback = _
         login_manager.request_loader(self._request_loader)
         login_manager.user_loader(
-            # skipcq: PYL-W0108 (unnecessary lambda)
-            lambda *a, **kw: self.security_utils_service.user_loader(*a, **kw))
+            lambda *a, **kw: self.security_utils_service.user_loader(*a, **kw)
+        )
         login_manager.login_view = 'security_controller.login'
         login_manager.login_message = _(
             'flask_unchained.bundles.security:error.login_required')

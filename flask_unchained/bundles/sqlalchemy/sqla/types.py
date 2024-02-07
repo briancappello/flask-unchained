@@ -18,16 +18,16 @@ class BigInteger(types.TypeDecorator):
 class DateTime(types.TypeDecorator):
     impl = types.DateTime
 
-    def __init__(self, timezone=True):  # skipcq: PYL-W0613 (unused arg)
+    def __init__(self, timezone=True):
         super().__init__(timezone=True)  # force timezone always True
 
-    def process_bind_param(self, value, dialect=None):  # skipcq: PYL-W0613 (unused arg)
+    def process_bind_param(self, value, dialect=None):
         if value is not None:
             if value.tzinfo is None:
                 raise ValueError('Cannot persist timezone-naive datetime')
             return value.astimezone(dt.timezone.utc)
 
-    def process_result_value(self, value, dialect=None):  # skipcq: PYL-W0613 (unused arg)
+    def process_result_value(self, value, dialect=None):
         if not value:
             return
         if not value.tzinfo:

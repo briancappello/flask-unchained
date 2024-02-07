@@ -17,7 +17,7 @@ OTHER_INLINE_START_STR = '#!('
 OTHER_INLINE_END_STR = ')'
 
 
-env = Environment()  # skipcq: BAN-B701
+env = Environment()
 _excluded = object()
 
 MODULE_NAME_RE = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_]*$')
@@ -30,7 +30,7 @@ TEMPLATES_ROOT = os.path.abspath(
 PROJECT_TEMPLATE = os.path.join(TEMPLATES_ROOT, 'project')
 
 
-def _validate_module_name(ctx, param, value):  # skipcq: PYL-W0613 (unused arg)
+def _validate_module_name(ctx, param, value):
     if not MODULE_NAME_RE.match(value):
         raise click.BadParameter('must be a valid python module name '
                                  '(letters, numbers, and underscore characters only)')
@@ -109,7 +109,7 @@ class IfToken(Token):
     def render(self, ctx=None, *, _debug=False):
         condition = (self.condition if isinstance(self.condition, (str, bytes))
                      else repr(self.condition))
-        if not eval(condition, env.globals, ctx):  # skipcq: PYL-W0123
+        if not eval(condition, env.globals, ctx):
             if self.next:
                 return self.next.render(ctx, _debug=_debug)
             return _excluded

@@ -27,7 +27,7 @@ class RegisterServicesHook(AppFactoryHook):
 
     run_after = ['init_extensions']
 
-    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
+
     def process_objects(self,
                         app: FlaskUnchained,
                         services: Dict[str, Service],

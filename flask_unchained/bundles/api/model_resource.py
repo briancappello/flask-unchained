@@ -66,7 +66,7 @@ class ModelResourceSerializerMetaOption(MetaOption):
 
     def check_value(self,
                     value,
-                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    mcs_args: McsArgs,
                     ) -> None:
         if not value or isinstance(value, ModelSerializer) or (
                 isinstance(value, type) and issubclass(value, ModelSerializer)
@@ -86,7 +86,7 @@ class ModelResourceSerializerCreateMetaOption(MetaOption):
 
     def check_value(self,
                     value,
-                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    mcs_args: McsArgs,
                     ) -> None:
         if not value or isinstance(value, ModelSerializer) or (
                 isinstance(value, type) and issubclass(value, ModelSerializer)
@@ -105,7 +105,7 @@ class ModelResourceSerializerManyMetaOption(MetaOption):
 
     def check_value(self,
                     value,
-                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    mcs_args: McsArgs,
                     ) -> None:
         if not value or isinstance(value, ModelSerializer) or (
                 isinstance(value, type) and issubclass(value, ModelSerializer)
@@ -132,7 +132,7 @@ class ModelResourceIncludeMethodsMetaOption(MetaOption):
 
     def check_value(self,
                     value,
-                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    mcs_args: McsArgs,
                     ) -> None:
         if not value:
             return
@@ -151,7 +151,7 @@ class ModelResourceExcludeMethodsMetaOption(MetaOption):
 
     def check_value(self,
                     value,
-                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    mcs_args: McsArgs,
                     ) -> None:
         if not value:
             return
@@ -199,7 +199,7 @@ class ModelResourceIncludeDecoratorsMetaOption(MetaOption):
 
     def check_value(self,
                     value,
-                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    mcs_args: McsArgs,
                     ) -> None:
         if not value:
             return
@@ -219,7 +219,7 @@ class ModelResourceExcludeDecoratorsMetaOption(MetaOption):
 
     def check_value(self,
                     value,
-                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    mcs_args: McsArgs,
                     ) -> None:
         if not value:
             return
@@ -276,7 +276,7 @@ class ModelResourceUrlPrefixMetaOption(MetaOption):
 
     def check_value(self,
                     value,
-                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    mcs_args: McsArgs,
                     ) -> None:
         if not value:
             return
@@ -444,7 +444,7 @@ class ModelResource(Resource, metaclass=ModelResourceMetaclass):
 
         return self.make_response(rv, code, headers)
 
-    def make_response(self, data, code=200, headers=None):  # skipcq:  PYL-W0221
+    def make_response(self, data, code=200, headers=None):
         headers = headers or {}
         if isinstance(data, Response):
             return make_response(data, code, headers)

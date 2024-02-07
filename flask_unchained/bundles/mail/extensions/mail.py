@@ -26,7 +26,7 @@ class Mail(_MailMixin, metaclass=ConfigPropertyMetaclass):
 
     send: FunctionType = ConfigProperty('MAIL_SEND_FN')
 
-    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
+
     def send_message(self,
                      subject_or_message: Optional[Union[Message, str]] = None,
                      to: Optional[Union[str, List[str]]] = None,

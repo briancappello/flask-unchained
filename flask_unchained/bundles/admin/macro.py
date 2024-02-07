@@ -27,7 +27,7 @@ def macro(name):
 
         {% import 'admin/column_formatters.html' as column_formatters with context %}
     """
-    def wrapper(view, context, model, column):  # skipcq: PYL-W0613 (unused arg)
+    def wrapper(view, context, model, column):
         if '.' in name:
             macro_import_name, macro_name = name.split('.')
             m = getattr(context.get(macro_import_name), macro_name, None)

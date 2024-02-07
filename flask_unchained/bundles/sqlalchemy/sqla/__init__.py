@@ -1,7 +1,7 @@
 # alias common names
-from sqlalchemy.ext.associationproxy import association_proxy  # skipcq (aliases)
-from sqlalchemy.ext.declarative import declared_attr  # skipcq (aliases)
-from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property  # skipcq (aliases)
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 
 from .column import Column
 from .events import attach_events, on, slugify
@@ -17,7 +17,6 @@ class _relationship_type_hinter_(RelationshipProperty):
         pass
 
 
-# skipcq
 def _column_type_hinter_(name=None, type=None, *args, autoincrement='auto',
                          default=None, doc=None, key=None, index=False,
                          info=None, nullable=False, onupdate=None,

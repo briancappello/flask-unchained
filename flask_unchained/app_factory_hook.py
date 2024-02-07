@@ -264,7 +264,7 @@ class AppFactoryHook:
 
     def key_name(self,
                  name: str,
-                 obj: Any,  # skipcq: PYL-W0613 (unused arg)
+                 obj: Any,
                  ) -> str:
         """
         Override to use a custom key to determine uniqueness/overriding.

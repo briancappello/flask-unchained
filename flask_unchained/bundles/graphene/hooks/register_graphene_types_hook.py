@@ -25,7 +25,7 @@ class RegisterGrapheneTypesHook(AppFactoryHook):
     bundle_override_module_names_attr = 'graphene_types_module_names'
     run_after = ['models', 'services']
 
-    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
+
     def process_objects(self,
                         app: FlaskUnchained,
                         types: Dict[str, SQLAlchemyObjectType]):

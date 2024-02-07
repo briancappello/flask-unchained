@@ -10,7 +10,7 @@ except ImportError:
          'convert html email messages to plain text.')
 
 try:
-    import lxml  # skipcq
+    import lxml
 except ImportError:
     from warnings import warn
     warn('lxml is not installed. Will not automatically '

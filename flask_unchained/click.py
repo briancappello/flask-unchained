@@ -33,8 +33,8 @@ def default(value):
     return value
 
 
-def should_prompt(ctx, param, value):  # skipcq: PYL-W0613 (unused arg)
-    global SKIP_PROMPTING  # skipcq: PYL-W0603 (allow global)
+def should_prompt(ctx, param, value):
+    global SKIP_PROMPTING
 
     if value is False:
         SKIP_PROMPTING = True
@@ -115,7 +115,7 @@ class Command(click.Command):
                 formatter.write_dl(opts)
 
     # overridden to set the limit parameter to always be CLI_HELP_STRING_MAX_LEN
-    def get_short_help_str(self, limit=0):  # skipcq: PYL-W0613 (unused arg)
+    def get_short_help_str(self, limit=0):
         return super().get_short_help_str(limit=CLI_HELP_STRING_MAX_LEN)
 
 
@@ -162,7 +162,7 @@ class GroupOverrideMixin:
         return rv
 
     # overridden to set the limit parameter to always be CLI_HELP_STRING_MAX_LEN
-    def get_short_help_str(self, limit=0):  # skipcq: PYL-W0613 (unused arg)
+    def get_short_help_str(self, limit=0):
         return super().get_short_help_str(limit=CLI_HELP_STRING_MAX_LEN)
 
 
@@ -248,7 +248,7 @@ class Argument(click.Argument):
         return var
 
     # this code is 90% copied from click.Option.get_help_record
-    def get_help_record(self, ctx):  # skipcq: PYL-W0613 (unused arg)
+    def get_help_record(self, ctx):
         if self.hidden:
             return
 

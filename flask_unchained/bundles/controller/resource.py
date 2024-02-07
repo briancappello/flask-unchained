@@ -68,7 +68,7 @@ class ResourceUrlPrefixMetaOption(MetaOption):
 
     def check_value(self,
                     value,
-                    mcs_args: McsArgs,  # skipcq: PYL-W0613 (unused arg)
+                    mcs_args: McsArgs,
                     ) -> None:
         if not value:
             return

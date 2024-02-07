@@ -27,7 +27,7 @@ class RegisterBlueprintsHook(AppFactoryHook):
     discover_from_package_submodules = False
     run_after = ['bundle_blueprints']
 
-    # skipcq: PYL-W0221 (parameters mismatch in overridden method)
+
     def process_objects(self, app: FlaskUnchained, blueprints: List[Blueprint]):
         """
         Registers discovered blueprints with the app.

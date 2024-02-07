@@ -2,7 +2,7 @@ import re
 import unicodedata
 
 # alias these to the string_utils module
-from .clips_pattern import de_camel, pluralize, singularize  # skipcq (aliases)
+from .clips_pattern import de_camel, pluralize, singularize
 
 
 def camel_case(string):
