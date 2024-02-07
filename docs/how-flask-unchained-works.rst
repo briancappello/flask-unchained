@@ -202,8 +202,8 @@ As an alternative to using ``Bundle.before_init_app`` and ``Bundle.after_init_ap
 
     from flask_unchained import unchained
 
-    @unchained.before_first_request
-    def called_once_before_the_first_request():
+    @unchained.before_request
+    def called_once_before_each_request():
         pass
 
     # the other familiar decorators are also available:

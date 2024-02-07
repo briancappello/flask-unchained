@@ -1,4 +1,5 @@
-from flask import _request_ctx_stack, current_app, request
+from flask import current_app, request, g
+
 from flask_principal import Identity, identity_changed
 from flask_unchained import unchained
 from functools import wraps
@@ -79,7 +80,7 @@ def _check_token():
     user = security.login_manager._request_callback(request)
 
     if user and user.is_authenticated:
-        _request_ctx_stack.top.user = user
+        g._login_user = user
         identity_changed.send(current_app._get_current_object(),
                               identity=Identity(user.id))
         return True

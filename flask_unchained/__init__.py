@@ -14,7 +14,7 @@ __version__ = '0.9.0'
 from . import _compat
 
 # aliases
-from flask import current_app, g, request, session, _app_ctx_stack, _request_ctx_stack
+from flask import current_app, g, request, session
 from flask import render_template, render_template_string
 from flask import Request, Response
 from werkzeug.exceptions import abort

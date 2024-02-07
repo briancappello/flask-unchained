@@ -504,20 +504,6 @@ class Unchained:
         self._defer(lambda app: app.before_request(fn))
         return fn
 
-    def before_first_request(self, fn=None):
-        """
-        Registers a function to be run before the first request to this
-        instance of the application.
-
-        The function will be called without any arguments and its return
-        value is ignored.
-        """
-        if fn is None:
-            return self.before_first_request
-
-        self._defer(lambda app: app.before_first_request(fn))
-        return fn
-
     def after_request(self, fn=None):
         """
         Register a function to be run after each request.

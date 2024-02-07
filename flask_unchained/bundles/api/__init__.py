@@ -1,5 +1,7 @@
 import enum
 
+from datetime import date, datetime
+
 from flask_unchained import Bundle, FlaskUnchained, unchained
 from flask_unchained._compat import is_local_proxy
 from speaklater import _LazyString
@@ -60,32 +62,49 @@ class ApiBundle(Bundle):
         """
         from flask_unchained.bundles.sqlalchemy import BaseModel
 
-        class JSONEncoder(app.json_encoder):
-            def default(self, obj):
-                if is_local_proxy(obj):
-                    obj = obj._get_current_object()
+        def _default(obj):
+            if is_local_proxy(obj):
+                obj = obj._get_current_object()
 
-                if isinstance(obj, enum.Enum):
-                    return obj.name
-                elif isinstance(obj, _LazyString):
-                    return str(obj)
+            if isinstance(obj, (date, datetime)):
+                return obj.isoformat()
+            elif isinstance(obj, enum.Enum):
+                return obj.name
+            elif isinstance(obj, _LazyString):
+                return str(obj)
 
-                api_bundle = unchained.api_bundle
-                if isinstance(obj, BaseModel):
-                    model_name = obj.__class__.__name__
-                    serializer_cls = api_bundle.serializers_by_model.get(model_name)
-                    if serializer_cls:
-                        return serializer_cls().dump(obj)
+            api_bundle = unchained.api_bundle
+            if isinstance(obj, BaseModel):
+                model_name = obj.__class__.__name__
+                serializer_cls = api_bundle.serializers_by_model.get(model_name)
+                if serializer_cls:
+                    return serializer_cls().dump(obj)
 
-                elif (obj and isinstance(obj, (list, tuple))
-                        and isinstance(obj[0], BaseModel)):
-                    model_name = obj[0].__class__.__name__
-                    serializer_cls = api_bundle.many_by_model.get(
-                        model_name,
-                        api_bundle.serializers_by_model.get(model_name))
-                    if serializer_cls:
-                        return serializer_cls(many=True).dump(obj)
+            elif (obj and isinstance(obj, (list, tuple))
+                  and isinstance(obj[0], BaseModel)):
+                model_name = obj[0].__class__.__name__
+                serializer_cls = api_bundle.many_by_model.get(
+                    model_name,
+                    api_bundle.serializers_by_model.get(model_name))
+                if serializer_cls:
+                    return serializer_cls(many=True).dump(obj)
 
-                return super().default(obj)
+            raise TypeError(f'Unable to serialize {obj!r} ({type(obj)} to JSON')
 
-        app.json_encoder = JSONEncoder
+        if hasattr(app, 'json_encoder'):
+            class JSONEncoder(app.json_encoder):
+                def default(self, obj):
+                    try:
+                        return _default(obj)
+                    except TypeError:
+                        return super().default(obj)
+
+            app.json_encoder = JSONEncoder
+        else:
+            from flask.json.provider import DefaultJSONProvider
+
+            class JSONProvider(DefaultJSONProvider):
+                default = staticmethod(_default)
+
+            app.json_provider_class = JSONProvider
+            app.json = JSONProvider(app)

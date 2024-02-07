@@ -6,6 +6,7 @@ from superclass bundles in the hierarchy)
 import re
 
 from flask import request
+from flask.globals import request_ctx
 from flask.templating import DispatchingJinjaLoader, Environment
 from flask_unchained import unchained
 from jinja2 import TemplateNotFound
@@ -94,16 +95,14 @@ def explain_template_loading_attempts(app, template, attempts):
     """
     from flask import Flask, Blueprint
     from flask.debughelpers import _dump_loader_info
-    from flask.globals import _request_ctx_stack
 
     template, expected_priors = parse_template(template)
     info = [f'Locating {pretty_num(expected_priors + 1)} template "{template}":']
 
     total_found = 0
     blueprint = None
-    reqctx = _request_ctx_stack.top
-    if reqctx is not None and reqctx.request.blueprint is not None:
-        blueprint = reqctx.request.blueprint
+    if request_ctx and request_ctx.request.blueprint is not None:
+        blueprint = request_ctx.request.blueprint
 
     for idx, (loader, srcobj, triple) in enumerate(attempts):
         if isinstance(srcobj, Flask):

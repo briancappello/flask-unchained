@@ -15,9 +15,6 @@ class FakeApp:
     def before_request(self, fn):
         return fn('app')
 
-    def before_first_request(self, fn):
-        return fn('app')
-
     def after_request(self, fn):
         return fn('app')
 
@@ -93,7 +90,6 @@ class TestUnchained:
         fake_app = FakeApp()
         unchained.add_url_rule('/test', 'test.endpoint', 'view_func', methods=['GET'])
         unchained.before_request(lambda app: 'before_request')
-        unchained.before_first_request(lambda app: 'before_first_request')
         unchained.after_request(lambda app: 'after_request')
         unchained.teardown_request(lambda app: 'teardown_request')
         unchained.teardown_appcontext(lambda app: 'teardown_appcontext')
@@ -106,15 +102,14 @@ class TestUnchained:
         assert unchained._deferred_functions[0](fake_app) == (
             '/test', 'test.endpoint', 'view_func', {'methods': ['GET']})
         assert unchained._deferred_functions[1](fake_app) == 'before_request'
-        assert unchained._deferred_functions[2](fake_app) == 'before_first_request'
-        assert unchained._deferred_functions[3](fake_app) == 'after_request'
-        assert unchained._deferred_functions[4](fake_app) == 'teardown_request'
-        assert unchained._deferred_functions[5](fake_app) == 'teardown_appcontext'
-        assert unchained._deferred_functions[6](fake_app) == 'context_processor'
-        assert unchained._deferred_functions[7](fake_app) == 'shell_context_processor'
-        assert unchained._deferred_functions[8](fake_app) == 'url_defaults'
-        assert unchained._deferred_functions[9](fake_app) == 'url_value_preprocessor'
-        assert unchained._deferred_functions[10](fake_app) == 'errorhandler'
+        assert unchained._deferred_functions[2](fake_app) == 'after_request'
+        assert unchained._deferred_functions[3](fake_app) == 'teardown_request'
+        assert unchained._deferred_functions[4](fake_app) == 'teardown_appcontext'
+        assert unchained._deferred_functions[5](fake_app) == 'context_processor'
+        assert unchained._deferred_functions[6](fake_app) == 'shell_context_processor'
+        assert unchained._deferred_functions[7](fake_app) == 'url_defaults'
+        assert unchained._deferred_functions[8](fake_app) == 'url_value_preprocessor'
+        assert unchained._deferred_functions[9](fake_app) == 'errorhandler'
 
     def test_deferred_bundle_functions(self, app):
         app.env = DEV

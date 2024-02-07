@@ -2,8 +2,9 @@ import os
 import sys
 import traceback
 
+from flask import current_app
+
 from flask_unchained.cli import click, with_appcontext
-from flask.globals import _app_ctx_stack
 
 
 @click.command()
@@ -42,7 +43,7 @@ def shell():
 
 
 def _get_shell_banner(verbose=False):
-    app = _app_ctx_stack.top.app
+    app = current_app._get_current_object()
     py_version = sys.version.replace('\n', '')
     python = f'Python {py_version} on {sys.platform}'
     flask_app = f"Flask App: {app.import_name}{app.debug and ' [debug]' or ''}"
@@ -50,7 +51,7 @@ def _get_shell_banner(verbose=False):
 
 
 def _get_shell_ctx():
-    app = _app_ctx_stack.top.app
+    app = current_app._get_current_object()
     ctx = {}
 
     # Support the regular Python interpreter startup script if someone is using it.
