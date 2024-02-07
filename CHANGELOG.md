@@ -4,6 +4,8 @@
 
 ### General
 
+- Support Python 3.10+
+- Support Flask 2.2+ and Flask 3.0
 - support using the app bundle's config module as the `unchained_config` by setting the `FLASK_APP` environment variable to the app bundle name
 - allow bundles to specify other bundles they depend on, and implement support for resolving the correct order to load bundles
 - add a submit field to forms by default

@@ -43,13 +43,14 @@ import socket
 import threading
 import time
 import unittest
+
 from contextlib import contextmanager
+from unittest import mock
 
 from email.header import Header
 
 from flask import Flask
 from flask_mail import BadHeaderError, Connection, Mail, Message, sanitize_address
-import mock
 from speaklater import make_lazy_string
 
 
