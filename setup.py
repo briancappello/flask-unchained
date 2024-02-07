@@ -53,7 +53,8 @@ setup(
         ],
         'dev': [
             'IPython>=7.24.1',
-            'pytest>=4.6.5',
+            'factory-boy',
+            'pytest>=4.6.5,<8',
             'pytest-flask>=1.0.0',
         ],
         'docs': [
