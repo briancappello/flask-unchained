@@ -1,4 +1,4 @@
-from flask_babelex import Domain
+from flask_babel import Domain
 from flask_unchained import BundleConfig
 from werkzeug.datastructures import ImmutableDict
 
@@ -25,7 +25,7 @@ class Config(BundleConfig):
 
     DEFAULT_DOMAIN = Domain()
     """
-    The default :class:`~flask_babelex.Domain` to use.
+    The default :class:`~flask_babel.Domain` to use.
     """
 
     DATE_FORMATS = ImmutableDict({

@@ -1,4 +1,4 @@
-from flask_babelex import Babel
+from flask_babel import Babel
 
 
 babel = Babel()

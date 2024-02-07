@@ -2,7 +2,7 @@ import pkg_resources
 import re
 
 from flask import Blueprint, current_app, g, request
-from flask_babelex import Domain, gettext as _gettext, ngettext as _ngettext
+from flask_babel import Domain, gettext as _gettext, ngettext as _ngettext
 from flask_unchained import Bundle, FlaskUnchained, DEV, TEST
 from speaklater import make_lazy_string
 from typing import *

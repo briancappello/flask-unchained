@@ -24,7 +24,7 @@ setup(
         'blinker>=1.4',
         'click>=8.0.1',
         'flask>=2.0.1',
-        'flask_babelex>=0.9.4',
+        'flask_babel>=0.9.4',
         'flask-wtf>=1.0.0',
         'py-meta-utils>=0.7.8',
         'pyterminalsize>=0.1.0',
