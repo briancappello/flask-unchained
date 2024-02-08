@@ -1,15 +1,18 @@
 import importlib
 
+from typing import *
+
 from flask import Blueprint
+
 from flask_unchained import FlaskUnchained
 from py_meta_utils import _missing
-from typing import *
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
 from .controller import Controller
 from .resource import Resource
 from .route import Route
 from .utils import join, method_name_to_url, rename_parent_resource_param_name
+
 
 Defaults = Dict[str, Any]
 Endpoints = Union[List[str], Tuple[str], Set[str]]
@@ -74,9 +77,7 @@ def controller(
             else:
                 routes.append(route)
 
-    yield from _normalize_controller_routes(
-        routes, controller_cls, url_prefix=url_prefix
-    )
+    yield from _normalize_controller_routes(routes, controller_cls, url_prefix=url_prefix)
 
 
 def delete(
@@ -284,7 +285,7 @@ def include(
         routes = getattr(module, attr)()
     except AttributeError as e:
         raise AttributeError(
-            f"Could not find a variable named `{attr}` " f"in the {module_name} module!"
+            f"Could not find a variable named `{attr}` in the {module_name} module!"
         ) from e
 
     routes = _reduce_routes(routes, exclude=exclude, only=only)
@@ -387,9 +388,7 @@ def prefix(
     """
     for route in _reduce_routes(children):
         route = route.copy()
-        route.rule = join(
-            url_prefix, route.rule, trailing_slash=route.rule.endswith("/")
-        )
+        route.rule = join(url_prefix, route.rule, trailing_slash=route.rule.endswith("/"))
         yield route
 
 
@@ -495,10 +494,7 @@ def resource(
     if rules is not None:
         routes = {route.method_name: route for route in _reduce_routes(rules)}
         for method_name, method_route in existing_routes.items():
-            if (
-                method_name not in routes
-                and method_name in resource_cls.resource_methods
-            ):
+            if method_name not in routes and method_name in resource_cls.resource_methods:
                 routes[method_name] = method_route
 
     yield from _normalize_controller_routes(
@@ -606,9 +602,7 @@ def _is_controller_cls(controller_cls, has_rule):
     if is_controller and not is_resource:
         return True
     elif is_resource:
-        raise TypeError(
-            f"please use the resource function to include " f"{controller_cls}"
-        )
+        raise TypeError(f"please use the resource function to include {controller_cls}")
 
     if has_rule:
         raise ValueError(
@@ -617,7 +611,7 @@ def _is_controller_cls(controller_cls, has_rule):
         )
     else:
         raise ValueError(
-            "call to controller missing rule and/or " "controller_cls arguments"
+            "call to controller missing rule and/or controller_cls arguments"
         )
 
 
@@ -631,9 +625,7 @@ def _is_resource_cls(resource_cls, has_rule):
             "first argument to resource is a url prefix"
         )
     else:
-        raise ValueError(
-            "call to resource missing rule and/or " "resource_cls arguments"
-        )
+        raise ValueError("call to resource missing rule and/or resource_cls arguments")
 
 
 def _is_view_func(view_func, has_rule):

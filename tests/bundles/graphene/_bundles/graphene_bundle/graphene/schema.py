@@ -2,8 +2,7 @@ import graphene
 
 from flask_unchained.bundles.graphene import MutationsObjectType, QueriesObjectType
 
-from . import types
-from . import mutations
+from . import mutations, types
 
 
 class GrapheneBundleQueries(QueriesObjectType):

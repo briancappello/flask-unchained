@@ -3,14 +3,13 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 
+# a bit of hackery to make type-hinting in PyCharm work correctly
+from sqlalchemy.orm.relationships import RelationshipProperty
+
 from .column import Column
 from .events import attach_events, on, slugify
 from .foreign_key import foreign_key
 from .types import BigInteger, DateTime
-
-
-# a bit of hackery to make type-hinting in PyCharm work correctly
-from sqlalchemy.orm.relationships import RelationshipProperty
 
 
 class _relationship_type_hinter_(RelationshipProperty):
@@ -36,6 +35,6 @@ def _column_type_hinter_(
     server_onupdate=None,
     quote=None,
     unique=False,
-    system=False
+    system=False,
 ):
     pass

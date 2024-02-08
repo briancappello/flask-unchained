@@ -59,10 +59,12 @@ QUART_ENABLED = False
 
 from werkzeug.local import LocalProxy as WerkzeugLocalProxy
 
+
 LocalProxy = WerkzeugLocalProxy
 
 try:
     import quart.flask_patch
+
     from quart.local import LocalProxy as QuartLocalProxy
 except ImportError:
     QuartLocalProxy = type("QuartLocalProxy", (), {})

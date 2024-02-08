@@ -1,3 +1,5 @@
+from typing import *
+
 import pytest
 
 from flask_sqlalchemy_unchained import BaseModel as Model
@@ -5,14 +7,13 @@ from flask_unchained import unchained
 from flask_unchained.bundles.sqlalchemy import SQLAlchemyBundle
 from flask_unchained.bundles.sqlalchemy.hooks import RegisterModelsHook
 from tests.bundles.sqlalchemy.conftest import POSTGRES
-from typing import *
 
 from ._bundles.app import MyAppBundle
 from ._bundles.backref import BackrefBundle
-from ._bundles.vendor_one import VendorOneBundle
-from ._bundles.ext_vendor_one import ExtVendorOneBundle
 from ._bundles.ext_ext_vendor_one import ExtExtVendorOneBundle
+from ._bundles.ext_vendor_one import ExtVendorOneBundle
 from ._bundles.polymorphic import PolymorphicBundle
+from ._bundles.vendor_one import VendorOneBundle
 from ._bundles.vendor_two import VendorTwoBundle
 
 
@@ -42,11 +43,11 @@ def get_app_models():
 def get_vendor_one_models():
     from ._bundles.vendor_one.models import (
         OneBasic,
-        OneParent,
         OneChild,
-        OneUserRole,
-        OneUser,
+        OneParent,
         OneRole,
+        OneUser,
+        OneUserRole,
     )
 
     return _to_dict([OneBasic, OneParent, OneChild, OneUserRole, OneUser, OneRole])
@@ -59,7 +60,7 @@ def get_vendor_two_models():
 
 
 def get_ext_vendor_one_models():
-    from ._bundles.ext_vendor_one.models import OneBasic, OneParent, OneUser, OneRole
+    from ._bundles.ext_vendor_one.models import OneBasic, OneParent, OneRole, OneUser
 
     d = {**get_vendor_one_models(), **_to_dict([OneBasic, OneParent, OneUser, OneRole])}
     # overridden OneParent has no children relationship, make sure the
@@ -74,14 +75,14 @@ def get_ext_vendor_one_models():
 
 
 def get_ext_ext_vendor_one_models():
+    from ._bundles.ext_ext_vendor_one.models import OneRole, OneUser
     from ._bundles.vendor_one.models import OneUserRole
-    from ._bundles.ext_ext_vendor_one.models import OneUser, OneRole
 
     return {**get_ext_vendor_one_models(), **_to_dict([OneRole, OneUser, OneUserRole])}
 
 
 def get_polymorphic_models():
-    from ._bundles.polymorphic.models import Person, Employee
+    from ._bundles.polymorphic.models import Employee, Person
 
     return _to_dict([Person, Employee])
 

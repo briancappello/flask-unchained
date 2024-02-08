@@ -1,7 +1,8 @@
-from flask import abort, request
-from flask_principal import Permission, UserNeed
 from functools import wraps
 from http import HTTPStatus
+
+from flask import abort, request
+from flask_principal import Permission, UserNeed
 
 from .auth_required import auth_required
 

@@ -1,8 +1,9 @@
-import click
 import itertools
 
 from typing import *
 from warnings import warn
+
+import click
 
 from ..app_factory_hook import AppFactoryHook
 from ..bundles import Bundle

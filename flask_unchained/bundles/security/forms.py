@@ -1,9 +1,7 @@
 import inspect
 
-from flask import current_app as app, request
-from flask_unchained.bundles.controller.utils import _validate_redirect_url
-from flask_unchained.bundles.sqlalchemy import ModelForm
-from flask_unchained import unchained, lazy_gettext as _
+from flask import current_app as app
+from flask import request
 from wtforms import (
     Field,
     HiddenField,
@@ -14,9 +12,15 @@ from wtforms import (
     validators,
 )
 
+from flask_unchained import lazy_gettext as _
+from flask_unchained import unchained
+from flask_unchained.bundles.controller.utils import _validate_redirect_url
+from flask_unchained.bundles.sqlalchemy import ModelForm
+
 from .models import User
 from .services import SecurityUtilsService, UserManager
 from .utils import current_user
+
 
 user_manager: UserManager = unchained.get_local_proxy("user_manager")
 security_utils_service: SecurityUtilsService = unchained.get_local_proxy(
@@ -231,9 +235,7 @@ class ResetPasswordForm(BaseForm, PasswordFormMixin):
         model = User
         model_fields = {"password_confirm": "password"}
 
-    submit = SubmitField(
-        _("flask_unchained.bundles.security:form_submit.reset_password")
-    )
+    submit = SubmitField(_("flask_unchained.bundles.security:form_submit.reset_password"))
 
 
 class SendConfirmationForm(BaseForm):

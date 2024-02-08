@@ -1,7 +1,9 @@
+from typing import *
+
 from flask import Blueprint
+
 from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
 from flask_unchained.hooks.views_hook import ViewsHook
-from typing import *
 
 
 class RegisterBlueprintsHook(AppFactoryHook):

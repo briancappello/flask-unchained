@@ -1,8 +1,9 @@
 import graphene
 
+from graphql import GraphQLError
+
 from flask_unchained import unchained
 from flask_unchained.bundles.sqlalchemy import SessionManager, ValidationErrors
-from graphql import GraphQLError
 
 from . import types
 

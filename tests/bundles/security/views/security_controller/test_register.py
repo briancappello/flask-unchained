@@ -1,6 +1,6 @@
 import pytest
-from flask_unchained.bundles.mail.pytest import *
 
+from flask_unchained.bundles.mail.pytest import *
 from tests.bundles.security._bundles.security.forms import RegisterForm
 
 

@@ -4,12 +4,12 @@ from werkzeug.routing import BuildError
 
 from flask_unchained.bundles.controller import Controller, Resource
 from flask_unchained.bundles.controller.utils import (
+    _validate_redirect_url,
     controller_name,
     get_param_tuples,
     join,
     method_name_to_url,
     url_for,
-    _validate_redirect_url,
 )
 from py_meta_utils import deep_getattr
 

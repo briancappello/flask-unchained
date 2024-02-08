@@ -1,7 +1,7 @@
 import pytest
 
-from flask_unchained.hooks.run_hooks_hook import HookTuple, RunHooksHook
 from flask_unchained import unchained
+from flask_unchained.hooks.run_hooks_hook import HookTuple, RunHooksHook
 
 
 @pytest.fixture()

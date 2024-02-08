@@ -10,6 +10,7 @@ from ._bundles.myapp import MyAppBundle
 from ._bundles.override_vendor_bundle import VendorBundle
 from ._bundles.vendor_bundle import VendorBundle as BaseVendorBundle
 
+
 app_bundle_in_module = "tests._bundles.app_bundle_in_module"
 bundle_in_module = "tests._bundles.bundle_in_module"
 empty_bundle = "tests._bundles.empty_bundle"

@@ -1,5 +1,6 @@
-from flask_unchained import AppFactoryHook, FlaskUnchained
 from typing import *
+
+from flask_unchained import AppFactoryHook, FlaskUnchained
 
 from ..object_types import QueriesObjectType
 
@@ -25,9 +26,7 @@ class RegisterGrapheneQueriesHook(AppFactoryHook):
     bundle_override_module_names_attr = "graphene_queries_module_names"
     run_after = ["graphene_types"]
 
-    def process_objects(
-        self, app: FlaskUnchained, queries: Dict[str, QueriesObjectType]
-    ):
+    def process_objects(self, app: FlaskUnchained, queries: Dict[str, QueriesObjectType]):
         """
         Register discovered queries with the Graphene Bundle.
         """

@@ -1,7 +1,7 @@
 from flask_unchained import Service
 from flask_unchained.di import ServiceMetaclass
+from sqlalchemy_unchained.session_manager import SessionManager as BaseSessionManager
 from sqlalchemy_unchained.session_manager import (
-    SessionManager as BaseSessionManager,
     SessionManagerMetaclass as BaseSessionManagerMetaclass,
 )
 

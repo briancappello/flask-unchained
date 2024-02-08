@@ -1,8 +1,9 @@
 import sys
 
+from typing import *
+
 from flask_unchained import AppFactoryHook, FlaskUnchained
 from flask_unchained.constants import TEST
-from typing import *
 
 from ..base_model import BaseModel
 from ..model_registry import UnchainedModelRegistry

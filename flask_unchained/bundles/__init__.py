@@ -294,10 +294,7 @@ class Bundle(metaclass=BundleMetaclass):
         }:
             from warnings import warn
 
-            warn(
-                "The app has already been initialized. Please register "
-                f"{name} sooner."
-            )
+            warn(f"The app has already been initialized. Please register {name} sooner.")
             return
 
         raise AttributeError(name)

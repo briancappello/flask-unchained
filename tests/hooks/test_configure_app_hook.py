@@ -4,8 +4,8 @@ from flask_unchained.constants import DEV
 from flask_unchained.hooks.configure_app_hook import ConfigureAppHook
 from flask_unchained.unchained import Unchained
 
-from .._bundles.myapp import MyAppBundle
 from .._bundles.empty_bundle import EmptyBundle
+from .._bundles.myapp import MyAppBundle
 from .._bundles.vendor_bundle import VendorBundle
 
 

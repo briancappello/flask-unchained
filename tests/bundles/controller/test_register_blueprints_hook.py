@@ -5,10 +5,10 @@ from flask_unchained.unchained import Unchained
 
 from .fixtures.app_bundle import AppBundle
 from .fixtures.app_bundle.views import one, two
-from .fixtures.vendor_bundle import VendorBundle
-from .fixtures.vendor_bundle.views import three, four
-from .fixtures.warning_bundle import WarningBundle
 from .fixtures.empty_bundle import EmptyBundle
+from .fixtures.vendor_bundle import VendorBundle
+from .fixtures.vendor_bundle.views import four, three
+from .fixtures.warning_bundle import WarningBundle
 
 
 @pytest.fixture

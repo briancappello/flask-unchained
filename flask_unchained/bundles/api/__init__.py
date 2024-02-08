@@ -2,9 +2,10 @@ import enum
 
 from datetime import date, datetime
 
+from speaklater import _LazyString
+
 from flask_unchained import Bundle, FlaskUnchained, unchained
 from flask_unchained._compat import is_local_proxy
-from speaklater import _LazyString
 
 from .extensions import Api, Marshmallow, api, ma
 from .model_resource import ModelResource
@@ -80,9 +81,7 @@ class ApiBundle(Bundle):
                 if serializer_cls:
                     return serializer_cls().dump(obj)
 
-            elif (
-                obj and isinstance(obj, (list, tuple)) and isinstance(obj[0], BaseModel)
-            ):
+            elif obj and isinstance(obj, (list, tuple)) and isinstance(obj[0], BaseModel):
                 model_name = obj[0].__class__.__name__
                 serializer_cls = api_bundle.many_by_model.get(
                     model_name, api_bundle.serializers_by_model.get(model_name)

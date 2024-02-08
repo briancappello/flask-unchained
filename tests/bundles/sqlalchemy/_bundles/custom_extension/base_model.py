@@ -1,6 +1,6 @@
 from flask_unchained.bundles.sqlalchemy.base_model import BaseModel
-from sqlalchemy_unchained import ModelMetaOptionsFactory
 from py_meta_utils import McsArgs, MetaOption
+from sqlalchemy_unchained import ModelMetaOptionsFactory
 
 
 class ExtendExisting(MetaOption):
@@ -8,9 +8,7 @@ class ExtendExisting(MetaOption):
         super().__init__(name="extend_existing", default=True, inherit=False)
 
     def check_value(self, value, mcs_args: McsArgs):
-        msg = (
-            f"{self.name} Meta option on {mcs_args.qualname} " f"must be True or False"
-        )
+        msg = f"{self.name} Meta option on {mcs_args.qualname} must be True or False"
         assert isinstance(value, bool), msg
 
     def contribute_to_class(self, mcs_args, value):

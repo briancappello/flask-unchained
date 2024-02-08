@@ -1,8 +1,8 @@
 from flask_unchained import AppFactoryHook
 from flask_unchained.hooks.views_hook import ViewsHook
 
-from ..model_resource import ModelResource
 from ..extensions.api import Api
+from ..model_resource import ModelResource
 
 
 class RegisterModelResourcesHook(AppFactoryHook):

@@ -8,12 +8,12 @@ from flask_unchained.bundles.controller import (
 )
 
 from .views import (
-    SiteController,
-    ProductController,
-    simple,
-    UserResource,
-    RoleResource,
     AnotherResource,
+    ProductController,
+    RoleResource,
+    SiteController,
+    UserResource,
+    simple,
 )
 
 

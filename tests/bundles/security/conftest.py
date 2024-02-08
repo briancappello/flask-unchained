@@ -1,14 +1,14 @@
+from datetime import datetime, timezone
+
 import factory
 import pytest
 
-from datetime import datetime, timezone
-
-from flask_unchained import AppFactory, TEST
-from ..sqlalchemy.conftest import *
+from flask_unchained import TEST, AppFactory
 from flask_unchained.bundles.security.pytest import *
 from flask_unchained.bundles.sqlalchemy.model_factory import ModelFactory
+from tests.bundles.security._bundles.security.models import Role, User, UserRole
 
-from tests.bundles.security._bundles.security.models import User, Role, UserRole
+from ..sqlalchemy.conftest import *
 
 
 # we need to override the `app` and `db` fixtures to make them function-scoped
@@ -125,7 +125,7 @@ def admin(request):
         **kwargs,
         username="admin",
         email="admin@example.com",
-        _user_role__role__name="ROLE_ADMIN"
+        _user_role__role__name="ROLE_ADMIN",
     )
     kwargs.setdefault("user_role__role__name", "ROLE_USER")
     return UserWithTwoRolesFactory(**kwargs)

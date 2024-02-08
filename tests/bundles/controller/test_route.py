@@ -26,8 +26,7 @@ class TestRoute:
 
         route = getattr(SomeController, CONTROLLER_ROUTES_ATTR)["index"][0]
         assert (
-            route.full_name
-            == "tests.bundles.controller.test_route.SomeController.index"
+            route.full_name == "tests.bundles.controller.test_route.SomeController.index"
         )
 
     def test_full_name_with_func(self):

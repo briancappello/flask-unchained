@@ -1,4 +1,5 @@
 from flask_admin import Admin as BaseAdmin
+
 from flask_unchained import FlaskUnchained
 
 

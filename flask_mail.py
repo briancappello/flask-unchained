@@ -37,7 +37,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-import blinker
 import re
 import smtplib
 import time
@@ -52,6 +51,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.policy import SMTP
 from email.utils import formataddr, formatdate, make_msgid, parseaddr
+
+import blinker
 
 from flask import current_app
 
@@ -458,9 +459,7 @@ class Message:
             except UnicodeEncodeError:
                 filename = ("UTF8", "", filename)
 
-            f.add_header(
-                "Content-Disposition", attachment.disposition, filename=filename
-            )
+            f.add_header("Content-Disposition", attachment.disposition, filename=filename)
 
             for key, value in attachment.headers.items():
                 f.add_header(key, value)
@@ -620,7 +619,7 @@ class _MailMixin:
             return Connection(app.extensions["mail"])
         except KeyError:
             raise RuntimeError(
-                "The curent application was" " not configured with Flask-Mail"
+                "The current application was not configured with Flask-Mail"
             )
 
 

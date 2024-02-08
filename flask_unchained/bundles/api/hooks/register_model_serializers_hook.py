@@ -2,8 +2,8 @@ from typing import *
 
 from flask_unchained import AppFactoryHook, FlaskUnchained
 
-from ..model_serializer import ModelSerializer
 from ..extensions import api
+from ..model_serializer import ModelSerializer
 
 
 class RegisterModelSerializersHook(AppFactoryHook):

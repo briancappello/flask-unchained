@@ -1,8 +1,9 @@
 from flask_unchained import unchained
 from flask_unchained.cli import cli, click, print_table
 
-from .utils import _query_to_role
 from ..services import RoleManager
+from .utils import _query_to_role
+
 
 role_manager: RoleManager = unchained.get_local_proxy("role_manager")
 
@@ -45,8 +46,7 @@ def create_role(name):
 @roles.command(name="delete")
 @click.argument(
     "query",
-    help="The query to search for a role by. For example, "
-    "`id=5` or `name=ROLE_USER`.",
+    help="The query to search for a role by. For example, `id=5` or `name=ROLE_USER`.",
 )
 def delete_role(query):
     """

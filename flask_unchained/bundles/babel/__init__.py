@@ -1,17 +1,20 @@
-import pkg_resources
 import re
 
-from flask import Blueprint, current_app, g, request
-from flask_babel import Domain, gettext as _gettext, ngettext as _ngettext
-from flask_unchained import Bundle, FlaskUnchained, DEV, TEST
-from speaklater import make_lazy_string
 from typing import *
 
-from .config import (
-    Config as BabelBundleConfig,
-    DevConfig as BabelBundleDevConfig,
-    ProdConfig as BabelBundleProdConfig,
-)
+import pkg_resources
+
+from flask import Blueprint, current_app, g, request
+from flask_babel import Domain
+from flask_babel import gettext as _gettext
+from flask_babel import ngettext as _ngettext
+from speaklater import make_lazy_string
+
+from flask_unchained import DEV, TEST, Bundle, FlaskUnchained
+
+from .config import Config as BabelBundleConfig
+from .config import DevConfig as BabelBundleDevConfig
+from .config import ProdConfig as BabelBundleProdConfig
 from .extensions import Babel, babel
 
 
@@ -90,9 +93,7 @@ class BabelBundle(Bundle):
 
     def add_url_rule(self, app: FlaskUnchained, rule: str, **kwargs):
         if app.config.ENABLE_URL_LANG_CODE_PREFIX:
-            app.add_url_rule(
-                self.get_url_rule(rule), register_with_babel=False, **kwargs
-            )
+            app.add_url_rule(self.get_url_rule(rule), register_with_babel=False, **kwargs)
 
     def get_locale(self):
         languages = current_app.config.LANGUAGES

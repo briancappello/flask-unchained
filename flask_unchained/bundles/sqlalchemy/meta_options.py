@@ -1,7 +1,8 @@
+from typing import *
+
 from flask_unchained import unchained
 from py_meta_utils import McsArgs, MetaOption
 from sqlalchemy_unchained import ModelMetaOptionsFactory as BaseModelMetaOptionsFactory
-from typing import *
 
 
 class ModelMetaOption(MetaOption):

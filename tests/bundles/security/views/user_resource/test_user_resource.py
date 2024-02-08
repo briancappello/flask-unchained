@@ -1,6 +1,6 @@
 import pytest
-from flask_unchained.bundles.mail.pytest import *
 
+from flask_unchained.bundles.mail.pytest import *
 from flask_unchained.bundles.security import AnonymousUser, current_user
 
 

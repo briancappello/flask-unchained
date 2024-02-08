@@ -2,8 +2,9 @@ import json
 import os
 
 from flask import current_app
-from flask_unchained import DEV
 from markupsafe import Markup
+
+from flask_unchained import DEV
 
 
 class Webpack:

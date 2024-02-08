@@ -23,9 +23,9 @@ packages = [
     { include = "unchained_config.py" },
 ]
 include = [
-    "LICENSE",
-    "CHANGELOG.md",
-    "flask_unchained",
+    { path = "flask_unchained" },
+    { path = "CHANGELOG.md", format = "sdist" },
+    { path = "LICENSE", format = "sdist" },
 ]
 
 [tool.poetry.scripts]
@@ -106,6 +106,7 @@ pytest = "^7.0.0"
 pytest-flask = "^1.3.0"
 tox = "^4.12.1"
 psycopg2 = "^2.9.9"
+isort = "^5.13.2"
 
 [tool.poetry.group.docs.dependencies]
 ipython = "^8.21.0"
@@ -115,20 +116,81 @@ sphinx-material = "^0.0.36"
 m2r2 = "^0.3.3.post2"
 
 [tool.poetry.extras]
-admin = ["flask-admin"]
-api = ["apispec", "apispec-webframeworks", "flask-marshmallow", "marshmallow", "marshmallow-sqlalchemy"]
-quart = ["quart"]
-celery = ["dill", "celery"]
-graphene = ["graphql-core", "graphql-relay", "graphql-server-core", "flask-graphql", "graphene", "graphene-sqlalchemy"]
-mail = ["beautifulsoup4", "lxml"]
-oauth = ["flask-oauthlib"]
-security = ["bcrypt", "flask-login", "flask-principal", "itsdangerous", "passlib"]
-session = ["dill", "flask-session"]
-sqlalchemy = ["flask-migrate", "flask-sqlalchemy", "flask-sqlalchemy-unchained", "sqlalchemy", "wtforms-sqlalchemy"]
+admin = [
+    "flask-admin",
+]
+api = [
+    "apispec",
+    "apispec-webframeworks",
+    "flask-marshmallow",
+    "marshmallow",
+    "marshmallow-sqlalchemy",
+]
+quart = [
+    "quart",
+]
+celery = [
+    "dill",
+    "celery",
+]
+graphene = [
+    "graphql-core",
+    "graphql-relay",
+    "graphql-server-core",
+    "flask-graphql",
+    "graphene",
+    "graphene-sqlalchemy",
+]
+mail = [
+    "beautifulsoup4",
+    "lxml",
+]
+oauth = [
+    "flask-oauthlib",
+]
+security = [
+    "bcrypt",
+    "flask-login",
+    "flask-principal",
+    "itsdangerous",
+    "passlib",
+]
+session = [
+    "dill",
+    "flask-session",
+]
+sqlalchemy = [
+    "flask-migrate",
+    "flask-sqlalchemy",
+    "flask-sqlalchemy-unchained",
+    "sqlalchemy",
+    "wtforms-sqlalchemy",
+]
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 90
+target-version = ['py310']
+extend-exclude = "flask_unchained/_code_templates"
+
+[tool.isort]
+profile = "black"
+include_trailing_comma = true
+lines_between_types = 1
+lines_after_imports = 2
+multi_line_output = 3
+extend_skip = [
+    "flask_unchained/_code_templates",
+]
+sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+known_first_party = [
+    "flask_sqlalchemy_unchained",
+    "py_meta_utils",
+    "sqlalchemy_unchained",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

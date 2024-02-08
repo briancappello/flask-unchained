@@ -1,8 +1,8 @@
 import pytest
-from flask_unchained.bundles.mail.pytest import *
 
 from flask_mail import Message
 from flask_unchained.bundles.mail import mail
+from flask_unchained.bundles.mail.pytest import *
 from flask_unchained.bundles.mail.utils import _send_mail
 
 

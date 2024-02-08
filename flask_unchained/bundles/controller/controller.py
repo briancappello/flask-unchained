@@ -8,10 +8,11 @@ from typing import *
 
 from flask_unchained._compat import QUART_ENABLED
 
+
 if QUART_ENABLED:
+    from quart import after_this_request
+    from quart import current_app as app
     from quart import (
-        after_this_request,
-        current_app as app,
         flash,
         jsonify,
         make_response,
@@ -32,13 +33,13 @@ else:
     )
 
 from flask_unchained.di import _set_up_class_dependency_injection
+from py_meta_utils import AbstractMetaOption as _ControllerAbstractMetaOption
 from py_meta_utils import (
-    AbstractMetaOption as _ControllerAbstractMetaOption,
     McsArgs,
     MetaOption,
     MetaOptionsFactory,
-    deep_getattr,
     _missing,
+    deep_getattr,
     process_factory_meta_options,
 )
 
@@ -50,8 +51,8 @@ from .attr_constants import (
     NOT_VIEWS_ATTR,
     REMOVE_SUFFIXES_ATTR,
 )
-from .utils import controller_name, redirect
 from .route import Route
+from .utils import controller_name, redirect
 
 
 CONTROLLER_REMOVE_EXTRA_SUFFIXES = ["View"]
@@ -147,9 +148,7 @@ class ControllerDecoratorsMetaOption(MetaOption):
             return
 
         if not all(callable(x) for x in value):
-            raise ValueError(
-                f"The {self.name} meta option must be a list of callables."
-            )
+            raise ValueError(f"The {self.name} meta option must be a list of callables.")
 
 
 class ControllerTemplateFolderNameMetaOption(MetaOption):

@@ -11,39 +11,54 @@
 __version__ = "0.9.0"
 
 # must be first
-from . import _compat
+from . import _compat  # isort: skip
 
 # aliases
-from flask import current_app, g, request, session
-from flask import render_template, render_template_string
-from flask import Request, Response
+from flask import (
+    Request,
+    Response,
+    current_app,
+    g,
+    render_template,
+    render_template_string,
+    request,
+    session,
+)
 from werkzeug.exceptions import abort
 
 from .app_factory import AppFactory
 from .app_factory_hook import AppFactoryHook
-from .config import BundleConfig
 from .bundles import AppBundle, Bundle
+from .config import BundleConfig
 from .constants import DEV, PROD, STAGING, TEST
 from .di import Service, injectable
 from .flask_unchained import FlaskUnchained
 from .forms import FlaskForm
 from .routes import (
     controller,
-    resource,
-    func,
-    include,
-    prefix,
     delete,
+    func,
     get,
+    include,
     patch,
     post,
+    prefix,
     put,
+    resource,
     rule,
 )
 from .unchained import Unchained, unchained
 from .utils import get_boolean_env
-from .views import Controller, Resource
-from .views import param_converter, route, no_route, redirect, url_for
+
 
 # must be last
-from .bundles.babel import gettext, ngettext, lazy_gettext, lazy_ngettext
+from .bundles.babel import gettext, lazy_gettext, lazy_ngettext, ngettext  # isort: skip
+from .views import (  # isort: skip
+    Controller,
+    Resource,
+    no_route,
+    param_converter,
+    redirect,
+    route,
+    url_for,
+)

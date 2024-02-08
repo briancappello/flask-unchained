@@ -1,14 +1,14 @@
 from flask_unchained import (
     controller,
-    resource,
-    func,
-    include,
-    prefix,
-    get,
     delete,
-    post,
+    func,
+    get,
+    include,
     patch,
+    post,
+    prefix,
     put,
+    resource,
     rule,
 )
 

@@ -2,13 +2,15 @@ from flask import Blueprint as BaseBlueprint
 from flask import send_from_directory as _send_from_directory
 from flask.blueprints import BlueprintSetupState as BaseBlueprintSetupState
 
+
 try:
     from flask.blueprints import _endpoint_from_view_func
 except (ImportError, ModuleNotFoundError):
     from flask.sansio.scaffold import _endpoint_from_view_func
 
-from flask_unchained import Bundle
 from werkzeug.exceptions import NotFound
+
+from flask_unchained import Bundle
 
 
 class BundleBlueprintSetupState(BaseBlueprintSetupState):

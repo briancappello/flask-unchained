@@ -84,9 +84,7 @@ EXPECTED_DEEP_RESULTS = [
 class TestReduceRoutes:
     def test_explicit_routes(self):
         routes = list(_reduce_routes(test_routes.explicit_routes()))
-        for i, expected in enumerate(
-            t for t in EXPECTED_RESULTS if "foobar" not in t[0]
-        ):
+        for i, expected in enumerate(t for t in EXPECTED_RESULTS if "foobar" not in t[0]):
             route = routes[i]
             assert route.endpoint == expected[0], (route.endpoint, expected[0])
             assert route.full_rule == expected[1], route.endpoint

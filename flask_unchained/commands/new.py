@@ -3,11 +3,13 @@ import re
 import shutil
 import sys
 
+from typing import *
+
+from jinja2 import Environment
+
 from flask_unchained.cli import click
 from flask_unchained.click import default, should_prompt
 from flask_unchained.string_utils import right_replace
-from jinja2 import Environment
-from typing import *
 
 
 JINJA_START_STR = "{#!"
@@ -406,9 +408,7 @@ def _process_tokens(
 
         stripped = line.strip()
         if not stripped.startswith(start_str):
-            token.tokens.append(
-                _extract_inline_token(line, _real_start_i + i, is_jinja)
-            )
+            token.tokens.append(_extract_inline_token(line, _real_start_i + i, is_jinja))
             continue
 
         stripped = stripped[len(start_str) :].strip()

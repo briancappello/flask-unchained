@@ -30,6 +30,7 @@ def shell():
         if interactive_hook is not None:
             try:
                 import readline
+
                 from rlcompleter import Completer
             except ImportError:
                 pass

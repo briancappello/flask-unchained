@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
-from flask_unchained import request, route, lazy_gettext as _
+from flask_unchained import lazy_gettext as _
+from flask_unchained import request, route
 from flask_unchained.bundles.security import SecurityController, current_user
 
 
@@ -24,9 +25,7 @@ class AdminSecurityController(SecurityController):
         if request.is_json:
             return "", HTTPStatus.NO_CONTENT
 
-        self.flash(
-            _("flask_unchained.bundles.security:flash.logout"), category="success"
-        )
+        self.flash(_("flask_unchained.bundles.security:flash.logout"), category="success")
         return self.redirect(
             "ADMIN_POST_LOGOUT_REDIRECT_ENDPOINT",
             "SECURITY_POST_LOGOUT_REDIRECT_ENDPOINT",

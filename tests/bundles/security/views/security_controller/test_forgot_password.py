@@ -45,9 +45,7 @@ class TestHtmlForgotPassword:
         assert templates[0].context.get("reset_link")
 
         assert templates[1].template.name == "security/forgot_password.html"
-        flash_msg = (
-            "Instructions to reset your password have been sent to " f"{user.email}"
-        )
+        flash_msg = f"Instructions to reset your password have been sent to {user.email}"
         assert flash_msg in r.html
 
 

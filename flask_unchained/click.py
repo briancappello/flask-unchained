@@ -15,8 +15,9 @@ We override upstream to do the following:
 - support automatic dependency injection on commands
 """
 
-import click
 import inspect as _inspect
+
+import click
 
 from click import *
 from click.formatting import join_options as _join_options
@@ -139,7 +140,7 @@ class GroupOverrideMixin:
         super().__init__(
             *args,
             context_settings=_update_ctx_settings(kwargs.pop("context_settings", None)),
-            **kwargs
+            **kwargs,
         )
         self.subcommand_metavar = "COMMAND [<args>...]"
         self.subcommands_metavar = "COMMAND1 [<args>...] [COMMAND2 [<args>...]]"

@@ -1,9 +1,7 @@
 from flask_unchained import Service, injectable, unchained
-from tests._bundles.services_bundle.services import (
-    TwoService as BaseTwo,
-    FunkyService as BaseFunky,
-    ClassAttrService as BaseAttrs,
-)
+from tests._bundles.services_bundle.services import ClassAttrService as BaseAttrs
+from tests._bundles.services_bundle.services import FunkyService as BaseFunky
+from tests._bundles.services_bundle.services import TwoService as BaseTwo
 
 
 class OneService(Service):

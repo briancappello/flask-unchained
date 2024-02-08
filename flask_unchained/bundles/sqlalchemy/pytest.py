@@ -1,6 +1,7 @@
 import pytest
 
-from .model_registry import UnchainedModelRegistry  # required import
+
+from .model_registry import UnchainedModelRegistry  # isort: skip (required import)
 
 
 @pytest.fixture(autouse=True, scope="session")

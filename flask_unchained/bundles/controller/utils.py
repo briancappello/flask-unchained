@@ -1,18 +1,18 @@
 import re
 
-from flask import (
-    Response,
-    current_app,
-    request,
-    redirect as flask_redirect,
-    url_for as flask_url_for,
-)
-from flask_unchained.string_utils import kebab_case, right_replace, snake_case
-from flask_unchained._compat import is_local_proxy
-from py_meta_utils import _missing
 from typing import *
-from urllib.parse import urlsplit, quote as urlquote, unquote, unquote_plus
+from urllib.parse import quote as urlquote
+from urllib.parse import unquote, unquote_plus, urlsplit
+
+from flask import Response, current_app
+from flask import redirect as flask_redirect
+from flask import request
+from flask import url_for as flask_url_for
 from werkzeug.routing import BuildError, UnicodeConverter
+
+from flask_unchained._compat import is_local_proxy
+from flask_unchained.string_utils import kebab_case, right_replace, snake_case
+from py_meta_utils import _missing
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
 

@@ -8,9 +8,7 @@ class DataVendor(db.Model):
     abbrev = db.Column(db.String(10), index=True, unique=True)
     name = db.Column(db.String(64), index=True, unique=True)
 
-    data_vendor_assets = db.relationship(
-        "AssetDataVendor", back_populates="data_vendor"
-    )
+    data_vendor_assets = db.relationship("AssetDataVendor", back_populates="data_vendor")
     assets = db.association_proxy(
         "data_vendor_assets",
         "asset",

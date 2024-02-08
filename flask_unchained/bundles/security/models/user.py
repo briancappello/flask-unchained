@@ -1,8 +1,11 @@
+from flask_unchained import injectable
+from flask_unchained import lazy_gettext as _
+from flask_unchained import unchained
 from flask_unchained.bundles.sqlalchemy import db
-from flask_unchained import unchained, injectable, lazy_gettext as _
 
-from .user_role import UserRole
 from ..validators import EmailValidator
+from .user_role import UserRole
+
 
 MIN_PASSWORD_LENGTH = 8
 
@@ -52,7 +55,7 @@ class User(db.Model):
     def validate_password(cls, password):
         if password and len(password) < MIN_PASSWORD_LENGTH:
             raise db.ValidationError(
-                f"Password must be at least " f"{MIN_PASSWORD_LENGTH} characters long."
+                f"Password must be at least {MIN_PASSWORD_LENGTH} characters long."
             )
 
     @unchained.inject("security_utils_service")

@@ -1,10 +1,10 @@
-import flask
-
 from typing import *
 
-from ..config import BundleConfig
+import flask
+
 from ..app_factory_hook import AppFactoryHook
-from ..bundles import Bundle, AppBundle
+from ..bundles import AppBundle, Bundle
+from ..config import BundleConfig
 from ..constants import DEV, PROD, STAGING, TEST
 from ..flask_unchained import FlaskUnchained
 

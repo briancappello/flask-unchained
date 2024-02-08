@@ -1,6 +1,5 @@
 from flask_unchained.bundles.sqlalchemy import db
 
-
 from ..vendor_one.models import OneBasic as BaseOneBasic
 
 

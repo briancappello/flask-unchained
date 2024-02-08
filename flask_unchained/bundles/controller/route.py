@@ -1,18 +1,20 @@
 import inspect
+
 from types import FunctionType
 from typing import *
 
 from flask import Blueprint
-from flask_unchained.flask_unchained import FlaskUnchained
-from py_meta_utils import _missing
 from werkzeug.utils import cached_property
 
+from flask_unchained.flask_unchained import FlaskUnchained
+from py_meta_utils import _missing
+
 from .utils import (
+    controller_name,
+    get_param_tuples,
     join,
     method_name_to_url,
     rename_parent_resource_param_name,
-    controller_name,
-    get_param_tuples,
 )
 
 

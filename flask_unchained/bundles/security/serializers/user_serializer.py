@@ -3,7 +3,8 @@ try:
 except ImportError:
     from py_meta_utils import OptionalClass as ma
 
-from flask_unchained import injectable, lazy_gettext as _
+from flask_unchained import injectable
+from flask_unchained import lazy_gettext as _
 
 from ..models import User
 from ..services import UserManager

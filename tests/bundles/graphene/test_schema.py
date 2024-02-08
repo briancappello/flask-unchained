@@ -127,7 +127,6 @@ class TestSchema:
                 id=str(parent.id),
                 name=parent.name,
                 children=[
-                    {"id": str(child.id), "name": child.name}
-                    for child in parent.children
+                    {"id": str(child.id), "name": child.name} for child in parent.children
                 ],
             )

@@ -1,6 +1,6 @@
 import factory
 
-from flask_unchained import unchained, injectable
+from flask_unchained import injectable, unchained
 
 from .services import SessionManager
 
@@ -28,8 +28,7 @@ class ModelFactory(factory.Factory):
             filter_kwargs = {
                 k: v
                 for k, v in kwargs.items()
-                if "__" not in k
-                and (v is None or isinstance(v, (bool, int, str, float)))
+                if "__" not in k and (v is None or isinstance(v, (bool, int, str, float)))
             }
 
         instance = (

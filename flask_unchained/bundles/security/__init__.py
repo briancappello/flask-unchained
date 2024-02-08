@@ -1,12 +1,14 @@
 from flask_unchained import Bundle
 
 from .decorators import anonymous_user_required, auth_required, auth_required_same_user
-from .exceptions import SecurityException, AuthenticationError
-from .models import AnonymousUser, User, Role, UserRole
-from .services import SecurityService, SecurityUtilsService, UserManager, RoleManager
+from .exceptions import AuthenticationError, SecurityException
+from .models import AnonymousUser, Role, User, UserRole
+from .services import RoleManager, SecurityService, SecurityUtilsService, UserManager
 from .utils import current_user
 from .views import SecurityController, UserResource
-from .extensions import Security, security  # must be imported last
+
+
+from .extensions import Security, security  # isort: skip (must be last)
 
 
 class SecurityBundle(Bundle):

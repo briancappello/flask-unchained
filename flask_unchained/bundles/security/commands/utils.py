@@ -3,7 +3,8 @@ import sys
 from flask_unchained import unchained
 from flask_unchained.cli import click
 
-from ..services import UserManager, RoleManager
+from ..services import RoleManager, UserManager
+
 
 user_manager: UserManager = unchained.get_local_proxy("user_manager")
 role_manager: RoleManager = unchained.get_local_proxy("role_manager")

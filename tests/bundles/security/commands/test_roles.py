@@ -1,10 +1,11 @@
-import pytest
 import traceback
 
+import pytest
+
 from flask_unchained.bundles.security.commands.roles import (
-    list_roles,
     create_role,
     delete_role,
+    list_roles,
 )
 
 
@@ -23,9 +24,7 @@ class TestRolesCommands:
         assert lines[-3] == f" {roles[-3].id}  {roles[-3].name}"
 
     def test_create_role(self, cli_runner):
-        result = cli_runner.invoke(
-            create_role, args=["--name", "new-role"], input="y\n"
-        )
+        result = cli_runner.invoke(create_role, args=["--name", "new-role"], input="y\n")
         assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
         assert (
             result.output.strip().splitlines()[-1]

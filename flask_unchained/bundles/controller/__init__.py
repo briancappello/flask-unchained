@@ -1,22 +1,24 @@
 from collections import defaultdict
+from typing import *
+
+from flask_wtf.csrf import generate_csrf
+
 from flask_unchained import Bundle, FlaskUnchained
 from flask_unchained.constants import DEV, TEST
-from flask_wtf.csrf import generate_csrf
-from typing import *
 
 from .constants import (
     ALL_RESOURCE_METHODS,
-    RESOURCE_INDEX_METHODS,
-    RESOURCE_MEMBER_METHODS,
     CREATE,
     DELETE,
     GET,
     LIST,
     PATCH,
     PUT,
+    RESOURCE_INDEX_METHODS,
+    RESOURCE_MEMBER_METHODS,
 )
 from .controller import Controller
-from .decorators import param_converter, no_route, route
+from .decorators import no_route, param_converter, route
 from .resource import Resource
 from .route import Route
 from .routes import (

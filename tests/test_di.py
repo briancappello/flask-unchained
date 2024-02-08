@@ -18,9 +18,9 @@ def test_injectable():
 class TestInject:
     def test_services_named_correctly(self):
         from tests._bundles.services_ext_bundle.services import (
+            FunkyService,
             OneService,
             TwoService,
-            FunkyService,
             WhyBoth,
         )
 
@@ -31,9 +31,9 @@ class TestInject:
 
     def test_services_keep_their_docstrings(self):
         from tests._bundles.services_ext_bundle.services import (
+            FunkyService,
             OneService,
             TwoService,
-            FunkyService,
             WhyBoth,
         )
 
@@ -57,10 +57,10 @@ class TestInject:
 
     def test_correct_signature_for_classes(self):
         from tests._bundles.services_ext_bundle.services import (
-            OneService,
             BaseTwo,
-            TwoService,
             FunkyService,
+            OneService,
+            TwoService,
             WhyBoth,
         )
 
@@ -191,9 +191,9 @@ class TestInjectedClassAttributes:
     @pytest.mark.bundles(["tests._bundles.services_bundle"])
     def test_injected_class_attrs_on_extended_service(self):
         from tests._bundles.services_bundle.services import (
+            FunkyService,
             OneService,
             TwoService,
-            FunkyService,
         )
 
         assert isinstance(
@@ -209,9 +209,9 @@ class TestInjectedClassAttributes:
     @pytest.mark.bundles(["tests._bundles.services_ext_bundle"])
     def test_injected_class_attrs_on_extended_service_with_same_name_as_base(self):
         from tests._bundles.services_ext_bundle.services import (
+            FunkyService,
             OneService,
             TwoService,
-            FunkyService,
         )
 
         assert isinstance(unchained.services.class_attr_service.one_service, OneService)
@@ -223,9 +223,9 @@ class TestInjectedClassAttributes:
     @pytest.mark.bundles(["tests._bundles.services_bundle"])
     def test_injected_class_attrs_with_init(self):
         from tests._bundles.services_bundle.services import (
+            FunkyService,
             OneService,
             TwoService,
-            FunkyService,
         )
 
         assert isinstance(
@@ -241,11 +241,11 @@ class TestInjectedClassAttributes:
     @pytest.mark.bundles(["tests._bundles.services_bundle"])
     def test_injected_class_attrs_extended_and_with_init(self):
         from tests._bundles.services_bundle.services import (
-            OneService,
-            TwoService,
-            ThreeService,
             FourService,
             FunkyService,
+            OneService,
+            ThreeService,
+            TwoService,
         )
 
         assert isinstance(
@@ -296,10 +296,10 @@ class TestInjectedClassAttributes:
     @pytest.mark.bundles(["tests._bundles.services_bundle"])
     def test_injected_class_attrs_works_on_extended_decorated_classes_with_init(self):
         from tests._bundles.services_bundle.services import (
+            FunkyService,
             NotAutomaticWithInitExtended,
             OneService,
             TwoService,
-            FunkyService,
         )
 
         instance = NotAutomaticWithInitExtended()

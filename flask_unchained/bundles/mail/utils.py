@@ -1,6 +1,7 @@
 import inspect
 import re
 
+
 try:
     from bs4 import BeautifulSoup
 except ImportError:
@@ -22,11 +23,14 @@ except ImportError:
         "convert html email messages to plain text."
     )
 
-from flask import render_template
-from flask_mail import Message
 from typing import *
 
+from flask import render_template
+
+from flask_mail import Message
+
 from .extensions import mail
+
 
 message_sig = inspect.signature(Message)
 message_kwargs = {
@@ -59,7 +63,7 @@ def make_message(
     subject_or_message: Union[str, Message],
     to: Union[str, List[str]],
     template: Optional[str] = None,
-    **kwargs
+    **kwargs,
 ):
     """
     Creates a new :class:`~flask_mail.Message` from the given arguments.
@@ -81,7 +85,7 @@ def make_message(
     msg = Message(
         subject=subject_or_message,
         recipients=to,
-        **{k: kwargs[k] for k in message_kwargs & set(kwargs)}
+        **{k: kwargs[k] for k in message_kwargs & set(kwargs)},
     )
 
     if not msg.html and template:
@@ -95,7 +99,7 @@ def _send_mail(
     subject_or_message: Optional[Union[str, Message]] = None,
     to: Optional[Union[str, List[str]]] = None,
     template: Optional[str] = None,
-    **kwargs
+    **kwargs,
 ):
     """
     The default function used for sending emails.

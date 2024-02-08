@@ -1,11 +1,14 @@
-import flask_unchained
 import os
 import sys
 
 from babel.messages.frontend import CommandLineInterface
 from flask import current_app
-from flask_unchained.cli import cli, click
+
+import flask_unchained
+
 from flask_unchained import AppBundle
+from flask_unchained.cli import cli, click
+
 
 DEFAULT_DOMAIN = "messages"
 

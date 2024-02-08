@@ -4,8 +4,16 @@ from flask_unchained.string_utils import pluralize
 from py_meta_utils import McsArgs, MetaOption, _missing
 
 from .attr_constants import CONTROLLER_ROUTES_ATTR, REMOVE_SUFFIXES_ATTR
-from .constants import ALL_RESOURCE_METHODS, RESOURCE_INDEX_METHODS
-from .constants import CREATE, DELETE, GET, LIST, PATCH, PUT
+from .constants import (
+    ALL_RESOURCE_METHODS,
+    CREATE,
+    DELETE,
+    GET,
+    LIST,
+    PATCH,
+    PUT,
+    RESOURCE_INDEX_METHODS,
+)
 from .controller import (
     Controller,
     ControllerMetaclass,
@@ -77,9 +85,7 @@ class ResourceUrlPrefixMetaOption(MetaOption):
         if value is not _missing:
             return value
 
-        ctrl_name = controller_name(
-            mcs_args.name, mcs_args.getattr(REMOVE_SUFFIXES_ATTR)
-        )
+        ctrl_name = controller_name(mcs_args.name, mcs_args.getattr(REMOVE_SUFFIXES_ATTR))
         return "/" + pluralize(ctrl_name.replace("_", "-"))
 
     def check_value(

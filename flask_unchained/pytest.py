@@ -1,18 +1,21 @@
 import importlib
 import inspect
 import json
+
+from collections import namedtuple
+from urllib.parse import urlparse
+
 import pytest
 
+from _pytest.fixtures import FixtureLookupError
 from click.testing import CliRunner
-from collections import namedtuple
 from flask import Response, template_rendered
 from flask.cli import ScriptInfo
 from flask.testing import FlaskClient
-from flask_unchained import url_for
-from urllib.parse import urlparse
 from werkzeug.test import EnvironBuilder
 from werkzeug.utils import cached_property
-from _pytest.fixtures import FixtureLookupError
+
+from flask_unchained import url_for
 
 from .app_factory import AppFactory, maybe_set_app_factory_from_env
 from .constants import TEST

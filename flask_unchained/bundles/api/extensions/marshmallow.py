@@ -1,8 +1,9 @@
-import marshmallow as ma
 import flask_marshmallow as flask_ma
+import marshmallow as ma
 import marshmallow_sqlalchemy.fields as msqla_fields
 
 from flask_marshmallow.sqla import HyperlinkRelated
+
 from flask_unchained import FlaskUnchained
 
 from ..model_serializer import ModelSerializer

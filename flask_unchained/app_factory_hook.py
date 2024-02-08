@@ -5,13 +5,13 @@ import pkgutil
 from types import FunctionType, ModuleType
 from typing import *
 
+from ._compat import is_local_proxy
 from .bundles import AppBundle, Bundle
 from .exceptions import NameCollisionError
 from .flask_unchained import FlaskUnchained
 from .string_utils import snake_case
 from .unchained import Unchained
 from .utils import safe_import_module
-from ._compat import is_local_proxy
 
 
 class _BundleOverrideModuleNamesAttrDescriptor:
@@ -330,8 +330,7 @@ class AppFactoryHook:
                 f"on {cls.__module__}.{cls.__name__} to use this feature."
             )
         elif (
-            not cls.require_exactly_one_bundle_module
-            and cls.bundle_module_names is None
+            not cls.require_exactly_one_bundle_module and cls.bundle_module_names is None
         ):
             raise RuntimeError(
                 f"you must set the `bundle_module_names` class attribute "

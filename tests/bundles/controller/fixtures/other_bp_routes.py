@@ -1,6 +1,6 @@
-from flask_unchained.bundles.controller import func, prefix, include
+from flask_unchained.bundles.controller import func, include, prefix
 
-from .bp_views import one, two, three
+from .bp_views import one, three, two
 
 
 implicit = lambda: [

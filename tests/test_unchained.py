@@ -125,9 +125,7 @@ class TestUnchained:
         unchained.empty_bundle.teardown_request(lambda bp: "teardown_request")
         unchained.empty_bundle.context_processor(lambda bp: "context_processor")
         unchained.empty_bundle.url_defaults(lambda bp: "url_defaults")
-        unchained.empty_bundle.url_value_preprocessor(
-            lambda bp: "url_value_preprocessor"
-        )
+        unchained.empty_bundle.url_value_preprocessor(lambda bp: "url_value_preprocessor")
         unchained.empty_bundle.errorhandler(500)(lambda bp: "errorhandler")
         unchained.init_app(app, [empty])
         assert empty._deferred_functions[0](fake_bp) == "before_request"

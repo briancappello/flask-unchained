@@ -1,6 +1,9 @@
-from flask_unchained.string_utils import slugify as _slugify
 from functools import partial
+
 from sqlalchemy import event
+
+from flask_unchained.string_utils import slugify as _slugify
+
 
 # EVENTS DOCS
 # http://docs.sqlalchemy.org/en/rel_1_1/core/event.html
@@ -125,9 +128,7 @@ def slugify(field_name, slug_field_name="slug", mutable=False):
             setattr(target, slug_field_name, _slugify(value))
 
     def wrapper(cls):
-        event.listen(
-            getattr(cls, field_name), "set", partial(_set_slug, mutable=mutable)
-        )
+        event.listen(getattr(cls, field_name), "set", partial(_set_slug, mutable=mutable))
         return cls
 
     return wrapper

@@ -1,20 +1,22 @@
 from types import FunctionType
 from typing import *
 
+from speaklater import _LazyString
+
 from flask_unchained import unchained
 from flask_unchained.di import _set_up_class_dependency_injection
 from flask_unchained.string_utils import title_case
 from py_meta_utils import McsArgs
-from speaklater import _LazyString
+
 
 try:
+    from flask_marshmallow.sqla import SQLAlchemyAutoSchema as BaseModelSerializer
     from flask_marshmallow.sqla import (
-        SQLAlchemyAutoSchema as BaseModelSerializer,
         SQLAlchemyAutoSchemaOpts as BaseModelSerializerOptionsClass,
     )
-    from marshmallow.fields import Field
     from marshmallow.class_registry import _registry
     from marshmallow.exceptions import ValidationError as MarshmallowValidationError
+    from marshmallow.fields import Field
     from marshmallow_sqlalchemy.convert import ModelConverter as BaseModelConverter
     from marshmallow_sqlalchemy.schema import (
         SQLAlchemyAutoSchemaMeta as BaseModelSerializerMetaclass,
@@ -152,9 +154,7 @@ class ModelSerializerMetaclass(BaseModelSerializerMetaclass):
             model_missing = True
 
         if model_missing:
-            raise AttributeError(
-                f"{name} is missing the ``class Meta`` model attribute"
-            )
+            raise AttributeError(f"{name} is missing the ``class Meta`` model attribute")
 
         model = meta.model
         try:
@@ -174,9 +174,7 @@ class ModelSerializerMetaclass(BaseModelSerializerMetaclass):
 
         additional_fields = meta_dict.pop("additional", None)
         if additional_fields:
-            fields = [
-                name for name, field in clsdict.items() if isinstance(field, Field)
-            ]
+            fields = [name for name, field in clsdict.items() if isinstance(field, Field)]
             meta_dict["fields"] = fields + list(additional_fields)
 
         meta_dict.pop("model", None)

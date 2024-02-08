@@ -6,7 +6,6 @@ USAGE:
 flask [--env=dev|prod|staging|test] [--no-warn] COMMAND <args> [OPTIONS]
 """
 import argparse
-import flask.cli as flask_cli
 import functools
 import os
 import sys
@@ -15,14 +14,17 @@ import time
 from traceback import format_exc
 from typing import *
 
+import flask.cli as flask_cli
+
 from flask.cli import with_appcontext
 from pyterminalsize import get_terminal_size
 
 from . import click, unchained
 from .app_factory import AppFactory, maybe_set_app_factory_from_env
-from .constants import DEV, PROD, STAGING, ENV_ALIASES, VALID_ENVS
+from .constants import DEV, ENV_ALIASES, PROD, STAGING, VALID_ENVS
 from .exceptions import UnchainedConfigNotFoundError
 from .utils import get_boolean_env
+
 
 IterableOfStrings = Union[List[str], Tuple[str, ...]]
 IterableOfTuples = Union[List[tuple], Tuple[tuple, ...]]
@@ -56,9 +58,7 @@ def cli_create_app(_load_unchained_config=True):
     env = os.getenv("FLASK_ENV")
 
     try:
-        return AppFactory().create_app(
-            env, _load_unchained_config=_load_unchained_config
-        )
+        return AppFactory().create_app(env, _load_unchained_config=_load_unchained_config)
     except:
         print(format_exc())
         clear_env_vars()
@@ -124,9 +124,7 @@ def cli(ctx, env, warn):
         from sqlalchemy.exc import DatabaseError
 
         def get_next_migration_version():
-            version_table = migrate.configure_args.get(
-                "version_table", "alembic_version"
-            )
+            version_table = migrate.configure_args.get("version_table", "alembic_version")
 
             try:
                 rows = migrate.db.engine.execute(

@@ -1,26 +1,30 @@
 from datetime import timedelta
-from flask import current_app as app, session
-from flask_login.signals import user_logged_in
-from flask_login.utils import logout_user as _logout_user
-from flask_principal import Identity, AnonymousIdentity, identity_changed
-from flask_unchained import url_for, lazy_gettext as _
-from flask_unchained.bundles.mail import Mail
-from flask_unchained import Service, injectable
 from typing import *
 
-from .security_utils_service import SecurityUtilsService
-from .user_manager import UserManager
+from flask import current_app as app
+from flask import session
+from flask_login.signals import user_logged_in
+from flask_login.utils import logout_user as _logout_user
+from flask_principal import AnonymousIdentity, Identity, identity_changed
+
+from flask_unchained import Service, injectable
+from flask_unchained import lazy_gettext as _
+from flask_unchained import url_for
+from flask_unchained.bundles.mail import Mail
+
 from ..exceptions import AuthenticationError
 from ..extensions import Security
 from ..models import User
 from ..signals import (
     confirm_instructions_sent,
-    reset_password_instructions_sent,
     password_changed,
     password_reset,
+    reset_password_instructions_sent,
     user_confirmed,
     user_registered,
 )
+from .security_utils_service import SecurityUtilsService
+from .user_manager import UserManager
 
 
 class SecurityService(Service):
@@ -172,9 +176,7 @@ class SecurityService(Service):
 
         user_registered.send(app._get_current_object(), user=user, confirm_token=token)
 
-        if send_email or (
-            send_email is None and app.config.SECURITY_SEND_REGISTER_EMAIL
-        ):
+        if send_email or (send_email is None and app.config.SECURITY_SEND_REGISTER_EMAIL):
             self.send_mail(
                 _("flask_unchained.bundles.security:email_subject.register"),
                 to=user.email,
@@ -229,9 +231,7 @@ class SecurityService(Service):
         self.user_manager.save(user)
         if app.config.SECURITY_SEND_PASSWORD_RESET_NOTICE_EMAIL:
             self.send_mail(
-                _(
-                    "flask_unchained.bundles.security:email_subject.password_reset_notice"
-                ),
+                _("flask_unchained.bundles.security:email_subject.password_reset_notice"),
                 to=user.email,
                 template="security/email/password_reset_notice.html",
                 user=user,
@@ -259,9 +259,7 @@ class SecurityService(Service):
             user=user,
             confirmation_link=confirmation_link,
         )
-        confirm_instructions_sent.send(
-            app._get_current_object(), user=user, token=token
-        )
+        confirm_instructions_sent.send(app._get_current_object(), user=user, token=token)
 
     def send_reset_password_instructions(self, user):
         """
@@ -321,5 +319,5 @@ class SecurityService(Service):
             subject,
             to,
             template,
-            **dict(**self.security.run_ctx_processor("mail"), **template_ctx)
+            **dict(**self.security.run_ctx_processor("mail"), **template_ctx),
         )

@@ -1,5 +1,7 @@
-from flask import abort, current_app, request
 from http import HTTPStatus
+
+from flask import abort, current_app, request
+
 
 try:
     from flask_unchained.bundles.security import current_user as user

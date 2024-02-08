@@ -2,6 +2,7 @@ import pytest
 
 from flask_unchained import unchained
 from flask_unchained.bundles.graphene.pytest import *
+
 from ..sqlalchemy.conftest import *
 
 

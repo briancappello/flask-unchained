@@ -1,5 +1,6 @@
 from flask_session import SqlAlchemySessionInterface as BaseSqlAlchemySessionInterface
 
+
 try:
     from sqlalchemy import types
 except ImportError:

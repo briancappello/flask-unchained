@@ -6,7 +6,8 @@ https://stackoverflow.com/questions/12044776/how-to-use-flask-sqlalchemy-in-a-ce
 import flask
 
 from celery import Celery as BaseCelery
-from dill import dumps as dill_dumps, load as dill_load
+from dill import dumps as dill_dumps
+from dill import load as dill_load
 from kombu.serialization import pickle_loads, pickle_protocol, registry
 from kombu.utils.encoding import str_to_bytes
 

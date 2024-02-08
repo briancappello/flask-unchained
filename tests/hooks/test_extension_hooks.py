@@ -3,8 +3,8 @@ import pytest
 from flask_unchained.hooks import InitExtensionsHook, RegisterExtensionsHook
 from flask_unchained.unchained import Unchained
 
-from .._bundles.myapp import MyAppBundle, myext
 from .._bundles.empty_bundle import EmptyBundle
+from .._bundles.myapp import MyAppBundle, myext
 from .._bundles.vendor_bundle import VendorBundle, awesome
 
 

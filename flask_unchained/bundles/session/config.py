@@ -1,7 +1,9 @@
 import os
 
 from datetime import timedelta
+
 from flask_unchained import BundleConfig
+
 
 try:
     from flask_unchained.bundles.sqlalchemy import db

@@ -7,6 +7,7 @@ from flask_unchained.utils import utcnow
 
 from ..models import User
 
+
 password_length = validators.Length(
     8, message="Password must be at least 8 characters long."
 )

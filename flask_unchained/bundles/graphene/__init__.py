@@ -1,9 +1,11 @@
+from typing import *
+
 import graphene
 
 from flask_graphql import GraphQLView
+
 from flask_unchained import Bundle, FlaskUnchained
 from flask_unchained.bundles.controller.extensions import csrf
-from typing import *
 
 from .exceptions import MutationValidationError
 from .object_types import MutationsObjectType, QueriesObjectType, SQLAlchemyObjectType

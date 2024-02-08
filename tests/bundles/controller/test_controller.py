@@ -1,4 +1,5 @@
 import functools
+
 from flask import Blueprint
 
 from flask_unchained.bundles.controller import Controller

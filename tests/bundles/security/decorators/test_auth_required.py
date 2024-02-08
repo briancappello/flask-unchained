@@ -1,11 +1,10 @@
 import pytest
 
-from flask_unchained.bundles.security.decorators import (
-    auth_required,
-    # roles_accepted,  # tested by tests for auth_required
-    # roles_required,  # tested by tests for auth_required
-)
 from werkzeug.exceptions import Forbidden, Unauthorized
+
+from flask_unchained.bundles.security.decorators import (  # roles_accepted,  # tested by tests for auth_required; roles_required,  # tested by tests for auth_required
+    auth_required,
+)
 
 
 class MethodCalled(Exception):

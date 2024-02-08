@@ -8,8 +8,8 @@ from flask_unchained.unchained import Unchained
 
 from .fixtures.app_bundle import AppBundle
 from .fixtures.auto_route_app_bundle import AutoRouteAppBundle
-from .fixtures.vendor_bundle import VendorBundle
 from .fixtures.empty_bundle import EmptyBundle
+from .fixtures.vendor_bundle import VendorBundle
 
 
 @pytest.fixture

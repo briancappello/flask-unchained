@@ -1,9 +1,10 @@
 import pytest
 
 from flask import session
+from werkzeug.exceptions import Forbidden
+
 from flask_unchained import url_for
 from flask_unchained.bundles.security.decorators import anonymous_user_required
-from werkzeug.exceptions import Forbidden
 
 
 class MethodCalled(Exception):

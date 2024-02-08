@@ -1,6 +1,5 @@
 from flask_unchained.bundles.sqlalchemy import db
 
-
 from .many_to_many_model import AssetDataVendor
 from .many_to_many_table import index_equities
 

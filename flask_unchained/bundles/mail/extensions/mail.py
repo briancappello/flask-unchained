@@ -1,8 +1,9 @@
-from flask_mail import _MailMixin, Message
-from flask_unchained import FlaskUnchained
-from flask_unchained.utils import ConfigProperty, ConfigPropertyMetaclass
 from types import FunctionType
 from typing import *
+
+from flask_mail import Message, _MailMixin
+from flask_unchained import FlaskUnchained
+from flask_unchained.utils import ConfigProperty, ConfigPropertyMetaclass
 
 
 class Mail(_MailMixin, metaclass=ConfigPropertyMetaclass):
@@ -30,7 +31,7 @@ class Mail(_MailMixin, metaclass=ConfigPropertyMetaclass):
         self,
         subject_or_message: Optional[Union[Message, str]] = None,
         to: Optional[Union[str, List[str]]] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         Send an email using the send function as configured by

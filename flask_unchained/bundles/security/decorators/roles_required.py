@@ -1,7 +1,8 @@
-from flask import abort
-from flask_principal import Permission, RoleNeed
 from functools import wraps
 from http import HTTPStatus
+
+from flask import abort
+from flask_principal import Permission, RoleNeed
 
 
 def roles_required(*roles):

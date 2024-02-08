@@ -1,12 +1,14 @@
-from flask import current_app, request, g
-
-from flask_principal import Identity, identity_changed
-from flask_unchained import unchained
 from functools import wraps
 
+from flask import current_app, g, request
+from flask_principal import Identity, identity_changed
+
+from flask_unchained import unchained
+
+from ..utils import current_user
 from .roles_accepted import roles_accepted
 from .roles_required import roles_required
-from ..utils import current_user
+
 
 security = unchained.get_local_proxy("security")
 

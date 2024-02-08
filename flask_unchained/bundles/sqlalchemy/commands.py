@@ -1,9 +1,11 @@
 from alembic import command as alembic
 from flask.cli import with_appcontext
 from flask_migrate.cli import db
+
 from flask_unchained import click, unchained
 
 from .extensions import SQLAlchemyUnchained, migrate
+
 
 db_ext: SQLAlchemyUnchained = unchained.get_local_proxy("db")
 

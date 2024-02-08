@@ -1,24 +1,27 @@
 import functools
 import inspect
 import itertools
+
+from typing import *
+
 import jinja2
 import markupsafe
 import networkx as nx
 
 from flask import Flask, current_app
+
 from py_meta_utils import _missing
-from typing import *
 
 from ._compat import QUART_ENABLED, LocalProxy
 from .constants import (
+    _DI_AUTOMATICALLY_HANDLED,
+    _INJECT_CLS_ATTRS,
     DEV,
     PROD,
     STAGING,
     TEST,
-    _DI_AUTOMATICALLY_HANDLED,
-    _INJECT_CLS_ATTRS,
 )
-from .di import _ensure_service_name, _get_injected_value, injectable, _inject_cls_attrs
+from .di import _ensure_service_name, _get_injected_value, _inject_cls_attrs, injectable
 from .exceptions import ServiceUsageError
 from .utils import AttrDict
 
@@ -254,9 +257,7 @@ class Unchained:
         def get_extension_or_service_by_name():
             value = _get_injected_value(current_app.unchained, name, throw=False)
             if value is _missing:
-                raise KeyError(
-                    f"No extension or service was found with the name {name}."
-                )
+                raise KeyError(f"No extension or service was found with the name {name}.")
             return value
 
         return LocalProxy(get_extension_or_service_by_name)
@@ -388,9 +389,7 @@ class Unchained:
                 for k, v in bound_args.arguments.items():
                     if isinstance(v, str) and v == injectable:
                         di_name = dependency_injector.__di_name__
-                        is_constructor = (
-                            "." not in di_name and di_name != di_name.lower()
-                        )
+                        is_constructor = "." not in di_name and di_name != di_name.lower()
                         action = "initialized" if is_constructor else "called"
                         raise ServiceUsageError(
                             f"{di_name} was {action} without the {k} parameter. "

@@ -1,4 +1,5 @@
-from flask_admin import AdminIndexView as BaseAdminIndexView, expose
+from flask_admin import AdminIndexView as BaseAdminIndexView
+from flask_admin import expose
 
 from ..security import AdminSecurityMixin
 

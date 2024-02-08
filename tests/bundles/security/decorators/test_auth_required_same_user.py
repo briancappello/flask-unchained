@@ -1,7 +1,8 @@
 import pytest
 
-from flask_unchained.bundles.security.decorators import auth_required_same_user
 from werkzeug.exceptions import Forbidden
+
+from flask_unchained.bundles.security.decorators import auth_required_same_user
 
 
 class MethodCalled(Exception):

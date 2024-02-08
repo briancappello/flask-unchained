@@ -1,17 +1,13 @@
-from flask_sqlalchemy_unchained import (
-    SQLAlchemyUnchained as BaseSQLAlchemy,
-    Query as BaseQuery,
-)
 from sqlalchemy import event
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.naming import (
-    ConventionDict,
-    _get_convention,
-    conv as converted_name,
-)
+from sqlalchemy.sql.naming import ConventionDict, _get_convention
+from sqlalchemy.sql.naming import conv as converted_name
+
+from flask_sqlalchemy_unchained import Query as BaseQuery
+from flask_sqlalchemy_unchained import SQLAlchemyUnchained as BaseSQLAlchemy
 from sqlalchemy_unchained import (
-    DeclarativeMeta,
     BaseValidator,
+    DeclarativeMeta,
     Required,
     ValidationError,
     ValidationErrors,
@@ -19,9 +15,10 @@ from sqlalchemy_unchained import (
 
 from .. import sqla
 from ..base_model import BaseModel
-from ..services import SessionManager, ModelManager
+from ..services import ModelManager, SessionManager
 
-from ..model_registry import UnchainedModelRegistry  # required import
+
+from ..model_registry import UnchainedModelRegistry  # isort: skip (required import)
 
 
 class SQLAlchemyUnchained(BaseSQLAlchemy):

@@ -1,23 +1,27 @@
 import inspect
+
+from functools import partial
+from http import HTTPStatus
 from typing import *
 
 from flask import current_app, make_response, request
-from flask_unchained import Resource, route, param_converter, unchained, injectable
-from flask_unchained.string_utils import kebab_case, pluralize
+from werkzeug.wrappers import Response
+
+from flask_unchained import Resource, injectable, param_converter, route, unchained
 from flask_unchained.bundles.controller.attr_constants import (
     CONTROLLER_ROUTES_ATTR,
     FN_ROUTES_ATTR,
 )
 from flask_unchained.bundles.controller.constants import (
     ALL_RESOURCE_METHODS,
-    RESOURCE_INDEX_METHODS,
-    RESOURCE_MEMBER_METHODS,
     CREATE,
     DELETE,
     GET,
     LIST,
     PATCH,
     PUT,
+    RESOURCE_INDEX_METHODS,
+    RESOURCE_MEMBER_METHODS,
 )
 from flask_unchained.bundles.controller.resource import (
     ResourceMetaclass,
@@ -28,12 +32,10 @@ from flask_unchained.bundles.controller.route import Route
 from flask_unchained.bundles.controller.utils import get_param_tuples
 from flask_unchained.bundles.sqlalchemy import SessionManager
 from flask_unchained.bundles.sqlalchemy.meta_options import ModelMetaOption
-from functools import partial
-from http import HTTPStatus
+from flask_unchained.string_utils import kebab_case, pluralize
 from py_meta_utils import McsArgs, MetaOption, _missing
-from werkzeug.wrappers import Response
 
-from .decorators import list_loader, patch_loader, put_loader, post_loader
+from .decorators import list_loader, patch_loader, post_loader, put_loader
 from .model_serializer import ModelSerializer
 from .utils import unpack
 

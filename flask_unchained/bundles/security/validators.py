@@ -1,8 +1,9 @@
 import re
 
-from sqlalchemy_unchained import BaseValidator, ValidationError
-from flask_unchained import lazy_gettext as _
 from wtforms.validators import HostnameValidation
+
+from flask_unchained import lazy_gettext as _
+from sqlalchemy_unchained import BaseValidator, ValidationError
 
 
 # FIXME move into the SQLAlchemy bundle; the only thing security-bundle-specific

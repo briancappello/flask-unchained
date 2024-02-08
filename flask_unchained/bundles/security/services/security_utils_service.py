@@ -3,8 +3,10 @@ import hashlib
 import hmac
 
 from datetime import timedelta
-from flask_unchained import Service, current_app, injectable
+
 from itsdangerous import BadSignature, SignatureExpired
+
+from flask_unchained import Service, current_app, injectable
 
 
 class SecurityUtilsService(Service):
@@ -83,7 +85,7 @@ class SecurityUtilsService(Service):
             password,
             **current_app.config.SECURITY_PASSWORD_HASH_OPTIONS.get(
                 current_app.config.SECURITY_PASSWORD_HASH, {}
-            )
+            ),
         )
 
     def hash_data(self, data):
@@ -107,7 +109,7 @@ class SecurityUtilsService(Service):
         single_hash = current_app.config.SECURITY_PASSWORD_SINGLE_HASH
         if single_hash and self.security.password_salt:
             raise RuntimeError(
-                "You may not specify a salt with " "SECURITY_PASSWORD_SINGLE_HASH"
+                "You may not specify a salt with SECURITY_PASSWORD_SINGLE_HASH"
             )
 
         if password_hash is None:
@@ -170,11 +172,7 @@ class SecurityUtilsService(Service):
             token, "reset", "SECURITY_RESET_PASSWORD_WITHIN", return_data=True
         )
 
-        if (
-            not invalid
-            and user.password
-            and not self.verify_hash(data[1], user.password)
-        ):
+        if not invalid and user.password and not self.verify_hash(data[1], user.password):
             invalid = True
 
         return expired, invalid, user

@@ -1,5 +1,6 @@
-from flask_unchained import AppFactoryHook, FlaskUnchained
 from typing import *
+
+from flask_unchained import AppFactoryHook, FlaskUnchained
 
 
 class DiscoverTasksHook(AppFactoryHook):

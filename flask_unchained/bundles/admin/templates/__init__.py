@@ -1,10 +1,12 @@
 import html
 
-from flask_unchained import url_for
+from typing import *
+
 from markupsafe import Markup as safe
 from sqlalchemy.ext.associationproxy import _AssociationCollection
+
+from flask_unchained import url_for
 from sqlalchemy_unchained.utils import rec_getattr
-from typing import *
 
 
 def admin_link(
@@ -16,9 +18,7 @@ def admin_link(
     multiline_many: bool = False,
 ):
     ctrl = (
-        admin_controller
-        if "_admin" in admin_controller
-        else f"{admin_controller}_admin"
+        admin_controller if "_admin" in admin_controller else f"{admin_controller}_admin"
     )
     endpoint = f"{ctrl}.{view}"
 

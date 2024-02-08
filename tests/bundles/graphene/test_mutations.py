@@ -131,14 +131,10 @@ class TestParentMutations:
 
     def test_edit_parent_name(self, graphql_client):
         parent = parent_manager.get_by(name="parent_one")
-        result = graphql_client.execute(
-            EDIT_PARENT, dict(id=parent.id, name="new-name")
-        )
+        result = graphql_client.execute(EDIT_PARENT, dict(id=parent.id, name="new-name"))
 
         assert "errors" not in result and "data" in result, result["errors"]
-        assert (
-            "editParent" in result["data"] and "parent" in result["data"]["editParent"]
-        )
+        assert "editParent" in result["data"] and "parent" in result["data"]["editParent"]
 
         result = result["data"]["editParent"]["parent"]
         assert dict(result) == dict(
@@ -157,9 +153,7 @@ class TestParentMutations:
         )
 
         assert "errors" not in result and "data" in result, result["errors"]
-        assert (
-            "editParent" in result["data"] and "parent" in result["data"]["editParent"]
-        )
+        assert "editParent" in result["data"] and "parent" in result["data"]["editParent"]
 
         result = result["data"]["editParent"]["parent"]
         assert dict(result) == dict(

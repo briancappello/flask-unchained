@@ -1,17 +1,20 @@
-from flask import Request
-from flask_login import LoginManager
-from flask_principal import Principal, Identity, UserNeed, RoleNeed, identity_loaded
-from flask_unchained import FlaskUnchained, injectable, lazy_gettext as _
-from flask_unchained.utils import ConfigProperty, ConfigPropertyMetaclass
-from itsdangerous import URLSafeTimedSerializer
-from passlib.context import CryptContext
 from types import FunctionType
 from typing import *
 
+from flask import Request
+from flask_login import LoginManager
+from flask_principal import Identity, Principal, RoleNeed, UserNeed, identity_loaded
+from itsdangerous import URLSafeTimedSerializer
+from passlib.context import CryptContext
+
+from flask_unchained import FlaskUnchained, injectable
+from flask_unchained import lazy_gettext as _
+from flask_unchained.utils import ConfigProperty, ConfigPropertyMetaclass
+
 from ..models import AnonymousUser, User
-from ..utils import current_user
 from ..services.security_utils_service import SecurityUtilsService
 from ..services.user_manager import UserManager
+from ..utils import current_user
 
 
 class _SecurityConfigProperties(metaclass=ConfigPropertyMetaclass):
@@ -282,9 +285,7 @@ class Security(_SecurityConfigProperties):
             token = data.get(args_key, token)
 
         try:
-            data = self.remember_token_serializer.loads(
-                token, max_age=self.token_max_age
-            )
+            data = self.remember_token_serializer.loads(token, max_age=self.token_max_age)
             user = self.user_manager.get(data[0])
             if user and self.security_utils_service.verify_hash(data[1], user.password):
                 return user

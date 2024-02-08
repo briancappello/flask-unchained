@@ -1,8 +1,8 @@
-import networkx as nx
-
 from collections import namedtuple
 from importlib import import_module
 from typing import *
+
+import networkx as nx
 
 from ..app_factory_hook import AppFactoryHook
 from ..bundles import Bundle
@@ -50,9 +50,7 @@ class RunHooksHook(AppFactoryHook):
         """
         return {
             hook_class_name: HookTuple(HookClass, bundle)
-            for hook_class_name, HookClass in super()
-            .collect_from_bundle(bundle)
-            .items()
+            for hook_class_name, HookClass in super().collect_from_bundle(bundle).items()
         }
 
     def collect_unchained_hooks(self) -> Dict[str, HookTuple]:

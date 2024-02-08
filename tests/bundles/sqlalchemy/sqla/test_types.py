@@ -1,9 +1,12 @@
+from datetime import datetime, timezone
+
 import pytest
 
 from dateutil import tz
-from datetime import datetime, timezone
+
 from flask_unchained.bundles.sqlalchemy.sqla import types
 from tests.bundles.sqlalchemy.conftest import POSTGRES
+
 
 year, month, day, hour = 2000, 1, 1, 1
 

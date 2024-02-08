@@ -2,10 +2,11 @@ import pytest
 
 from flask_unchained import unchained
 from flask_unchained._compat import is_local_proxy
-
+from tests.bundles.sqlalchemy._bundles.custom_extension.extensions import (
+    Model as CustomModel,
+)
 from tests.bundles.sqlalchemy._bundles.custom_extension.extensions import (
     SQLAlchemyUnchained as CustomSQLAlchemy,
-    Model as CustomModel,
 )
 
 

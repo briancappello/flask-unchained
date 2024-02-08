@@ -1,5 +1,6 @@
-from sqlalchemy_unchained.foreign_key import _get_fk_col_args
 from typing import *
+
+from sqlalchemy_unchained.foreign_key import _get_fk_col_args
 
 from .column import Column
 from .types import BigInteger
@@ -65,9 +66,7 @@ def foreign_key(
                    constructor.
     """
     return Column(
-        *_get_fk_col_args(
-            args, fk_col, ondelete, onupdate, _default_col_type=BigInteger
-        ),
+        *_get_fk_col_args(args, fk_col, ondelete, onupdate, _default_col_type=BigInteger),
         primary_key=primary_key,
         nullable=nullable,
         **kwargs,

@@ -1,8 +1,8 @@
 import pytest
-from flask_unchained.bundles.mail.pytest import *
 
 from flask_unchained import url_for
-from flask_unchained.bundles.security import current_user, AnonymousUser
+from flask_unchained.bundles.mail.pytest import *
+from flask_unchained.bundles.security import AnonymousUser, current_user
 
 
 @pytest.mark.options(SECURITY_CONFIRMABLE=True)
@@ -18,9 +18,7 @@ class TestConfirmEmail:
         assert not user.confirmed_at
 
         confirm_token = registrations[0]["confirm_token"]
-        r = client.get(
-            url_for("security_controller.confirm_email", token=confirm_token)
-        )
+        r = client.get(url_for("security_controller.confirm_email", token=confirm_token))
         assert r.status_code == 302
         assert r.path == "/"
 
@@ -46,9 +44,7 @@ class TestConfirmEmail:
         assert len(registrations) == 1
 
         confirm_token = registrations[0]["confirm_token"]
-        r = client.get(
-            url_for("security_controller.confirm_email", token=confirm_token)
-        )
+        r = client.get(url_for("security_controller.confirm_email", token=confirm_token))
         assert r.status_code == 302
         assert r.path == url_for("security_controller.send_confirmation_email")
 

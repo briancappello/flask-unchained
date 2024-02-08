@@ -1,13 +1,13 @@
 from .bundles.controller.routes import (
     controller,
-    resource,
-    func,
-    include,
-    prefix,
     delete,
+    func,
     get,
+    include,
     patch,
     post,
+    prefix,
     put,
+    resource,
     rule,
 )

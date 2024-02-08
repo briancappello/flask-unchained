@@ -1,3 +1,12 @@
+from typing import *
+
+from wtforms.fields import SubmitField as _SubmitField
+from wtforms.form import FormMeta as FormMetaclass
+from wtforms.validators import DataRequired as _RequiredValidator
+from wtforms_sqlalchemy.fields import *
+from wtforms_sqlalchemy.orm import ModelConverter as BaseModelConverter
+from wtforms_sqlalchemy.orm import converts
+
 from flask_unchained import FlaskForm, unchained
 from flask_unchained.di import _set_up_class_dependency_injection
 from py_meta_utils import (
@@ -9,12 +18,6 @@ from py_meta_utils import (
     process_factory_meta_options,
 )
 from sqlalchemy_unchained.validation import ValidationError, ValidationErrors
-from typing import *
-from wtforms.fields import SubmitField as _SubmitField
-from wtforms.validators import DataRequired as _RequiredValidator
-from wtforms_sqlalchemy.fields import *
-from wtforms_sqlalchemy.orm import ModelConverter as BaseModelConverter, converts
-from wtforms.form import FormMeta as FormMetaclass
 
 from .extensions import db
 from .meta_options import ModelMetaOption
@@ -88,8 +91,7 @@ class ExcludePrimaryKeyMetaOption(MetaOption):
 
         if not isinstance(value, bool):
             raise TypeError(
-                f"The `exclude_pk` Meta option for {mcs_args.name} "
-                f"must be a boolean"
+                f"The `exclude_pk` Meta option for {mcs_args.name} must be a boolean"
             )
 
 
@@ -103,8 +105,7 @@ class ExcludeForeignKeyMetaOption(MetaOption):
 
         if not isinstance(value, bool):
             raise TypeError(
-                f"The `exclude_fk` Meta option for {mcs_args.name} "
-                f"must be a boolean"
+                f"The `exclude_fk` Meta option for {mcs_args.name} must be a boolean"
             )
 
 

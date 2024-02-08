@@ -1,10 +1,10 @@
-import networkx as nx
-
 from collections import namedtuple
 from typing import *
 
-from .register_extensions_hook import RegisterExtensionsHook
+import networkx as nx
+
 from ..flask_unchained import FlaskUnchained
+from .register_extensions_hook import RegisterExtensionsHook
 
 
 ExtensionTuple = namedtuple("ExtensionTuple", ("name", "extension", "dependencies"))

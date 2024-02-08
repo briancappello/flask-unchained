@@ -1,4 +1,5 @@
 import datetime
+
 import pytest
 
 from flask_unchained.utils import get_boolean_env, safe_import_module, utcnow

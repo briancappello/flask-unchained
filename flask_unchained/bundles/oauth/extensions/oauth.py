@@ -1,5 +1,7 @@
 from flask_oauthlib.client import OAuth as BaseOAuth
+
 from flask_unchained import session
+
 
 REMOTE_APP_NAME_CONFIG_PREFIX = "OAUTH_REMOTE_APP_"
 

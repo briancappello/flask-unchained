@@ -1,7 +1,7 @@
 from flask_unchained import Service, unchained
 from flask_unchained.di import ServiceMetaclass, ServiceMetaOptionsFactory
+from sqlalchemy_unchained.model_manager import ModelManager as BaseModelManager
 from sqlalchemy_unchained.model_manager import (
-    ModelManager as BaseModelManager,
     ModelManagerMetaclass as BaseModelManagerMetaclass,
 )
 

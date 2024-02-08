@@ -1,9 +1,13 @@
-from flask import current_app as app, request
-from flask_unchained import Controller, route, lazy_gettext as _
-from flask_unchained import injectable
-from flask_unchained.bundles.sqlalchemy import SessionManager
 from http import HTTPStatus
+
+from flask import current_app as app
+from flask import request
 from werkzeug.datastructures import MultiDict
+
+from flask_unchained import Controller, injectable
+from flask_unchained import lazy_gettext as _
+from flask_unchained import route
+from flask_unchained.bundles.sqlalchemy import SessionManager
 
 from ..decorators import anonymous_user_required, auth_required
 from ..exceptions import AuthenticationError
@@ -87,14 +91,10 @@ class SecurityController(Controller):
         if request.is_json:
             return "", HTTPStatus.NO_CONTENT
 
-        self.flash(
-            _("flask_unchained.bundles.security:flash.logout"), category="success"
-        )
+        self.flash(_("flask_unchained.bundles.security:flash.logout"), category="success")
         return self.redirect("SECURITY_POST_LOGOUT_REDIRECT_ENDPOINT")
 
-    @route(
-        methods=["GET", "POST"], only_if=lambda app: app.config.SECURITY_REGISTERABLE
-    )
+    @route(methods=["GET", "POST"], only_if=lambda app: app.config.SECURITY_REGISTERABLE)
     @anonymous_user_required
     def register(self):
         """
@@ -242,14 +242,12 @@ class SecurityController(Controller):
         It also handles the form for them to set a new password.
         Supports html and json requests.
         """
-        expired, invalid, user = (
-            self.security_utils_service.reset_password_token_status(token)
+        expired, invalid, user = self.security_utils_service.reset_password_token_status(
+            token
         )
         if invalid:
             self.flash(
-                _(
-                    "flask_unchained.bundles.security:flash.invalid_reset_password_token"
-                ),
+                _("flask_unchained.bundles.security:flash.invalid_reset_password_token"),
                 category="error",
             )
             return self.redirect("SECURITY_INVALID_RESET_TOKEN_REDIRECT")

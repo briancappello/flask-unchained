@@ -1,14 +1,16 @@
 from datetime import datetime, timezone
-from flask import abort
-from flask_unchained import BundleConfig
 from http import HTTPStatus
 
+from flask import abort
+
+from flask_unchained import BundleConfig
+
 from .forms import (
+    ChangePasswordForm,
+    ForgotPasswordForm,
     LoginForm,
     RegisterForm,
-    ForgotPasswordForm,
     ResetPasswordForm,
-    ChangePasswordForm,
     SendConfirmationForm,
 )
 from .models import AnonymousUser

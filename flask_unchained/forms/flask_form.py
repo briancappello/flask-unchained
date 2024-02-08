@@ -1,6 +1,9 @@
+from flask_wtf.form import FlaskForm as BaseForm
+from flask_wtf.form import _Auto
+from wtforms import FileField as _FileField
+from wtforms import SubmitField as _SubmitField
+
 from flask_unchained.string_utils import snake_case
-from flask_wtf.form import FlaskForm as BaseForm, _Auto
-from wtforms import FileField as _FileField, SubmitField as _SubmitField
 
 
 class FlaskForm(BaseForm):
@@ -57,7 +60,7 @@ class FlaskForm(BaseForm):
             fields = [self._fields[name] for name in self.field_order]
         except KeyError as e:
             raise RuntimeError(
-                f"{str(e)} is listed in `field_order` but the " f"field is not defined"
+                f"{str(e)} is listed in `field_order` but the field is not defined"
             )
         extra_fields = []
         submit_fields = {}

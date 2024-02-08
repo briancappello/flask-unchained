@@ -1,9 +1,12 @@
-from flask import abort, request, session
-from flask_unchained import Controller, injectable, lazy_gettext as _, route, url_for
 from http import HTTPStatus
 
-from ...security import SecurityService, UserManager, anonymous_user_required
+from flask import abort, request, session
 
+from flask_unchained import Controller, injectable
+from flask_unchained import lazy_gettext as _
+from flask_unchained import route, url_for
+
+from ...security import SecurityService, UserManager, anonymous_user_required
 from ..extensions import OAuth
 from ..services import OAuthService
 
@@ -30,9 +33,7 @@ class OAuthController(Controller):
     def logout(self):
         session.pop("oauth_token", None)
         self.security_service.logout_user()
-        self.flash(
-            _("flask_unchained.bundles.security:flash.logout"), category="success"
-        )
+        self.flash(_("flask_unchained.bundles.security:flash.logout"), category="success")
         return self.redirect("SECURITY_POST_LOGOUT_REDIRECT_ENDPOINT")
 
     @route("/authorized/<string:remote_app>")
@@ -63,7 +64,5 @@ class OAuthController(Controller):
             self.security_service.login_user(user, force=True)
 
         self.oauth_service.on_authorized(provider)
-        self.flash(
-            _("flask_unchained.bundles.security:flash.login"), category="success"
-        )
+        self.flash(_("flask_unchained.bundles.security:flash.login"), category="success")
         return self.redirect("SECURITY_POST_LOGIN_REDIRECT_ENDPOINT")

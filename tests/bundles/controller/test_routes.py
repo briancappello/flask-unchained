@@ -9,11 +9,11 @@ from flask_unchained.bundles.controller.attr_constants import (
 )
 from flask_unchained.bundles.controller.decorators import route as route_decorator
 from flask_unchained.bundles.controller.routes import (
+    _normalize_args,
     controller,
     func,
     include,
     resource,
-    _normalize_args,
 )
 from py_meta_utils import _missing
 
@@ -272,9 +272,7 @@ class TestInclude:
 
     def test_it_only_includes_only(self):
         routes = list(
-            include(
-                "tests.bundles.controller.fixtures.other_routes", only=["views.one"]
-            )
+            include("tests.bundles.controller.fixtures.other_routes", only=["views.one"])
         )
         assert len(routes) == 1
         assert routes[0].endpoint == "views.one"
@@ -354,9 +352,7 @@ class TestResource:
         assert routes[3].rule == "/users/<string:user_slug>/roles/<string:slug>"
 
     def test_it_renames_with_deeply_customized_unique_member_params(self):
-        routes = list(
-            resource("/baz", BazResource, subresources=[resource(BarResource)])
-        )
+        routes = list(resource("/baz", BazResource, subresources=[resource(BarResource)]))
 
         assert routes[0].endpoint == "baz_resource.list"
         assert routes[0].rule == "/baz"
@@ -473,9 +469,7 @@ class TestResource:
 
     def test_it_does_not_mutate_subresource_routes(self):
         routes = list(
-            resource(
-                "/one", UserResource, subresources=[resource("/two", RoleResource)]
-            )
+            resource("/one", UserResource, subresources=[resource("/two", RoleResource)])
         )
         orig_routes = [
             route

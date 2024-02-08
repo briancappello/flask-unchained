@@ -1,16 +1,17 @@
 import functools
 import inspect
 
+from types import FunctionType
+from typing import *
+
 from py_meta_utils import (
     AbstractMetaOption,
     McsArgs,
     MetaOptionsFactory,
-    process_factory_meta_options,
-    deep_getattr,
     _missing,
+    deep_getattr,
+    process_factory_meta_options,
 )
-from types import FunctionType
-from typing import *
 
 from .constants import _DI_AUTOMATICALLY_HANDLED, _INJECT_CLS_ATTRS
 from .exceptions import ServiceUsageError
@@ -123,9 +124,7 @@ def _set_up_class_dependency_injection(mcs_args: McsArgs):
         mcs_args.clsdict[_INJECT_CLS_ATTRS] = cls_attrs_to_inject
 
     if "__init__" not in mcs_args.clsdict and cls_attrs_to_inject:
-        init = _inject_cls_attrs(
-            _call_super_for_cls=f"{mcs_args.module}:{mcs_args.name}"
-        )
+        init = _inject_cls_attrs(_call_super_for_cls=f"{mcs_args.module}:{mcs_args.name}")
         init.__di_name__ = mcs_args.name
         init.__signature__ = inspect.signature(object)
         mcs_args.clsdict["__init__"] = init

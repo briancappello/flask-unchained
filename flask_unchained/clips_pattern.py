@@ -24,12 +24,13 @@
 # Modified to add a LRU cache decorator
 
 
-from __future__ import unicode_literals
-from __future__ import division
+from __future__ import division, unicode_literals
 
-from builtins import str, range
 import functools
 import re
+
+from builtins import range, str
+
 
 VERB, NOUN, ADJECTIVE, ADVERB = "VB", "NN", "JJ", "RB"
 

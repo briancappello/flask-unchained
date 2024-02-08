@@ -1,4 +1,5 @@
 import pytest
+
 from flask_unchained.bundles.mail.pytest import *
 
 
@@ -19,9 +20,7 @@ class TestHtmlSendConfirmationEmail:
         assert "Your email has already been confirmed." in r.html
 
     @pytest.mark.user(confirmed_at=None)
-    def test_instructions_resent(
-        self, client, user, outbox, templates, security_service
-    ):
+    def test_instructions_resent(self, client, user, outbox, templates, security_service):
         security_service.register_user(user)
         assert len(outbox) == len(templates) == 1
         assert templates[0].template.name == "security/email/welcome.html"
@@ -39,9 +38,9 @@ class TestHtmlSendConfirmationEmail:
             templates[1].template.name
             == "security/email/email_confirmation_instructions.html"
         )
-        assert templates[0].context.get("confirmation_link") != templates[
-            1
-        ].context.get("confirmation_link")
+        assert templates[0].context.get("confirmation_link") != templates[1].context.get(
+            "confirmation_link"
+        )
 
         # make sure the frontend tells them to check their email
         r = client.follow_redirects(r)
@@ -86,6 +85,6 @@ class TestApiSendConfirmationEmail:
             templates[1].template.name
             == "security/email/email_confirmation_instructions.html"
         )
-        assert templates[0].context.get("confirmation_link") != templates[
-            1
-        ].context.get("confirmation_link")
+        assert templates[0].context.get("confirmation_link") != templates[1].context.get(
+            "confirmation_link"
+        )

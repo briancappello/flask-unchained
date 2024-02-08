@@ -1,4 +1,4 @@
-from flask_unchained import Controller, route, injectable, current_app
+from flask_unchained import Controller, current_app, injectable, route
 
 from .extensions import Api
 

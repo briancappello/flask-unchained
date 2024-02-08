@@ -6,12 +6,14 @@ from superclass bundles in the hierarchy)
 
 import re
 
+from typing import *
+
 from flask import request
 from flask.globals import request_ctx
 from flask.templating import DispatchingJinjaLoader, Environment
-from flask_unchained import unchained
 from jinja2 import TemplateNotFound
-from typing import *
+
+from flask_unchained import unchained
 
 
 TEMPLATE_OVERRIDE_RE = re.compile(r"^(?P<template>.+)__(?P<depth>\d+)__$")
@@ -94,7 +96,7 @@ def explain_template_loading_attempts(app, template, attempts):
     :func:`flask.debughelpers.explain_template_loading_attempts`, except here we've
     extended it to support showing what :class:`UnchainedJinjaLoader` is doing.
     """
-    from flask import Flask, Blueprint
+    from flask import Blueprint, Flask
     from flask.debughelpers import _dump_loader_info
 
     template, expected_priors = parse_template(template)

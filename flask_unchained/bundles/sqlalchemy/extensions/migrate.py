@@ -1,7 +1,9 @@
 import os
 
-from flask_migrate import Migrate as BaseMigrate, Config
-from flask_unchained import FlaskUnchained, unchained, injectable
+from flask_migrate import Config
+from flask_migrate import Migrate as BaseMigrate
+
+from flask_unchained import FlaskUnchained, injectable, unchained
 
 
 class Migrate(BaseMigrate):
@@ -22,7 +24,7 @@ class Migrate(BaseMigrate):
             app,
             db=db,
             directory=alembic_config.get("script_location"),
-            **app.config.get("ALEMBIC_CONTEXT", {})
+            **app.config.get("ALEMBIC_CONTEXT", {}),
         )
 
     @staticmethod

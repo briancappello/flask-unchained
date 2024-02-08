@@ -1,4 +1,5 @@
 from flask import jsonify
+
 from flask_unchained import BundleConfig
 from flask_unchained.string_utils import camel_case, snake_case
 

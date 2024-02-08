@@ -1,7 +1,5 @@
 import graphene
 
-from flask_unchained import unchained
-from flask_unchained.bundles.sqlalchemy.sqla.types import BigInteger
 from graphene.utils.subclass_with_meta import (
     SubclassWithMeta_Meta as BaseObjectTypeMetaclass,
 )
@@ -16,6 +14,9 @@ from graphene_sqlalchemy.types import (
 )
 from sqlalchemy import types
 from sqlalchemy.orm import class_mapper
+
+from flask_unchained import unchained
+from flask_unchained.bundles.sqlalchemy.sqla.types import BigInteger
 
 
 @convert_sqlalchemy_type.register(BigInteger)

@@ -1,4 +1,4 @@
-from flask_unchained.clips_pattern import pluralize, singularize, ADJECTIVE
+from flask_unchained.clips_pattern import ADJECTIVE, pluralize, singularize
 
 
 class TestPluralize:

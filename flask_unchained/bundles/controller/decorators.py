@@ -3,8 +3,10 @@ from functools import wraps
 from http import HTTPStatus
 
 from flask import abort, request
+
 from flask_unchained.string_utils import snake_case
 from py_meta_utils import _missing
+
 
 try:
     from sqlalchemy_unchained import BaseModel as Model
@@ -23,7 +25,7 @@ def route(
     is_member=False,
     methods=None,
     only_if=_missing,
-    **rule_options
+    **rule_options,
 ):
     """
     Decorator to set default route rules for a view function. The arguments this
@@ -75,7 +77,7 @@ def route(
             is_member=is_member,
             methods=methods,
             only_if=only_if,
-            **rule_options
+            **rule_options,
         )
         setattr(fn, FN_ROUTES_ATTR, fn_routes + [route])
         return fn

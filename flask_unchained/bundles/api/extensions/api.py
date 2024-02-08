@@ -12,7 +12,7 @@ from flask_unchained.bundles.controller.constants import (
     PATCH,
     PUT,
 )
-from flask_unchained.string_utils import title_case, pluralize
+from flask_unchained.string_utils import pluralize, title_case
 
 from ..model_resource import ModelResource
 

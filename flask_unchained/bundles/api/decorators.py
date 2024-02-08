@@ -3,6 +3,7 @@ from http import HTTPStatus
 
 from flask import abort, request
 
+
 try:
     from marshmallow import ValidationError
 except ImportError:

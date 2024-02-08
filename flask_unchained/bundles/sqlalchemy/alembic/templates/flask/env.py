@@ -1,10 +1,12 @@
 import logging
 import os
 
+from logging.config import fileConfig
+
 from alembic import context
 from flask import current_app
 from sqlalchemy import engine_from_config, pool
-from logging.config import fileConfig
+
 
 # make sure the migrations versions directory exists
 versions_dir = os.path.join(
@@ -82,7 +84,7 @@ def run_migrations_online():
         connection=connection,
         target_metadata=target_metadata,
         process_revision_directives=process_revision_directives,
-        **current_app.extensions["migrate"].configure_args
+        **current_app.extensions["migrate"].configure_args,
     )
 
     try:

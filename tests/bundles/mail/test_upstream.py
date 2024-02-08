@@ -45,13 +45,13 @@ import time
 import unittest
 
 from contextlib import contextmanager
+from email.header import Header
 from unittest import mock
 
-from email.header import Header
-
 from flask import Flask
-from flask_mail import BadHeaderError, Connection, Mail, Message, sanitize_address
 from speaklater import make_lazy_string
+
+from flask_mail import BadHeaderError, Connection, Mail, Message, sanitize_address
 
 
 class TestCase(unittest.TestCase):
@@ -381,9 +381,7 @@ class TestMessage(TestCase):
 
     def test_plain_message_with_ascii_converted_attachment(self):
         with self.mail_config(ascii_attachments=True):
-            msg = Message(
-                subject="subject", recipients=["to@example.com"], body="hello"
-            )
+            msg = Message(subject="subject", recipients=["to@example.com"], body="hello")
 
             msg.attach(
                 data=b"this is a test",
@@ -486,7 +484,7 @@ class TestMessage(TestCase):
         )
 
         self.assertIn(
-            "From: =?utf-8?b?w4TDnMOWIOKGkiDinJM=?=" " <from@example.com>",
+            "From: =?utf-8?b?w4TDnMOWIOKGkiDinJM=?= <from@example.com>",
             msg.as_string(),
         )
 
@@ -498,7 +496,7 @@ class TestMessage(TestCase):
         )
 
         self.assertIn(
-            "From: =?utf-8?b?w4TDnMOWIOKGkiDinJM=?=" " <from@example.com>",
+            "From: =?utf-8?b?w4TDnMOWIOKGkiDinJM=?= <from@example.com>",
             msg.as_string(),
         )
 
@@ -619,9 +617,7 @@ class TestMessage(TestCase):
         self.assertNotIn("Subject: =?utf-8?", msg.as_string())
         self.assertIn("Reply-To: =?iso-2022-jp?", msg.as_string())
         self.assertNotIn("Reply-To: =?utf-8?", msg.as_string())
-        self.assertIn(
-            'Content-Type: text/plain; charset="iso-2022-jp"', msg.as_string()
-        )
+        self.assertIn('Content-Type: text/plain; charset="iso-2022-jp"', msg.as_string())
 
         # unicode subject sjis
         msg = Message(
@@ -632,9 +628,7 @@ class TestMessage(TestCase):
         )  # japanese
         msg.body = "内容"
         self.assertIn("Subject: =?iso-2022-jp?", msg.as_string())
-        self.assertIn(
-            'Content-Type: text/plain; charset="iso-2022-jp"', msg.as_string()
-        )
+        self.assertIn('Content-Type: text/plain; charset="iso-2022-jp"', msg.as_string())
 
         # unicode subject utf-8
         msg = Message(

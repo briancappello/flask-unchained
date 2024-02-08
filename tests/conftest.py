@@ -1,6 +1,6 @@
 import pytest
 
-from flask_unchained import AppFactory, TEST, unchained
+from flask_unchained import TEST, AppFactory, unchained
 
 
 @pytest.fixture()

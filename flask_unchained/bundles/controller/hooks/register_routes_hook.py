@@ -1,15 +1,16 @@
 import inspect
 import itertools
 
+from typing import *
+
 from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained, unchained
 from flask_unchained._compat import is_local_proxy
-from typing import *
 
 from ..attr_constants import CONTROLLER_ROUTES_ATTR, FN_ROUTES_ATTR
 from ..controller import Controller
 from ..resource import Resource
 from ..route import Route
-from ..routes import _reduce_routes, controller, resource, include
+from ..routes import _reduce_routes, controller, include, resource
 
 
 class RegisterRoutesHook(AppFactoryHook):

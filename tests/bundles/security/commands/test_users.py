@@ -1,16 +1,17 @@
-import pytest
 import traceback
 
+import pytest
+
 from flask_unchained.bundles.security.commands.users import (
-    list_users,
-    create_user,
-    delete_user,
-    set_password,
-    confirm_user,
     activate_user,
-    deactivate_user,
     add_role_to_user,
+    confirm_user,
+    create_user,
+    deactivate_user,
+    delete_user,
+    list_users,
     remove_role_from_user,
+    set_password,
 )
 
 

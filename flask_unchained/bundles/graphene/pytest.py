@@ -1,8 +1,9 @@
 import graphql
 import pytest
 
-from flask_unchained import request, unchained
 from graphene.test import Client as GrapheneClient
+
+from flask_unchained import request, unchained
 
 
 def _raise_non_graphql_exceptions(error):
@@ -17,7 +18,7 @@ class GraphQLClient(GrapheneClient):
         super().__init__(
             schema or unchained.graphene_bundle.root_schema,
             format_error=format_error or _raise_non_graphql_exceptions,
-            **execute_options
+            **execute_options,
         )
 
     def execute(self, query, values=None):

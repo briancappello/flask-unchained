@@ -1,9 +1,10 @@
 import pytest
 
+from sqlalchemy.exc import MultipleResultsFound
+
+from flask_unchained import unchained
 from flask_unchained.bundles.sqlalchemy import ModelManager, SQLAlchemyUnchained
 from flask_unchained.bundles.sqlalchemy.model_registry import UnchainedModelRegistry
-from flask_unchained import unchained
-from sqlalchemy.exc import MultipleResultsFound
 
 
 def _setup(db: SQLAlchemyUnchained):

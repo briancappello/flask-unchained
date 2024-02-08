@@ -1,14 +1,14 @@
-from flask import abort, flash, request
-from flask_unchained import redirect
 from functools import wraps
 from http import HTTPStatus
+
+from flask import abort, flash, request
+
+from flask_unchained import redirect
 
 from ..utils import current_user
 
 
-def anonymous_user_required(
-    *decorator_args, msg=None, category=None, redirect_url=None
-):
+def anonymous_user_required(*decorator_args, msg=None, category=None, redirect_url=None):
     """
     Decorator requiring that there is no user currently logged in.
 

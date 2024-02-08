@@ -1,16 +1,17 @@
 import importlib
 import inspect
-import networkx as nx
 import os
 import sys
 
 from types import ModuleType
 from typing import *
 
+import networkx as nx
+
 from py_meta_utils import Singleton
 
 from .bundles import AppBundle, Bundle
-from .constants import DEV, PROD, STAGING, TEST, ENV_ALIASES, VALID_ENVS
+from .constants import DEV, ENV_ALIASES, PROD, STAGING, TEST, VALID_ENVS
 from .exceptions import (
     BundleNotFoundError,
     CWDImportError,
@@ -138,7 +139,9 @@ class AppFactory(metaclass=Singleton):
             try:
                 return cwd_import("tests._unchained_config")
             except ImportError as e:
-                msg = f"{e.msg}: Could not find _unchained_config.py in the tests directory"
+                msg = (
+                    f"{e.msg}: Could not find _unchained_config.py in the tests directory"
+                )
 
         unchained_config_module_name = os.getenv("UNCHAINED_CONFIG", "unchained_config")
         flask_app_module_name = os.getenv("FLASK_APP", "app")

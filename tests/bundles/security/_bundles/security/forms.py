@@ -1,5 +1,6 @@
-from flask_unchained.bundles.security.forms import RegisterForm as BaseRegisterForm
 from wtforms import fields
+
+from flask_unchained.bundles.security.forms import RegisterForm as BaseRegisterForm
 
 
 class RegisterForm(BaseRegisterForm):

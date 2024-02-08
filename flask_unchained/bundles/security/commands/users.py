@@ -1,9 +1,10 @@
 from flask_unchained import unchained
 from flask_unchained.cli import cli, click, print_table
 
-from .utils import _query_to_role, _query_to_user
 from ..extensions import Security
 from ..services import RoleManager, SecurityService, UserManager
+from .utils import _query_to_role, _query_to_user
+
 
 role_manager: RoleManager = unchained.get_local_proxy("role_manager")
 security: Security = unchained.get_local_proxy("security")
@@ -64,8 +65,7 @@ def list_users():
 @click.option(
     "--confirmed-at",
     prompt='Confirmed at timestamp (or enter "now")',
-    help='The date stamp the user was confirmed at (or enter "now") '
-    " [default: None]",
+    help='The date stamp the user was confirmed at (or enter "now") [default: None]',
     default=None,
     show_default=True,
 )
@@ -136,7 +136,7 @@ def create_user(email, password, active, confirmed_at, role, send_email=False):
 )
 def create_superuser(email, password, active, confirmed_at, role, send_email):
     """
-    Create a new admin super user.
+    Create a new admin superuser.
     """
     if confirmed_at == "now":
         confirmed_at = security.datetime_factory()
@@ -284,8 +284,7 @@ def deactivate_user(query):
 @click.option(
     "-r",
     "--role",
-    help="The query to search for a role by. For example, "
-    "`id=5` or `name=ROLE_USER`.",
+    help="The query to search for a role by. For example, `id=5` or `name=ROLE_USER`.",
 )
 def add_role_to_user(user, role):
     """
@@ -312,8 +311,7 @@ def add_role_to_user(user, role):
 @click.option(
     "-r",
     "--role",
-    help="The query to search for a role by. For example, "
-    "`id=5` or `name=ROLE_USER`.",
+    help="The query to search for a role by. For example, `id=5` or `name=ROLE_USER`.",
 )
 def remove_role_from_user(user, role):
     """

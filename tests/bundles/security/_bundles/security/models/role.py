@@ -1,6 +1,5 @@
-from flask_unchained.bundles.sqlalchemy import db
-
 from flask_unchained.bundles.security.models import Role as BaseRole
+from flask_unchained.bundles.sqlalchemy import db
 
 
 class Role(BaseRole):

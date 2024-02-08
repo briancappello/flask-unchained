@@ -1,8 +1,9 @@
 import pytest
 
+from werkzeug.exceptions import NotFound
+
 from flask_unchained.bundles.controller import param_converter
 from flask_unchained.bundles.sqlalchemy.model_factory import ModelFactory
-from werkzeug.exceptions import NotFound
 
 
 @pytest.fixture()
@@ -37,7 +38,7 @@ def role(request):
 @pytest.mark.bundles(["tests.bundles.sqlalchemy._bundles.vendor_one"])
 class TestParamConverter:
     def test_it_works(self, user, role):
-        from ._bundles.vendor_one.models import OneUser, OneRole
+        from ._bundles.vendor_one.models import OneRole, OneUser
 
         @param_converter(id=OneUser, one_role_id=OneRole)
         def method(one_user, one_role):
@@ -47,7 +48,7 @@ class TestParamConverter:
         method(id=user.id, one_role_id=role.id)
 
     def test_custom_arg_names(self, user, role):
-        from ._bundles.vendor_one.models import OneUser, OneRole
+        from ._bundles.vendor_one.models import OneRole, OneUser
 
         @param_converter(id={"a_user": OneUser}, one_role_id={"a_role": OneRole})
         def method(a_user, a_role):
@@ -57,7 +58,7 @@ class TestParamConverter:
         method(id=user.id, one_role_id=role.id)
 
     def test_404_on_lookup_error(self, user, role):
-        from ._bundles.vendor_one.models import OneUser, OneRole
+        from ._bundles.vendor_one.models import OneRole, OneUser
 
         @param_converter(id=OneUser, one_role_id=OneRole)
         def method(one_user, one_role):

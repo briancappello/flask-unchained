@@ -1,12 +1,14 @@
 import importlib
 import os
-import pytest
 import sys
 
-from flask_unchained.bundles.sqlalchemy.pytest import *
-from flask_unchained import AppFactory, TEST, unchained
+import pytest
+
 from sqlalchemy import MetaData
 from sqlalchemy.orm import clear_mappers
+
+from flask_unchained import TEST, AppFactory, unchained
+from flask_unchained.bundles.sqlalchemy.pytest import *
 
 
 POSTGRES = "{dialect}://{user}:{password}@{host}:{port}/{db_name}".format(

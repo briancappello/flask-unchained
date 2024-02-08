@@ -1,13 +1,14 @@
-import pytest
 import sys
+
+import pytest
 
 from flask_unchained.constants import DEV
 from flask_unchained.hooks.register_commands_hook import RegisterCommandsHook
 from flask_unchained.unchained import Unchained
 
 from .._bundles.myapp import MyAppBundle
-from .._bundles.vendor_bundle import VendorBundle
 from .._bundles.override_vendor_bundle import VendorBundle as OverrideVendorBundle
+from .._bundles.vendor_bundle import VendorBundle
 
 
 @pytest.fixture()

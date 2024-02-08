@@ -1,7 +1,8 @@
+from typing import *
+
 import graphene
 
 from flask_unchained import AppFactoryHook, Bundle, FlaskUnchained
-from typing import *
 
 
 class RegisterGrapheneRootSchemaHook(AppFactoryHook):

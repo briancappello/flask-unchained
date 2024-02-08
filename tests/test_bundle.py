@@ -2,10 +2,10 @@ import os
 
 from flask_unchained import Bundle
 
-from ._bundles.myapp import MyAppBundle
 from ._bundles.empty_bundle import EmptyBundle
-from ._bundles.vendor_bundle import VendorBundle
+from ._bundles.myapp import MyAppBundle
 from ._bundles.override_vendor_bundle import VendorBundle as OverrideVendorBundle
+from ._bundles.vendor_bundle import VendorBundle
 
 
 class FoobarBundle(Bundle):
@@ -67,9 +67,7 @@ class TestBundleDescriptors:
 
 class TestBundleDescriptorsWithInheritance:
     def test_module_name(self):
-        assert (
-            OverrideVendorBundle.module_name == "tests._bundles.override_vendor_bundle"
-        )
+        assert OverrideVendorBundle.module_name == "tests._bundles.override_vendor_bundle"
 
     def test_folder(self):
         cwd = os.getcwd()
@@ -102,9 +100,7 @@ class TestBundle:
         assert isinstance(hierarchy[0], VendorBundle)
         assert isinstance(hierarchy[1], OverrideVendorBundle)
 
-        hierarchy = list(
-            OverrideVendorBundle()._iter_class_hierarchy(include_self=False)
-        )
+        hierarchy = list(OverrideVendorBundle()._iter_class_hierarchy(include_self=False))
         assert len(hierarchy) == 1
         assert isinstance(hierarchy[0], VendorBundle)
 

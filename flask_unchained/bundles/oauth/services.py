@@ -1,6 +1,8 @@
-from flask_oauthlib.client import OAuthRemoteApp
-from flask_unchained import Service, unchained
 from typing import *
+
+from flask_oauthlib.client import OAuthRemoteApp
+
+from flask_unchained import Service, unchained
 
 
 @unchained.service("oauth_service")
