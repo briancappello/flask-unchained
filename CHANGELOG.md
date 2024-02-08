@@ -48,6 +48,11 @@
 - add compatibility with upcoming wtforms v3
 - remove experimental `qtconsole` command
 
+### Internals
+
+- convert to `pyproject.toml`
+- format code with `black`
+
 ## v0.9.0 (2021/06/07)
 
 - fix security bundle salt configuration for itsdangerous 2.0+

@@ -1,0 +1,136 @@
+[tool.poetry]
+name = "flask-unchained"
+version = "0.10.0a0"
+description = "The quickest and easiest way to build web apps and APIs with Flask"
+repository = "https://github.com/briancappello/flask-unchained"
+authors = ["Brian Cappello <briancappello@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Framework :: Flask",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+packages = [
+    { include = "flask_unchained" },
+    { include = "flask_mail.py" },
+    { include = "unchained_config.py" },
+]
+include = [
+    "LICENSE",
+    "CHANGELOG.md",
+    "flask_unchained",
+]
+
+[tool.poetry.scripts]
+fun = "flask_unchained.cli:main"
+flask = "flask_unchained.cli:main"
+
+[tool.poetry.plugins.pytest11]
+flask_unchained = "flask_unchained.pytest"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+blinker = "^1.4.0"
+click = "^8.0"
+flask = ">=2.2"
+flask-babel = "^4.0.0"
+flask-wtf = "^1.2.1"
+py-meta-utils = "^0.8.0"
+pyterminalsize = "^0.1.0"
+networkx = ">=2.5"
+email-validator = "^2.1.0.post1"
+speaklater = "^1.3"
+setuptools = "^69.0.3"
+
+[tool.poetry.group.admin.dependencies]
+flask-admin = "^1.6.1"
+
+[tool.poetry.group.api.dependencies]
+apispec = "^6.4.0"
+apispec-webframeworks = "^1.0.0"
+flask-marshmallow = "^1.2.0"
+marshmallow = "^3.20.2"
+marshmallow-sqlalchemy = "^1.0.0"
+
+[tool.poetry.group.quart.dependencies]
+quart = "^0.19.4"
+
+[tool.poetry.group.celery.dependencies]
+celery = "^5.3.6"
+dill = "^0.3.8"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.1.1"
+ipython = "^8.21.0"
+factory-boy = "^3.3.0"
+pytest = "^7.0.0"
+pytest-flask = "^1.3.0"
+tox = "^4.12.1"
+psycopg2 = "^2.9.9"
+
+[tool.poetry.group.docs.dependencies]
+ipython = "^8.21.0"
+sphinx = "^7.2.6"
+sphinx-click = "^5.1.0"
+sphinx-material = "^0.0.36"
+m2r2 = "^0.3.3.post2"
+
+[tool.poetry.group.graphene.dependencies]
+graphql-core = ">=2.3.1,<3"
+graphql-relay = ">=2.0.1,<3"
+graphql-server-core = ">=1.2,<2"
+flask-graphql = "^2.0.1"
+graphene = ">=2.1.9,<3"
+graphene-sqlalchemy = ">=2.2,<3"
+
+[tool.poetry.group.mail.dependencies]
+beautifulsoup4 = "^4.12.3"
+lxml = "^5.1.0"
+
+[tool.poetry.group.oauth.dependencies]
+flask-oauthlib = "^0.9.6"
+
+[tool.poetry.group.security.dependencies]
+bcrypt = "^4.1.2"
+flask-login = "^0.6.3"
+flask-principal = "^0.4.0"
+itsdangerous = "^2.1.2"
+passlib = "^1.7.4"
+
+[tool.poetry.group.session.dependencies]
+dill = "^0.3.8"
+flask-session = "^0.6.0"
+
+[tool.poetry.group.sqlalchemy.dependencies]
+flask-migrate = "^4.0.5"
+flask-sqlalchemy = ">=3.0,<3.1"
+flask-sqlalchemy-unchained = "^0.8.0"
+sqlalchemy = ">=1.4,<2"
+wtforms-sqlalchemy = "^0.4.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-s"
+markers = [
+    "bundles: mark test(s) as using a specific list of bundles",
+    "role: mark to customize RoleFactory arguments for a single Role",
+    "roles: mark to customize RoleFactory arguments for multiple Roles",
+    "user: mark to customize UserFactory arguments for a single User",
+    "users: mark to customize UserFactory arguments for multiple Users",
+]
+filterwarnings = [
+    "ignore:the imp module is deprecated in favour of importlib:DeprecationWarning",
+    "ignore:The create_engine.convert_unicode parameter:sqlalchemy.exc.SADeprecationWarning",
+    "ignore:Use .persist_selectable:sqlalchemy.exc.SADeprecationWarning",
+]
