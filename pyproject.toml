@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flask-unchained"
-version = "0.10.0a0"
+version = "0.10.0a2"
 description = "The quickest and easiest way to build web apps and APIs with Flask"
 repository = "https://github.com/briancappello/flask-unchained"
 authors = ["Brian Cappello <briancappello@gmail.com>"]
@@ -49,22 +49,54 @@ email-validator = "^2.1.0.post1"
 speaklater = "^1.3"
 setuptools = "^69.0.3"
 
-[tool.poetry.group.admin.dependencies]
-flask-admin = "^1.6.1"
+# admin extra
+flask-admin = { version = "^1.6.1", optional = true }
 
-[tool.poetry.group.api.dependencies]
-apispec = "^6.4.0"
-apispec-webframeworks = "^1.0.0"
-flask-marshmallow = "^1.2.0"
-marshmallow = "^3.20.2"
-marshmallow-sqlalchemy = "^1.0.0"
+# api extra
+apispec = { version = "^6.4.0", optional = true }
+apispec-webframeworks = { version = "^1.0.0", optional = true }
+flask-marshmallow = { version = "^1.2.0", optional = true }
+marshmallow = { version = "^3.20.2", optional = true }
+marshmallow-sqlalchemy = { version = "^1.0.0", optional = true }
 
-[tool.poetry.group.quart.dependencies]
-quart = "^0.19.4"
+# quart extra
+quart = { version = "^0.19.4", optional = true }
 
-[tool.poetry.group.celery.dependencies]
-celery = "^5.3.6"
-dill = "^0.3.8"
+# celery extra
+celery = { version = "^5.3.6", optional = true }
+dill = { version = "^0.3.8", optional = true }
+
+# graphene extra
+graphql-core = { version = ">=2.3.1,<3", optional = true }
+graphql-relay = { version = ">=2.0.1,<3", optional = true }
+graphql-server-core = { version = ">=1.2,<2", optional = true }
+flask-graphql = { version = "^2.0.1", optional = true }
+graphene = { version = ">=2.1.9,<3", optional = true }
+graphene-sqlalchemy = { version = ">=2.2,<3", optional = true }
+
+# mail extra
+beautifulsoup4 = { version = "^4.12.3", optional = true }
+lxml = { version = "^5.1.0", optional = true }
+
+# oauth extra
+flask-oauthlib = { version = "^0.9.6", optional = true }
+
+# security extra
+bcrypt = { version = "^4.1.2", optional = true }
+flask-login = { version = "^0.6.3", optional = true }
+flask-principal = { version = "^0.4.0", optional = true }
+itsdangerous = { version = "^2.1.2", optional = true }
+passlib = { version = "^1.7.4", optional = true }
+
+# session extra
+flask-session = { version = "^0.6.0", optional = true }
+
+# sqlalchemy extra
+flask-migrate = { version = "^4.0.5", optional = true }
+flask-sqlalchemy = { version = ">=3.0,<3.1", optional = true }
+flask-sqlalchemy-unchained = { version = "^0.8.0", optional = true }
+sqlalchemy = { version = ">=1.4,<2", optional = true }
+wtforms-sqlalchemy = { version = "^0.4.1", optional = true }
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.1.1"
@@ -82,38 +114,17 @@ sphinx-click = "^5.1.0"
 sphinx-material = "^0.0.36"
 m2r2 = "^0.3.3.post2"
 
-[tool.poetry.group.graphene.dependencies]
-graphql-core = ">=2.3.1,<3"
-graphql-relay = ">=2.0.1,<3"
-graphql-server-core = ">=1.2,<2"
-flask-graphql = "^2.0.1"
-graphene = ">=2.1.9,<3"
-graphene-sqlalchemy = ">=2.2,<3"
-
-[tool.poetry.group.mail.dependencies]
-beautifulsoup4 = "^4.12.3"
-lxml = "^5.1.0"
-
-[tool.poetry.group.oauth.dependencies]
-flask-oauthlib = "^0.9.6"
-
-[tool.poetry.group.security.dependencies]
-bcrypt = "^4.1.2"
-flask-login = "^0.6.3"
-flask-principal = "^0.4.0"
-itsdangerous = "^2.1.2"
-passlib = "^1.7.4"
-
-[tool.poetry.group.session.dependencies]
-dill = "^0.3.8"
-flask-session = "^0.6.0"
-
-[tool.poetry.group.sqlalchemy.dependencies]
-flask-migrate = "^4.0.5"
-flask-sqlalchemy = ">=3.0,<3.1"
-flask-sqlalchemy-unchained = "^0.8.0"
-sqlalchemy = ">=1.4,<2"
-wtforms-sqlalchemy = "^0.4.1"
+[tool.poetry.extras]
+admin = ["flask-admin"]
+api = ["apispec", "apispec-webframeworks", "flask-marshmallow", "marshmallow", "marshmallow-sqlalchemy"]
+quart = ["quart"]
+celery = ["dill", "celery"]
+graphene = ["graphql-core", "graphql-relay", "graphql-server-core", "flask-graphql", "graphene", "graphene-sqlalchemy"]
+mail = ["beautifulsoup4", "lxml"]
+oauth = ["flask-oauthlib"]
+security = ["bcrypt", "flask-login", "flask-principal", "itsdangerous", "passlib"]
+session = ["dill", "flask-session"]
+sqlalchemy = ["flask-migrate", "flask-sqlalchemy", "flask-sqlalchemy-unchained", "sqlalchemy", "wtforms-sqlalchemy"]
 
 [build-system]
 requires = ["poetry-core"]
