@@ -10,13 +10,11 @@ from tests.bundles.sqlalchemy._bundles.custom_extension.extensions import (
 )
 
 
-@pytest.mark.bundles(
-    [
-        "tests.bundles.sqlalchemy._bundles.custom_extension",
-        "tests.bundles.sqlalchemy._bundles.ext_vendor_one",
-        "tests.bundles.sqlalchemy._bundles.vendor_two",
-    ]
-)
+@pytest.mark.bundles([
+    "tests.bundles.sqlalchemy._bundles.custom_extension",
+    "tests.bundles.sqlalchemy._bundles.ext_vendor_one",
+    "tests.bundles.sqlalchemy._bundles.vendor_two",
+])
 @pytest.mark.usefixtures("app", "db")
 class TestCustomExtension:
     def test_it_works(self, app, db):

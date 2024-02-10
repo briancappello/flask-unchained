@@ -210,13 +210,9 @@ def _convert_models(
             arg_name = snake_case(model.__name__)
 
         filter_by = url_param_name.replace(snake_case(model.__name__) + "_", "")
-        instance = model.query.filter_by(
-            **{
-                filter_by: view_kwargs.pop(
-                    url_param_name, request.args.get(url_param_name)
-                ),
-            }
-        ).first()
+        instance = model.query.filter_by(**{
+            filter_by: view_kwargs.pop(url_param_name, request.args.get(url_param_name)),
+        }).first()
 
         if not instance:
             abort(HTTPStatus.NOT_FOUND)

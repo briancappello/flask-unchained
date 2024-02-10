@@ -1,11 +1,11 @@
 """
-    flask_unchained
-    ---------------
+flask_unchained
+---------------
 
-    The quickest and easiest way to build large web apps and APIs with Flask and SQLAlchemy
+The quickest and easiest way to build large web apps and APIs with Flask and SQLAlchemy
 
-    :copyright: Copyright © 2018 Brian Cappello
-    :license: MIT, see LICENSE for more details
+:copyright: Copyright © 2018 Brian Cappello
+:license: MIT, see LICENSE for more details
 """
 
 __version__ = "0.9.0"
