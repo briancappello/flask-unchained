@@ -71,10 +71,12 @@ class Api:
         :param resource:
         """
         model_name = resource.Meta.model.__name__
-        self.spec.tag({
-            "name": model_name,
-            "description": resource.Meta.model.__doc__,
-        })
+        self.spec.tag(
+            {
+                "name": model_name,
+                "description": resource.Meta.model.__doc__,
+            }
+        )
 
         for method in resource.methods():
             key = f"{resource.__name__}.{method}"
@@ -87,11 +89,13 @@ class Api:
             if method == CREATE:
                 http_method = "post"
                 docs[http_method] = dict(
-                    parameters=[{
-                        "in": __location_map__["json"],
-                        "required": True,
-                        "schema": resource.Meta.serializer_create,
-                    }],
+                    parameters=[
+                        {
+                            "in": __location_map__["json"],
+                            "required": True,
+                            "schema": resource.Meta.serializer_create,
+                        }
+                    ],
                     responses={
                         "201": dict(
                             description=getattr(resource, CREATE).__doc__,
@@ -129,11 +133,13 @@ class Api:
                 )
             elif method == PATCH:
                 docs[http_method] = dict(
-                    parameters=[{
-                        "in": __location_map__["json"],
-                        "required": False,
-                        "schema": resource.Meta.serializer,
-                    }],
+                    parameters=[
+                        {
+                            "in": __location_map__["json"],
+                            "required": False,
+                            "schema": resource.Meta.serializer,
+                        }
+                    ],
                     responses={
                         "200": dict(
                             description=getattr(resource, PATCH).__doc__,
@@ -143,11 +149,13 @@ class Api:
                 )
             elif method == PUT:
                 docs[http_method] = dict(
-                    parameters=[{
-                        "in": __location_map__["json"],
-                        "required": True,
-                        "schema": resource.Meta.serializer,
-                    }],
+                    parameters=[
+                        {
+                            "in": __location_map__["json"],
+                            "required": True,
+                            "schema": resource.Meta.serializer,
+                        }
+                    ],
                     responses={
                         "200": dict(
                             description=getattr(resource, PUT).__doc__,

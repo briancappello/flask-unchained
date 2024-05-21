@@ -60,11 +60,13 @@ GET_PARENTS = """
 """
 
 
-@pytest.mark.bundles([
-    "flask_unchained.bundles.sqlalchemy",
-    "flask_unchained.bundles.graphene",
-    "tests.bundles.graphene._bundles.graphene_bundle",
-])
+@pytest.mark.bundles(
+    [
+        "flask_unchained.bundles.sqlalchemy",
+        "flask_unchained.bundles.graphene",
+        "tests.bundles.graphene._bundles.graphene_bundle",
+    ]
+)
 class TestSchema:
     def test_get_child(self, graphql_client):
         child = child_manager.get_by(name="child_one")

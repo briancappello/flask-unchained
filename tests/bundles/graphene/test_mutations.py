@@ -44,11 +44,13 @@ EDIT_PARENT = """
 """
 
 
-@pytest.mark.bundles([
-    "flask_unchained.bundles.sqlalchemy",
-    "flask_unchained.bundles.graphene",
-    "tests.bundles.graphene._bundles.graphene_bundle",
-])
+@pytest.mark.bundles(
+    [
+        "flask_unchained.bundles.sqlalchemy",
+        "flask_unchained.bundles.graphene",
+        "tests.bundles.graphene._bundles.graphene_bundle",
+    ]
+)
 class TestParentMutations:
     def test_create_parent_requires_name(self, graphql_client):
         result = graphql_client.execute(CREATE_PARENT)

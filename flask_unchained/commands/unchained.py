@@ -95,12 +95,14 @@ def hooks(ctx):
             if hook.require_exactly_one_bundle_module
             else hook.bundle_module_names
         )
-        rows.append((
-            hook.name,
-            bundle_module_names and ", ".join(bundle_module_names) or "(None)",
-            hook.bundle_override_module_names_attr or "(None)",
-            format_docstring(hook.__doc__) or "(None)",
-        ))
+        rows.append(
+            (
+                hook.name,
+                bundle_module_names and ", ".join(bundle_module_names) or "(None)",
+                hook.bundle_override_module_names_attr or "(None)",
+                format_docstring(hook.__doc__) or "(None)",
+            )
+        )
     print_table(header, rows)
 
 

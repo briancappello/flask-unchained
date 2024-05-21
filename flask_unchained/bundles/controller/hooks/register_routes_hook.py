@@ -118,11 +118,13 @@ class RegisterRoutesHook(AppFactoryHook):
                             break
 
         # get all the remaining routes not belonging to a bundle
-        self.bundle.other_routes = itertools.chain.from_iterable([
-            routes
-            for endpoint, routes in self.bundle.endpoints.items()
-            if endpoint not in bundle_route_endpoints
-        ])
+        self.bundle.other_routes = itertools.chain.from_iterable(
+            [
+                routes
+                for endpoint, routes in self.bundle.endpoints.items()
+                if endpoint not in bundle_route_endpoints
+            ]
+        )
 
         # we register non-bundle routes with the app here, and
         # the RegisterBundleBlueprintsHook registers the bundle routes

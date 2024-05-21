@@ -26,14 +26,16 @@ def url(url: str, method: str):
         headings = ("Method(s)", "Rule", "Params", "Endpoint", "View", "Options")
         print_table(
             headings,
-            [(
-                _get_http_methods(url_rule),
-                url_rule.rule if url_rule.strict_slashes else url_rule.rule + "[/]",
-                _format_dict(params),
-                url_rule.endpoint,
-                _get_rule_view(url_rule),
-                _format_rule_options(url_rule),
-            )],
+            [
+                (
+                    _get_http_methods(url_rule),
+                    url_rule.rule if url_rule.strict_slashes else url_rule.rule + "[/]",
+                    _format_dict(params),
+                    url_rule.endpoint,
+                    _get_rule_view(url_rule),
+                    _format_rule_options(url_rule),
+                )
+            ],
             ["<" if i > 0 else ">" for i, col in enumerate(headings)],
             primary_column_idx=1,
         )

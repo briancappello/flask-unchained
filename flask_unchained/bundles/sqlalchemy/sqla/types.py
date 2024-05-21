@@ -6,6 +6,7 @@ from sqlalchemy.dialects import sqlite
 
 class BigInteger(types.TypeDecorator):
     impl = types.BigInteger().with_variant(sqlite.INTEGER(), "sqlite")
+    cache_ok = True
 
     @property
     def python_type(self):
@@ -17,6 +18,7 @@ class BigInteger(types.TypeDecorator):
 
 class DateTime(types.TypeDecorator):
     impl = types.DateTime
+    cache_ok = True
 
     def __init__(self, timezone=True):
         super().__init__(timezone=True)  # force timezone always True
