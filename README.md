@@ -97,10 +97,10 @@ class TestSiteController:
 You can run it like so:
 
 ```bash
-pip install "flask-unchained[dev]"
-pytest app.py
-flask urls
-flask run
+uv add "flask-unchained[dev]"
+uv run pytest app.py
+uv run flask urls
+uv run flask run
 ```
 
 ### Going Big
